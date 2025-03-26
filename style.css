@@ -31,3 +31,19 @@ main { max-width: 1000px; margin: 0 auto; padding: 1rem; }
   border-radius: 6px;
   margin-bottom: 1rem;
 }
+
+.tag-cloud {
+  padding: 0.5rem 0 1rem;
+}
+.cloud-tag {
+  display: inline-block;
+  margin: 0.3rem;
+  padding: 0.3rem 0.6rem;
+  background: #ddd;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.cloud-tag:hover {
+  background: #bbb;
+}

@@ -105,6 +105,41 @@ function render(materials) {
     container.appendChild(div);
   });
 
+  
+function renderTagCloud(materials) {
+  const tagCount = {};
+  materials.forEach(m => {
+    (m.tags || []).forEach(t => {
+      const key = t.toLowerCase();
+      tagCount[key] = (tagCount[key] || 0) + 1;
+    });
+  });
+
+  const sortedTags = Object.entries(tagCount)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 30);
+
+  const cloud = document.createElement("div");
+  cloud.className = "tag-cloud";
+  cloud.innerHTML = "<h3>Popular Tags</h3>";
+  sortedTags.forEach(([tag, count]) => {
+    const span = document.createElement("span");
+    span.className = "cloud-tag";
+    span.textContent = tag;
+    span.title = `${count} materials`;
+    span.addEventListener("click", () => {
+      if (!activeTags.includes(tag)) {
+        activeTags.push(tag);
+        render(materials);
+      }
+    });
+    cloud.appendChild(span);
+  });
+
+  return cloud;
+}
+
+
   // Add tag refinement
   document.querySelectorAll(".tag").forEach(tagEl => {
     tagEl.addEventListener("click", () => {
