@@ -30,40 +30,36 @@ function render(materials) {
 }
 
 function updateFilters(materials) {
-  const industrySelect = document.getElementById("industryFilter");
-  const categorySelect = document.getElementById("categoryFilter");
-  const propertySelect = document.getElementById("propertyFilter");
+  const selects = {
+    industryFilter: "industry:",
+    categoryFilter: null,
+    propertyFilter: null
+  };
 
-  const industries = [...new Set(materials.flatMap(m => (m.tags || []).filter(t => t.startsWith("industry:")).map(t => t.replace("industry:", ""))))].sort();
-  const categories = [...new Set(materials.map(m => m.category))].sort();
-  const tags = [...new Set(materials.flatMap(m => m.tags || []).filter(t => !t.startsWith("industry:")))].sort();
+  for (const [id, prefix] of Object.entries(selects)) {
+    const select = document.getElementById(id);
+    const values = prefix
+      ? [...new Set(materials.flatMap(m => (m.tags || []).filter(t => t.startsWith(prefix)).map(t => t.replace(prefix, ""))))].sort()
+      : id === "categoryFilter"
+        ? [...new Set(materials.map(m => m.category))].sort()
+        : [...new Set(materials.flatMap(m => m.tags || []).filter(t => !t.startsWith("industry:")))].sort();
 
-  for (const list of [industrySelect, categorySelect, propertySelect]) list.innerHTML = "";
-
-  for (const i of industries) {
-    const opt = document.createElement("option");
-    opt.value = i;
-    opt.textContent = i;
-    industrySelect.appendChild(opt);
-  }
-
-  for (const c of categories) {
-    const opt = document.createElement("option");
-    opt.value = c;
-    opt.textContent = c;
-    categorySelect.appendChild(opt);
-  }
-
-  for (const t of tags) {
-    const opt = document.createElement("option");
-    opt.value = t;
-    opt.textContent = t;
-    propertySelect.appendChild(opt);
+    select.innerHTML = "";
+    const allOption = document.createElement("option");
+    allOption.value = "";
+    allOption.textContent = "All";
+    select.appendChild(allOption);
+    for (const val of values) {
+      const opt = document.createElement("option");
+      opt.value = val;
+      opt.textContent = val;
+      select.appendChild(opt);
+    }
   }
 }
 
-function getSelectedValues(selectElement) {
-  return Array.from(selectElement.selectedOptions).map(o => o.value);
+function getSelectedValues(select) {
+  return Array.from(select.selectedOptions).map(o => o.value).filter(v => v !== "");
 }
 
 function runFilter() {
