@@ -496,5 +496,169 @@ window.materials = [
       "industry:photonics",
       "industry:defense"
     ]
+  },
+  {
+    "name": "Silicon Nitride Reinforced Silicon Carbide",
+    "formula": "Si\u2083N\u2084/SiC",
+    "synonyms": [
+      "Si3N4/SiC",
+      "Silicon Nitride Ceramic Composite"
+    ],
+    "category": "Composite",
+    "tags": [
+      "ceramic matrix composite",
+      "Si3N4",
+      "SiC",
+      "high temperature",
+      "wear resistant",
+      "thermal shock",
+      "lightweight",
+      "stiff",
+      "hard",
+      "non-metallic",
+      "structural",
+      "machinable",
+      "insulator",
+      "oxidation resistant",
+      "industry:aerospace",
+      "industry:defense",
+      "industry:infrastructure"
+    ]
+  },
+  {
+    "name": "Oxide-Oxide Ceramic Composite (Ox/Ox)",
+    "formula": "Al\u2082O\u2083-based",
+    "synonyms": [
+      "Ox/Ox",
+      "Oxide-Oxide CMC"
+    ],
+    "category": "Composite",
+    "tags": [
+      "ceramic matrix composite",
+      "oxide",
+      "Al2O3",
+      "porous",
+      "thermal barrier",
+      "heat shield",
+      "insulator",
+      "non-metallic",
+      "refractory",
+      "high temperature",
+      "fiber reinforced",
+      "lightweight",
+      "flexible",
+      "durable",
+      "ceramic fiber",
+      "industry:aerospace",
+      "industry:infrastructure",
+      "industry:defense"
+    ]
+  },
+  {
+    "name": "PTFE Glass Fiber Composite",
+    "formula": "PTFE + Glass",
+    "synonyms": [
+      "Teflon Glass Composite"
+    ],
+    "category": "Composite",
+    "tags": [
+      "polymer composite",
+      "PTFE",
+      "glass fiber",
+      "chemical resistant",
+      "corrosion resistant",
+      "low friction",
+      "wear resistant",
+      "non-stick",
+      "thermal insulator",
+      "electrical insulator",
+      "UV resistant",
+      "flexible",
+      "non-metallic",
+      "industry:infrastructure",
+      "industry:energy",
+      "industry:electronics"
+    ]
+  },
+  {
+    "name": "PEEK Carbon Fiber Composite",
+    "formula": "PEEK + CF",
+    "synonyms": [
+      "PEEK Composite",
+      "Carbon Fiber Reinforced PEEK"
+    ],
+    "category": "Composite",
+    "tags": [
+      "polymer composite",
+      "PEEK",
+      "carbon fiber",
+      "lightweight",
+      "strong",
+      "fatigue resistant",
+      "chemical resistant",
+      "electrically conductive",
+      "high temperature",
+      "thermal stable",
+      "wear resistant",
+      "biocompatible",
+      "machinable",
+      "industry:energy",
+      "industry:defense",
+      "industry:aerospace",
+      "industry:medical"
+    ]
+  },
+  {
+    "name": "Ferrite-Polymer Composite",
+    "formula": "MnZn/NiZn + Polymer",
+    "synonyms": [
+      "Soft Magnetic Composite",
+      "Ferrite Epoxy"
+    ],
+    "category": "Composite",
+    "tags": [
+      "magnetic",
+      "EMI shielding",
+      "low loss",
+      "electrically insulating",
+      "thermally stable",
+      "soft magnetic",
+      "low frequency",
+      "high permeability",
+      "lightweight",
+      "non-metallic",
+      "industry:electronics",
+      "industry:defense",
+      "industry:microwave"
+    ]
+  },
+  {
+    "name": "Graphene Polymer Composite",
+    "formula": "Graphene/Epoxy",
+    "synonyms": [
+      "Graphene Composite",
+      "Graphene Enhanced Polymer"
+    ],
+    "category": "Composite",
+    "tags": [
+      "graphene",
+      "nanocomposite",
+      "electrically conductive",
+      "thermal conductive",
+      "flexible",
+      "transparent",
+      "lightweight",
+      "strong",
+      "sensor",
+      "thin film",
+      "EMI shielding",
+      "strain sensing",
+      "photonics",
+      "mechanical reinforcement",
+      "industry:electronics",
+      "industry:energy",
+      "industry:photonics",
+      "industry:defense"
+    ]
   }
 ];
