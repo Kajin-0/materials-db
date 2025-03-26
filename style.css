@@ -19,6 +19,22 @@ header input {
   width: 80%;
   max-width: 600px;
 }
+.toolbar {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 1rem;
+  background: #f0f0f0;
+}
+.filter-group label {
+  margin-right: 0.4rem;
+  font-weight: bold;
+}
+.filter-group select {
+  padding: 0.4rem;
+  font-size: 0.95rem;
+}
 main {
   max-width: 1000px;
   margin: 0 auto;
