@@ -10,3 +10,16 @@ main { max-width: 1000px; margin: 0 auto; padding: 1rem; }
 .material-card h2 { margin-bottom: 0.3rem; }
 .material-card .tags { margin-top: 0.5rem; }
 .material-card .tag { display: inline-block; margin: 0.2rem 0.3rem 0 0; padding: 0.2rem 0.5rem; background: #007acc; color: white; border-radius: 3px; font-size: 0.8rem; cursor: pointer; }
+
+.tag-active {
+  background: #004a99;
+}
+.clear-button {
+  background: #ccc;
+  border: none;
+  padding: 0.4rem 1rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 0.9rem;
+}
