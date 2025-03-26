@@ -68,7 +68,71 @@ function runFilter() {
   });
 }
 
+
 function render(materials) {
+  const container = document.getElementById("results");
+  container.innerHTML = "";
+
+  const filterTagSet = new Set(activeTags.map(t => t.toLowerCase()));
+  const filtered = activeTags.length
+    ? materials.filter(m => filterTagSet.size === 0 || [...filterTagSet].every(tag => (m.tags || []).map(t => t.toLowerCase()).includes(tag)))
+    : materials;
+
+  const summary = document.createElement("div");
+  summary.className = "result-summary";
+  const activeTagList = activeTags.length ? `<strong>Tags:</strong> ${activeTags.join(", ")}` : "";
+  summary.innerHTML = `<p>Showing ${filtered.length} materials ${activeTagList}</p>`;
+  container.appendChild(summary);
+
+  const clearBtn = document.createElement("button");
+  clearBtn.textContent = "Clear All Tags";
+  clearBtn.className = "clear-button";
+  clearBtn.onclick = () => {
+    activeTags = [];
+    render(materials);
+  };
+  container.appendChild(clearBtn);
+
+  container.appendChild(renderTagCloud(filtered));
+
+  if (!filtered.length) {
+    const msg = document.createElement("p");
+    msg.textContent = "No materials found.";
+    container.appendChild(msg);
+    return;
+  }
+
+  filtered.forEach(m => {
+    const div = document.createElement("div");
+    div.className = "material-card";
+    div.innerHTML = `
+      <h2>${m.name}</h2>
+      <p><strong>Formula:</strong> ${m.formula}</p>
+      <p><strong>Category:</strong> ${m.category}</p>
+      <div class="tags">
+        ${(m.tags || []).map(t => {
+          const active = filterTagSet.has(t.toLowerCase()) ? "tag-active" : "";
+          return `<span class="tag ${active}" data-tag="${t}">${t}</span>`;
+        }).join("")}
+      </div>
+    `;
+    container.appendChild(div);
+  });
+
+  document.querySelectorAll(".tag").forEach(tagEl => {
+    tagEl.addEventListener("click", () => {
+      const tag = tagEl.dataset.tag;
+      const i = activeTags.indexOf(tag);
+      if (i >= 0) {
+        activeTags.splice(i, 1);
+      } else {
+        activeTags.push(tag);
+      }
+      render(materials);
+    });
+  });
+}
+
   const container = document.getElementById("results");
   
     container.innerHTML = "";
@@ -104,41 +168,6 @@ function render(materials) {
     `;
     container.appendChild(div);
   });
-
-  
-function renderTagCloud(materials) {
-  const tagCount = {};
-  materials.forEach(m => {
-    (m.tags || []).forEach(t => {
-      const key = t.toLowerCase();
-      tagCount[key] = (tagCount[key] || 0) + 1;
-    });
-  });
-
-  const sortedTags = Object.entries(tagCount)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 30);
-
-  const cloud = document.createElement("div");
-  cloud.className = "tag-cloud";
-  cloud.innerHTML = "<h3>Popular Tags</h3>";
-  sortedTags.forEach(([tag, count]) => {
-    const span = document.createElement("span");
-    span.className = "cloud-tag";
-    span.textContent = tag;
-    span.title = `${count} materials`;
-    span.addEventListener("click", () => {
-      if (!activeTags.includes(tag)) {
-        activeTags.push(tag);
-        render(materials);
-      }
-    });
-    cloud.appendChild(span);
-  });
-
-  return cloud;
-}
-
 
   // Add tag refinement
   document.querySelectorAll(".tag").forEach(tagEl => {
