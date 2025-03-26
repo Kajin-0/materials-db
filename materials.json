@@ -1,0 +1,24 @@
+[
+  {
+    "name": "Gallium Arsenide",
+    "formula": "GaAs",
+    "synonyms": [
+      "Gallium Arsenide",
+      "GaAs"
+    ],
+    "bandgap": 1.43,
+    "lattice_constant": 5.653,
+    "category": "Semiconductor"
+  },
+  {
+    "name": "Silicon",
+    "formula": "Si",
+    "synonyms": [
+      "Silicon",
+      "Si"
+    ],
+    "bandgap": 1.12,
+    "lattice_constant": 5.431,
+    "category": "Semiconductor"
+  }
+]

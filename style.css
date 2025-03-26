@@ -1,0 +1,21 @@
+
+body {
+  font-family: sans-serif;
+  padding: 2rem;
+  background: #fdfdfd;
+  color: #333;
+  max-width: 800px;
+  margin: auto;
+}
+input {
+  width: 100%;
+  padding: 1rem;
+  margin-bottom: 2rem;
+  font-size: 1rem;
+}
+.material {
+  padding: 1rem;
+  border: 1px solid #ccc;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+}
