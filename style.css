@@ -74,6 +74,13 @@ input, select, button {
   border-radius: 8px;
 }
 
+.material img {
+  float: right;
+  margin-left: 1rem;
+  max-width: 200px;
+  border-radius: 6px;
+}
+
 .property-group {
   margin-top: 1rem;
 }

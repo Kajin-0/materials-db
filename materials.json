@@ -36,7 +36,8 @@
         "label": "Wikipedia",
         "url": "https://en.wikipedia.org/wiki/Gallium_arsenide"
       }
-    ]
+    ],
+    "image": "images/gaas.png"
   },
   {
     "name": "Silicon",
@@ -74,6 +75,7 @@
         "label": "Wikipedia",
         "url": "https://en.wikipedia.org/wiki/Silicon"
       }
-    ]
+    ],
+    "image": "images/si.png"
   }
 ]

@@ -41,6 +41,7 @@ function setupSearch() {
       div.className = 'material';
       div.innerHTML = `
         <h2>${m.name}</h2>
+        ${m.image ? `<img src='${m.image}' alt='${m.name} image'>` : ''}
         <div class="property-group"><h3>Basic Properties</h3>
           <dl>
             <dt>Formula</dt><dd>${m.formula}</dd>
