@@ -19,27 +19,6 @@ header input {
   width: 80%;
   max-width: 600px;
 }
-#toolbar {
-  display: none;
-  padding: 1rem;
-  background: #f0f0f0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2rem;
-  justify-content: start;
-}
-.filter-block {
-  min-width: 180px;
-}
-.filter-block h3 {
-  font-size: 1rem;
-  margin: 0 0 0.5rem 0;
-}
-.checkbox-label {
-  display: block;
-  font-size: 0.9rem;
-  margin-bottom: 0.3rem;
-}
 main {
   max-width: 1000px;
   margin: 0 auto;
@@ -66,4 +45,5 @@ main {
   color: white;
   border-radius: 3px;
   font-size: 0.8rem;
+  cursor: pointer;
 }
