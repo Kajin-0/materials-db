@@ -70,7 +70,14 @@ function runFilter() {
 
 function render(materials) {
   const container = document.getElementById("results");
-  container.innerHTML = "";
+  
+    container.innerHTML = "";
+    const summary = document.createElement("div");
+    summary.className = "result-summary";
+    const activeTagList = activeTags.length ? `<strong>Tags:</strong> ${activeTags.join(", ")}` : "";
+    summary.innerHTML = `<p>Showing ${filtered.length} materials ${activeTagList}</p>`;
+    container.appendChild(summary);
+    
   if (!materials.length) {
     container.innerHTML = "<p>No materials found.</p>";
     return;

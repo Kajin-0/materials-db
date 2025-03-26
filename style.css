@@ -23,3 +23,11 @@ main { max-width: 1000px; margin: 0 auto; padding: 1rem; }
   border-radius: 5px;
   font-size: 0.9rem;
 }
+
+.result-summary {
+  font-size: 0.95rem;
+  background: #e8e8e8;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
