@@ -1,9 +1,17 @@
 
 let indexData = [];
+let fuse;
 
 async function loadIndex() {
   const res = await fetch("data/materials-index.json");
   indexData = await res.json();
+
+  fuse = new Fuse(indexData, {
+    keys: ["name", "formula", "synonyms"],
+    threshold: 0.3,
+    includeScore: true,
+  });
+
   updateFilters(indexData);
 }
 
@@ -25,31 +33,43 @@ function updateFilters(materials) {
   fill(propertySelect, tags);
 }
 
-async function loadMaterials(file) {
-  const res = await fetch("data/" + file);
-  return await res.json();
+async function loadMaterialsByFiles(files) {
+  const all = {};
+  for (const file of new Set(files)) {
+    if (!all[file]) {
+      const res = await fetch("data/" + file);
+      all[file] = await res.json();
+    }
+  }
+  return Object.values(all).flat();
 }
 
 function runFilter() {
-  const query = document.getElementById("searchInput").value.trim().toLowerCase();
+  const query = document.getElementById("searchInput").value.trim();
   const industry = document.getElementById("industryFilter").value;
   const category = document.getElementById("categoryFilter").value;
   const tag = document.getElementById("propertyFilter").value;
+
   document.getElementById("toolbar").style.display = query ? "flex" : "none";
 
-  const matches = indexData.filter(m => {
-    const text = [m.name, m.formula, ...(m.synonyms || [])].join(" ").toLowerCase();
-    return (!query || text.includes(query))
-        && (!industry || m.tags.includes("industry:" + industry))
-        && (!category || m.category === category)
-        && (!tag || m.tags.includes(tag));
-  });
+  let results = query ? fuse.search(query).map(x => x.item) : indexData;
 
-  if (!matches.length) return render([]);
+  results = results.filter(m =>
+    (!industry || m.tags.includes("industry:" + industry)) &&
+    (!category || m.category === category) &&
+    (!tag || m.tags.includes(tag))
+  );
 
-  loadMaterials(matches[0].file).then(data => {
-    const filtered = data.filter(m => matches.find(x => x.name === m.name));
-    render(filtered);
+  if (!results.length) {
+    render([]);
+    return;
+  }
+
+  const neededFiles = [...new Set(results.map(m => m.file))];
+
+  loadMaterialsByFiles(neededFiles).then(allMaterials => {
+    const shown = allMaterials.filter(m => results.find(r => r.name === m.name));
+    render(shown);
   });
 }
 
@@ -60,6 +80,7 @@ function render(materials) {
     out.innerHTML = "<p>No materials found.</p>";
     return;
   }
+
   for (const m of materials) {
     const el = document.createElement("div");
     el.className = "material-card";
