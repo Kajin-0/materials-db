@@ -1,0 +1,47 @@
+[
+  {
+    "name": "Gallium Arsenide",
+    "formula": "GaAs",
+    "synonyms": [
+      "GaAs",
+      "Gallium Arsenide"
+    ],
+    "category": "Semiconductor",
+    "tags": [
+      "III-V",
+      "group 13",
+      "group 15",
+      "photodiode",
+      "photosensor",
+      "direct bandgap",
+      "semiconductor",
+      "infrared",
+      "epitaxial",
+      "single crystal",
+      "cryogenic",
+      "industry:photonics"
+    ]
+  },
+  {
+    "name": "Mercury Cadmium Telluride",
+    "formula": "Hg1-xCdxTe",
+    "synonyms": [
+      "HgCdTe",
+      "MCT"
+    ],
+    "category": "Semiconductor",
+    "tags": [
+      "II-VI",
+      "group 12",
+      "group 16",
+      "photosensor",
+      "photodiode",
+      "photoconductor",
+      "tunable bandgap",
+      "semiconductor",
+      "cryogenic",
+      "toxic",
+      "industry:infrared"
+    ]
+  }
+]
