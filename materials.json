@@ -16,14 +16,32 @@
       "value": 5.653,
       "units": "\u00c5"
     },
+    "crystal_structure": "Zinc Blende",
+    "density": {
+      "value": 5.32,
+      "units": "g/cm\u00b3"
+    },
     "thermal_conductivity": {
       "value": 46,
       "units": "W/mK"
+    },
+    "thermal_expansion": {
+      "value": 5.8,
+      "units": "\u00b5m/m\u00b7K"
     },
     "mobility": {
       "electrons": 8500,
       "holes": 400,
       "units": "cm\u00b2/V\u00b7s"
+    },
+    "refractive_index": {
+      "value": 3.3,
+      "units": ""
+    },
+    "dielectric_constant": 13.1,
+    "work_function": {
+      "value": 4.07,
+      "units": "eV"
     },
     "notes": "Used in high-speed optoelectronic devices.",
     "tags": [
@@ -56,16 +74,34 @@
       "value": 5.431,
       "units": "\u00c5"
     },
+    "crystal_structure": "Diamond Cubic",
+    "density": {
+      "value": 2.33,
+      "units": "g/cm\u00b3"
+    },
     "thermal_conductivity": {
       "value": 149,
       "units": "W/mK"
+    },
+    "thermal_expansion": {
+      "value": 2.6,
+      "units": "\u00b5m/m\u00b7K"
     },
     "mobility": {
       "electrons": 1400,
       "holes": 450,
       "units": "cm\u00b2/V\u00b7s"
     },
-    "notes": "Most commonly used semiconductor material in electronics.",
+    "refractive_index": {
+      "value": 3.5,
+      "units": ""
+    },
+    "dielectric_constant": 11.7,
+    "work_function": {
+      "value": 4.85,
+      "units": "eV"
+    },
+    "notes": "Most widely used semiconductor in electronics.",
     "tags": [
       "Group IV",
       "CMOS-compatible"
