@@ -7,25 +7,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css" />
 </head>
-<body class="landing">
-  <div class="landing-container">
-    <h1 class="logo">MaterialsDB</h1>
-    <div class="autocomplete-container">
-      <input type="text" id="landingSearch" autocomplete="off" placeholder="Search by formula, name, or tag..." />
-      <ul id="autocompleteList" class="autocomplete-list"></ul>
-    </div>
-    <div class="tagline">For photosensing, computing, aerospace, and practical materials.</div>
-    <div class="tag-suggestions">
-      <span class="tag">photosensor</span>
-      <span class="tag">aerospace</span>
-      <span class="tag">infrared</span>
-      <span class="tag">III-V</span>
-      <span class="tag">semiconductor</span>
-    </div>
+<body>
+
+<div class="top-section">
+  <h1 class="logo">MaterialsDB</h1>
+
+  <div class="search-container">
+    <input 
+      type="text" 
+      id="searchInput" 
+      placeholder="Search by formula, name, or tag..." 
+      autocomplete="off"
+    />
+    <ul id="suggestions" class="suggestions-list"></ul>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
-  <script src="materials.js"></script>
-  <script src="landing.js"></script>
+  <div class="tagline">For photosensing, computing, aerospace, and more</div>
+  <div id="popularTags" class="tag-suggestions"></div>
+</div>
+
+<div class="results" id="results"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+<script src="materials.js"></script>
+<script src="app.js"></script>
+
 </body>
 </html>

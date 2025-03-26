@@ -1,78 +1,92 @@
 
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 body {
   font-family: system-ui, sans-serif;
-  margin: 0;
-  padding: 0;
-  background: #fdfdfd;
+  background: #fafafa;
   color: #222;
+  overflow-x: hidden;
+  padding: 1rem;
 }
-
-.landing {
+.top-section {
   text-align: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  flex-direction: column;
+  margin-bottom: 2rem;
 }
-
-.landing-container {
-  max-width: 600px;
-  width: 90%;
-  padding: 2rem;
-}
-
 .logo {
-  font-size: 3rem;
-  margin-bottom: 1rem;
+  font-size: 2.5rem;
+  margin: 1rem 0;
 }
-
-input {
-  padding: 0.8rem;
-  font-size: 1.1rem;
-  width: 100%;
-}
-
-.autocomplete-container {
+.search-container {
   position: relative;
+  display: inline-block;
+  width: 80%;
+  max-width: 600px;
 }
-
-.autocomplete-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  background: white;
+#searchInput {
+  width: 100%;
+  padding: 0.9rem;
+  font-size: 1.1rem;
   border: 1px solid #ccc;
+  border-radius: 6px;
+}
+.suggestions-list {
+  list-style: none;
   position: absolute;
   width: 100%;
+  background: white;
+  border: 1px solid #ddd;
+  border-top: none;
+  max-height: 200px;
+  overflow-y: auto;
   z-index: 10;
 }
-
-.autocomplete-list li {
-  padding: 0.5rem;
+.suggestions-list li {
+  padding: 0.7rem;
   cursor: pointer;
 }
-
-.autocomplete-list li:hover {
+.suggestions-list li:hover {
   background: #eee;
 }
-
+.tag-suggestions {
+  margin: 1rem auto 0 auto;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
 .tagline {
   margin-top: 1rem;
-  font-style: italic;
   color: #666;
+  font-style: italic;
 }
-
-.tag-suggestions {
-  margin-top: 1rem;
-}
-
 .tag {
   background: #007acc;
-  color: white;
+  color: #fff;
   padding: 0.3rem 0.6rem;
-  margin: 0.2rem;
   border-radius: 4px;
   font-size: 0.9rem;
-  display: inline-block;
+  cursor: pointer;
+}
+.results {
+  max-width: 800px;
+  margin: 0 auto;
+}
+.material-card {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1rem 0;
+}
+.material-card h2 {
+  margin-bottom: 0.5rem;
+}
+.material-card .tags {
+  margin-top: 0.5rem;
+}
+.material-card .tag {
+  margin-right: 0.3rem;
 }
