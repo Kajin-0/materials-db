@@ -1,0 +1,46 @@
+[
+  {
+    "name": "TUFROC",
+    "formula": "B/SiC/SiO\u2082 matrix",
+    "synonyms": [
+      "TUFROC",
+      "TPS composite"
+    ],
+    "category": "Composite",
+    "tags": [
+      "aerospace",
+      "composite",
+      "heat shield",
+      "industry:aerospace",
+      "industry:space",
+      "oxidation resistant",
+      "refractory",
+      "space reentry",
+      "thermal protection",
+      "toughened",
+      "tps"
+    ]
+  },
+  {
+    "name": "Thulium-doped YAG (Tm:YAG)",
+    "formula": "Tm:Y\u2083Al\u2085O\u2081\u2082",
+    "synonyms": [
+      "Tm:YAG",
+      "Thulium Laser Crystal"
+    ],
+    "category": "Laser Crystal",
+    "tags": [
+      "crystal",
+      "eye safe",
+      "high efficiency",
+      "industry:defense",
+      "industry:lasers",
+      "industry:photonics",
+      "infrared",
+      "laser",
+      "laser gain medium",
+      "medical laser",
+      "solid state laser"
+    ]
+  }
+]

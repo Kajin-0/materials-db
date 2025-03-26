@@ -1,0 +1,30 @@
+[
+  {
+    "name": "Indium Gallium Arsenide",
+    "formula": "InGaAs",
+    "synonyms": [
+      "InxGa1-xAs",
+      "InGaAs"
+    ],
+    "category": "Semiconductor",
+    "tags": [
+      "III-V",
+      "MBE",
+      "MOCVD",
+      "epitaxial",
+      "group 13",
+      "group 15",
+      "high mobility",
+      "industry:infrared",
+      "industry:lasers",
+      "industry:photonics",
+      "infrared",
+      "photodiode",
+      "photosensor",
+      "semiconductor",
+      "sensor",
+      "swir",
+      "tunable bandgap"
+    ]
+  }
+]

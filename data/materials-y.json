@@ -1,0 +1,50 @@
+[
+  {
+    "name": "Yttrium Barium Copper Oxide (YBCO)",
+    "formula": "YBa\u2082Cu\u2083O\u2087",
+    "synonyms": [
+      "YBCO",
+      "HTS tape",
+      "coated conductor"
+    ],
+    "category": "Superconductor",
+    "tags": [
+      "ceramic",
+      "coated conductor",
+      "cryogenic",
+      "hts",
+      "industry:cryogenics",
+      "industry:energy",
+      "industry:quantum",
+      "low temperature",
+      "microwave",
+      "oxide",
+      "power electronics",
+      "quantum computing",
+      "superconductor"
+    ]
+  },
+  {
+    "name": "Yttrium Iron Garnet (YIG)",
+    "formula": "Y\u2083Fe\u2085O\u2081\u2082",
+    "synonyms": [
+      "YIG",
+      "Magnetic Garnet"
+    ],
+    "category": "Composite",
+    "tags": [
+      "cryogenic",
+      "ferrite",
+      "industry:microwave",
+      "industry:photonics",
+      "industry:quantum",
+      "low damping",
+      "magnetic",
+      "microwave",
+      "photonics",
+      "quantum computing",
+      "quantum magnonics",
+      "spin wave"
+    ]
+  }
+]

@@ -1,0 +1,26 @@
+[
+  {
+    "name": "Reinforced Carbon\u2013Carbon (RCC)",
+    "formula": "C\u2013C + SiC",
+    "synonyms": [
+      "RCC",
+      "Reinforced Carbon Composite"
+    ],
+    "category": "Composite",
+    "tags": [
+      "aerospace",
+      "carbon-carbon",
+      "composite",
+      "heat shield",
+      "high temperature",
+      "industry:aerospace",
+      "industry:defense",
+      "industry:space",
+      "oxidation resistant",
+      "refractory",
+      "space shuttle",
+      "structural",
+      "thermal protection"
+    ]
+  }
+]

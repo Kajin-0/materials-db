@@ -1,0 +1,26 @@
+[
+  {
+    "name": "Ferrite-Polymer Composite",
+    "formula": "MnZn/NiZn + Polymer",
+    "synonyms": [
+      "Soft Magnetic Composite",
+      "Ferrite Epoxy"
+    ],
+    "category": "Composite",
+    "tags": [
+      "electrically insulating",
+      "emi shielding",
+      "high permeability",
+      "industry:defense",
+      "industry:electronics",
+      "industry:microwave",
+      "lightweight",
+      "low frequency",
+      "low loss",
+      "magnetic",
+      "non-metallic",
+      "soft magnetic",
+      "thermally stable"
+    ]
+  }
+]

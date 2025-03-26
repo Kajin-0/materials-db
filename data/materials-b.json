@@ -1,0 +1,45 @@
+[
+  {
+    "name": "Boron Carbide Reinforced Epoxy",
+    "formula": "B\u2084C-Epoxy",
+    "synonyms": [
+      "Boron Carbide Composite"
+    ],
+    "category": "Composite",
+    "tags": [
+      "abrasion resistant",
+      "armor",
+      "composite",
+      "defense",
+      "ductile",
+      "hard",
+      "impact resistant",
+      "industry:aerospace",
+      "industry:defense",
+      "industry:infrastructure",
+      "lightweight",
+      "neutron shielding"
+    ]
+  },
+  {
+    "name": "Beryllium-Copper Alloy",
+    "formula": "BeCu",
+    "synonyms": [
+      "Copper Beryllium"
+    ],
+    "category": "Alloy",
+    "tags": [
+      "contact",
+      "corrosion resistant",
+      "cryogenic",
+      "electrical connector",
+      "high strength",
+      "industry:aerospace",
+      "industry:cryogenics",
+      "industry:electronics",
+      "spring",
+      "thermal conductor",
+      "vacuum compatible"
+    ]
+  }
+]

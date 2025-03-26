@@ -1,0 +1,24 @@
+[
+  {
+    "name": "Carbon Nanotube Composite",
+    "formula": "CNT/Epoxy",
+    "synonyms": [
+      "Carbon Nanotube Reinforced Polymer"
+    ],
+    "category": "Composite",
+    "tags": [
+      "aerospace",
+      "electrically conductive",
+      "emi shielding",
+      "flexible",
+      "industry:aerospace",
+      "industry:electronics",
+      "industry:energy",
+      "lightweight",
+      "nanocomposite",
+      "sensor",
+      "strong",
+      "structural"
+    ]
+  }
+]

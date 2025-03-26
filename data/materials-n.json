@@ -1,0 +1,47 @@
+[
+  {
+    "name": "Nextel 720 Fiber",
+    "formula": "Alumina-Boria-Silica",
+    "synonyms": [
+      "Nextel",
+      "Ceramic Fiber 720"
+    ],
+    "category": "Composite",
+    "tags": [
+      "aerospace",
+      "ceramic fiber",
+      "flexible",
+      "high temperature",
+      "industry:aerospace",
+      "industry:infrastructure",
+      "non-metallic",
+      "refractory",
+      "structural",
+      "thermal insulation"
+    ]
+  },
+  {
+    "name": "Niobium Titanium (NbTi) Wire",
+    "formula": "Nb-Ti/Cu",
+    "synonyms": [
+      "NbTi",
+      "Superconducting Wire"
+    ],
+    "category": "Superconductor",
+    "tags": [
+      "composite",
+      "cryogenic",
+      "ductile",
+      "fusion",
+      "industry:cryogenics",
+      "industry:energy",
+      "industry:quantum",
+      "low temperature",
+      "magnet",
+      "quantum computing",
+      "superconductor",
+      "vacuum compatible",
+      "wire"
+    ]
+  }
+]

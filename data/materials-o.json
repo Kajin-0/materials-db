@@ -1,0 +1,31 @@
+[
+  {
+    "name": "Oxide-Oxide Ceramic Composite (Ox/Ox)",
+    "formula": "Al\u2082O\u2083-based",
+    "synonyms": [
+      "Ox/Ox",
+      "Oxide-Oxide CMC"
+    ],
+    "category": "Composite",
+    "tags": [
+      "al2o3",
+      "ceramic fiber",
+      "ceramic matrix composite",
+      "durable",
+      "fiber reinforced",
+      "flexible",
+      "heat shield",
+      "high temperature",
+      "industry:aerospace",
+      "industry:defense",
+      "industry:infrastructure",
+      "insulator",
+      "lightweight",
+      "non-metallic",
+      "oxide",
+      "porous",
+      "refractory",
+      "thermal barrier"
+    ]
+  }
+]

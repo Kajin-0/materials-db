@@ -1,0 +1,50 @@
+[
+  {
+    "name": "Zirconia Toughened Alumina (ZTA)",
+    "formula": "Al\u2082O\u2083 + ZrO\u2082",
+    "synonyms": [
+      "ZTA",
+      "Zirconia-Alumina Composite"
+    ],
+    "category": "Composite",
+    "tags": [
+      "aerospace",
+      "ceramic",
+      "hard",
+      "industry:aerospace",
+      "industry:defense",
+      "industry:infrastructure",
+      "insulator",
+      "refractory",
+      "structural",
+      "thermal shock",
+      "tooling",
+      "wear resistant"
+    ]
+  },
+  {
+    "name": "ZBLAN Fluoride Glass",
+    "formula": "ZrF\u2084-BaF\u2082-LaF\u2083-AlF\u2083-NaF",
+    "synonyms": [
+      "ZBLAN",
+      "Fluoride Glass"
+    ],
+    "category": "Optical Material",
+    "tags": [
+      "cryogenic",
+      "fiber",
+      "industry:lasers",
+      "industry:photonics",
+      "industry:space",
+      "infrared",
+      "ir transmission",
+      "laser",
+      "low loss",
+      "optical",
+      "photonic",
+      "space",
+      "swir",
+      "transparent"
+    ]
+  }
+]

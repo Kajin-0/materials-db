@@ -1,0 +1,104 @@
+[
+  {
+    "name": "Silicon",
+    "formula": "Si",
+    "synonyms": [
+      "Si",
+      "Silicon"
+    ],
+    "category": "Semiconductor",
+    "tags": [
+      "aerospace",
+      "bulk grown",
+      "cmos compatible",
+      "computing",
+      "durable",
+      "elemental",
+      "group iv",
+      "high temperature",
+      "indirect bandgap",
+      "industry:aerospace",
+      "industry:computing",
+      "industry:electronics",
+      "low cost",
+      "research",
+      "semiconductor",
+      "substrate",
+      "transistor"
+    ]
+  },
+  {
+    "name": "Sapphire Substrate",
+    "formula": "Al\u2082O\u2083 (C-plane)",
+    "synonyms": [
+      "C-plane Sapphire",
+      "Alumina Substrate"
+    ],
+    "category": "Substrate",
+    "tags": [
+      "cryogenic",
+      "dielectric",
+      "industry:lasers",
+      "industry:photonics",
+      "industry:quantum",
+      "laser optics",
+      "low loss",
+      "microwave",
+      "photonic",
+      "quantum computing",
+      "single crystal",
+      "substrate"
+    ]
+  },
+  {
+    "name": "Silicon Carbide Fiber Reinforced Composite",
+    "formula": "SiC/SiC",
+    "synonyms": [
+      "SiC Fiber Composite",
+      "Ceramic Matrix Composite"
+    ],
+    "category": "Composite",
+    "tags": [
+      "aerospace",
+      "ceramic matrix composite",
+      "engine",
+      "high temperature",
+      "industry:aerospace",
+      "industry:defense",
+      "industry:space",
+      "oxidation resistant",
+      "sic",
+      "structural",
+      "thermal protection",
+      "tps"
+    ]
+  },
+  {
+    "name": "Silicon Nitride Reinforced Silicon Carbide",
+    "formula": "Si\u2083N\u2084/SiC",
+    "synonyms": [
+      "Si3N4/SiC",
+      "Silicon Nitride Ceramic Composite"
+    ],
+    "category": "Composite",
+    "tags": [
+      "ceramic matrix composite",
+      "hard",
+      "high temperature",
+      "industry:aerospace",
+      "industry:defense",
+      "industry:infrastructure",
+      "insulator",
+      "lightweight",
+      "machinable",
+      "non-metallic",
+      "oxidation resistant",
+      "si3n4",
+      "sic",
+      "stiff",
+      "structural",
+      "thermal shock",
+      "wear resistant"
+    ]
+  }
+]

@@ -1,0 +1,90 @@
+[
+  {
+    "name": "Gallium Arsenide",
+    "formula": "GaAs",
+    "synonyms": [
+      "GaAs",
+      "Gallium Arsenide"
+    ],
+    "category": "Semiconductor",
+    "tags": [
+      "III-V",
+      "MBE",
+      "MOCVD",
+      "aerospace",
+      "cmos compatible",
+      "commercial",
+      "cryogenic",
+      "direct bandgap",
+      "epitaxial",
+      "group 13",
+      "group 15",
+      "high mobility",
+      "industry:aerospace",
+      "industry:lasers",
+      "industry:photonics",
+      "infrared",
+      "laser diode",
+      "photodiode",
+      "photosensing",
+      "photosensor",
+      "semiconductor",
+      "sensor",
+      "single crystal",
+      "swir",
+      "vacuum compatible"
+    ]
+  },
+  {
+    "name": "Gadolinium Gallium Garnet (GGG)",
+    "formula": "Gd\u2083Ga\u2085O\u2081\u2082",
+    "synonyms": [
+      "GGG Crystal"
+    ],
+    "category": "Optical Crystal",
+    "tags": [
+      "cryogenic",
+      "dielectric",
+      "industry:lasers",
+      "industry:photonics",
+      "industry:quantum",
+      "laser",
+      "low loss",
+      "magnetic",
+      "microwave",
+      "optical",
+      "paramagnetic",
+      "photonic",
+      "substrate"
+    ]
+  },
+  {
+    "name": "Graphene Polymer Composite",
+    "formula": "Graphene/Epoxy",
+    "synonyms": [
+      "Graphene Composite",
+      "Graphene Enhanced Polymer"
+    ],
+    "category": "Composite",
+    "tags": [
+      "electrically conductive",
+      "emi shielding",
+      "flexible",
+      "graphene",
+      "industry:defense",
+      "industry:electronics",
+      "industry:energy",
+      "industry:photonics",
+      "lightweight",
+      "mechanical reinforcement",
+      "nanocomposite",
+      "photonics",
+      "sensor",
+      "strain sensing",
+      "strong",
+      "thermal conductive",
+      "thin film",
+      "transparent"
+    ]
+  }
+]

@@ -1,0 +1,26 @@
+[
+  {
+    "name": "LI-900 Silica Tile",
+    "formula": "SiO\u2082 foam",
+    "synonyms": [
+      "LI-900",
+      "Silica Tile",
+      "Thermal Protection Tile"
+    ],
+    "category": "Composite",
+    "tags": [
+      "aerospace",
+      "heat shield",
+      "high temperature",
+      "industry:aerospace",
+      "industry:space",
+      "insulator",
+      "lightweight",
+      "low density",
+      "porous",
+      "reusable",
+      "thermal insulation",
+      "tps"
+    ]
+  }
+]

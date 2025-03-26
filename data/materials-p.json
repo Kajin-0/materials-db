@@ -1,0 +1,56 @@
+[
+  {
+    "name": "PTFE Glass Fiber Composite",
+    "formula": "PTFE + Glass",
+    "synonyms": [
+      "Teflon Glass Composite"
+    ],
+    "category": "Composite",
+    "tags": [
+      "UV resistant",
+      "chemical resistant",
+      "corrosion resistant",
+      "electrical insulator",
+      "flexible",
+      "glass fiber",
+      "industry:electronics",
+      "industry:energy",
+      "industry:infrastructure",
+      "low friction",
+      "non-metallic",
+      "non-stick",
+      "polymer composite",
+      "ptfe",
+      "thermal insulator",
+      "wear resistant"
+    ]
+  },
+  {
+    "name": "PEEK Carbon Fiber Composite",
+    "formula": "PEEK + CF",
+    "synonyms": [
+      "PEEK Composite",
+      "Carbon Fiber Reinforced PEEK"
+    ],
+    "category": "Composite",
+    "tags": [
+      "biocompatible",
+      "carbon fiber",
+      "chemical resistant",
+      "electrically conductive",
+      "fatigue resistant",
+      "high temperature",
+      "industry:aerospace",
+      "industry:defense",
+      "industry:energy",
+      "industry:medical",
+      "lightweight",
+      "machinable",
+      "peek",
+      "polymer composite",
+      "strong",
+      "thermal stable",
+      "wear resistant"
+    ]
+  }
+]

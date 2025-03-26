@@ -1,0 +1,41 @@
+[
+  {
+    "name": "Mercury Cadmium Telluride",
+    "formula": "Hg1-xCdxTe",
+    "synonyms": [
+      "HgCdTe",
+      "MCT"
+    ],
+    "category": "Semiconductor",
+    "tags": [
+      "II-VI",
+      "LPE",
+      "MBE",
+      "aerospace",
+      "cadmium",
+      "chalcogenide",
+      "cryogenic",
+      "epitaxial",
+      "group 12",
+      "group 16",
+      "industry:aerospace",
+      "industry:infrared",
+      "industry:photonics",
+      "ir",
+      "lwir",
+      "mercury",
+      "mwir",
+      "nitrogen cooled",
+      "photoconductive",
+      "photoconductor",
+      "photodiode",
+      "photosensor",
+      "semiconductor",
+      "sensor",
+      "single crystal",
+      "tellurium",
+      "toxic",
+      "tunable bandgap"
+    ]
+  }
+]
