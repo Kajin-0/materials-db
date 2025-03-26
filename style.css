@@ -3,22 +3,8 @@ body {
   font-family: system-ui, sans-serif;
   margin: 0;
   padding: 0;
-  background: var(--bg);
-  color: var(--text);
-  transition: background 0.3s, color 0.3s;
-  overflow-x: hidden;
-}
-
-:root {
-  --bg: #f9f9f9;
-  --text: #222;
-  --card-bg: #fff;
-}
-
-body.dark {
-  --bg: #121212;
-  --text: #eee;
-  --card-bg: #1e1e1e;
+  background: #fdfdfd;
+  color: #222;
 }
 
 .container {
@@ -27,116 +13,71 @@ body.dark {
   padding: 2rem;
 }
 
-h1 {
-  text-align: center;
-  margin-top: 0;
+h1 a {
+  text-decoration: none;
+  color: inherit;
 }
 
-.top-bar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  align-items: center;
-  justify-content: space-between;
-}
-
-input, select, button {
-  padding: 0.6rem;
-  font-size: 1rem;
-  margin-top: 1rem;
-  flex-grow: 1;
-}
-
-.filters {
-  margin-top: 1rem;
-  display: flex;
-  gap: 2rem;
-  flex-wrap: wrap;
-}
-
-.suggestions {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  position: absolute;
-  width: calc(100% - 4rem);
-  background: white;
-  border: 1px solid #ccc;
-  border-top: none;
-  max-height: 200px;
-  overflow-y: auto;
-  z-index: 10;
-}
-
-.suggestions li {
-  padding: 0.75rem 1rem;
-  cursor: pointer;
-}
-
-.suggestions li:hover {
-  background: #eee;
+input[type="text"] {
+  width: 100%;
+  padding: 0.8rem;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
 }
 
 .material {
-  background: var(--card-bg);
   padding: 1rem;
-  margin-top: 1.5rem;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.material img {
-  flex: 0 0 auto;
-  max-width: 200px;
-  height: auto;
+  margin-bottom: 1rem;
+  border: 1px solid #ddd;
   border-radius: 8px;
-}
-
-.material-content {
-  flex: 1;
-  min-width: 0;
-}
-
-.property-group {
-  margin-top: 1rem;
-}
-
-.property-group h3 {
-  font-size: 1.1rem;
-  margin-bottom: 0.3rem;
-}
-
-dl {
-  display: flex;
-  flex-wrap: wrap;
-  margin: 0;
-}
-
-dt {
-  width: 150px;
-  font-weight: bold;
-}
-
-dd {
-  margin: 0 0 0.5rem 0;
-  flex: 1;
-}
-
-.tags {
-  margin-top: 0.5rem;
+  background: #fff;
 }
 
 .tag {
   background: #007acc;
   color: white;
-  padding: 0.3rem 0.6rem;
+  padding: 0.2rem 0.6rem;
   margin: 0.2rem;
   border-radius: 4px;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   display: inline-block;
-  white-space: nowrap;
+}
+
+.landing {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+.landing-container {
+  max-width: 600px;
+  width: 90%;
+}
+
+.logo {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+form {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+form input {
+  flex-grow: 1;
+}
+
+.tagline {
+  margin-top: 1rem;
+  font-style: italic;
+  color: #666;
+}
+
+.tag-suggestions {
+  margin-top: 1rem;
 }
