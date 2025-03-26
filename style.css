@@ -34,6 +34,7 @@ header input {
 .filter-group select {
   padding: 0.4rem;
   font-size: 0.95rem;
+  min-width: 160px;
 }
 main {
   max-width: 1000px;
