@@ -1,0 +1,12 @@
+
+body { font-family: sans-serif; background: #fafafa; color: #222; margin: 0; padding: 0; }
+header { background: #007acc; color: white; padding: 1rem; text-align: center; }
+header input { margin-top: 0.5rem; padding: 0.6rem; font-size: 1rem; width: 80%; max-width: 600px; }
+.toolbar { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; padding: 1rem; background: #f0f0f0; }
+.filter-group label { margin-right: 0.4rem; font-weight: bold; }
+.filter-group select { padding: 0.4rem; font-size: 0.95rem; }
+main { max-width: 1000px; margin: 0 auto; padding: 1rem; }
+.material-card { background: white; border: 1px solid #ccc; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; }
+.material-card h2 { margin-bottom: 0.3rem; }
+.material-card .tags { margin-top: 0.5rem; }
+.material-card .tag { display: inline-block; margin: 0.2rem 0.3rem 0 0; padding: 0.2rem 0.5rem; background: #007acc; color: white; border-radius: 3px; font-size: 0.8rem; cursor: pointer; }
