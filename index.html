@@ -2,18 +2,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Materials Database</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body class="landing">
   <div class="landing-container">
     <h1 class="logo">MaterialsDB</h1>
-    <form action="search.html" method="GET">
-      <input type="text" name="q" id="searchInput" placeholder="Search by formula, name, or tag..." autofocus>
-      <button type="submit">Search</button>
-    </form>
+    <div class="autocomplete-container">
+      <input type="text" id="landingSearch" autocomplete="off" placeholder="Search by formula, name, or tag..." />
+      <ul id="autocompleteList" class="autocomplete-list"></ul>
+    </div>
     <div class="tagline">For photosensing, computing, aerospace, and practical materials.</div>
     <div class="tag-suggestions">
       <span class="tag">photosensor</span>
@@ -23,5 +23,9 @@
       <span class="tag">semiconductor</span>
     </div>
   </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+  <script src="materials.js"></script>
+  <script src="landing.js"></script>
 </body>
 </html>

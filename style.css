@@ -7,42 +7,6 @@ body {
   color: #222;
 }
 
-.container {
-  max-width: 960px;
-  margin: auto;
-  padding: 2rem;
-}
-
-h1 a {
-  text-decoration: none;
-  color: inherit;
-}
-
-input[type="text"] {
-  width: 100%;
-  padding: 0.8rem;
-  font-size: 1.1rem;
-  margin-bottom: 1rem;
-}
-
-.material {
-  padding: 1rem;
-  margin-bottom: 1rem;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background: #fff;
-}
-
-.tag {
-  background: #007acc;
-  color: white;
-  padding: 0.2rem 0.6rem;
-  margin: 0.2rem;
-  border-radius: 4px;
-  font-size: 0.9rem;
-  display: inline-block;
-}
-
 .landing {
   text-align: center;
   display: flex;
@@ -55,6 +19,7 @@ input[type="text"] {
 .landing-container {
   max-width: 600px;
   width: 90%;
+  padding: 2rem;
 }
 
 .logo {
@@ -62,14 +27,34 @@ input[type="text"] {
   margin-bottom: 1rem;
 }
 
-form {
-  display: flex;
-  gap: 0.5rem;
-  justify-content: center;
+input {
+  padding: 0.8rem;
+  font-size: 1.1rem;
+  width: 100%;
 }
 
-form input {
-  flex-grow: 1;
+.autocomplete-container {
+  position: relative;
+}
+
+.autocomplete-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  background: white;
+  border: 1px solid #ccc;
+  position: absolute;
+  width: 100%;
+  z-index: 10;
+}
+
+.autocomplete-list li {
+  padding: 0.5rem;
+  cursor: pointer;
+}
+
+.autocomplete-list li:hover {
+  background: #eee;
 }
 
 .tagline {
@@ -80,4 +65,14 @@ form input {
 
 .tag-suggestions {
   margin-top: 1rem;
+}
+
+.tag {
+  background: #007acc;
+  color: white;
+  padding: 0.3rem 0.6rem;
+  margin: 0.2rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  display: inline-block;
 }
