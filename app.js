@@ -38,7 +38,7 @@ function runFilter() {
   document.getElementById("toolbar").style.display = query ? "flex" : "none";
 
   const matches = indexData.filter(m => {
-    const text = [m.name, m.formula].join(" ").toLowerCase();
+    const text = [m.name, m.formula, ...(m.synonyms || [])].join(" ").toLowerCase();
     return (!query || text.includes(query))
         && (!industry || m.tags.includes("industry:" + industry))
         && (!category || m.category === category)
