@@ -14,24 +14,18 @@
     <input id="searchInput" type="text" placeholder="Search materials..." autocomplete="off" />
   </header>
 
-  <section class="toolbar">
+  <section class="toolbar" id="toolbar">
     <div class="filter-group">
       <label for="industryFilter">Industry:</label>
-      <select id="industryFilter">
-        <option value="">All</option>
-      </select>
+      <select id="industryFilter" multiple></select>
     </div>
     <div class="filter-group">
       <label for="categoryFilter">Category:</label>
-      <select id="categoryFilter">
-        <option value="">All</option>
-      </select>
+      <select id="categoryFilter" multiple></select>
     </div>
     <div class="filter-group">
       <label for="propertyFilter">Tag:</label>
-      <select id="propertyFilter">
-        <option value="">All</option>
-      </select>
+      <select id="propertyFilter" multiple></select>
     </div>
   </section>
 

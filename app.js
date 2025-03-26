@@ -1,10 +1,10 @@
 
-function filterMaterials(materials, query, industry, category, tag) {
+function filterMaterials(materials, query, industries, categories, tags) {
   return materials.filter(m => {
     const qMatch = !query || [m.name, m.formula, ...m.synonyms].join(" ").toLowerCase().includes(query.toLowerCase());
-    const iMatch = !industry || (m.tags || []).includes("industry:" + industry);
-    const cMatch = !category || m.category === category;
-    const tMatch = !tag || (m.tags || []).includes(tag);
+    const iMatch = !industries.length || industries.some(i => (m.tags || []).includes("industry:" + i));
+    const cMatch = !categories.length || categories.includes(m.category);
+    const tMatch = !tags.length || tags.some(t => (m.tags || []).includes(t));
     return qMatch && iMatch && cMatch && tMatch;
   });
 }
@@ -35,42 +35,54 @@ function updateFilters(materials) {
   const propertySelect = document.getElementById("propertyFilter");
 
   const industries = [...new Set(materials.flatMap(m => (m.tags || []).filter(t => t.startsWith("industry:")).map(t => t.replace("industry:", ""))))].sort();
-  industries.forEach(i => {
+  const categories = [...new Set(materials.map(m => m.category))].sort();
+  const tags = [...new Set(materials.flatMap(m => m.tags || []).filter(t => !t.startsWith("industry:")))].sort();
+
+  for (const list of [industrySelect, categorySelect, propertySelect]) list.innerHTML = "";
+
+  for (const i of industries) {
     const opt = document.createElement("option");
     opt.value = i;
     opt.textContent = i;
     industrySelect.appendChild(opt);
-  });
+  }
 
-  const categories = [...new Set(materials.map(m => m.category))].sort();
-  categories.forEach(c => {
+  for (const c of categories) {
     const opt = document.createElement("option");
     opt.value = c;
     opt.textContent = c;
     categorySelect.appendChild(opt);
-  });
+  }
 
-  const tags = [...new Set(materials.flatMap(m => m.tags || []).filter(t => !t.startsWith("industry:")))].sort();
-  tags.forEach(t => {
+  for (const t of tags) {
     const opt = document.createElement("option");
     opt.value = t;
     opt.textContent = t;
     propertySelect.appendChild(opt);
-  });
+  }
+}
+
+function getSelectedValues(selectElement) {
+  return Array.from(selectElement.selectedOptions).map(o => o.value);
 }
 
 function runFilter() {
-  const query = document.getElementById("searchInput").value;
-  const industry = document.getElementById("industryFilter").value;
-  const category = document.getElementById("categoryFilter").value;
-  const tag = document.getElementById("propertyFilter").value;
-  const results = filterMaterials(window.materials, query, industry, category, tag);
+  const query = document.getElementById("searchInput").value.trim();
+  const showFilters = query.length > 0;
+  document.getElementById("toolbar").style.display = showFilters ? "flex" : "none";
+
+  const industries = getSelectedValues(document.getElementById("industryFilter"));
+  const categories = getSelectedValues(document.getElementById("categoryFilter"));
+  const tags = getSelectedValues(document.getElementById("propertyFilter"));
+
+  const results = filterMaterials(window.materials, query, industries, categories, tags);
   render(results);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
   updateFilters(window.materials);
-  render(window.materials);
+  render([]);
+  document.getElementById("toolbar").style.display = "none";
 
   document.getElementById("searchInput").addEventListener("input", runFilter);
   document.getElementById("industryFilter").addEventListener("change", runFilter);
