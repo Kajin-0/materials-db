@@ -1,11 +1,12 @@
 
-function filterMaterials(materials, query, industry, category, tag) {
+function filterMaterials(materials, query, industry, category, tag, tagOnlyMode = false) {
   return materials.filter(m => {
-    const qMatch = !query || [m.name, m.formula, ...m.synonyms].join(" ").toLowerCase().includes(query.toLowerCase());
+    const content = [m.name, m.formula, ...m.synonyms].join(" ").toLowerCase();
+    const qMatch = !query || content.includes(query.toLowerCase());
     const iMatch = !industry || (m.tags || []).includes("industry:" + industry);
     const cMatch = !category || m.category === category;
     const tMatch = !tag || (m.tags || []).includes(tag);
-    return qMatch && iMatch && cMatch && tMatch;
+    return tagOnlyMode ? tMatch : (qMatch && iMatch && cMatch && tMatch);
   });
 }
 
@@ -23,16 +24,22 @@ function render(materials) {
       <h2>${m.name}</h2>
       <p><strong>Formula:</strong> ${m.formula}</p>
       <p><strong>Category:</strong> ${m.category}</p>
-      <div class="tags">${(m.tags || []).map(t => `<span class="tag">${t}</span>`).join("")}</div>
+      <div class="tags">${(m.tags || []).map(t => `<span class="tag" data-tag="${t}">${t}</span>`).join("")}</div>
     `;
     out.appendChild(el);
   });
 
-  // Make tags clickable
+  // Better tag behavior — match by actual tag presence
   document.querySelectorAll(".tag").forEach(tagEl => {
     tagEl.addEventListener("click", () => {
-      document.getElementById("searchInput").value = tagEl.textContent;
-      runFilter();
+      document.getElementById("searchInput").value = "";
+      document.getElementById("industryFilter").value = "";
+      document.getElementById("categoryFilter").value = "";
+      document.getElementById("propertyFilter").value = "";
+
+      const tagValue = tagEl.dataset.tag;
+      const results = filterMaterials(window.materials, "", "", "", tagValue, true);
+      render(results);
     });
   });
 }
