@@ -2,32 +2,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Materials Database</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>Materials Database</h1>
-  <div class="top-bar">
-    <input type="text" id="searchBox" placeholder="Search materials...">
-    <button id="themeToggle">Toggle Theme</button>
-  </div>
-  <ul id="suggestions" class="suggestions"></ul>
+  <div class="container">
+    <h1>Materials Database</h1>
+    <div class="top-bar">
+      <input type="text" id="searchBox" placeholder="Search materials..." />
+      <button id="themeToggle">Toggle Theme</button>
+    </div>
+    <ul id="suggestions" class="suggestions"></ul>
 
-  <div class="filters">
-    <label>
-      Bandgap &gt; 
-      <input type="number" id="bandgapMin" value="0" step="0.1"> eV
-    </label>
-    <select id="categoryFilter">
-      <option value="">All Categories</option>
-      <option value="Semiconductor">Semiconductor</option>
-      <option value="Metal">Metal</option>
-      <option value="Insulator">Insulator</option>
-    </select>
-  </div>
+    <div class="filters">
+      <label>
+        Bandgap &gt;
+        <input type="number" id="bandgapMin" value="0" step="0.1" /> eV
+      </label>
+      <select id="categoryFilter">
+        <option value="">All Categories</option>
+        <option value="Semiconductor">Semiconductor</option>
+        <option value="Metal">Metal</option>
+        <option value="Insulator">Insulator</option>
+      </select>
+    </div>
 
-  <div id="results"></div>
+    <div id="results"></div>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
   <script src="script.js"></script>
