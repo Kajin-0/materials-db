@@ -12,19 +12,17 @@ function updateFilters(materials) {
   const categorySelect = document.getElementById("categoryFilter");
   const propertySelect = document.getElementById("propertyFilter");
 
-  const industries = [...new Set(materials.flatMap(m => (m.tags || []).filter(t => t.startsWith("industry:")).map(t => t.replace("industry:", ""))))].sort();
-  const categories = [...new Set(materials.map(m => m.category))].sort();
-  const tags = [...new Set(materials.flatMap(m => m.tags || []).filter(t => !t.startsWith("industry:")))].sort();
+  const industries = [...new Set(materials.flatMap(m => (m.tags || []).filter(t => t.startsWith("industry:")).map(t => t.replace("industry:", ""))))];
+  const categories = [...new Set(materials.map(m => m.category))];
+  const tags = [...new Set(materials.flatMap(m => m.tags || []).filter(t => !t.startsWith("industry:")))];
 
-  function populate(select, list) {
-    select.innerHTML = "";
-    select.append(new Option("All", ""));
-    list.forEach(t => select.append(new Option(t, t)));
+  function fill(sel, items) {
+    sel.innerHTML = "<option value=''>All</option>" + items.map(i => `<option>${i}</option>`).join("");
   }
 
-  populate(industrySelect, industries);
-  populate(categorySelect, categories);
-  populate(propertySelect, tags);
+  fill(industrySelect, industries);
+  fill(categorySelect, categories);
+  fill(propertySelect, tags);
 }
 
 async function loadMaterials(file) {
@@ -37,26 +35,20 @@ function runFilter() {
   const industry = document.getElementById("industryFilter").value;
   const category = document.getElementById("categoryFilter").value;
   const tag = document.getElementById("propertyFilter").value;
-
   document.getElementById("toolbar").style.display = query ? "flex" : "none";
 
   const matches = indexData.filter(m => {
-    const text = [m.name, m.formula, ...(m.synonyms || [])].join(" ").toLowerCase();
-    const q = !query || text.includes(query);
-    const i = !industry || m.tags.includes("industry:" + industry);
-    const c = !category || m.category === category;
-    const t = !tag || m.tags.includes(tag);
-    return q && i && c && t;
+    const text = [m.name, m.formula].join(" ").toLowerCase();
+    return (!query || text.includes(query))
+        && (!industry || m.tags.includes("industry:" + industry))
+        && (!category || m.category === category)
+        && (!tag || m.tags.includes(tag));
   });
 
-  if (!matches.length) {
-    render([]);
-    return;
-  }
+  if (!matches.length) return render([]);
 
-  const targetFile = matches[0].file;
-  loadMaterials(targetFile).then(materials => {
-    const filtered = materials.filter(m => matches.some(x => x.name === m.name));
+  loadMaterials(matches[0].file).then(data => {
+    const filtered = data.filter(m => matches.find(x => x.name === m.name));
     render(filtered);
   });
 }
@@ -68,17 +60,17 @@ function render(materials) {
     out.innerHTML = "<p>No materials found.</p>";
     return;
   }
-  materials.forEach(m => {
+  for (const m of materials) {
     const el = document.createElement("div");
     el.className = "material-card";
     el.innerHTML = `
       <h2>${m.name}</h2>
       <p><strong>Formula:</strong> ${m.formula}</p>
       <p><strong>Category:</strong> ${m.category}</p>
-      <div class="tags">${(m.tags || []).map(t => `<span class="tag">${t}</span>`).join("")}</div>
+      <div class="tags">${(m.tags || []).map(t => `<span class='tag'>${t}</span>`).join("")}</div>
     `;
     out.appendChild(el);
-  });
+  }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
