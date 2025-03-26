@@ -232,5 +232,138 @@ window.materials = [
       "industry:lasers",
       "industry:space"
     ]
+  },
+  {
+    "name": "Silicon Carbide Fiber Reinforced Composite",
+    "formula": "SiC/SiC",
+    "synonyms": [
+      "SiC Fiber Composite",
+      "Ceramic Matrix Composite"
+    ],
+    "category": "Composite",
+    "tags": [
+      "ceramic matrix composite",
+      "SiC",
+      "high temperature",
+      "oxidation resistant",
+      "thermal protection",
+      "aerospace",
+      "structural",
+      "TPS",
+      "engine",
+      "industry:aerospace",
+      "industry:space",
+      "industry:defense"
+    ]
+  },
+  {
+    "name": "Boron Carbide Reinforced Epoxy",
+    "formula": "B\u2084C-Epoxy",
+    "synonyms": [
+      "Boron Carbide Composite"
+    ],
+    "category": "Composite",
+    "tags": [
+      "lightweight",
+      "armor",
+      "impact resistant",
+      "defense",
+      "hard",
+      "ductile",
+      "composite",
+      "neutron shielding",
+      "abrasion resistant",
+      "industry:defense",
+      "industry:aerospace",
+      "industry:infrastructure"
+    ]
+  },
+  {
+    "name": "Carbon Nanotube Composite",
+    "formula": "CNT/Epoxy",
+    "synonyms": [
+      "Carbon Nanotube Reinforced Polymer"
+    ],
+    "category": "Composite",
+    "tags": [
+      "nanocomposite",
+      "electrically conductive",
+      "lightweight",
+      "strong",
+      "structural",
+      "EMI shielding",
+      "aerospace",
+      "sensor",
+      "flexible",
+      "industry:aerospace",
+      "industry:energy",
+      "industry:electronics"
+    ]
+  },
+  {
+    "name": "Beryllium-Copper Alloy",
+    "formula": "BeCu",
+    "synonyms": [
+      "Copper Beryllium"
+    ],
+    "category": "Alloy",
+    "tags": [
+      "spring",
+      "contact",
+      "high strength",
+      "corrosion resistant",
+      "electrical connector",
+      "cryogenic",
+      "vacuum compatible",
+      "thermal conductor",
+      "industry:electronics",
+      "industry:cryogenics",
+      "industry:aerospace"
+    ]
+  },
+  {
+    "name": "Gadolinium Gallium Garnet (GGG)",
+    "formula": "Gd\u2083Ga\u2085O\u2081\u2082",
+    "synonyms": [
+      "GGG Crystal"
+    ],
+    "category": "Optical Crystal",
+    "tags": [
+      "laser",
+      "substrate",
+      "microwave",
+      "dielectric",
+      "paramagnetic",
+      "magnetic",
+      "low loss",
+      "cryogenic",
+      "photonic",
+      "optical",
+      "industry:lasers",
+      "industry:photonics",
+      "industry:quantum"
+    ]
+  },
+  {
+    "name": "Thulium-doped YAG (Tm:YAG)",
+    "formula": "Tm:Y\u2083Al\u2085O\u2081\u2082",
+    "synonyms": [
+      "Tm:YAG",
+      "Thulium Laser Crystal"
+    ],
+    "category": "Laser Crystal",
+    "tags": [
+      "laser",
+      "laser gain medium",
+      "eye safe",
+      "infrared",
+      "solid state laser",
+      "crystal",
+      "high efficiency",
+      "medical laser",
+      "industry:lasers",
+      "industry:photonics",
+      "industry:defense"
+    ]
   }
 ];
