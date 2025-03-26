@@ -71,7 +71,7 @@ function runFilter() {
   const categories = getSelectedValues(document.getElementById("categoryFilter"));
   const tags = getSelectedValues(document.getElementById("propertyFilter"));
 
-  const results = filterMaterials(window.materials, query, industries, categories, tags);
+  const results = query ? filterMaterials(window.materials, query, industries, categories, tags) : [];
   render(results);
 }
 
