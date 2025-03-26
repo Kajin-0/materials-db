@@ -44,15 +44,13 @@ async function loadMaterialsByFiles(files) {
   return Object.values(all).flat();
 }
 
-function runFilter() {
-  const query = document.getElementById("searchInput").value.trim();
+function performSearch(query) {
   const industry = document.getElementById("industryFilter").value;
   const category = document.getElementById("categoryFilter").value;
   const tag = document.getElementById("propertyFilter").value;
-
   document.getElementById("toolbar").style.display = query ? "flex" : "none";
 
-  let results = query ? fuse.search(query).map(x => x.item) : indexData;
+  let results = fuse.search(query).map(x => x.item);
 
   results = results.filter(m =>
     (!industry || m.tags.includes("industry:" + industry)) &&
@@ -60,13 +58,9 @@ function runFilter() {
     (!tag || m.tags.includes(tag))
   );
 
-  if (!results.length) {
-    render([]);
-    return;
-  }
+  if (!results.length) return render([]);
 
   const neededFiles = [...new Set(results.map(m => m.file))];
-
   loadMaterialsByFiles(neededFiles).then(allMaterials => {
     const shown = allMaterials.filter(m => results.find(r => r.name === m.name));
     render(shown);
@@ -94,10 +88,46 @@ function render(materials) {
   }
 }
 
+function showSuggestions(query) {
+  const suggestions = fuse.search(query, { limit: 8 }).map(x => x.item.name);
+  const ul = document.getElementById("suggestions");
+  ul.innerHTML = "";
+  suggestions.forEach(name => {
+    const li = document.createElement("li");
+    li.textContent = name;
+    li.onclick = () => {
+      document.getElementById("searchInput").value = name;
+      ul.innerHTML = "";
+      performSearch(name);
+    };
+    ul.appendChild(li);
+  });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   loadIndex();
-  document.getElementById("searchInput").addEventListener("input", runFilter);
-  document.getElementById("industryFilter").addEventListener("change", runFilter);
-  document.getElementById("categoryFilter").addEventListener("change", runFilter);
-  document.getElementById("propertyFilter").addEventListener("change", runFilter);
+  const input = document.getElementById("searchInput");
+
+  input.addEventListener("input", () => {
+    const q = input.value.trim();
+    const ul = document.getElementById("suggestions");
+    if (!q) {
+      ul.innerHTML = "";
+      return;
+    }
+    showSuggestions(q);
+  });
+
+  input.addEventListener("keydown", e => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const query = input.value.trim();
+      document.getElementById("suggestions").innerHTML = "";
+      performSearch(query);
+    }
+  });
+
+  document.getElementById("industryFilter").addEventListener("change", () => performSearch(input.value.trim()));
+  document.getElementById("categoryFilter").addEventListener("change", () => performSearch(input.value.trim()));
+  document.getElementById("propertyFilter").addEventListener("change", () => performSearch(input.value.trim()));
 });
