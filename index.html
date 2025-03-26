@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,26 +13,13 @@
     <input id="searchInput" type="text" placeholder="Search materials..." autocomplete="off" />
   </header>
 
-  <section class="toolbar" id="toolbar">
-    <div class="filter-group">
-      <label for="industryFilter">Industry:</label>
-      <select id="industryFilter" multiple></select>
-    </div>
-    <div class="filter-group">
-      <label for="categoryFilter">Category:</label>
-      <select id="categoryFilter" multiple></select>
-    </div>
-    <div class="filter-group">
-      <label for="propertyFilter">Tag:</label>
-      <select id="propertyFilter" multiple></select>
-    </div>
-  </section>
-
+  <section id="toolbar"></section>
   <main id="results"></main>
 
   <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
   <script src="materials.js"></script>
   <script src="industries.js"></script>
+  <script src="tagTaxonomy.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

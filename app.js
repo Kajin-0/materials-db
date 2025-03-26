@@ -1,12 +1,58 @@
 
-function filterMaterials(materials, query, industries, categories, tags) {
-  return materials.filter(m => {
-    const qMatch = !query || [m.name, m.formula, ...m.synonyms].join(" ").toLowerCase().includes(query.toLowerCase());
-    const iMatch = !industries.length || industries.some(i => (m.tags || []).includes("industry:" + i));
-    const cMatch = !categories.length || categories.includes(m.category);
-    const tMatch = !tags.length || tags.some(t => (m.tags || []).includes(t));
-    return qMatch && iMatch && cMatch && tMatch;
+document.addEventListener("DOMContentLoaded", () => {
+  const taxonomy = window.tagTaxonomy;
+  const toolbar = document.getElementById("toolbar");
+  toolbar.innerHTML = ""; // Clear default
+
+  function createFilterGroup(title, tags, idPrefix) {
+    const groupDiv = document.createElement("div");
+    groupDiv.className = "filter-block";
+
+    const titleEl = document.createElement("h3");
+    titleEl.textContent = title;
+    groupDiv.appendChild(titleEl);
+
+    tags.forEach(tag => {
+      const label = document.createElement("label");
+      label.className = "checkbox-label";
+
+      const input = document.createElement("input");
+      input.type = "checkbox";
+      input.value = tag;
+      input.name = idPrefix;
+
+      input.addEventListener("change", runFilter);
+      label.appendChild(input);
+      label.appendChild(document.createTextNode(" " + tag));
+      groupDiv.appendChild(label);
+    });
+
+    return groupDiv;
+  }
+
+  for (const [category, tags] of Object.entries(taxonomy)) {
+    const title = category.replace(/([A-Z])/g, " $1").replace(/^./, s => s.toUpperCase());
+    toolbar.appendChild(createFilterGroup(title, tags, category));
+  }
+
+  document.getElementById("searchInput").addEventListener("input", runFilter);
+});
+
+function runFilter() {
+  const query = document.getElementById("searchInput").value.trim().toLowerCase();
+  const toolbar = document.getElementById("toolbar");
+  toolbar.style.display = query ? "block" : "none";
+
+  const checkedTags = Array.from(document.querySelectorAll("#toolbar input:checked")).map(i => i.value.toLowerCase());
+  const results = window.materials.filter(m => {
+    const content = [m.name, m.formula, ...(m.synonyms || [])].join(" ").toLowerCase();
+    const matchesQuery = !query || content.includes(query);
+    const materialTags = (m.tags || []).map(t => t.toLowerCase());
+    const matchesTags = checkedTags.every(tag => materialTags.includes(tag));
+    return matchesQuery && matchesTags;
   });
+
+  render(results);
 }
 
 function render(materials) {
@@ -28,60 +74,3 @@ function render(materials) {
     out.appendChild(el);
   });
 }
-
-function updateFilters(materials) {
-  const selects = {
-    industryFilter: "industry:",
-    categoryFilter: null,
-    propertyFilter: null
-  };
-
-  for (const [id, prefix] of Object.entries(selects)) {
-    const select = document.getElementById(id);
-    const values = prefix
-      ? [...new Set(materials.flatMap(m => (m.tags || []).filter(t => t.startsWith(prefix)).map(t => t.replace(prefix, ""))))].sort()
-      : id === "categoryFilter"
-        ? [...new Set(materials.map(m => m.category))].sort()
-        : [...new Set(materials.flatMap(m => m.tags || []).filter(t => !t.startsWith("industry:")))].sort();
-
-    select.innerHTML = "";
-    const allOption = document.createElement("option");
-    allOption.value = "";
-    allOption.textContent = "All";
-    select.appendChild(allOption);
-    for (const val of values) {
-      const opt = document.createElement("option");
-      opt.value = val;
-      opt.textContent = val;
-      select.appendChild(opt);
-    }
-  }
-}
-
-function getSelectedValues(select) {
-  return Array.from(select.selectedOptions).map(o => o.value).filter(v => v !== "");
-}
-
-function runFilter() {
-  const query = document.getElementById("searchInput").value.trim();
-  const showFilters = query.length > 0;
-  document.getElementById("toolbar").style.display = showFilters ? "flex" : "none";
-
-  const industries = getSelectedValues(document.getElementById("industryFilter"));
-  const categories = getSelectedValues(document.getElementById("categoryFilter"));
-  const tags = getSelectedValues(document.getElementById("propertyFilter"));
-
-  const results = query ? filterMaterials(window.materials, query, industries, categories, tags) : [];
-  render(results);
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  updateFilters(window.materials);
-  render([]);
-  document.getElementById("toolbar").style.display = "none";
-
-  document.getElementById("searchInput").addEventListener("input", runFilter);
-  document.getElementById("industryFilter").addEventListener("change", runFilter);
-  document.getElementById("categoryFilter").addEventListener("change", runFilter);
-  document.getElementById("propertyFilter").addEventListener("change", runFilter);
-});
