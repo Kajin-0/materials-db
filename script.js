@@ -17,6 +17,22 @@ function setupSearch() {
   const searchBox = document.getElementById('searchBox');
   const suggestions = document.getElementById('suggestions');
   const results = document.getElementById('results');
+  const bandgapMin = document.getElementById('bandgapMin');
+  const categoryFilter = document.getElementById('categoryFilter');
+  const themeToggle = document.getElementById('themeToggle');
+
+  themeToggle.onclick = () => {
+    document.body.classList.toggle('dark');
+  };
+
+  function applyFilters(list) {
+    const minBG = parseFloat(bandgapMin.value) || 0;
+    const category = categoryFilter.value;
+    return list.filter(m => {
+      return (!category || m.category === category) &&
+             (!m.bandgap || m.bandgap.value >= minBG);
+    });
+  }
 
   function displayResults(items) {
     results.innerHTML = '';
@@ -43,6 +59,8 @@ function setupSearch() {
           </dl>
         </div>
         <p>${m.notes}</p>
+        <div class="tags">${(m.tags || []).map(tag => `<span class="tag">${tag}</span>`).join('')}</div>
+        <div class="references">${(m.references || []).map(ref => `<a href="${ref.url}" target="_blank">${ref.label}</a>`).join(' | ')}</div>
       `;
       results.appendChild(div);
     });
@@ -57,7 +75,7 @@ function setupSearch() {
       li.addEventListener('click', () => {
         searchBox.value = item.name;
         suggestions.innerHTML = '';
-        displayResults([item]);
+        displayResults(applyFilters([item]));
       });
       suggestions.appendChild(li);
     });
@@ -67,8 +85,15 @@ function setupSearch() {
     const query = searchBox.value;
     const result = fuse.search(query).map(r => r.item);
     updateSuggestions(query);
-    displayResults(result);
+    displayResults(applyFilters(result));
   });
+
+  [bandgapMin, categoryFilter].forEach(el =>
+    el.addEventListener('input', () => {
+      const result = fuse.search(searchBox.value).map(r => r.item);
+      displayResults(applyFilters(result));
+    })
+  );
 
   searchBox.addEventListener('keydown', (e) => {
     const topSuggestion = suggestions.querySelector('li');
@@ -77,9 +102,9 @@ function setupSearch() {
       searchBox.value = topSuggestion.textContent;
       suggestions.innerHTML = '';
       const result = fuse.search(searchBox.value).map(r => r.item);
-      displayResults(result);
+      displayResults(applyFilters(result));
     }
   });
 
-  displayResults(materials); // initial render
+  displayResults(applyFilters(materials)); // initial render
 }

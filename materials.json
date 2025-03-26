@@ -25,7 +25,18 @@
       "holes": 400,
       "units": "cm\u00b2/V\u00b7s"
     },
-    "notes": "Used in high-speed optoelectronic devices."
+    "notes": "Used in high-speed optoelectronic devices.",
+    "tags": [
+      "III-V",
+      "Direct bandgap",
+      "Infrared emitter"
+    ],
+    "references": [
+      {
+        "label": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Gallium_arsenide"
+      }
+    ]
   },
   {
     "name": "Silicon",
@@ -53,6 +64,16 @@
       "holes": 450,
       "units": "cm\u00b2/V\u00b7s"
     },
-    "notes": "Most commonly used semiconductor material in electronics."
+    "notes": "Most commonly used semiconductor material in electronics.",
+    "tags": [
+      "Group IV",
+      "CMOS-compatible"
+    ],
+    "references": [
+      {
+        "label": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Silicon"
+      }
+    ]
   }
 ]
