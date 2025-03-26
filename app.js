@@ -1,7 +1,5 @@
 
 let indexData = [];
-let allLoadedMaterials = {};
-let activeTags = [];
 
 async function loadIndex() {
   const res = await fetch("data/materials-index.json");
@@ -29,18 +27,9 @@ function updateFilters(materials) {
   populate(propertySelect, tags);
 }
 
-async function loadMaterialsByFiles(files) {
-  const uniqueFiles = [...new Set(files)];
-  let combined = [];
-  for (const file of uniqueFiles) {
-    if (!allLoadedMaterials[file]) {
-      const res = await fetch("data/" + file);
-      const data = await res.json();
-      allLoadedMaterials[file] = data;
-    }
-    combined = combined.concat(allLoadedMaterials[file]);
-  }
-  return combined;
+async function loadMaterials(file) {
+  const res = await fetch("data/" + file);
+  return await res.json();
 }
 
 function runFilter() {
@@ -50,10 +39,9 @@ function runFilter() {
   const tag = document.getElementById("propertyFilter").value;
 
   document.getElementById("toolbar").style.display = query ? "flex" : "none";
-  activeTags = [];
 
   const matches = indexData.filter(m => {
-    const text = [m.name, m.formula].join(" ").toLowerCase();
+    const text = [m.name, m.formula, ...(m.synonyms || [])].join(" ").toLowerCase();
     const q = !query || text.includes(query);
     const i = !industry || m.tags.includes("industry:" + industry);
     const c = !category || m.category === category;
@@ -61,137 +49,36 @@ function runFilter() {
     return q && i && c && t;
   });
 
-  const neededFiles = matches.map(m => m.file);
-  loadMaterialsByFiles(neededFiles).then(allMaterials => {
-    const filtered = allMaterials.filter(m => matches.some(idx => idx.name === m.name));
+  if (!matches.length) {
+    render([]);
+    return;
+  }
+
+  const targetFile = matches[0].file;
+  loadMaterials(targetFile).then(materials => {
+    const filtered = materials.filter(m => matches.some(x => x.name === m.name));
     render(filtered);
   });
 }
 
-
 function render(materials) {
-  const container = document.getElementById("results");
-  container.innerHTML = "";
-
-  const filterTagSet = new Set(activeTags.map(t => t.toLowerCase()));
-  const filtered = activeTags.length
-    ? materials.filter(m => filterTagSet.size === 0 || [...filterTagSet].every(tag => (m.tags || []).map(t => t.toLowerCase()).includes(tag)))
-    : materials;
-
-  const summary = document.createElement("div");
-  summary.className = "result-summary";
-  const activeTagList = activeTags.length ? `<strong>Tags:</strong> ${activeTags.join(", ")}` : "";
-  summary.innerHTML = `<p>Showing ${filtered.length} materials ${activeTagList}</p>`;
-  container.appendChild(summary);
-
-  const clearBtn = document.createElement("button");
-  clearBtn.textContent = "Clear All Tags";
-  clearBtn.className = "clear-button";
-  clearBtn.onclick = () => {
-    activeTags = [];
-    render(materials);
-  };
-  container.appendChild(clearBtn);
-
-  container.appendChild(renderTagCloud(filtered));
-
-  if (!filtered.length) {
-    const msg = document.createElement("p");
-    msg.textContent = "No materials found.";
-    container.appendChild(msg);
-    return;
-  }
-
-  filtered.forEach(m => {
-    const div = document.createElement("div");
-    div.className = "material-card";
-    div.innerHTML = `
-      <h2>${m.name}</h2>
-      <p><strong>Formula:</strong> ${m.formula}</p>
-      <p><strong>Category:</strong> ${m.category}</p>
-      <div class="tags">
-        ${(m.tags || []).map(t => {
-          const active = filterTagSet.has(t.toLowerCase()) ? "tag-active" : "";
-          return `<span class="tag ${active}" data-tag="${t}">${t}</span>`;
-        }).join("")}
-      </div>
-    `;
-    container.appendChild(div);
-  });
-
-  document.querySelectorAll(".tag").forEach(tagEl => {
-    tagEl.addEventListener("click", () => {
-      const tag = tagEl.dataset.tag;
-      const i = activeTags.indexOf(tag);
-      if (i >= 0) {
-        activeTags.splice(i, 1);
-      } else {
-        activeTags.push(tag);
-      }
-      render(materials);
-    });
-  });
-}
-
-  const container = document.getElementById("results");
-  
-    container.innerHTML = "";
-    const summary = document.createElement("div");
-    summary.className = "result-summary";
-    const activeTagList = activeTags.length ? `<strong>Tags:</strong> ${activeTags.join(", ")}` : "";
-    summary.innerHTML = `<p>Showing ${filtered.length} materials ${activeTagList}</p>`;
-    container.appendChild(summary);
-    
+  const out = document.getElementById("results");
+  out.innerHTML = "";
   if (!materials.length) {
-    container.innerHTML = "<p>No materials found.</p>";
+    out.innerHTML = "<p>No materials found.</p>";
     return;
   }
-
-  const filterTagSet = new Set(activeTags.map(t => t.toLowerCase()));
-  const filtered = activeTags.length
-    ? materials.filter(m => filterTagSet.size === 0 || [...filterTagSet].every(tag => (m.tags || []).map(t => t.toLowerCase()).includes(tag)))
-    : materials;
-
-  filtered.forEach(m => {
-    const div = document.createElement("div");
-    div.className = "material-card";
-    div.innerHTML = `
+  materials.forEach(m => {
+    const el = document.createElement("div");
+    el.className = "material-card";
+    el.innerHTML = `
       <h2>${m.name}</h2>
       <p><strong>Formula:</strong> ${m.formula}</p>
       <p><strong>Category:</strong> ${m.category}</p>
-      <div class="tags">
-        ${(m.tags || []).map(t => {
-          const active = filterTagSet.has(t.toLowerCase()) ? "tag-active" : "";
-          return `<span class="tag ${active}" data-tag="${t}">${t}</span>`;
-        }).join("")}
-      </div>
+      <div class="tags">${(m.tags || []).map(t => `<span class="tag">${t}</span>`).join("")}</div>
     `;
-    container.appendChild(div);
+    out.appendChild(el);
   });
-
-  // Add tag refinement
-  document.querySelectorAll(".tag").forEach(tagEl => {
-    tagEl.addEventListener("click", () => {
-      const tag = tagEl.dataset.tag;
-      const i = activeTags.indexOf(tag);
-      if (i >= 0) {
-        activeTags.splice(i, 1);
-      } else {
-        activeTags.push(tag);
-      }
-      render(materials);
-    });
-  });
-
-  // Add Clear button
-  const clearBtn = document.createElement("button");
-  clearBtn.textContent = "Clear All Tags";
-  clearBtn.className = "clear-button";
-  clearBtn.onclick = () => {
-    activeTags = [];
-    render(materials);
-  };
-  container.prepend(clearBtn);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
