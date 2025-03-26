@@ -1,96 +1,79 @@
 
-(() => {
-  const searchInput = document.getElementById('searchInput');
-  const suggestionsList = document.getElementById('suggestions');
-  const resultsContainer = document.getElementById('results');
-  const popularTagsContainer = document.getElementById('popularTags');
-
-  const fuse = new Fuse(window.materials, {
-    keys: ['name', 'formula', 'synonyms', 'tags'],
-    threshold: 0.3
+function filterMaterials(materials, query, industry, category, tag) {
+  return materials.filter(m => {
+    const qMatch = !query || [m.name, m.formula, ...m.synonyms].join(" ").toLowerCase().includes(query.toLowerCase());
+    const iMatch = !industry || (m.tags || []).includes("industry:" + industry);
+    const cMatch = !category || m.category === category;
+    const tMatch = !tag || (m.tags || []).includes(tag);
+    return qMatch && iMatch && cMatch && tMatch;
   });
+}
 
-  const popularTags = [...new Set(window.materials.flatMap(m => m.tags))].slice(0, 10);
-  popularTags.forEach(tag => {
-    const span = document.createElement('span');
-    span.className = 'tag';
-    span.textContent = tag;
-    span.onclick = () => {
-      searchInput.value = tag;
-      performSearch(tag);
-    };
-    popularTagsContainer.appendChild(span);
-  });
-
-  searchInput.addEventListener('input', () => {
-    const val = searchInput.value.trim();
-    suggestionsList.innerHTML = '';
-    if (!val) {
-      renderResults([]);
-      return;
-    }
-
-    const results = fuse.search(val).slice(0, 5);
-    results.forEach(r => {
-      const li = document.createElement('li');
-      li.textContent = r.item.name;
-      li.onclick = () => {
-        searchInput.value = r.item.name;
-        suggestionsList.innerHTML = '';
-        performSearch(r.item.name);
-      };
-      suggestionsList.appendChild(li);
-    });
-    performSearch(val);
-  });
-
-  searchInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      const val = searchInput.value.trim();
-      suggestionsList.innerHTML = '';
-      if (val) {
-        performSearch(val);
-      }
-    }
-  });
-
-  function performSearch(query) {
-    const results = fuse.search(query).map(r => r.item);
-    renderResults(results);
+function render(materials) {
+  const out = document.getElementById("results");
+  out.innerHTML = "";
+  if (!materials.length) {
+    out.innerHTML = "<p>No materials found.</p>";
+    return;
   }
+  materials.forEach(m => {
+    const el = document.createElement("div");
+    el.className = "material-card";
+    el.innerHTML = `
+      <h2>${m.name}</h2>
+      <p><strong>Formula:</strong> ${m.formula}</p>
+      <p><strong>Category:</strong> ${m.category}</p>
+      <div class="tags">${(m.tags || []).map(t => `<span class="tag">${t}</span>`).join("")}</div>
+    `;
+    out.appendChild(el);
+  });
+}
 
-  function renderResults(items) {
-    resultsContainer.innerHTML = '';
-    if (!items || !items.length) {
-      if (searchInput.value.trim()) {
-        resultsContainer.innerHTML = '<p>No materials found.</p>';
-      }
-      return;
-    }
+function updateFilters(materials) {
+  const industrySelect = document.getElementById("industryFilter");
+  const categorySelect = document.getElementById("categoryFilter");
+  const propertySelect = document.getElementById("propertyFilter");
 
-    items.forEach(m => {
-      const card = document.createElement('div');
-      card.className = 'material-card';
-      card.innerHTML = `
-        <h2>${m.name}</h2>
-        <p><strong>Formula:</strong> ${m.formula}</p>
-        <p><strong>Category:</strong> ${m.category || '—'}</p>
-        <div class="tags">
-          ${(m.tags || []).map(t => `<span class="tag">${t}</span>`).join(' ')}
-        </div>
-      `;
-      const tagEls = card.querySelectorAll('.tag');
-      tagEls.forEach(tagEl => {
-        tagEl.onclick = () => {
-          searchInput.value = tagEl.textContent;
-          performSearch(tagEl.textContent);
-        };
-      });
+  const industries = [...new Set(materials.flatMap(m => (m.tags || []).filter(t => t.startsWith("industry:")).map(t => t.replace("industry:", ""))))].sort();
+  industries.forEach(i => {
+    const opt = document.createElement("option");
+    opt.value = i;
+    opt.textContent = i;
+    industrySelect.appendChild(opt);
+  });
 
-      resultsContainer.appendChild(card);
-    });
-  }
+  const categories = [...new Set(materials.map(m => m.category))].sort();
+  categories.forEach(c => {
+    const opt = document.createElement("option");
+    opt.value = c;
+    opt.textContent = c;
+    categorySelect.appendChild(opt);
+  });
 
-  renderResults([]);
-})();
+  const tags = [...new Set(materials.flatMap(m => m.tags || []).filter(t => !t.startsWith("industry:")))].sort();
+  tags.forEach(t => {
+    const opt = document.createElement("option");
+    opt.value = t;
+    opt.textContent = t;
+    propertySelect.appendChild(opt);
+  });
+}
+
+function runFilter() {
+  const query = document.getElementById("searchInput").value;
+  const industry = document.getElementById("industryFilter").value;
+  const category = document.getElementById("categoryFilter").value;
+  const tag = document.getElementById("propertyFilter").value;
+  const results = filterMaterials(window.materials, query, industry, category, tag);
+  render(results);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  updateFilters(window.materials);
+  render(window.materials);
+
+  document.getElementById("searchInput").addEventListener("input", runFilter);
+  document.getElementById("industryFilter").addEventListener("change", runFilter);
+  document.getElementById("categoryFilter").addEventListener("change", runFilter);
+  document.getElementById("propertyFilter").addEventListener("change", runFilter);
+});

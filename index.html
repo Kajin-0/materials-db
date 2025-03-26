@@ -3,34 +3,43 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Materials Database</title>
+  <title>MaterialsDB</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<div class="top-section">
-  <h1 class="logo">MaterialsDB</h1>
+  <header>
+    <h1>MaterialsDB</h1>
+    <input id="searchInput" type="text" placeholder="Search materials..." autocomplete="off" />
+  </header>
 
-  <div class="search-container">
-    <input 
-      type="text" 
-      id="searchInput" 
-      placeholder="Search by formula, name, or tag..." 
-      autocomplete="off"
-    />
-    <ul id="suggestions" class="suggestions-list"></ul>
-  </div>
+  <section class="toolbar">
+    <div class="filter-group">
+      <label for="industryFilter">Industry:</label>
+      <select id="industryFilter">
+        <option value="">All</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label for="categoryFilter">Category:</label>
+      <select id="categoryFilter">
+        <option value="">All</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label for="propertyFilter">Tag:</label>
+      <select id="propertyFilter">
+        <option value="">All</option>
+      </select>
+    </div>
+  </section>
 
-  <div class="tagline">For photosensing, computing, aerospace, and more</div>
-  <div id="popularTags" class="tag-suggestions"></div>
-</div>
+  <main id="results"></main>
 
-<div class="results" id="results"></div>
-
-<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
-<script src="materials.js"></script>
-<script src="app.js"></script>
-
+  <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+  <script src="materials.js"></script>
+  <script src="industries.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
