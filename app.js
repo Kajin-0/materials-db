@@ -4,7 +4,7 @@ let fuse;
 
 async function loadIndex() {
 try {
-const res = await fetch("./data/materials-index.json"); // Added "./"
+const res = await fetch("data/materials-index.json");
 if (!res.ok) {
 console.error("Failed to load materials index:", res.status);
 return;
@@ -18,15 +18,16 @@ includeScore: true,
 });
 
 updateFilters(indexData);
+// Optionally load all material files on startup for faster filtering
+// await loadAllMaterials();
 } catch (error) {
 console.error("Error loading index:", error);
 }
 }
 
-async function loadMaterialsByFiles(files) {
-const materials = [];
-for (const file of new Set(files)) {
-const filePath = `./data/${file}`; // Added "./"
+async function loadAllMaterials() {
+const uniqueFiles = [...new Set(indexData.map(item => `data/${item.file}`))];
+for (const filePath of uniqueFiles) {
 if (!allMaterialsData.hasOwnProperty(filePath)) {
 try {
 const res = await fetch(filePath);
@@ -34,17 +35,12 @@ if (!res.ok) {
 console.error(`Failed to load data file: ${filePath}`, res.status);
 continue;
 }
-allMaterialsData[`./data/${file}`] = await res.json(); // Keep with "./"
+allMaterialsData[`data/${filePath}`] = await res.json();
 } catch (error) {
 console.error(`Error loading data file: ${filePath}`, error);
 }
 }
-if (allMaterialsData.hasOwnProperty(filePath)) {
-const key = `./data/${file}`; // Use the same key
-materials.push(...allMaterialsData[`${key}`]);
 }
-}
-return materials;
 }
 
 function updateFilters(materials) {
@@ -63,6 +59,29 @@ sel.innerHTML = "<option value=''>All</option>" + items.map(i => `<option value=
 fill(industrySelect, industries);
 fill(categorySelect, categories);
 fill(propertySelect, tags);
+}
+
+async function loadMaterialsByFiles(files) {
+const materials = [];
+for (const file of new Set(files)) {
+const filePath = `data/${file}`;
+if (!allMaterialsData.hasOwnProperty(filePath)) {
+try {
+const res = await fetch(filePath);
+if (!res.ok) {
+console.error(`Failed to load data file: ${filePath}`, res.status);
+continue;
+}
+allMaterialsData[`data/${filePath}`] = await res.json();
+} catch (error) {
+console.error(`Error loading data file: ${filePath}`, error);
+}
+}
+if (allMaterialsData.hasOwnProperty(filePath)) {
+materials.push(...allMaterialsData[`data/${filePath}`]);
+}
+}
+return materials;
 }
 
 function performSearch(query) {
