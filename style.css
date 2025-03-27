@@ -25,3 +25,8 @@ main { max-width: 1000px; margin: 0 auto; padding: 1rem; }
   color: #007acc;
   font-weight: bold;
 }
+
+header input {
+  color: black;
+  background-color: white;
+}
