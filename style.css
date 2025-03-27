@@ -39,3 +39,7 @@ main { max-width: 1000px; margin: 0 auto; padding: 1rem; }
 #suggestions li:hover {
   background: #f0f0f0;
 }
+
+header input {
+  color: black;
+}
