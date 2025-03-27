@@ -1,4 +1,5 @@
 <pre><code>let indexData = [];
+let allMaterialsData = {}; // To store loaded material files
 let fuse;
 
 async function loadIndex() {
@@ -17,8 +18,28 @@ includeScore: true,
 });
 
 updateFilters(indexData);
+// Optionally load all material files on startup for faster filtering
+// await loadAllMaterials();
 } catch (error) {
 console.error("Error loading index:", error);
+}
+}
+
+async function loadAllMaterials() {
+const uniqueFiles = [...new Set(indexData.map(item => `data/${item.file}`))];
+for (const filePath of uniqueFiles) {
+if (!allMaterialsData.hasOwnProperty(filePath)) {
+try {
+const res = await fetch(filePath);
+if (!res.ok) {
+console.error(`Failed to load data file: ${filePath}`, res.status);
+continue;
+}
+allMaterialsData[`data/${filePath}`] = await res.json();
+} catch (error) {
+console.error(`Error loading data file: ${filePath}`, error);
+}
+}
 }
 }
 
@@ -41,22 +62,26 @@ fill(propertySelect, tags);
 }
 
 async function loadMaterialsByFiles(files) {
-const all = {};
+const materials = [];
 for (const file of new Set(files)) {
-if (!all.hasOwnProperty(file)) {
+const filePath = `data/${file}`;
+if (!allMaterialsData.hasOwnProperty(filePath)) {
 try {
-const res = await fetch("data/" + file);
+const res = await fetch(filePath);
 if (!res.ok) {
-console.error(`Failed to load data file: data/${file}`, res.status);
+console.error(`Failed to load data file: ${filePath}`, res.status);
 continue;
 }
-all[`data/${file}`] = await res.json();
+allMaterialsData[`data/${filePath}`] = await res.json();
 } catch (error) {
-console.error(`Error loading data file: data/${file}`, error);
+console.error(`Error loading data file: ${filePath}`, error);
 }
 }
+if (allMaterialsData.hasOwnProperty(filePath)) {
+materials.push(...allMaterialsData[`data/${filePath}`]);
 }
-return Object.values(all).flat();
+}
+return materials;
 }
 
 function performSearch(query) {
@@ -66,23 +91,25 @@ const tag = document.getElementById("propertyFilter").value;
 const toolbar = document.getElementById("toolbar");
 toolbar.classList.toggle("active", query.trim() !== "");
 
-let results = query.trim() ? fuse.search(query).map(x => x.item) : indexData;
+let searchResults = query.trim() ? fuse.search(query).map(x => x.item) : indexData;
 
-results = results.filter(m =>
+let filteredResults = searchResults.filter(m =>
 (!industry || (m.tags && m.tags.includes("industry:" + industry))) &&
 (!category || m.category === category) &&
 (!tag || (m.tags && m.tags.includes(tag)))
 );
 
-if (!results.length) {
+if (!filteredResults.length) {
 render([]);
 return;
 }
 
-const neededFiles = [...new Set(results.map(m => m.file))];
-loadMaterialsByFiles(neededFiles).then(allMaterials => {
-const shown = allMaterials.filter(m => results.some(r => r.name === m.name));
-render(shown);
+const neededFiles = [...new Set(filteredResults.map(m => m.file))];
+loadMaterialsByFiles(neededFiles).then(loadedMaterials => {
+const shownMaterials = loadedMaterials.filter(loaded =>
+filteredResults.some(result => result.name === loaded.name)
+);
+render(shownMaterials);
 });
 }
 
@@ -141,7 +168,7 @@ input.addEventListener("input", () => {
 const q = input.value.trim();
 if (!q) {
 suggestions.innerHTML = "";
-performSearch(""); // Show all when input is cleared
+performSearch(""); // Show all (from index) when input is cleared
 return;
 }
 showSuggestions(q);
@@ -154,7 +181,6 @@ showSuggestions(input.value.trim());
 });
 
 input.addEventListener("blur", () => {
-// Slight delay to allow click on suggestion to register
 setTimeout(() => {
 suggestions.innerHTML = "";
 }, 200);
@@ -173,3 +199,4 @@ document.getElementById("industryFilter").addEventListener("change", () => perfo
 document.getElementById("categoryFilter").addEventListener("change", () => performSearch(input.value.trim()));
 document.getElementById("propertyFilter").addEventListener("change", () => performSearch(input.value.trim()));
 });
+</code></pre>
