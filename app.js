@@ -1,4 +1,3 @@
-import Fuse from 'fuse.js';
 
 class MaterialSearch {
   constructor() {
