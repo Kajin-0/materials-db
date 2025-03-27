@@ -39,17 +39,3 @@ main { max-width: 1000px; margin: 0 auto; padding: 1rem; }
 #suggestions li:hover {
   background: #f0f0f0;
 }
-
-#suggestions li.active {
-  background-color: #cce4ff;
-}
-#suggestions li mark {
-  background: none;
-  color: #007acc;
-  font-weight: bold;
-}
-
-header input {
-  color: black;
-  background-color: white;
-}
