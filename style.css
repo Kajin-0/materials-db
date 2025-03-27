@@ -106,3 +106,12 @@ main {
   font-size: 0.8rem;
   cursor: pointer;
 }
+
+
+#toolbar {
+  display: none;
+}
+
+#toolbar.active {
+  display: flex;
+}
