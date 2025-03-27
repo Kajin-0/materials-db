@@ -585,5 +585,246 @@
       "thermally stable"
     ],
     "file": "materials-f.json"
+  },
+  {
+    "name": "Boron Nitride Nanotube Composite",
+    "formula": "BNNT Composite",
+    "synonyms": [
+      "BNNT",
+      "Boron Nitride Nanotube"
+    ],
+    "category": "Composite",
+    "tags": [
+      "boron nitride",
+      "nanotube",
+      "composite",
+      "lightweight",
+      "thermal conductor",
+      "electrically insulating",
+      "high strength",
+      "radiation shielding",
+      "cryogenic",
+      "vacuum compatible",
+      "refractory",
+      "ceramic",
+      "industry:aerospace",
+      "industry:thermal",
+      "industry:cryogenics",
+      "industry:space"
+    ],
+    "file": "materials-x.json"
+  },
+  {
+    "name": "Silica Aerogel",
+    "formula": "SiO\u2082 aerogel",
+    "synonyms": [
+      "Aerogel",
+      "Silica Gel"
+    ],
+    "category": "Composite",
+    "tags": [
+      "insulator",
+      "lightweight",
+      "porous",
+      "thermal insulation",
+      "cryogenic",
+      "space qualified",
+      "fragile",
+      "low density",
+      "transparent",
+      "infrared",
+      "industry:space",
+      "industry:cryogenics",
+      "industry:thermal",
+      "industry:insulation"
+    ],
+    "file": "materials-x.json"
+  },
+  {
+    "name": "Yttria-Stabilized Zirconia (YSZ)",
+    "formula": "ZrO\u2082 + Y\u2082O\u2083",
+    "synonyms": [
+      "YSZ",
+      "Yttria Stabilized Zirconia"
+    ],
+    "category": "Ceramic",
+    "tags": [
+      "ceramic",
+      "thermal barrier",
+      "electrolyte",
+      "oxide",
+      "ion conductor",
+      "wear resistant",
+      "fuel cell",
+      "high temperature",
+      "industry:energy",
+      "industry:thermal",
+      "industry:automotive"
+    ],
+    "file": "materials-x.json"
+  },
+  {
+    "name": "G-10/FR-4 Epoxy Glass Laminate",
+    "formula": "Glass-Epoxy",
+    "synonyms": [
+      "G-10",
+      "FR-4",
+      "Glass Epoxy Laminate"
+    ],
+    "category": "Composite",
+    "tags": [
+      "PCB substrate",
+      "dielectric",
+      "thermoplastic",
+      "insulator",
+      "laminate",
+      "mechanical strength",
+      "electrical insulation",
+      "flame retardant",
+      "industry:electronics",
+      "industry:aerospace"
+    ],
+    "file": "materials-x.json"
+  },
+  {
+    "name": "Kapton Polyimide Film",
+    "formula": "Polyimide (C22H10N2O5)n",
+    "synonyms": [
+      "Kapton",
+      "Polyimide Film"
+    ],
+    "category": "Polymer",
+    "tags": [
+      "polyimide",
+      "flexible",
+      "thermal stability",
+      "insulator",
+      "film",
+      "vacuum compatible",
+      "radiation resistant",
+      "electronics",
+      "high temperature",
+      "space",
+      "industry:aerospace",
+      "industry:electronics",
+      "industry:space"
+    ],
+    "file": "materials-x.json"
+  },
+  {
+    "name": "Graphene Oxide Paper",
+    "formula": "GO sheets",
+    "synonyms": [
+      "Graphene Oxide",
+      "GO Paper"
+    ],
+    "category": "Composite",
+    "tags": [
+      "graphene",
+      "flexible",
+      "conductive",
+      "sensor",
+      "wearable",
+      "transparent",
+      "layered",
+      "printable",
+      "stretchable",
+      "industry:electronics",
+      "industry:wearables"
+    ],
+    "file": "materials-x.json"
+  },
+  {
+    "name": "Hafnium Carbide Matrix Composite",
+    "formula": "HfC matrix",
+    "synonyms": [
+      "HfC Composite",
+      "Ultra High Temp Ceramic"
+    ],
+    "category": "Composite",
+    "tags": [
+      "ceramic matrix",
+      "refractory",
+      "hypersonic",
+      "reentry",
+      "heat shield",
+      "ultra high temp",
+      "oxidation resistant",
+      "space",
+      "industry:space",
+      "industry:defense",
+      "industry:aerospace"
+    ],
+    "file": "materials-x.json"
+  },
+  {
+    "name": "Amorphous Alloy (Vitreloy)",
+    "formula": "Zr-based BMG",
+    "synonyms": [
+      "Vitreloy",
+      "Bulk Metallic Glass",
+      "Amorphous Metal"
+    ],
+    "category": "Alloy",
+    "tags": [
+      "amorphous",
+      "metallic glass",
+      "non-crystalline",
+      "high strength",
+      "elastic",
+      "corrosion resistant",
+      "soft magnetic",
+      "industry:magnetics",
+      "industry:precision",
+      "industry:mechanical"
+    ],
+    "file": "materials-x.json"
+  },
+  {
+    "name": "Lithium Niobate",
+    "formula": "LiNbO\u2083",
+    "synonyms": [
+      "Lithium Niobate",
+      "LiNbO3"
+    ],
+    "category": "Crystal",
+    "tags": [
+      "nonlinear optical",
+      "ferroelectric",
+      "electro-optic",
+      "acousto-optic",
+      "single crystal",
+      "photonic",
+      "quantum",
+      "modulator",
+      "laser",
+      "industry:photonics",
+      "industry:quantum"
+    ],
+    "file": "materials-x.json"
+  },
+  {
+    "name": "LYSO:Ce Scintillator",
+    "formula": "Lu\u2082SiO\u2085:Ce",
+    "synonyms": [
+      "LYSO",
+      "LYSO:Ce",
+      "Scintillator Crystal"
+    ],
+    "category": "Crystal",
+    "tags": [
+      "scintillator",
+      "radiation detection",
+      "high light yield",
+      "fast decay",
+      "gamma ray",
+      "medical imaging",
+      "PET",
+      "crystal",
+      "industry:medical",
+      "industry:photonics",
+      "industry:radiation"
+    ],
+    "file": "materials-x.json"
   }
 ]
