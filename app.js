@@ -16,6 +16,17 @@ async function loadIndex() {
 }
 
 function updateFilters(materials) {
+  const industrySelect = document.getElementById("industryFilter");
+  const categorySelect = document.getElementById("categoryFilter");
+  const propertySelect = document.getElementById("propertyFilter");
+
+  const industries = [...new Set(materials.flatMap(m => (m.tags || []).filter(t => t.startsWith("industry:")).map(t => t.replace("industry:", ""))))];
+  const categories = [...new Set(materials.map(m => m.category))];
+  const tags = [...new Set(materials.flatMap(m => m.tags || []).filter(t => !t.startsWith("industry:")))];
+
+  function fill(sel, items) {
+    sel.innerHTML = "<option value=''>All</option>" + items.map(i => `<option>${i}</option>`).join("");
+  }
 
   fill(industrySelect, industries);
   fill(categorySelect, categories);
@@ -34,6 +45,27 @@ async function loadMaterialsByFiles(files) {
 }
 
 function performSearch(query) {
+  const industry = document.getElementById("industryFilter").value;
+  const category = document.getElementById("categoryFilter").value;
+  const tag = document.getElementById("propertyFilter").value;
+  document.getElementById("toolbar").style.display = query ? "flex" : "none";
+
+  let results = fuse.search(query).map(x => x.item);
+
+  results = results.filter(m =>
+    (!industry || m.tags.includes("industry:" + industry)) &&
+    (!category || m.category === category) &&
+    (!tag || m.tags.includes(tag))
+  );
+
+  if (!results.length) return render([]);
+
+  const neededFiles = [...new Set(results.map(m => m.file))];
+  loadMaterialsByFiles(neededFiles).then(allMaterials => {
+    const shown = allMaterials.filter(m => results.find(r => r.name === m.name));
+    render(shown);
+  });
+}
 
 function render(materials) {
   const out = document.getElementById("results");
@@ -94,3 +126,8 @@ document.addEventListener("DOMContentLoaded", () => {
       performSearch(query);
     }
   });
+
+  document.getElementById("industryFilter").addEventListener("change", () => performSearch(input.value.trim()));
+  document.getElementById("categoryFilter").addEventListener("change", () => performSearch(input.value.trim()));
+  document.getElementById("propertyFilter").addEventListener("change", () => performSearch(input.value.trim()));
+});
