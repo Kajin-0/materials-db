@@ -1,117 +1,203 @@
 
-body {
-  font-family: sans-serif;
-  background: #fafafa;
-  color: #222;
-  margin: 0;
-  padding: 0;
+<pre><code>body {
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+background: #f4f6f8; /* Lighter background */
+color: #333;
+margin: 0;
+padding: 0;
+line-height: 1.6;
 }
 
+/* Header */
 header {
-  background: #007acc;
-  color: white;
-  padding: 1rem;
-  text-align: center;
+background: #2c3e50; /* Darker header */
+color: white;
+padding: 1.5rem 2rem;
+text-align: left; /* Align title to the left */
+box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
+header h1 {
+margin: 0;
+font-size: 1.8rem;
+cursor: pointer;
+}
+
+/* Search Container */
 #search-container {
-  padding: 1rem;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  align-items: center;
+padding: 2rem;
+display: flex;
+justify-content: center;
+flex-direction: column;
+align-items: center;
+background: #fff; /* White background for search area */
+box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 #search-container input {
-  padding: 0.6rem;
-  font-size: 1rem;
-  width: 100%;
-  max-width: 600px;
-  color: black;
-  background: white;
-  border: 1px solid #ccc;
+padding: 0.8rem 1rem;
+font-size: 1.1rem;
+width: 100%;
+max-width: 700px; /* Slightly wider search bar */
+color: #333;
+background: #f9f9f9;
+border: 1px solid #ddd;
+border-radius: 6px;
+box-sizing: border-box;
+transition: border-color 0.3s ease;
+}
+
+#search-container input:focus {
+outline: none;
+border-color: #007bff; /* Highlight on focus */
 }
 
 #search-container input::placeholder {
-  color: #666;
+color: #999;
 }
 
+/* Suggestions */
 #suggestions {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  max-height: 160px;
-  overflow-y: auto;
-  background: white;
-  border: 1px solid #ccc;
-  width: 100%;
-  max-width: 600px;
-  z-index: 10;
-  position: relative;
+list-style: none;
+margin: 0;
+padding: 0;
+max-height: 200px; /* Increased max height */
+overflow-y: auto;
+background: white;
+border: 1px solid #ddd;
+border-radius: 6px;
+width: 100%;
+max-width: 700px;
+z-index: 10;
+position: relative;
+box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
 }
 
 #suggestions li {
-  padding: 0.5rem;
-  border-bottom: 1px solid #eee;
-  cursor: pointer;
-  color: black;
+padding: 0.7rem 1rem;
+border-bottom: 1px solid #eee;
+cursor: pointer;
+color: #333;
+transition: background-color 0.2s ease;
+}
+
+#suggestions li:last-child {
+border-bottom: none;
 }
 
 #suggestions li:hover,
 #suggestions li.active {
-  background: #cce4ff;
+background: #e9f5ff; /* Lighter hover color */
 }
 
+/* Toolbar / Filters */
 .toolbar {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-  justify-content: center;
-  padding: 1rem;
-  background: #f0f0f0;
+display: none; /* Initially hidden */
+gap: 1.5rem;
+flex-wrap: wrap;
+justify-content: center;
+padding: 1.5rem 2rem;
+background: #fff;
+box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+margin-bottom: 1rem;
 }
+
+.toolbar.active {
+display: flex;
+}
+
+.filter-group {
+display: flex;
+align-items: center;
+}
+
 .filter-group label {
-  margin-right: 0.4rem;
-  font-weight: bold;
+margin-right: 0.6rem;
+font-weight: bold;
+color: #555;
 }
+
 .filter-group select {
-  padding: 0.4rem;
-  font-size: 0.95rem;
+padding: 0.6rem 0.8rem;
+font-size: 1rem;
+border: 1px solid #ccc;
+border-radius: 4px;
+background-color: #fff;
+color: #333;
+cursor: pointer;
+transition: border-color 0.3s ease;
 }
+
+.filter-group select:focus {
+outline: none;
+border-color: #007bff;
+}
+
+/* Main Content */
 main {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 1rem;
+max-width: 1100px; /* Slightly wider main area */
+margin: 2rem auto; /* More top margin */
+padding: 0 2rem;
 }
+
+/* Material Card */
 .material-card {
-  background: white;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 1rem;
-  margin-bottom: 1rem;
+background: white;
+border: 1px solid #ddd;
+border-radius: 8px;
+padding: 1.5rem;
+margin-bottom: 1.5rem;
+box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+transition: box-shadow 0.3s ease;
 }
+
+.material-card:hover {
+box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
 .material-card h2 {
-  margin-bottom: 0.3rem;
+margin-top: 0;
+margin-bottom: 0.5rem;
+font-size: 1.5rem;
+color: #2c3e50;
 }
+
+.material-card p {
+margin-bottom: 0.5rem;
+color: #555;
+}
+
+.material-card strong {
+font-weight: 600;
+color: #333;
+}
+
 .material-card .tags {
-  margin-top: 0.5rem;
+margin-top: 1rem;
 }
+
 .material-card .tag {
-  display: inline-block;
-  margin: 0.2rem 0.3rem 0 0;
-  padding: 0.2rem 0.5rem;
-  background: #007acc;
-  color: white;
-  border-radius: 3px;
-  font-size: 0.8rem;
-  cursor: pointer;
+display: inline-block;
+margin: 0.3rem 0.4rem 0 0;
+padding: 0.3rem 0.7rem;
+background: #007bff; /* More vibrant tag color */
+color: white;
+border-radius: 4px;
+font-size: 0.9rem;
+cursor: pointer;
+transition: background-color 0.2s ease;
 }
 
-
-#toolbar {
-  display: none;
+.material-card .tag:hover {
+background: #0056b3;
 }
 
-#toolbar.active {
-  display: flex;
+/* No Results */
+main#results:empty::after {
+content: "No materials found.";
+display: block;
+padding: 2rem;
+text-align: center;
+color: #777;
 }
+</code></pre>
