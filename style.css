@@ -1,5 +1,5 @@
-
-<pre><code>body {
+<pre><code>/* General Styles */
+body {
 font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 background: #f4f6f8; /* Lighter background */
 color: #333;
@@ -32,6 +32,7 @@ flex-direction: column;
 align-items: center;
 background: #fff; /* White background for search area */
 box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+position: relative; /* Needed for suggestions positioning */
 }
 
 #search-container input {
@@ -59,7 +60,7 @@ color: #999;
 /* Suggestions */
 #suggestions {
 list-style: none;
-margin: 0;
+margin: 5px 0 0 0; /* Add slight top margin */
 padding: 0;
 max-height: 200px; /* Increased max height */
 overflow-y: auto;
@@ -69,8 +70,12 @@ border-radius: 6px;
 width: 100%;
 max-width: 700px;
 z-index: 10;
-position: relative;
+position: absolute; /* Position suggestions below input */
+top: 100%; /* Start right below the search container's content */
+left: 50%; /* Center horizontally */
+transform: translateX(-50%); /* Adjust centering */
 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+box-sizing: border-box; /* Include padding/border in width */
 }
 
 #suggestions li {
@@ -89,6 +94,12 @@ border-bottom: none;
 #suggestions li.active {
 background: #e9f5ff; /* Lighter hover color */
 }
+
+#suggestions li.disabled { /* Style for 'Loading...' or 'No results' */
+color: #999;
+cursor: default;
+}
+
 
 /* Toolbar / Filters */
 .toolbar {
@@ -126,6 +137,7 @@ background-color: #fff;
 color: #333;
 cursor: pointer;
 transition: border-color 0.3s ease;
+min-width: 150px; /* Give dropdowns a minimum width */
 }
 
 .filter-group select:focus {
@@ -192,12 +204,13 @@ transition: background-color 0.2s ease;
 background: #0056b3;
 }
 
-/* No Results */
+/* No Results Message Styling */
 main#results:empty::after {
-content: "No materials found.";
+content: "No materials found matching your criteria.";
 display: block;
 padding: 2rem;
 text-align: center;
 color: #777;
+font-style: italic;
 }
 </code></pre>
