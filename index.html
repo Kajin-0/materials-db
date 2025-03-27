@@ -4,14 +4,16 @@
 <meta charset="UTF-8" />
 <title>MaterialsDB</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<!-- Link the CSS file -->
+<!-- Link the CSS file (relative path usually fine) -->
 <link rel="stylesheet" href="style.css" />
+<!-- Optional: Add a placeholder favicon to reduce 404 errors -->
+<link rel="icon" href="data:;base64,iVBORw0KGgo=">
 </head>
 <body>
 
 <header>
-<!-- Reloads the page on click, effectively resetting the search -->
-<h1 onclick="window.location.reload()" title="Reload MaterialsDB">MaterialsDB</h1>
+<!-- Reloads the page on click -->
+<h1 onclick="window.location.reload()" title="Reload MaterialsDB" style="cursor:pointer;">MaterialsDB</h1>
 </header>
 
 <!-- Container for search input and suggestions list -->
@@ -25,20 +27,20 @@
 <section class="toolbar" id="toolbar">
 <div class="filter-group">
 <label for="industryFilter">Industry:</label>
-<select id="industryFilter">
-<option value="">Loading...</option> <!-- Placeholder until JS loads -->
+<select id="industryFilter" disabled> <!-- Start disabled until JS loads -->
+<option value="">Loading...</option>
 </select>
 </div>
 <div class="filter-group">
 <label for="categoryFilter">Category:</label>
-<select id="categoryFilter">
-<option value="">Loading...</option> <!-- Placeholder until JS loads -->
+<select id="categoryFilter" disabled> <!-- Start disabled until JS loads -->
+<option value="">Loading...</option>
 </select>
 </div>
 <div class="filter-group">
 <label for="propertyFilter">Tag:</label>
-<select id="propertyFilter">
-<option value="">Loading...</option> <!-- Placeholder until JS loads -->
+<select id="propertyFilter" disabled> <!-- Start disabled until JS loads -->
+<option value="">Loading...</option>
 </select>
 </div>
 </section>
@@ -46,13 +48,15 @@
 <!-- Main content area where results are rendered -->
 <main id="results">
 <!-- Results will be populated here by JS -->
-<p style="text-align: center; color: #999;">Loading initial data...</p> <!-- Initial loading message -->
+<p style="text-align: center; color: #999;">Initializing database...</p> <!-- Initial loading message -->
 </main>
 
 <!-- Load Fuse.js library from CDN -->
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
-<!-- Load the application's JavaScript logic -->
-<script src="app.js"></script>
+<!-- === MODIFIED LINE === -->
+<!-- Load the application's JavaScript logic using absolute path for GitHub Pages subdirectory -->
+<script src="/materials-db/app.js"></script>
+<!-- ===================== -->
 </body>
 </html>
 </code></pre>
