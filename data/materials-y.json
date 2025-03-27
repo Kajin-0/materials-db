@@ -1,50 +1,175 @@
 [
   {
-    "name": "Yttrium Barium Copper Oxide (YBCO)",
-    "formula": "YBa\u2082Cu\u2083O\u2087",
+    "name": "Maraging Steel",
+    "formula": "Fe-Ni-Co-Mo-Ti",
     "synonyms": [
-      "YBCO",
-      "HTS tape",
-      "coated conductor"
+      "Maraging",
+      "Maraging Steel Alloy"
     ],
-    "category": "Superconductor",
+    "category": "Alloy",
     "tags": [
-      "ceramic",
-      "coated conductor",
-      "cryogenic",
-      "hts",
-      "industry:cryogenics",
-      "industry:energy",
-      "industry:quantum",
-      "low temperature",
-      "microwave",
-      "oxide",
-      "power electronics",
-      "quantum computing",
-      "superconductor"
+      "high strength",
+      "tough",
+      "steel",
+      "ultra high strength",
+      "machinable",
+      "age hardened",
+      "aerospace",
+      "durability",
+      "structural",
+      "impact resistant",
+      "industry:aerospace",
+      "industry:infrastructure",
+      "industry:defense"
     ]
   },
   {
-    "name": "Yttrium Iron Garnet (YIG)",
-    "formula": "Y\u2083Fe\u2085O\u2081\u2082",
+    "name": "Ultra-High Molecular Weight Polyethylene (UHMWPE)",
+    "formula": "(C\u2082H\u2084)n",
     "synonyms": [
-      "YIG",
-      "Magnetic Garnet"
+      "UHMWPE",
+      "Dyneema",
+      "Spectra"
+    ],
+    "category": "Polymer",
+    "tags": [
+      "high strength",
+      "lightweight",
+      "fiber",
+      "impact resistant",
+      "ballistic",
+      "non-conductive",
+      "self-lubricating",
+      "abrasion resistant",
+      "industry:defense",
+      "industry:biomedical",
+      "industry:aerospace"
+    ]
+  },
+  {
+    "name": "Polyethylene Neutron Shielding",
+    "formula": "H-rich Polymer",
+    "synonyms": [
+      "HDPE Shield",
+      "Polyethylene Radiation Shield"
     ],
     "category": "Composite",
     "tags": [
+      "neutron shielding",
+      "radiation resistant",
+      "polyethylene",
+      "moderator",
+      "hydrogen rich",
+      "non-toxic",
+      "low-Z",
+      "industry:radiation",
+      "industry:nuclear",
+      "industry:space"
+    ]
+  },
+  {
+    "name": "Lead Tungstate",
+    "formula": "PbWO\u2084",
+    "synonyms": [
+      "Lead Tungstate",
+      "PbWO4",
+      "Scintillator Crystal"
+    ],
+    "category": "Crystal",
+    "tags": [
+      "radiation shielding",
+      "scintillator",
+      "dense",
+      "ionizing radiation",
+      "gamma detection",
+      "high density",
+      "optical crystal",
+      "industry:radiation",
+      "industry:medical",
+      "industry:defense"
+    ]
+  },
+  {
+    "name": "Zirconium Diboride (ZrB\u2082)",
+    "formula": "ZrB\u2082",
+    "synonyms": [
+      "ZrB2",
+      "Ultra-High Temp Ceramic"
+    ],
+    "category": "Ceramic",
+    "tags": [
+      "refractory",
+      "high temperature",
+      "thermal conductivity",
+      "structural ceramic",
+      "oxidation resistant",
+      "hypersonic",
+      "rocket nozzle",
+      "industry:space",
+      "industry:aerospace"
+    ]
+  },
+  {
+    "name": "Tantalum Hafnium Carbide",
+    "formula": "Ta\u2084HfC\u2085",
+    "synonyms": [
+      "TaHfC",
+      "Tantalum Hafnium Carbide"
+    ],
+    "category": "Ceramic",
+    "tags": [
+      "ultra high temperature",
+      "carbide",
+      "hard",
+      "oxidation resistant",
+      "refractory",
+      "hypersonic",
+      "thermal protection",
+      "industry:space",
+      "industry:defense",
+      "industry:aerospace"
+    ]
+  },
+  {
+    "name": "Indium Foil",
+    "formula": "In (foil)",
+    "synonyms": [
+      "Indium Gasket",
+      "Indium Cryogenic Seal"
+    ],
+    "category": "Metal",
+    "tags": [
       "cryogenic",
-      "ferrite",
-      "industry:microwave",
-      "industry:photonics",
-      "industry:quantum",
-      "low damping",
-      "magnetic",
-      "microwave",
-      "photonics",
-      "quantum computing",
-      "quantum magnonics",
-      "spin wave"
+      "soft metal",
+      "vacuum seal",
+      "thermal interface",
+      "cold welding",
+      "corrosion resistant",
+      "low temp",
+      "industry:cryogenics",
+      "industry:space",
+      "industry:vacuum"
+    ]
+  },
+  {
+    "name": "Vacuum Multilayer Insulation (MLI)",
+    "formula": "Aluminized Mylar Layers",
+    "synonyms": [
+      "MLI",
+      "Space Blanket"
+    ],
+    "category": "Composite",
+    "tags": [
+      "thermal insulation",
+      "cryogenic",
+      "vacuum compatible",
+      "infrared reflective",
+      "space qualified",
+      "lightweight",
+      "flexible",
+      "industry:space",
+      "industry:cryogenics",
+      "industry:aerospace"
     ]
   }
 ]

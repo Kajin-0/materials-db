@@ -826,5 +826,186 @@
       "industry:radiation"
     ],
     "file": "materials-x.json"
+  },
+  {
+    "name": "Maraging Steel",
+    "formula": "Fe-Ni-Co-Mo-Ti",
+    "synonyms": [
+      "Maraging",
+      "Maraging Steel Alloy"
+    ],
+    "category": "Alloy",
+    "tags": [
+      "high strength",
+      "tough",
+      "steel",
+      "ultra high strength",
+      "machinable",
+      "age hardened",
+      "aerospace",
+      "durability",
+      "structural",
+      "impact resistant",
+      "industry:aerospace",
+      "industry:infrastructure",
+      "industry:defense"
+    ],
+    "file": "materials-y.json"
+  },
+  {
+    "name": "Ultra-High Molecular Weight Polyethylene (UHMWPE)",
+    "formula": "(C\u2082H\u2084)n",
+    "synonyms": [
+      "UHMWPE",
+      "Dyneema",
+      "Spectra"
+    ],
+    "category": "Polymer",
+    "tags": [
+      "high strength",
+      "lightweight",
+      "fiber",
+      "impact resistant",
+      "ballistic",
+      "non-conductive",
+      "self-lubricating",
+      "abrasion resistant",
+      "industry:defense",
+      "industry:biomedical",
+      "industry:aerospace"
+    ],
+    "file": "materials-y.json"
+  },
+  {
+    "name": "Polyethylene Neutron Shielding",
+    "formula": "H-rich Polymer",
+    "synonyms": [
+      "HDPE Shield",
+      "Polyethylene Radiation Shield"
+    ],
+    "category": "Composite",
+    "tags": [
+      "neutron shielding",
+      "radiation resistant",
+      "polyethylene",
+      "moderator",
+      "hydrogen rich",
+      "non-toxic",
+      "low-Z",
+      "industry:radiation",
+      "industry:nuclear",
+      "industry:space"
+    ],
+    "file": "materials-y.json"
+  },
+  {
+    "name": "Lead Tungstate",
+    "formula": "PbWO\u2084",
+    "synonyms": [
+      "Lead Tungstate",
+      "PbWO4",
+      "Scintillator Crystal"
+    ],
+    "category": "Crystal",
+    "tags": [
+      "radiation shielding",
+      "scintillator",
+      "dense",
+      "ionizing radiation",
+      "gamma detection",
+      "high density",
+      "optical crystal",
+      "industry:radiation",
+      "industry:medical",
+      "industry:defense"
+    ],
+    "file": "materials-y.json"
+  },
+  {
+    "name": "Zirconium Diboride (ZrB\u2082)",
+    "formula": "ZrB\u2082",
+    "synonyms": [
+      "ZrB2",
+      "Ultra-High Temp Ceramic"
+    ],
+    "category": "Ceramic",
+    "tags": [
+      "refractory",
+      "high temperature",
+      "thermal conductivity",
+      "structural ceramic",
+      "oxidation resistant",
+      "hypersonic",
+      "rocket nozzle",
+      "industry:space",
+      "industry:aerospace"
+    ],
+    "file": "materials-y.json"
+  },
+  {
+    "name": "Tantalum Hafnium Carbide",
+    "formula": "Ta\u2084HfC\u2085",
+    "synonyms": [
+      "TaHfC",
+      "Tantalum Hafnium Carbide"
+    ],
+    "category": "Ceramic",
+    "tags": [
+      "ultra high temperature",
+      "carbide",
+      "hard",
+      "oxidation resistant",
+      "refractory",
+      "hypersonic",
+      "thermal protection",
+      "industry:space",
+      "industry:defense",
+      "industry:aerospace"
+    ],
+    "file": "materials-y.json"
+  },
+  {
+    "name": "Indium Foil",
+    "formula": "In (foil)",
+    "synonyms": [
+      "Indium Gasket",
+      "Indium Cryogenic Seal"
+    ],
+    "category": "Metal",
+    "tags": [
+      "cryogenic",
+      "soft metal",
+      "vacuum seal",
+      "thermal interface",
+      "cold welding",
+      "corrosion resistant",
+      "low temp",
+      "industry:cryogenics",
+      "industry:space",
+      "industry:vacuum"
+    ],
+    "file": "materials-y.json"
+  },
+  {
+    "name": "Vacuum Multilayer Insulation (MLI)",
+    "formula": "Aluminized Mylar Layers",
+    "synonyms": [
+      "MLI",
+      "Space Blanket"
+    ],
+    "category": "Composite",
+    "tags": [
+      "thermal insulation",
+      "cryogenic",
+      "vacuum compatible",
+      "infrared reflective",
+      "space qualified",
+      "lightweight",
+      "flexible",
+      "industry:space",
+      "industry:cryogenics",
+      "industry:aerospace"
+    ],
+    "file": "materials-y.json"
   }
 ]
