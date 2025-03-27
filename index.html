@@ -1,41 +1,45 @@
-
-<!DOCTYPE html>
+<pre><code><!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>MaterialsDB</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="style.css" />
+<meta charset="UTF-8" />
+<title>MaterialsDB</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header>
-    <h1 style="cursor:pointer;" onclick="window.location.reload()">MaterialsDB</h1>
-  </header>
+<header>
+<h1 onclick="window.location.reload()">MaterialsDB</h1>
+</header>
 
-  <div id="search-container">
-    <input id="searchInput" type="text" placeholder="Search materials..." autocomplete="off" />
-    <ul id="suggestions"></ul>
-  </div>
+<div id="search-container">
+<input id="searchInput" type="text" placeholder="Search materials..." autocomplete="off" />
+<ul id="suggestions"></ul>
+</div>
 
-  <section class="toolbar" id="toolbar">
-    <div class="filter-group">
-      <label for="industryFilter">Industry:</label>
-      <select id="industryFilter"></select>
-    </div>
-    <div class="filter-group">
-      <label for="categoryFilter">Category:</label>
-      <select id="categoryFilter"></select>
-    </div>
-    <div class="filter-group">
-      <label for="propertyFilter">Tag:</label>
-      <select id="propertyFilter"></select>
-    </div>
-  </section>
+<section class="toolbar" id="toolbar">
+<div class="filter-group">
+<label for="industryFilter">Industry:</label>
+<select id="industryFilter">
+<option value="">All</option>
+</select>
+</div>
+<div class="filter-group">
+<label for="categoryFilter">Category:</label>
+<select id="categoryFilter">
+<option value="">All</option>
+</select>
+</div>
+<div class="filter-group">
+<label for="propertyFilter">Tag:</label>
+<select id="propertyFilter">
+<option value="">All</option>
+</select>
+</div>
+</section>
 
-  <main id="results"></main>
-  <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
-  <script src="data/tagTaxonomy.js"></script>
-  <script src="data/industries.js"></script>
-  <script src="app.js"></script>
+<main id="results"></main>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+<script src="app.js"></script>
 </body>
 </html>
+</code></pre>
