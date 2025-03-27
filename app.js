@@ -88,11 +88,45 @@ function render(materials) {
   }
 }
 
+
+let selectedSuggestion = -1;
 function showSuggestions(query) {
+
   const suggestions = fuse.search(query, { limit: 8 }).map(x => x.item.name);
   const ul = document.getElementById("suggestions");
   ul.innerHTML = "";
-  suggestions.forEach(name => {
+  
+  const ul = document.getElementById("suggestions");
+  ul.innerHTML = "";
+  selectedSuggestion = -1;
+  fuse.search(query, { limit: 8 }).forEach((result, index) => {
+    const name = result.item.name;
+    const li = document.createElement("li");
+
+    // Highlight matched characters
+    const match = result.matches?.find(m => m.key === "name");
+    if (match) {
+      let highlighted = "";
+      let lastIndex = 0;
+      for (const [start, end] of match.indices) {
+        highlighted += name.slice(lastIndex, start) + "<mark>" + name.slice(start, end + 1) + "</mark>";
+        lastIndex = end + 1;
+      }
+      highlighted += name.slice(lastIndex);
+      li.innerHTML = highlighted;
+    } else {
+      li.textContent = name;
+    }
+
+    li.dataset.name = name;
+    li.onclick = () => {
+      document.getElementById("searchInput").value = name;
+      ul.innerHTML = "";
+      performSearch(name);
+    };
+    ul.appendChild(li);
+  });
+
     const li = document.createElement("li");
     li.textContent = name;
     li.onclick = () => {
@@ -118,7 +152,36 @@ document.addEventListener("DOMContentLoaded", () => {
     showSuggestions(q);
   });
 
+  
   input.addEventListener("keydown", e => {
+    const ul = document.getElementById("suggestions");
+    const items = ul.querySelectorAll("li");
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      if (items.length > 0) {
+        selectedSuggestion = (selectedSuggestion + 1) % items.length;
+        items.forEach((li, i) => li.classList.toggle("active", i === selectedSuggestion));
+      }
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      if (items.length > 0) {
+        selectedSuggestion = (selectedSuggestion - 1 + items.length) % items.length;
+        items.forEach((li, i) => li.classList.toggle("active", i === selectedSuggestion));
+      }
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      if (selectedSuggestion >= 0 && items[selectedSuggestion]) {
+        const name = items[selectedSuggestion].dataset.name;
+        document.getElementById("searchInput").value = name;
+        ul.innerHTML = "";
+        performSearch(name);
+      } else {
+        ul.innerHTML = "";
+        performSearch(input.value.trim());
+      }
+    }
+  });
+
     if (e.key === "Enter") {
       e.preventDefault();
       const query = input.value.trim();
