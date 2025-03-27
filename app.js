@@ -1,176 +1,133 @@
-// Constants for DOM elements
-const DOM = {
-  searchInput: document.getElementById("searchInput"),
-  suggestions: document.getElementById("suggestions"),
-  toolbar: document.getElementById("toolbar"),
-  industryFilter: document.getElementById("industryFilter"),
-  categoryFilter: document.getElementById("categoryFilter"),
-  propertyFilter: document.getElementById("propertyFilter"),
-  results: document.getElementById("results"),
-};
 
-// State
 let indexData = [];
 let fuse;
 
-// Load index data with error handling
 async function loadIndex() {
-  try {
-    const res = await fetch("data/materials-index.json");
-    if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
-    indexData = await res.json();
+  const res = await fetch("data/materials-index.json");
+  indexData = await res.json();
 
-    fuse = new Fuse(indexData, {
-      keys: ["name", "formula", "synonyms"],
-      threshold: 0.3,
-      includeScore: true,
-    });
-
-    updateFilters(indexData);
-  } catch (error) {
-    console.error("Failed to load index:", error);
-    DOM.results.innerHTML = "<p>Error loading materials. Please try again later.</p>";
-  }
-}
-
-// Update filter dropdowns
-function updateFilters(materials) {
-  const getUnique = (arr) => [...new Set(arr)].sort();
-  const industries = getUnique(
-    materials.flatMap((m) => (m.tags || []).filter((t) => t.startsWith("industry:")).map((t) => t.replace("industry:", "")))
-  );
-  const categories = getUnique(materials.map((m) => m.category));
-  const tags = getUnique(materials.flatMap((m) => (m.tags || []).filter((t) => !t.startsWith("industry:"))));
-
-  const fillSelect = (select, items) => {
-    select.innerHTML = "<option value=''>All</option>" + items.map((item) => `<option value="${item}">${item}</option>`).join("");
-  };
-
-  fillSelect(DOM.industryFilter, industries);
-  fillSelect(DOM.categoryFilter, categories);
-  fillSelect(DOM.propertyFilter, tags);
-}
-
-// Fetch materials by file
-async function loadMaterialsByFiles(files) {
-  const uniqueFiles = [...new Set(files)];
-  const promises = uniqueFiles.map(async (file) => {
-    const res = await fetch(`data/${file}`);
-    if (!res.ok) throw new Error(`Failed to load ${file}`);
-    return res.json();
+  fuse = new Fuse(indexData, {
+    keys: ["name", "formula", "synonyms"],
+    threshold: 0.3,
+    includeScore: true,
   });
-  return (await Promise.all(promises)).flat();
+
+  updateFilters(indexData);
 }
 
-// Perform search with filters
-function performSearch(query) {
-  const filters = {
-    industry: DOM.industryFilter.value,
-    category: DOM.categoryFilter.value,
-    tag: DOM.propertyFilter.value,
-  };
+function updateFilters(materials) {
+  const industrySelect = document.getElementById("industryFilter");
+  const categorySelect = document.getElementById("categoryFilter");
+  const propertySelect = document.getElementById("propertyFilter");
 
-  DOM.toolbar.classList.toggle("active", !!query);
-  DOM.suggestions.innerHTML = "";
+  const industries = [...new Set(materials.flatMap(m => (m.tags || []).filter(t => t.startsWith("industry:")).map(t => t.replace("industry:", ""))))];
+  const categories = [...new Set(materials.map(m => m.category))];
+  const tags = [...new Set(materials.flatMap(m => m.tags || []).filter(t => !t.startsWith("industry:")))];
 
-  if (!query) {
-    render([]);
-    return;
+  function fill(sel, items) {
+    sel.innerHTML = "<option value=''>All</option>" + items.map(i => `<option>${i}</option>`).join("");
   }
 
-  let results = fuse.search(query).map((x) => x.item);
-  results = results.filter(
-    (m) =>
-      (!filters.industry || m.tags.includes(`industry:${filters.industry}`)) &&
-      (!filters.category || m.category === filters.category) &&
-      (!filters.tag || m.tags.includes(filters.tag))
+  fill(industrySelect, industries);
+  fill(categorySelect, categories);
+  fill(propertySelect, tags);
+}
+
+async function loadMaterialsByFiles(files) {
+  const all = {};
+  for (const file of new Set(files)) {
+    if (!all[file]) {
+      const res = await fetch("data/" + file);
+      all[file] = await res.json();
+    }
+  }
+  return Object.values(all).flat();
+}
+
+function performSearch(query) {
+  const industry = document.getElementById("industryFilter").value;
+  const category = document.getElementById("categoryFilter").value;
+  const tag = document.getElementById("propertyFilter").value;
+  document.getElementById("toolbar").style.display = query ? "flex" : "none";
+
+  let results = fuse.search(query).map(x => x.item);
+
+  results = results.filter(m =>
+    (!industry || m.tags.includes("industry:" + industry)) &&
+    (!category || m.category === category) &&
+    (!tag || m.tags.includes(tag))
   );
 
-  if (!results.length) {
-    render([]);
-    return;
-  }
+  if (!results.length) return render([]);
 
-  const neededFiles = [...new Set(results.map((m) => m.file))];
-  loadMaterialsByFiles(neededFiles)
-    .then((allMaterials) => {
-      const shown = allMaterials.filter((m) => results.some((r) => r.name === m.name));
-      render(shown);
-    })
-    .catch((error) => {
-      console.error("Failed to load materials:", error);
-      DOM.results.innerHTML = "<p>Error loading materials.</p>";
-    });
+  const neededFiles = [...new Set(results.map(m => m.file))];
+  loadMaterialsByFiles(neededFiles).then(allMaterials => {
+    const shown = allMaterials.filter(m => results.find(r => r.name === m.name));
+    render(shown);
+  });
 }
 
-// Render results
 function render(materials) {
-  DOM.results.innerHTML = materials.length
-    ? materials
-        .map(
-          (m) => `
-          <div class="material-card">
-            <h2>${m.name}</h2>
-            <p><strong>Formula:</strong> ${m.formula || "N/A"}</p>
-            <p><strong>Category:</strong> ${m.category || "N/A"}</p>
-            <div class="tags">${(m.tags || []).map((t) => `<span class="tag">${t}</span>`).join("")}</div>
-          </div>
-        `
-        )
-        .join("")
-    : "<p>No materials found.</p>";
-}
-
-// Show suggestions with debouncing
-function showSuggestions(query) {
-  if (!query) {
-    DOM.suggestions.innerHTML = "";
+  const out = document.getElementById("results");
+  out.innerHTML = "";
+  if (!materials.length) {
+    out.innerHTML = "<p>No materials found.</p>";
     return;
   }
-  const suggestions = fuse.search(query, { limit: 8 }).map((x) => x.item.name);
-  DOM.suggestions.innerHTML = suggestions
-    .map(
-      (name) => `
-        <li tabindex="0" onclick="selectSuggestion('${name}')">${name}</li>
-      `
-    )
-    .join("");
+
+  for (const m of materials) {
+    const el = document.createElement("div");
+    el.className = "material-card";
+    el.innerHTML = `
+      <h2>${m.name}</h2>
+      <p><strong>Formula:</strong> ${m.formula}</p>
+      <p><strong>Category:</strong> ${m.category}</p>
+      <div class="tags">${(m.tags || []).map(t => `<span class='tag'>${t}</span>`).join("")}</div>
+    `;
+    out.appendChild(el);
+  }
 }
 
-// Handle suggestion selection
-function selectSuggestion(name) {
-  DOM.searchInput.value = name;
-  DOM.suggestions.innerHTML = "";
-  performSearch(name);
+function showSuggestions(query) {
+  const suggestions = fuse.search(query, { limit: 8 }).map(x => x.item.name);
+  const ul = document.getElementById("suggestions");
+  ul.innerHTML = "";
+  suggestions.forEach(name => {
+    const li = document.createElement("li");
+    li.textContent = name;
+    li.onclick = () => {
+      document.getElementById("searchInput").value = name;
+      ul.innerHTML = "";
+      performSearch(name);
+    };
+    ul.appendChild(li);
+  });
 }
 
-// Debounce utility
-function debounce(fn, delay) {
-  let timeout;
-  return (...args) => {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => fn(...args), delay);
-  };
-}
-
-// Event Listeners
 document.addEventListener("DOMContentLoaded", () => {
   loadIndex();
+  const input = document.getElementById("searchInput");
 
-  const debouncedSuggestions = debounce((query) => showSuggestions(query), 200);
+  input.addEventListener("input", () => {
+    const q = input.value.trim();
+    const ul = document.getElementById("suggestions");
+    if (!q) {
+      ul.innerHTML = "";
+      return;
+    }
+    showSuggestions(q);
+  });
 
-  DOM.searchInput.addEventListener("input", () => debouncedSuggestions(DOM.searchInput.value.trim()));
-  DOM.searchInput.addEventListener("keydown", (e) => {
+  input.addEventListener("keydown", e => {
     if (e.key === "Enter") {
       e.preventDefault();
-      performSearch(DOM.searchInput.value.trim());
+      const query = input.value.trim();
+      document.getElementById("suggestions").innerHTML = "";
+      performSearch(query);
     }
   });
 
-  DOM.headerTitle = document.querySelector(".header-title");
-  DOM.headerTitle.addEventListener("click", () => window.location.reload());
-
-  [DOM.industryFilter, DOM.categoryFilter, DOM.propertyFilter].forEach((filter) =>
-    filter.addEventListener("change", () => performSearch(DOM.searchInput.value.trim()))
-  );
+  document.getElementById("industryFilter").addEventListener("change", () => performSearch(input.value.trim()));
+  document.getElementById("categoryFilter").addEventListener("change", () => performSearch(input.value.trim()));
+  document.getElementById("propertyFilter").addEventListener("change", () => performSearch(input.value.trim()));
 });
