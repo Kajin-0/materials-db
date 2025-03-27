@@ -62,7 +62,6 @@ header {
   background: #cce4ff;
 }
 
-.toolbar {
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
@@ -70,11 +69,9 @@ header {
   padding: 1rem;
   background: #f0f0f0;
 }
-.filter-group label {
   margin-right: 0.4rem;
   font-weight: bold;
 }
-.filter-group select {
   padding: 0.4rem;
   font-size: 0.95rem;
 }
