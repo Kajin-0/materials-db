@@ -67,3 +67,8 @@ header input:focus {
   outline: none;
   border: 2px solid #004a99;
 }
+
+
+#suggestions li {
+  color: black; /* Ensure dropdown text is visible */
+}
