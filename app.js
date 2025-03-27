@@ -10,6 +10,7 @@ async function loadIndex() {
     keys: ["name", "formula", "synonyms"],
     threshold: 0.3,
     includeScore: true,
+  includeMatches: true,
   });
 
   updateFilters(indexData);
