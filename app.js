@@ -131,3 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("categoryFilter").addEventListener("change", () => performSearch(input.value.trim()));
   document.getElementById("propertyFilter").addEventListener("change", () => performSearch(input.value.trim()));
 });
+
+if (results.innerHTML.trim() === '') {
+  results.innerHTML = '<div class="no-results">No matching materials found.</div>';
+}

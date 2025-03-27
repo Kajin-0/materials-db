@@ -106,3 +106,28 @@ main {
   font-size: 0.8rem;
   cursor: pointer;
 }
+
+
+.material-card .tag:hover {
+  background: #339dff;
+}
+
+.tag-active {
+  background: #004a99;
+}
+
+.no-results {
+  text-align: center;
+  color: #888;
+  font-style: italic;
+  margin-top: 2rem;
+}
+
+@media (max-width: 600px) {
+  .material-card {
+    margin: 0.5rem;
+  }
+  #search-container input {
+    width: 95%;
+  }
+}
