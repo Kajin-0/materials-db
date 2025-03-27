@@ -1,4 +1,7 @@
-<pre><code>// Global variables
+<pre><code>
+// Force redeploy test
+  
+// Global variables
 let allMaterialsData = []; // Holds combined data
 let fuse; // Fuse.js instance
 
