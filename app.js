@@ -1,119 +1,174 @@
 <pre><code>// Global variables
-let allMaterialsData = []; // Will hold combined data from all source files
+let allMaterialsData = []; // Holds combined data
 let fuse; // Fuse.js instance
 
-// Function to fetch and parse a single JSON file
+// --- Core Data Loading ---
+
+// Fetches and parses a single JSON file
 async function fetchJson(url) {
+console.log(`Attempting to fetch: ${url}`);
 try {
 const response = await fetch(url);
 if (!response.ok) {
-// Log specific errors for 404s which are expected if a listed file doesn't exist yet
 if (response.status === 404) {
-console.warn(`Source file not found (expected if not yet created): ${url}`);
+// This is expected for files not yet created, log as warning
+console.warn(`Source file not found (404): ${url}`);
 } else {
-console.error(`Failed to fetch ${url}: ${response.status} ${response.statusText}`);
+// Log other fetch errors more prominently
+console.error(`Fetch Error for ${url}: ${response.status} ${response.statusText}`);
 }
-return null; // Return null for failed fetches or 404s
+return null; // Indicate failure
 }
-return await response.json();
-} catch (error) {
-console.error(`Error fetching or parsing ${url}:`, error);
-return null; // Return null on other errors
+// Try parsing JSON
+try {
+const data = await response.json();
+// **Crucial Check:** Ensure the data from source files is an array
+if (!Array.isArray(data)) {
+console.error(`Data format error: Content of ${url} is not a JSON array.`);
+return null; // Treat non-array content as an error
+}
+console.log(`Successfully fetched and parsed: ${url}`);
+return data;
+} catch (parseError) {
+console.error(`JSON Parse Error in ${url}:`, parseError);
+return null; // Indicate failure due to parsing error
+}
+} catch (networkError) {
+console.error(`Network Error fetching ${url}:`, networkError);
+return null; // Indicate failure
 }
 }
 
-// Function to load the index, then all source files, and initialize
+// Loads index, fetches all sources, initializes Fuse.js and UI
 async function initializeDatabase() {
 const resultsContainer = document.getElementById("results");
-resultsContainer.innerHTML = '<p style="text-align: center; color: #999;">Loading material index...</p>';
+updateLoadingMessage("Loading material index...");
+console.log("Initializing database...");
 
-// 1. Fetch the index file containing the list of source filenames
 const indexData = await fetchJson('./data/materials-index.json');
 
-// Validate the index file structure
 if (!indexData || !indexData.sources || !Array.isArray(indexData.sources)) {
-console.error("Invalid or missing materials-index.json structure. Expected { \"sources\": [...] }");
-resultsContainer.innerHTML = '<p style="color: red; text-align: center;">Error: Could not load material sources index. Check console (F12) and index file format.</p>';
+console.error("Failed to load or invalid format: ./data/materials-index.json. Expected { \"sources\": [...] }");
+updateLoadingMessage("Error: Could not load material index. Check console (F12).", true);
+disableFilters();
 return;
 }
 
-resultsContainer.innerHTML = '<p style="text-align: center; color: #999;">Loading material data files...</p>';
-console.log("Index loaded. Sources to fetch:", indexData.sources);
+updateLoadingMessage(`Loading ${indexData.sources.length} source files...`);
+console.log("Index loaded. Sources:", indexData.sources);
 
-// 2. Create promises for fetching all source files listed in the index
-const fetchPromises = indexData.sources.map(sourceFile => {
-// Basic validation of filename format
-if (typeof sourceFile !== 'string' || !sourceFile.endsWith('.json')) {
-console.warn(`Invalid source file entry in index: ${sourceFile}`);
-return Promise.resolve(null); // Resolve immediately as null for invalid entries
+const fetchPromises = indexData.sources
+.filter(sourceFile => typeof sourceFile === 'string' && sourceFile.endsWith('.json')) // Ensure valid entries
+.map(sourceFile => fetchJson(`./data/${sourceFile}`));
+
+if (fetchPromises.length !== indexData.sources.length) {
+console.warn("Some entries in materials-index.json sources were invalid filenames.");
 }
-return fetchJson(`./data/${sourceFile}`);
-});
 
+if (fetchPromises.length === 0) {
+console.error("No valid source files listed in materials-index.json.");
+updateLoadingMessage("Error: No valid source files found in index. Check console (F12).", true);
+disableFilters();
+return;
+}
 
 try {
-// 3. Wait for all source files to be fetched concurrently
 const results = await Promise.all(fetchPromises);
 
-// 4. Combine data from all successfully fetched files into one array
-// Filter out null results (failed fetches/404s) and flatten the arrays
-allMaterialsData = results.flat().filter(material => material !== null);
+// Combine valid results (which should all be arrays)
+// Filter out nulls (fetch/parse errors) before flattening
+allMaterialsData = results.filter(data => data !== null).flat();
+
+console.log(`Total materials loaded after filtering and flattening: ${allMaterialsData.length}`);
 
 if (allMaterialsData.length === 0) {
-console.error("No material data successfully loaded from any source files listed in index.");
-resultsContainer.innerHTML = '<p style="color: red; text-align: center;">Error: No material data could be loaded. Check source files exist and are valid JSON. Check console (F12).</p>';
-// Keep filters disabled or show an error state
+console.error("Failed to load any valid material data from source files.");
+updateLoadingMessage("Error: No material data loaded. Check source files and console (F12).", true);
 disableFilters();
 return;
 }
 
-console.log(`Successfully loaded ${allMaterialsData.length} material entries from all sources.`);
+updateLoadingMessage("Initializing search index...");
 
-// 5. Initialize Fuse.js with the combined data
+// Initialize Fuse.js
+try {
 fuse = new Fuse(allMaterialsData, {
-keys: ["name", "formula", "synonyms", "tags"], // Include tags in search keys
-threshold: 0.3, // Adjust sensitivity
+keys: ["name", "formula", "synonyms", "tags"],
+threshold: 0.3,
 includeScore: true,
-// Add other Fuse options if needed
+ignoreLocation: true, // Useful for keyword matching across fields
 });
-console.log("Fuse.js initialized.");
+console.log("Fuse.js initialized successfully.");
+} catch (fuseError) {
+console.error("Error initializing Fuse.js:", fuseError);
+updateLoadingMessage("Error: Failed to initialize search index. Check console (F12).", true);
+disableFilters();
+return;
+}
 
-// 6. Populate filter dropdowns based on the loaded data
+
+updateLoadingMessage("Updating filters...");
+// Populate filters
 updateFilters(allMaterialsData);
 
-// 7. Perform an initial empty search to clear loading message or show all results
+updateLoadingMessage(""); // Clear loading message
+// Perform initial display (e.g., show all or prompt)
 performSearch("");
+console.log("Database initialization complete.");
 
 } catch (error) {
-// Catch errors from Promise.all or subsequent processing
-console.error("Error processing source files or initializing Fuse/Filters:", error);
-resultsContainer.innerHTML = '<p style="color: red; text-align: center;">Error loading or processing material data. Check console (F12).</p>';
+// Catch potential errors from Promise.all itself, though individual errors are handled in fetchJson
+console.error("Unexpected error during source file processing:", error);
+updateLoadingMessage("Error: Failed to process material data. Check console (F12).", true);
 disableFilters();
 }
 }
 
-// Function to disable filter dropdowns on error
+// --- UI and Filtering ---
+
+// Updates loading message in the results area
+function updateLoadingMessage(message, isError = false) {
+const resultsContainer = document.getElementById("results");
+if (message) {
+resultsContainer.innerHTML = `<p style="text-align: center; color: ${isError ? 'red' : '#777'};">${message}</p>`;
+} else {
+// Clear message only if it's not an error, otherwise leave error showing
+if (!resultsContainer.querySelector('p[style*="color: red"]')) {
+resultsContainer.innerHTML = '';
+}
+}
+}
+
+// Disables filter dropdowns
 function disableFilters() {
+try {
 document.getElementById("industryFilter").disabled = true;
 document.getElementById("categoryFilter").disabled = true;
 document.getElementById("propertyFilter").disabled = true;
+console.log("Filters disabled due to error.");
+} catch (e) { console.error("Error disabling filters:", e); }
 }
 
 
-// Function to populate filter dropdowns
+// Populates filter dropdowns
 function updateFilters(materials) {
+try {
 const industrySelect = document.getElementById("industryFilter");
 const categorySelect = document.getElementById("categoryFilter");
 const propertySelect = document.getElementById("propertyFilter");
 
-// Enable filters now that data is loaded
+// Ensure elements exist before proceeding
+if (!industrySelect || !categorySelect || !propertySelect) {
+console.error("Filter select elements not found in the DOM.");
+return;
+}
+
 industrySelect.disabled = false;
 categorySelect.disabled = false;
 propertySelect.disabled = false;
 
-// Extract unique, sorted values
 const industries = [...new Set(materials.flatMap(m => (m.tags || []).filter(t => typeof t === 'string' && t.startsWith("industry:")).map(t => t.replace("industry:", ""))))].sort();
-const categories = [...new Set(materials.map(m => m.category).filter(Boolean))].sort(); // Filter out null/undefined
+const categories = [...new Set(materials.map(m => m.category).filter(Boolean))].sort();
 const tags = [...new Set(materials.flatMap(m => (m.tags || []).filter(t => typeof t === 'string' && !t.startsWith("industry:"))))].sort();
 
 function fill(sel, items) {
@@ -124,79 +179,101 @@ fill(industrySelect, industries);
 fill(categorySelect, categories);
 fill(propertySelect, tags);
 console.log("Filters updated and enabled.");
+} catch (error) {
+console.error("Error updating filters:", error);
+updateLoadingMessage("Error: Failed to update filters. Check console (F12).", true);
+disableFilters();
+}
 }
 
-// Function to perform search and filtering
+// Performs search and filtering
 function performSearch(query) {
-console.log(`Performing search for query: "${query}"`);
+console.log(`Performing search. Query: "${query}"`);
 const resultsContainer = document.getElementById("results");
 
-// Handle case where initialization hasn't finished
+// Explicit check if Fuse is ready
 if (!fuse) {
-console.warn("Fuse.js not initialized yet. Search aborted.");
-// Keep the loading message or show a specific "not ready" message
-if (!resultsContainer.querySelector('p[style*="color: red"]')) { // Avoid overwriting error messages
-resultsContainer.innerHTML = '<p style="text-align: center; color: #999;">Database is loading, please wait...</p>';
+console.warn("Search called before Fuse.js was initialized.");
+// Do not overwrite critical error messages
+if (!resultsContainer.querySelector('p[style*="color: red"]')) {
+updateLoadingMessage("Database loading, please wait...", false);
 }
 return;
 }
 
-// Get filter values
-const industry = document.getElementById("industryFilter").value;
-const category = document.getElementById("categoryFilter").value;
-const tag = document.getElementById("propertyFilter").value;
+// Get filter values (ensure elements exist)
+const industryFilter = document.getElementById("industryFilter");
+const categoryFilter = document.getElementById("categoryFilter");
+const propertyFilter = document.getElementById("propertyFilter");
+const industry = industryFilter ? industryFilter.value : "";
+const category = categoryFilter ? categoryFilter.value : "";
+const tag = propertyFilter ? propertyFilter.value : "";
 
-// Toggle toolbar visibility
+// Toggle toolbar
 const toolbar = document.getElementById("toolbar");
+if (toolbar) {
 toolbar.classList.toggle("active", query.trim() !== "" || industry || category || tag);
-
-// --- Filtering Logic ---
-let results = [];
-
-// 1. Start with all data if query is empty, otherwise perform Fuse search
-if (query.trim() === "") {
-results = allMaterialsData;
-} else {
-results = fuse.search(query).map(x => x.item);
 }
 
-// 2. Apply filters sequentially
+
+let results = [];
+// Execute search or use all data
+if (query.trim() === "") {
+results = allMaterialsData;
+console.log(`Query empty, starting with ${results.length} total materials.`);
+} else {
+console.log(`Executing Fuse search for "${query}"...`);
+const fuseResults = fuse.search(query);
+results = fuseResults.map(x => x.item);
+console.log(`Fuse search returned ${results.length} initial matches.`);
+}
+
+// Apply filters
+const initialCount = results.length;
 if (industry) {
-results = results.filter(m => m.tags && m.tags.includes("industry:" + industry));
+results = results.filter(m => m.tags && Array.isArray(m.tags) && m.tags.includes("industry:" + industry));
+console.log(`After industry filter ('${industry}'): ${results.length} materials remaining.`);
 }
 if (category) {
 results = results.filter(m => m.category === category);
+console.log(`After category filter ('${category}'): ${results.length} materials remaining.`);
 }
 if (tag) {
-results = results.filter(m => m.tags && m.tags.includes(tag));
+results = results.filter(m => m.tags && Array.isArray(m.tags) && m.tags.includes(tag));
+console.log(`After tag filter ('${tag}'): ${results.length} materials remaining.`);
 }
-// --- End Filtering Logic ---
-
-
-console.log(`Found ${results.length} materials matching criteria.`);
-render(results); // Render the final filtered list
+if (industry || category || tag) {
+console.log(`Filtering reduced results from ${initialCount} to ${results.length}.`);
 }
 
-// Function to render the material cards
+
+render(results); // Render the final list
+}
+
+// Renders material cards
 function render(materials) {
 const out = document.getElementById("results");
-out.innerHTML = ""; // Clear previous results or messages
+if (!out) {
+console.error("Results container (#results) not found.");
+return;
+}
+out.innerHTML = ""; // Clear previous
 
 if (!materials || materials.length === 0) {
-// CSS :empty::after will handle the "No materials found" message
 console.log("Render: No materials to display.");
+// CSS :empty::after handles the message
 return;
 }
 
-// Create and append cards
+console.log(`Render: Displaying ${materials.length} material cards.`);
+// Use DocumentFragment for potential performance boost with many items
+const fragment = document.createDocumentFragment();
 for (const m of materials) {
 const el = document.createElement("div");
 el.className = "material-card";
-// Add checks for potentially missing fields
 const name = m.name || 'Unnamed Material';
 const formula = m.formula || 'N/A';
 const category = m.category || 'N/A';
-// Ensure tags is an array and elements are strings before mapping
 const tagsHtml = Array.isArray(m.tags)
 ? m.tags.filter(t => typeof t === 'string').map(t => `<span class='tag'>${t}</span>`).join(" ")
 : '';
@@ -207,126 +284,151 @@ el.innerHTML = `
 <p><strong>Category:</strong> ${category}</p>
 <div class="tags">${tagsHtml}</div>
 `;
-out.appendChild(el);
+fragment.appendChild(el);
 }
+out.appendChild(fragment); // Append all cards at once
 }
 
-// Function to show search suggestions
+// Shows search suggestions
 function showSuggestions(query) {
 const ul = document.getElementById("suggestions");
+if (!ul) return; // Element check
 ul.innerHTML = "";
 
 if (!fuse) {
-return; // Fuse not ready
+console.warn("Suggestions requested before Fuse was ready.");
+return;
 }
 
-// Get suggestions from Fuse.js based on the combined data
+try {
 const results = fuse.search(query, { limit: 8 });
-const suggestionItems = results.map(x => x.item); // Get the full item for potential use
+const suggestionItems = results.map(x => x.item);
 
 if (suggestionItems.length > 0) {
 suggestionItems.forEach(item => {
+if (!item || !item.name) return; // Skip if item or name is invalid
 const li = document.createElement("li");
-li.textContent = item.name || 'Unnamed'; // Use name for suggestion text
+li.textContent = item.name;
 li.addEventListener("mousedown", (e) => {
-e.preventDefault(); // Prevent input blur messing with click
-document.getElementById("searchInput").value = item.name || '';
-ul.innerHTML = ""; // Hide suggestions
-performSearch(item.name || ''); // Perform search with selected name
+e.preventDefault();
+const searchInput = document.getElementById("searchInput");
+if(searchInput) searchInput.value = item.name;
+ul.innerHTML = "";
+performSearch(item.name);
 });
 ul.appendChild(li);
 });
 }
-// No "No suggestions" message needed, empty list is sufficient
+} catch (error) {
+console.error("Error during suggestion generation:", error);
+}
 }
 
 // --- Event Listeners Setup ---
 document.addEventListener("DOMContentLoaded", () => {
-console.log("DOM fully loaded.");
-initializeDatabase(); // Start loading data and initializing
+console.log("DOM fully loaded. Initializing...");
+initializeDatabase(); // Start the process
 
+// Get elements (check for existence)
 const searchInput = document.getElementById("searchInput");
 const suggestionsList = document.getElementById("suggestions");
+const resultsContainer = document.getElementById("results");
+const industryFilter = document.getElementById("industryFilter");
+const categoryFilter = document.getElementById("categoryFilter");
+const propertyFilter = document.getElementById("propertyFilter");
 
-// Input event for search
+if (!searchInput || !suggestionsList || !resultsContainer || !industryFilter || !categoryFilter || !propertyFilter) {
+console.error("One or more essential DOM elements are missing. Check HTML IDs.");
+updateLoadingMessage("Error: Page structure incorrect. Cannot initialize.", true);
+return; // Stop initialization if elements are missing
+}
+
+
+// Search input
 searchInput.addEventListener("input", () => {
 const query = searchInput.value.trim();
 if (query) {
 showSuggestions(query);
 } else {
-suggestionsList.innerHTML = ""; // Clear suggestions
-performSearch(""); // Show all/filtered results when input is cleared
+suggestionsList.innerHTML = "";
+performSearch(""); // Reset on clear
 }
 });
 
-// Enter key for search
+// Enter key
 searchInput.addEventListener("keydown", e => {
 if (e.key === "Enter") {
 e.preventDefault();
 const query = searchInput.value.trim();
-suggestionsList.innerHTML = ""; // Hide suggestions
+suggestionsList.innerHTML = "";
 performSearch(query);
 }
 });
 
-// Hide suggestions on blur (with delay)
+// Blur hides suggestions
 searchInput.addEventListener("blur", () => {
 setTimeout(() => {
-if (document.activeElement !== searchInput) { // Only hide if focus isn't back on input
+// Check if focus has moved to a suggestion - this is hard, mousedown is better
+if (document.activeElement !== searchInput) {
 suggestionsList.innerHTML = "";
 }
 }, 150);
 });
 
-// Show suggestions on focus if there's text
+// Focus shows suggestions if text exists
 searchInput.addEventListener("focus", () => {
 if (searchInput.value.trim()) {
 showSuggestions(searchInput.value.trim());
 }
 });
 
-// Filters trigger search
-document.getElementById("industryFilter").addEventListener("change", () => performSearch(searchInput.value.trim()));
-document.getElementById("categoryFilter").addEventListener("change", () => performSearch(searchInput.value.trim()));
-document.getElementById("propertyFilter").addEventListener("change", () => performSearch(searchInput.value.trim()));
 
-// Tag clicking in results
-document.getElementById("results").addEventListener("click", (event) => {
+// Filters trigger search
+industryFilter.addEventListener("change", () => performSearch(searchInput.value.trim()));
+categoryFilter.addEventListener("change", () => performSearch(searchInput.value.trim()));
+propertyFilter.addEventListener("change", () => performSearch(searchInput.value.trim()));
+
+// Tag clicking in results (delegated)
+resultsContainer.addEventListener("click", (event) => {
 if (event.target.classList.contains("tag")) {
 const clickedTag = event.target.textContent;
 console.log("Tag clicked:", clickedTag);
 
 const industryPrefix = "industry:";
-const industryFilter = document.getElementById("industryFilter");
-const propertyFilter = document.getElementById("propertyFilter");
+let searchTriggered = false;
 
 if (clickedTag.startsWith(industryPrefix)) {
 const industry = clickedTag.substring(industryPrefix.length);
-// Check if option exists before setting
 if ([...industryFilter.options].some(opt => opt.value === industry)) {
+if (industryFilter.value !== industry) {
 industryFilter.value = industry;
-} else {
-console.warn(`Industry filter option not found for: ${industry}`);
+searchTriggered = true;
 }
-propertyFilter.value = ""; // Clear other tag filter
+if (propertyFilter.value !== "") {
+propertyFilter.value = "";
+searchTriggered = true;
+}
+} else { console.warn(`Industry filter option not found: ${industry}`); }
 } else {
-// Check if option exists before setting
 if ([...propertyFilter.options].some(opt => opt.value === clickedTag)) {
+if (propertyFilter.value !== clickedTag) {
 propertyFilter.value = clickedTag;
-} else {
-console.warn(`Property filter option not found for: ${clickedTag}`);
+searchTriggered = true;
 }
-industryFilter.value = ""; // Clear industry filter
+if (industryFilter.value !== "") {
+industryFilter.value = "";
+searchTriggered = true;
 }
-// Optionally clear category
-// document.getElementById("categoryFilter").value = "";
+} else { console.warn(`Property filter option not found: ${clickedTag}`); }
+}
 
-// Optionally clear search input
+// Only perform search if a filter value actually changed
+if (searchTriggered) {
+// Optionally clear search input:
 // searchInput.value = "";
-
-performSearch(searchInput.value.trim()); // Re-run search with new filter
+performSearch(searchInput.value.trim());
+}
 }
 });
 });
-
 </code></pre>
