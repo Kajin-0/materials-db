@@ -1,4 +1,3 @@
-<pre><code>
 // Force redeploy test
   
 // Global variables
@@ -434,4 +433,3 @@ performSearch(searchInput.value.trim());
 }
 });
 });
-</code></pre>
