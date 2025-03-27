@@ -1,53 +1,58 @@
-<!DOCTYPE html>
+<pre><code><!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>MaterialsDB</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="style.css" />
-  <link rel="icon" href="data:;base64,iVBORw0KGgo=" />
+<meta charset="UTF-8" />
+<title>MaterialsDB</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!-- Link the CSS file -->
+<link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
 <header>
-  <h1 onclick="window.location.reload()" title="Reload MaterialsDB">MaterialsDB</h1>
+<!-- Reloads the page on click, effectively resetting the search -->
+<h1 onclick="window.location.reload()" title="Reload MaterialsDB">MaterialsDB</h1>
 </header>
 
+<!-- Container for search input and suggestions list -->
 <div id="search-container">
-  <input id="searchInput" type="text" placeholder="Search materials by name, formula, tag..." autocomplete="off" />
-  <ul id="suggestions"></ul>
+<input id="searchInput" type="text" placeholder="Search materials by name, formula, tag..." autocomplete="off" />
+<!-- Suggestions will be populated here by JS -->
+<ul id="suggestions"></ul>
 </div>
 
+<!-- Toolbar section for filtering results -->
 <section class="toolbar" id="toolbar">
-  <div class="filter-group">
-    <label for="industryFilter">Industry:</label>
-    <select id="industryFilter">
-      <option value="">Loading...</option>
-    </select>
-  </div>
-  <div class="filter-group">
-    <label for="categoryFilter">Category:</label>
-    <select id="categoryFilter">
-      <option value="">Loading...</option>
-    </select>
-  </div>
-  <div class="filter-group">
-    <label for="propertyFilter">Tag:</label>
-    <select id="propertyFilter">
-      <option value="">Loading...</option>
-    </select>
-  </div>
+<div class="filter-group">
+<label for="industryFilter">Industry:</label>
+<select id="industryFilter">
+<option value="">Loading...</option> <!-- Placeholder until JS loads -->
+</select>
+</div>
+<div class="filter-group">
+<label for="categoryFilter">Category:</label>
+<select id="categoryFilter">
+<option value="">Loading...</option> <!-- Placeholder until JS loads -->
+</select>
+</div>
+<div class="filter-group">
+<label for="propertyFilter">Tag:</label>
+<select id="propertyFilter">
+<option value="">Loading...</option> <!-- Placeholder until JS loads -->
+</select>
+</div>
 </section>
 
+<!-- Main content area where results are rendered -->
 <main id="results">
-  <p style="text-align: center; color: #999;">Loading initial data...</p>
+<!-- Results will be populated here by JS -->
+<p style="text-align: center; color: #999;">Loading initial data...</p> <!-- Initial loading message -->
 </main>
 
-<!-- Fuzzy search library -->
+<!-- Load Fuse.js library from CDN -->
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
-
-<!-- ✅ Confirmed correct: this file must exist in the repo root -->
+<!-- Load the application's JavaScript logic -->
 <script src="app.js"></script>
-
 </body>
 </html>
+</code></pre>
