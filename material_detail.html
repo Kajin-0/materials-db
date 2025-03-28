@@ -1,157 +1,22 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gallium Arsenide (GaAs) - Material Detail</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      line-height: 1.6;
-      margin: 0;
-      padding: 0;
-      background-color: #f9f9f9;
-      color: #222;
-    }
-    header {
-      background: #007acc;
-      color: white;
-      padding: 1rem;
-      text-align: center;
-    }
-    main {
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: 1rem;
-      background: white;
-    }
-    h1 {
-      font-size: 2rem;
-      margin-bottom: 0.5rem;
-    }
-    .subhead {
-      color: #666;
-      margin-bottom: 1rem;
-    }
-    section {
-      margin-bottom: 2rem;
-    }
-    h2 {
-      border-bottom: 2px solid #007acc;
-      padding-bottom: 0.3rem;
-      margin-top: 2rem;
-    }
-    dl {
-      display: grid;
-      grid-template-columns: max-content 1fr;
-      row-gap: 0.5rem;
-      column-gap: 1rem;
-    }
-    dt {
-      font-weight: bold;
-    }
-    dd {
-      margin: 0;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 1rem;
-    }
-    th, td {
-      border: 1px solid #ccc;
-      padding: 0.5rem;
-    }
-    th {
-      background: #eee;
-    }
-    img {
-      max-width: 100%;
-      height: auto;
-      margin: 0.5rem 0;
-    }
-    .tag {
-      display: inline-block;
-      background: #007acc;
-      color: white;
-      padding: 0.2rem 0.6rem;
-      margin: 0.2rem;
-      border-radius: 4px;
-      font-size: 0.85rem;
-    }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Material Detail - MaterialsDB</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header>
-    <h1>Gallium Arsenide (GaAs)</h1>
-    <div class="subhead">III-V Semiconductor | Photonics | Electronics</div>
-  </header>
-
-  <main>
-    <section>
-      <h2>Description</h2>
-      <p>Gallium Arsenide (GaAs) is a III-V compound semiconductor with a direct bandgap, high electron mobility, and excellent optoelectronic properties. It is widely used in infrared LEDs, laser diodes, and high-frequency electronics.</p>
-    </section>
-
-    <section>
-      <h2>Identification</h2>
-      <dl>
-        <dt>Formula:</dt><dd>GaAs</dd>
-        <dt>Category:</dt><dd>Semiconductor</dd>
-        <dt>Material Class:</dt><dd>III-V</dd>
-        <dt>CAS Number:</dt><dd>1303-00-0</dd>
-        <dt>Synonyms:</dt><dd>Gallium Arsenide, GaAs</dd>
-      </dl>
-    </section>
-
-    <section>
-      <h2>Physical Properties</h2>
-      <dl>
-        <dt>Crystal System:</dt><dd>Cubic</dd>
-        <dt>Space Group:</dt><dd>F-43m</dd>
-        <dt>Lattice Constant (a):</dt><dd>5.653 Å</dd>
-        <dt>Density:</dt><dd>5.32 g/cm³</dd>
-        <dt>Appearance:</dt><dd>Grayish crystalline solid</dd>
-      </dl>
-    </section>
-
-    <section>
-      <h2>Thermal Properties</h2>
-      <dl>
-        <dt>Melting Point:</dt><dd>1238 °C</dd>
-        <dt>Thermal Conductivity:</dt><dd>55 W/m·K at 300K</dd>
-        <dt>Specific Heat:</dt><dd>0.35 J/g·K</dd>
-        <dt>Thermal Expansion:</dt><dd>5.73 ppm/K</dd>
-      </dl>
-    </section>
-
-    <section>
-      <h2>Electrical Properties</h2>
-      <dl>
-        <dt>Bandgap:</dt><dd>1.424 eV (Direct)</dd>
-        <dt>Electron Mobility:</dt><dd>8500 cm²/V·s</dd>
-        <dt>Hole Mobility:</dt><dd>400 cm²/V·s</dd>
-        <dt>Dielectric Constant:</dt><dd>12.9</dd>
-      </dl>
-    </section>
-
-    <section>
-      <h2>Applications & Tags</h2>
-      <div class="tag">photodiode</div>
-      <div class="tag">laser diode</div>
-      <div class="tag">CMOS compatible</div>
-      <div class="tag">infrared</div>
-      <div class="tag">direct bandgap</div>
-      <div class="tag">high mobility</div>
-    </section>
-
-    <section>
-      <h2>Images</h2>
-      <p>Crystal Structure:</p>
-      <img src="images/gaas-crystal.png" alt="GaAs Crystal Structure">
-      <p>Band Structure:</p>
-      <img src="images/gaas-band-structure.png" alt="GaAs Band Structure">
-    </section>
-  </main>
+  <div class="container">
+    <header class="detail-header">
+      <h1 id="material-name">Loading...</h1>
+      <div id="material-formula" class="formula"></div>
+    </header>
+    <main id="material-content">
+      <p style="text-align: center;">Loading material data...</p>
+    </main>
+  </div>
+  <script src="material_loader.js"></script>
 </body>
 </html>

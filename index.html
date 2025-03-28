@@ -4,48 +4,51 @@
   <meta charset="UTF-8" />
   <title>MaterialsDB</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Link the CSS file -->
   <link rel="stylesheet" href="style.css" />
   <!-- Optional: Placeholder favicon -->
   <link rel="icon" href="data:;base64,iVBORw0KGgo=">
 </head>
 <body>
 
-<header>
-  <!-- Ensure ID matches JS -->
-  <h1 id="logo" title="Reload MaterialsDB" style="cursor:pointer;">MaterialsDB</h1>
-</header>
+  <header>
+    <h1 onclick="window.location.reload()" title="Reload MaterialsDB" style="cursor:pointer;">MaterialsDB</h1>
+  </header>
 
-<div id="search-container">
-  <input id="searchInput" type="text" placeholder="Search materials by name, formula, tag..." autocomplete="off" />
-  <ul id="suggestions"></ul>
-</div>
-
-<!-- Toolbar: Populated by JS -->
-<section class="toolbar" id="toolbar"></section>
-
-<!-- Main content area -->
-<main>
-  <!-- Summary Div (Outside #results) -->
-  <div id="result-summary" style="text-align: center; margin-bottom: 1rem;">
-      <p style="color: #777;">Initializing...</p> <!-- Initial message -->
+  <div id="search-container">
+    <input id="searchInput" type="text" placeholder="Search materials by name, formula, tag..." autocomplete="off" />
+    <ul id="suggestions"></ul>
   </div>
 
-  <!-- Results Div -->
-  <div id="results">
-      <!-- Material cards will be added here by JS -->
-  </div>
-</main>
+  <section class="toolbar" id="toolbar">
+    <div class="filter-group">
+      <label for="industryFilter">Industry:</label>
+      <select id="industryFilter" disabled>
+        <option value="">Loading...</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label for="categoryFilter">Category:</label>
+      <select id="categoryFilter" disabled>
+        <option value="">Loading...</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label for="propertyFilter">Tag:</label>
+      <select id="propertyFilter" disabled>
+        <option value="">Loading...</option>
+      </select>
+    </div>
+  </section>
 
-<!-- Load Libraries & App Script -->
-<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+  <main id="results">
+    <p style="text-align: center; color: #999;">Initializing...</p> <!-- Simplified message -->
+  </main>
 
-<!-- === MODIFIED LINE === -->
-<!-- Load Taxonomy from the data folder BEFORE app.js -->
-<script src="data/tagTaxonomy.js"></script>
-<!-- ===================== -->
-
-<!-- Load App Logic -->
-<script src="app.js"></script>
+  <!-- Load Fuse.js library from CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+  <!-- Load the application's JavaScript logic (relative path) -->
+  <script src="app.js"></script>
 
 </body>
 </html>
