@@ -1,7 +1,7 @@
 // ============================================
 // Global Variables
 // ============================================
-let materials = []; // Holds combined data from all source files
+let materials = []; // Holds combined data
 let fuse; // Fuse.js instance
 
 // ============================================
@@ -14,26 +14,37 @@ async function fetchJson(url) {
   try {
     const response = await fetch(url);
     if (!response.ok) {
-      // Log errors but don't stop Promise.all unless critical
-      console.error(`Fetch Error for ${url}: ${response.status} ${response.statusText}`);
-      return null; // Indicate failure for this file
+      if (response.status === 404) {
+        console.warn(`Source file not found (404): ${url}`);
+      } else {
+        console.error(`Fetch Error for ${url}: ${response.status} ${response.statusText}`);
+      }
+      return null;
     }
     try {
-      const data = await response.json();
-      // Source files MUST be arrays
-      if (!Array.isArray(data)) {
-        console.error(`Data format error: ${url} MUST be a JSON array [...]. Received:`, data);
-        return null; // Indicate format error
-      }
-      console.log(`Successfully fetched and parsed: ${url}`);
-      return data; // Return valid array data
+        const data = await response.json();
+        // Check structure based on filename
+        if (url.endsWith('materials-index.json')) {
+             if (!data || typeof data !== 'object' || !Array.isArray(data.sources)) {
+                 console.error(`Data format error: ${url} MUST be an object like { "sources": [...] }. Received:`, data);
+                 return null;
+             }
+        } else {
+             if (!Array.isArray(data)) {
+                 console.error(`Data format error: ${url} MUST be a JSON array [...]. Received:`, data);
+                 return null;
+             }
+        }
+        console.log(`Successfully fetched and validated: ${url}`);
+        return data; // Return validated data
+
     } catch (parseError) {
-      console.error(`JSON Parse Error in ${url}:`, parseError);
-      return null; // Indicate parse error
+        console.error(`JSON Parse Error in ${url}:`, parseError);
+        return null;
     }
   } catch (networkError) {
     console.error(`Network Error fetching ${url}:`, networkError);
-    return null; // Indicate network error
+    return null;
   }
 }
 
@@ -44,7 +55,10 @@ function updateStatusMessage(message, isError = false) {
     if (message) {
         summaryElement.innerHTML = `<p style="text-align: center; color: ${isError ? 'red' : '#777'};">${message}</p>`;
     } else {
-        summaryElement.innerHTML = ''; // Clear message
+        // Clear message only if it wasn't an error message previously
+         if (!summaryElement.querySelector('p[style*="color: red"]')) {
+            summaryElement.innerHTML = '';
+         }
     }
 }
 
@@ -89,20 +103,19 @@ async function loadMaterials() {
 
   try {
       const results = await Promise.all(promises);
-      // Filter out null results (errors) before flattening
       const loadedMaterials = results.filter(data => data !== null).flat();
       console.log(`loadMaterials finished. ${loadedMaterials.length} entries loaded.`);
       if (loadedMaterials.length === 0) {
           updateStatusMessage("Error: No material data loaded successfully. Check console.", true);
       } else {
-          updateStatusMessage("Materials loaded."); // Update status
+          // Don't clear success message immediately, let next step do it
+          // updateStatusMessage("Materials loaded.");
       }
-      return loadedMaterials; // Return the combined array
+      return loadedMaterials;
   } catch (error) {
-      // Catch potential errors from Promise.all itself (less likely with fetchJson handling)
       console.error("Critical error during Promise.all in loadMaterials:", error);
       updateStatusMessage("Error: Failed to load material files. Check console.", true);
-      return []; // Return empty array on major failure
+      return [];
   }
 }
 
@@ -117,12 +130,12 @@ function initializeSearchIndex() {
   try {
       fuse = new Fuse(materials, {
         keys: ['name', 'formula', 'synonyms', 'tags'],
-        threshold: 0.3, // Adjust sensitivity as needed
+        threshold: 0.3,
         ignoreLocation: true,
-        includeScore: true // Often useful
+        includeScore: true
       });
       console.log("Fuse search index initialized successfully.");
-      updateStatusMessage("Search index ready.");
+      // updateStatusMessage("Search index ready."); // Let next step update
       return true;
   } catch (error) {
       console.error("Error initializing Fuse.js:", error);
@@ -135,16 +148,16 @@ function initializeSearchIndex() {
 function populateFilterOptions() {
   updateStatusMessage("Populating filters...");
   const toolbar = document.getElementById("toolbar");
-  const taxonomy = window.tagTaxonomy; // Assumes tagTaxonomy.js is loaded
+  const taxonomy = window.tagTaxonomy;
 
   if (!toolbar) { console.error("Toolbar element not found."); return false; }
   if (!taxonomy) { console.error("tagTaxonomy object not found. Ensure tagTaxonomy.js loaded correctly."); return false; }
 
-  toolbar.innerHTML = ""; // Clear any previous content
+  toolbar.innerHTML = "";
 
   try {
       for (const prefix in taxonomy) {
-        if (!Object.hasOwnProperty.call(taxonomy, prefix)) continue; // Skip inherited properties
+        if (!Object.hasOwnProperty.call(taxonomy, prefix)) continue;
 
         const group = taxonomy[prefix];
         if (!group || typeof group !== 'object' || !group.label || !Array.isArray(group.tags)) {
@@ -158,20 +171,20 @@ function populateFilterOptions() {
         const allOption = document.createElement("option"); allOption.value = ""; allOption.textContent = "All"; select.appendChild(allOption);
 
         group.tags.forEach(tag => {
-          if (typeof tag !== 'string') return; // Skip non-strings
+          if (typeof tag !== 'string') return;
           const option = document.createElement("option");
-          option.value = `${prefix}:${tag}`; // Value format prefix:tag
-          option.textContent = tag.replace(/_/g, " "); // Display format
+          option.value = `${prefix}:${tag}`;
+          option.textContent = tag.replace(/_/g, " ");
           select.appendChild(option);
         });
 
-        select.addEventListener("change", performSearch); // Add listener to trigger search
+        select.addEventListener("change", performSearch);
         div.appendChild(select);
         toolbar.appendChild(div);
       }
       console.log("Filter options populated successfully.");
-      enableFilters(); // Enable filters now that they are populated
-      updateStatusMessage("Filters ready.");
+      enableFilters(); // Enable now populated filters
+      // updateStatusMessage("Filters ready."); // Let next step update
       return true;
   } catch(error) {
       console.error("Error populating filter options:", error);
@@ -183,7 +196,7 @@ function populateFilterOptions() {
 
 // Initializes the suggestion functionality
 function initSuggestions() {
-  updateStatusMessage("Initializing suggestions...");
+  // updateStatusMessage("Initializing suggestions..."); // Can be noisy
   const input = document.getElementById("searchInput");
   const suggestions = document.getElementById("suggestions");
 
@@ -192,32 +205,32 @@ function initSuggestions() {
   input.addEventListener("input", () => {
     if (!fuse) { suggestions.innerHTML = ""; return; } // Check if fuse is ready
 
-    const query = input.value.trim(); // Use original case for Fuse search
+    const query = input.value.trim();
     if (!query) { suggestions.innerHTML = ""; return; }
 
-    suggestions.innerHTML = ""; // Clear previous
+    suggestions.innerHTML = "";
 
-    // Use Fuse.js for suggestions for better matching
-    const fuseResults = fuse.search(query, { limit: 8 }); // Limit suggestions
+    // Use Fuse.js for suggestions
+    const fuseResults = fuse.search(query, { limit: 8 });
 
     if (fuseResults.length > 0) {
         fuseResults.forEach(result => {
             const item = result.item;
-            if (!item || !item.name) return; // Basic check
+            if (!item || !item.name) return;
 
             const li = document.createElement("li");
             li.textContent = `${item.name} (${item.formula || 'N/A'})`;
-            li.addEventListener("mousedown", () => { // Use mousedown to beat blur
-                input.value = item.name; // Set input to name
-                suggestions.innerHTML = ""; // Clear suggestions
-                performSearch(); // Trigger search
+            li.addEventListener("mousedown", () => {
+                input.value = item.name;
+                suggestions.innerHTML = "";
+                performSearch();
             });
             suggestions.appendChild(li);
         });
     }
   });
   console.log("Suggestions initialized.");
-  updateStatusMessage("Suggestions ready."); // Update status
+  // updateStatusMessage("Suggestions ready."); // Let initial search clear status
 }
 
 
@@ -228,16 +241,15 @@ function getActiveFilters() {
   for (const prefix in taxonomy) {
      if (!Object.hasOwnProperty.call(taxonomy, prefix)) continue;
     const filterElement = document.getElementById(`${prefix}Filter`);
-    const value = filterElement?.value; // Use optional chaining
-    if (value) active.push(value); // Add if not empty ("All")
+    const value = filterElement?.value;
+    if (value) active.push(value);
   }
-  return active;
+  return active; // Return array of selected filter values like "prefix:tag"
 }
 
 // Checks if a material object matches all provided filters
 function matchesFilters(material, filters) {
   if (!material || !Array.isArray(material.tags)) return false;
-  // Ensure every filter in the 'filters' array is present in 'material.tags'
   return filters.every(filter => material.tags.includes(filter));
 }
 
@@ -252,28 +264,16 @@ function performSearch() {
 
   let results = [];
 
-  // Ensure fuse and materials are ready before searching
-  if (!fuse || !materials) {
-      console.warn("Search called before materials or index were ready.");
-      displayResults([]); // Show no results
-      return;
-  }
+  if (!fuse || !materials) { console.warn("Search called before ready."); displayResults([]); return; }
 
-  // Perform search
-  if (query === "") {
-    results = [...materials]; // Start with all if no query
-  } else {
-    const fuseResults = fuse.search(query); // Use Fuse.js
-    results = fuseResults.map(result => result.item);
-  }
-  console.log(`Initial results count (from query/all): ${results.length}`);
+  if (query === "") { results = [...materials]; }
+  else { const fuseResults = fuse.search(query); results = fuseResults.map(result => result.item); }
+  console.log(`Initial results count: ${results.length}`);
 
-
-  // Apply filters
   if (activeFilters.length > 0) {
     const countBeforeFilter = results.length;
     results = results.filter(m => matchesFilters(m, activeFilters));
-    console.log(`Filtering reduced results from ${countBeforeFilter} to ${results.length}.`);
+    console.log(`Filtering reduced results to ${results.length}.`);
   }
 
   displayResults(results); // Update the UI
@@ -288,16 +288,15 @@ function performSearchWithTag(tag) {
   const filterElement = document.getElementById(`${prefix}Filter`);
 
   if (filterElement) {
-    // Check if option exists before setting
     if ([...filterElement.options].some(opt => opt.value === tag)) {
-        if (filterElement.value !== tag) { // Only search if value changed
+        if (filterElement.value !== tag) {
             filterElement.value = tag;
             console.log(`Set ${prefix}Filter to ${tag}`);
-            // Clear other filters maybe? Or keep them? Currently keeps them.
+            // Clear the search input when a tag is clicked
+            const searchInput = document.getElementById("searchInput");
+            if (searchInput) searchInput.value = "";
             performSearch(); // Re-run search
-        } else {
-            console.log(`Filter ${prefix}Filter already set to ${tag}.`);
-        }
+        } else { console.log(`Filter ${prefix}Filter already set to ${tag}.`); }
     } else { console.warn(`Option value "${tag}" not found in ${prefix}Filter.`); }
   } else { console.warn(`Filter dropdown element not found for prefix: ${prefix}`); }
 }
@@ -325,23 +324,29 @@ function displayResults(results) {
 
     if (Array.isArray(mat.tags) && mat.tags.length > 0) {
       const tagContainer = document.createElement("div"); tagContainer.className = "tags";
-      mat.tags.forEach(tag => {
+      mat.tags.forEach(tag => { // Tag is the full "prefix:value" string
         if (typeof tag !== 'string') return;
         const span = document.createElement("span"); span.className = "tag";
         const displayTag = tag.split(":")[1]?.replace(/_/g, " ") ?? tag; // Text part after ":"
         span.textContent = displayTag;
-        span.title = tag; // *** Store the FULL tag (prefix:value) in title ***
-        span.addEventListener("click", () => {
-            const input = document.getElementById("searchInput"); if (input) input.value = ""; // Clear search box
-            performSearchWithTag(tag); // Use the full tag
+        span.title = tag; // *** Store the FULL tag (prefix:value) in title *** CORRECT
+
+        // === CORRECTED EVENT LISTENER ===
+        span.addEventListener("click", (event) => {
+            event.preventDefault(); // Good practice
+            const clickedFullTag = event.target.title; // Get from title
+            // Clear search input is handled in performSearchWithTag now
+            performSearchWithTag(clickedFullTag); // Use the full tag from title
         });
+        // === END CORRECTED EVENT LISTENER ===
+
         tagContainer.appendChild(span);
       });
       card.appendChild(tagContainer);
     }
     fragment.appendChild(card);
   });
-  resultsContainer.appendChild(fragment); // Append all at once
+  resultsContainer.appendChild(fragment);
 }
 
 // ============================================
@@ -367,7 +372,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           missingElement = true;
       }
   }
-  if (missingElement) return; // Stop if crucial elements are missing
+  if (missingElement) return;
 
   // Disable filters initially
   disableFilters();
@@ -384,11 +389,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Only proceed if materials loaded successfully
     if (!initializeSearchIndex()) { // Initialize Fuse.js
-      throw new Error("Search index initialization failed."); // Propagate error
+      throw new Error("Search index initialization failed.");
     }
 
     if (!populateFilterOptions()) { // Populate filters from taxonomy
-      throw new Error("Filter population failed."); // Propagate error
+      throw new Error("Filter population failed.");
     }
 
     initSuggestions(); // Setup search suggestions
@@ -398,30 +403,26 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.log("Initialization sequence complete.");
 
   } catch (error) {
-    // Catch errors from the async operations or subsequent init steps
     console.error("Error during initialization sequence:", error);
-    // updateStatusMessage function might have already shown an error,
-    // but we can add a general one if needed, checking first.
     const summaryElement = document.getElementById("result-summary");
     if (summaryElement && !summaryElement.querySelector('p[style*="color: red"]')) {
        updateStatusMessage(error.message || "Critical failure during initialization. Check console.", true);
     }
-    disableFilters(); // Ensure filters are disabled on any init error
+    disableFilters();
   }
 
   // --- Event Listeners Setup (Attach AFTER elements are confirmed) ---
-  // Search Input Listeners (handled within initSuggestions)
-  // Filter Change Listeners (handled within populateFilterOptions)
+  // Search Input Listeners (handled within initSuggestions now)
+  // Filter Change Listeners (handled within populateFilterOptions now)
 
   // Tag Click Listener (Delegate on results container)
   document.getElementById("results").addEventListener("click", (event) => {
     if (event.target.classList.contains("tag")) {
-      // Use the 'title' attribute which stores the full tag "prefix:value"
-      const fullTag = event.target.title;
+      const fullTag = event.target.title; // Use the 'title' attribute
       if (fullTag) {
           performSearchWithTag(fullTag);
       } else {
-          console.warn("Clicked tag missing title attribute with full tag value.");
+          console.warn("Clicked tag missing title attribute.");
       }
     }
   });
