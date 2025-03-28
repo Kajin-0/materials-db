@@ -8,7 +8,6 @@
     ],
     "category": "Composite",
     "tags": [
-      "aerospace",
       "ceramic fiber",
       "flexible",
       "high temperature",
@@ -30,17 +29,17 @@
     "category": "Superconductor",
     "tags": [
       "composite",
-      "cryogenic",
       "ductile",
+      "env:vacuum_compatible",
       "fusion",
       "industry:cryogenics",
       "industry:energy",
       "industry:quantum",
       "low temperature",
       "magnet",
+      "prop:cryogenic",
       "quantum computing",
       "superconductor",
-      "vacuum compatible",
       "wire"
     ]
   }

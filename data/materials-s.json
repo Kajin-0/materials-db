@@ -8,8 +8,8 @@
     ],
     "category": "Semiconductor",
     "tags": [
-      "aerospace",
       "bulk grown",
+      "class:semiconductor",
       "cmos compatible",
       "computing",
       "durable",
@@ -22,7 +22,6 @@
       "industry:electronics",
       "low cost",
       "research",
-      "semiconductor",
       "substrate",
       "transistor"
     ]
@@ -36,7 +35,6 @@
     ],
     "category": "Substrate",
     "tags": [
-      "cryogenic",
       "dielectric",
       "industry:lasers",
       "industry:photonics",
@@ -45,8 +43,9 @@
       "low loss",
       "microwave",
       "photonic",
+      "proc:single_crystal",
+      "prop:cryogenic",
       "quantum computing",
-      "single crystal",
       "substrate"
     ]
   },
@@ -59,7 +58,6 @@
     ],
     "category": "Composite",
     "tags": [
-      "aerospace",
       "ceramic matrix composite",
       "engine",
       "high temperature",

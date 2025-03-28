@@ -8,19 +8,18 @@
     ],
     "category": "Alloy",
     "tags": [
-      "high strength",
-      "tough",
-      "steel",
-      "ultra high strength",
-      "machinable",
       "age hardened",
-      "aerospace",
       "durability",
-      "structural",
+      "high strength",
       "impact resistant",
       "industry:aerospace",
+      "industry:defense",
       "industry:infrastructure",
-      "industry:defense"
+      "machinable",
+      "steel",
+      "structural",
+      "tough",
+      "ultra high strength"
     ]
   },
   {
@@ -33,17 +32,17 @@
     ],
     "category": "Polymer",
     "tags": [
-      "high strength",
-      "lightweight",
-      "fiber",
-      "impact resistant",
-      "ballistic",
-      "non-conductive",
-      "self-lubricating",
       "abrasion resistant",
-      "industry:defense",
+      "ballistic",
+      "fiber",
+      "high strength",
+      "impact resistant",
+      "industry:aerospace",
       "industry:biomedical",
-      "industry:aerospace"
+      "industry:defense",
+      "lightweight",
+      "non-conductive",
+      "self-lubricating"
     ]
   },
   {
@@ -55,16 +54,16 @@
     ],
     "category": "Composite",
     "tags": [
-      "neutron shielding",
-      "radiation resistant",
-      "polyethylene",
-      "moderator",
       "hydrogen rich",
-      "non-toxic",
-      "low-Z",
-      "industry:radiation",
       "industry:nuclear",
-      "industry:space"
+      "industry:radiation",
+      "industry:space",
+      "low-Z",
+      "moderator",
+      "neutron shielding",
+      "non-toxic",
+      "polyethylene",
+      "radiation resistant"
     ]
   },
   {
@@ -77,16 +76,16 @@
     ],
     "category": "Crystal",
     "tags": [
-      "radiation shielding",
-      "scintillator",
       "dense",
-      "ionizing radiation",
       "gamma detection",
       "high density",
-      "optical crystal",
-      "industry:radiation",
+      "industry:defense",
       "industry:medical",
-      "industry:defense"
+      "industry:radiation",
+      "ionizing radiation",
+      "optical crystal",
+      "radiation shielding",
+      "scintillator"
     ]
   },
   {
@@ -98,15 +97,15 @@
     ],
     "category": "Ceramic",
     "tags": [
-      "refractory",
       "high temperature",
-      "thermal conductivity",
-      "structural ceramic",
-      "oxidation resistant",
       "hypersonic",
-      "rocket nozzle",
+      "industry:aerospace",
       "industry:space",
-      "industry:aerospace"
+      "oxidation resistant",
+      "refractory",
+      "rocket nozzle",
+      "structural ceramic",
+      "thermal conductivity"
     ]
   },
   {
@@ -118,16 +117,16 @@
     ],
     "category": "Ceramic",
     "tags": [
-      "ultra high temperature",
       "carbide",
       "hard",
+      "hypersonic",
+      "industry:aerospace",
+      "industry:defense",
+      "industry:space",
       "oxidation resistant",
       "refractory",
-      "hypersonic",
       "thermal protection",
-      "industry:space",
-      "industry:defense",
-      "industry:aerospace"
+      "ultra high temperature"
     ]
   },
   {
@@ -139,16 +138,16 @@
     ],
     "category": "Metal",
     "tags": [
-      "cryogenic",
-      "soft metal",
-      "vacuum seal",
-      "thermal interface",
       "cold welding",
       "corrosion resistant",
-      "low temp",
       "industry:cryogenics",
       "industry:space",
-      "industry:vacuum"
+      "industry:vacuum",
+      "low temp",
+      "prop:cryogenic",
+      "soft metal",
+      "thermal interface",
+      "vacuum seal"
     ]
   },
   {
@@ -160,16 +159,16 @@
     ],
     "category": "Composite",
     "tags": [
-      "thermal insulation",
-      "cryogenic",
-      "vacuum compatible",
-      "infrared reflective",
-      "space qualified",
-      "lightweight",
+      "env:vacuum_compatible",
       "flexible",
-      "industry:space",
+      "industry:aerospace",
       "industry:cryogenics",
-      "industry:aerospace"
+      "industry:space",
+      "infrared reflective",
+      "lightweight",
+      "prop:cryogenic",
+      "space qualified",
+      "thermal insulation"
     ]
   }
 ]
