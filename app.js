@@ -106,7 +106,8 @@ function displayResults(results) {
   const resultsContainer = document.getElementById("results");
   const summary = document.getElementById("result-summary");
   resultsContainer.innerHTML = "";
-  summary.textContent = `${results.length} materials found`;
+  const summary = document.getElementById("result-summary");
+  if (summary) summary.textContent = `${results.length} materials found`;
 
   results.forEach(mat => {
     const card = document.createElement("div");
