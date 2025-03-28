@@ -1,6 +1,4 @@
 
-// Updated app.js using structured tagTaxonomy
-
 let materials = [];
 let fuse;
 let filters = {
@@ -26,7 +24,7 @@ function loadMaterials() {
     fetch(`data/${file}`)
       .then(res => res.json())
       .then(data => {
-        if (!Array.isArray(data)) throw new Error(\`Data format error in \${file}\`);
+        if (!Array.isArray(data)) throw new Error(`Data format error in ${file}`);
         return data;
       })
   );
@@ -129,7 +127,9 @@ function displayResults(results) {
       mat.tags.forEach(tag => {
         const span = document.createElement("span");
         span.className = "tag";
+        // Hide prefixes in display but keep in logic
         span.textContent = tag.split(":")[1]?.replace(/_/g, " ") ?? tag;
+        span.title = span.textContent;
         span.onclick = () => {
           const input = document.getElementById("searchInput");
           input.value = "";
@@ -146,7 +146,6 @@ function displayResults(results) {
 }
 
 function performSearchWithTag(tag) {
-  // If tag clicked, apply it as a filter
   const [prefix, value] = tag.split(":");
   const filterElement = document.getElementById(`${prefix}Filter`);
   if (filterElement) {
