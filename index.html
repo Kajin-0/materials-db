@@ -1,54 +1,32 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <title>MaterialsDB</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- Link the CSS file -->
   <link rel="stylesheet" href="style.css" />
-  <!-- Optional: Placeholder favicon -->
-  <link rel="icon" href="data:;base64,iVBORw0KGgo=">
 </head>
 <body>
 
-  <header>
-    <h1 onclick="window.location.reload()" title="Reload MaterialsDB" style="cursor:pointer;">MaterialsDB</h1>
-  </header>
+<header>
+  <!-- Modified to match app.js expectations -->
+  <h1 id="logo" title="Reload MaterialsDB" style="cursor:pointer;">MaterialsDB</h1>
+</header>
 
-  <div id="search-container">
-    <input id="searchInput" type="text" placeholder="Search materials by name, formula, tag..." autocomplete="off" />
-    <ul id="suggestions"></ul>
-  </div>
+<div id="search-container">
+  <input id="searchInput" type="text" placeholder="Search materials by name, formula, tag..." autocomplete="off" />
+  <ul id="suggestions"></ul>
+</div>
 
-  <section class="toolbar" id="toolbar">
-    <div class="filter-group">
-      <label for="industryFilter">Industry:</label>
-      <select id="industryFilter" disabled>
-        <option value="">Loading...</option>
-      </select>
-    </div>
-    <div class="filter-group">
-      <label for="categoryFilter">Category:</label>
-      <select id="categoryFilter" disabled>
-        <option value="">Loading...</option>
-      </select>
-    </div>
-    <div class="filter-group">
-      <label for="propertyFilter">Tag:</label>
-      <select id="propertyFilter" disabled>
-        <option value="">Loading...</option>
-      </select>
-    </div>
-  </section>
+<section class="toolbar" id="toolbar"></section>
 
-  <main id="results">
-    <p style="text-align: center; color: #999;">Initializing...</p> <!-- Simplified message -->
-  </main>
+<main id="results">
+  <div id="result-summary"></div>
+</main>
 
-  <!-- Load Fuse.js library from CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
-  <!-- Load the application's JavaScript logic (relative path) -->
-  <script src="app.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+<script src="tagTaxonomy.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
