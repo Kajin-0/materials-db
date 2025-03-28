@@ -11,28 +11,35 @@ async function fetchJson(url) {
     const response = await fetch(url);
     if (!response.ok) {
       if (response.status === 404) {
-        console.warn(`Source file not found (404): ${url}`); // Expected for non-existent files
+        console.warn(`Source file not found (404): ${url}`);
       } else {
         console.error(`Fetch Error for ${url}: ${response.status} ${response.statusText}`);
       }
       return null;
     }
     try {
-        const data = await response.json();
-        // Check structure: index must be object with sources array, others must be arrays
+        const data = await response.json(); // Parse JSON first
+
+        // === CORRECTED VALIDATION ===
+        // Check structure based on filename
         if (url.endsWith('materials-index.json')) {
-             if (!data || !data.sources || !Array.isArray(data.sources)) {
-                 console.error(`Data format error: ${url} missing { "sources": [...] } structure.`);
+             // Index MUST be an object with a 'sources' array
+             if (!data || typeof data !== 'object' || !Array.isArray(data.sources)) {
+                 console.error(`Data format error: ${url} MUST be an object like { "sources": [...] }. Received:`, data);
                  return null;
              }
         } else {
+             // Source files MUST be arrays
              if (!Array.isArray(data)) {
-                 console.error(`Data format error: ${url} is not a JSON array.`);
+                 console.error(`Data format error: ${url} MUST be a JSON array [...]. Received:`, data);
                  return null;
              }
         }
-        console.log(`Successfully fetched and parsed: ${url}`);
-        return data;
+        // ============================
+
+        console.log(`Successfully fetched and validated: ${url}`);
+        return data; // Return validated data
+
     } catch (parseError) {
         console.error(`JSON Parse Error in ${url}:`, parseError);
         return null;
@@ -49,13 +56,16 @@ async function initializeDatabase() {
   updateLoadingMessage("Loading material index...");
   console.log("Initializing database...");
 
-  // Use relative path, standard for files served from same origin/directory structure
   const indexUrl = './data/materials-index.json';
-  const indexData = await fetchJson(indexUrl);
+  const indexData = await fetchJson(indexUrl); // fetchJson now validates index structure
 
-  if (!indexData) { // fetchJson handles validation and returns null on error/bad format
-    console.error(`Failed to load or invalid format for index: ${indexUrl}`);
-    updateLoadingMessage(`Error: Could not load material index (${indexUrl}). Check console.`, true);
+  if (!indexData) {
+    // Error message shown by fetchJson or the validation within it
+    console.error(`Failed to load or invalid format for index: ${indexUrl}. See previous logs.`);
+    // Update message if fetchJson didn't already show specific error
+    if (!resultsContainer.querySelector('p[style*="color: red"]')) {
+        updateLoadingMessage(`Error: Could not load or validate material index (${indexUrl}). Check console.`, true);
+    }
     disableFilters();
     return;
   }
@@ -66,7 +76,7 @@ async function initializeDatabase() {
   // Fetch source files using relative paths
   const fetchPromises = indexData.sources
       .filter(sourceFile => typeof sourceFile === 'string' && sourceFile.endsWith('.json'))
-      .map(sourceFile => fetchJson(`./data/${sourceFile}`)); // Relative path within data folder
+      .map(sourceFile => fetchJson(`./data/${sourceFile}`)); // fetchJson validates these are arrays
 
   if (fetchPromises.length !== indexData.sources.length) {
       console.warn("Some entries in materials-index.json sources were invalid filenames.");
@@ -118,7 +128,9 @@ async function initializeDatabase() {
   }
 }
 
-// --- UI and Filtering ---
+// --- UI and Filtering (No changes needed below this line) ---
+// (Keep the rest of the functions: updateLoadingMessage, disableFilters, updateFilters, performSearch, render, showSuggestions, and the DOMContentLoaded listener exactly as they were in the previous 'Clean Separate Version' of app.js)
+
 
 function updateLoadingMessage(message, isError = false) {
     const resultsContainer = document.getElementById("results");
@@ -242,7 +254,6 @@ document.addEventListener("DOMContentLoaded", () => {
   console.log("DOM loaded. Initializing database...");
   initializeDatabase();
 
-  // Get elements, check for existence
   const searchInput = document.getElementById("searchInput");
   const suggestionsList = document.getElementById("suggestions");
   const resultsContainer = document.getElementById("results");
@@ -255,7 +266,6 @@ document.addEventListener("DOMContentLoaded", () => {
       updateLoadingMessage("Error: Page structure incorrect.", true); return;
   }
 
-  // Setup listeners
   searchInput.addEventListener("input", () => {
     const query = searchInput.value.trim();
     if (query) showSuggestions(query); else { suggestionsList.innerHTML = ""; performSearch(""); }
