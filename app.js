@@ -109,16 +109,9 @@ async function loadMaterials() {
       const results = await Promise.all(promises);
       const loadedMaterials = results.filter(data => data !== null).flat();
       console.log(`loadMaterials finished. ${loadedMaterials.length} entries loaded.`);
-      // Moved status message responsibility to caller (initializeDatabase)
-      // if (loadedMaterials.length === 0) {
-      //     updateStatusMessage("Error: No material data loaded successfully. Check console.", true);
-      // } else {
-      //     updateStatusMessage("Materials loaded."); // Update status
-      // }
       return loadedMaterials; // Return the combined array
   } catch (error) {
       console.error("Critical error during Promise.all in loadMaterials:", error);
-      // updateStatusMessage("Error: Failed to load material files. Check console.", true); // Caller handles this
       return []; // Return empty array on major failure
   }
 }
@@ -128,7 +121,6 @@ function initializeSearchIndex() {
   // updateStatusMessage("Initializing search index..."); // Message moved to caller
   if (!materials || materials.length === 0) {
       console.warn("Cannot initialize search index: No material data available.");
-      // updateStatusMessage("Warning: No data for search index.", true); // Caller handles this
       return false;
   }
   try {
@@ -139,11 +131,9 @@ function initializeSearchIndex() {
         includeScore: true
       });
       console.log("Fuse search index initialized successfully.");
-      // updateStatusMessage("Search index ready."); // Caller handles this
       return true;
   } catch (error) {
       console.error("Error initializing Fuse.js:", error);
-      // updateStatusMessage("Error: Failed to initialize search index. Check console.", true); // Caller handles this
       return false;
   }
 }
@@ -152,12 +142,13 @@ function initializeSearchIndex() {
 function populateFilterOptions() {
   // updateStatusMessage("Populating filters..."); // Message moved to caller
   const toolbar = document.getElementById("toolbar");
-  const taxonomy = window.tagTaxonomy; // Assumes tagTaxonomy.js is loaded and checked by caller
+  const taxonomy = window.tagTaxonomy;
 
   if (!toolbar) { console.error("Toolbar element not found."); return false; }
-  // No need to check taxonomy here again if caller does it
+  // Check moved to initializer
+  // if (!taxonomy) { console.error("tagTaxonomy object not found."); return false; }
 
-  toolbar.innerHTML = ""; // Clear previous content
+  toolbar.innerHTML = "";
 
   try {
       for (const prefix in taxonomy) {
@@ -187,54 +178,78 @@ function populateFilterOptions() {
         toolbar.appendChild(div);
       }
       console.log("Filter options populated successfully.");
-      enableFilters(); // Enable filters after populating
-      // updateStatusMessage("Filters ready."); // Caller handles this
+      enableFilters();
       return true;
   } catch(error) {
       console.error("Error populating filter options:", error);
-      // updateStatusMessage("Error: Failed to create filters. Check console.", true); // Caller handles this
       disableFilters();
       return false;
   }
 }
 
-// Initializes the suggestion functionality
+// Initializes the suggestion functionality USING FUSE.JS
 function initSuggestions() {
-  // updateStatusMessage("Initializing suggestions..."); // Message moved to caller
+  // updateStatusMessage("Initializing suggestions..."); // Optional: uncomment if needed
   const input = document.getElementById("searchInput");
   const suggestions = document.getElementById("suggestions");
 
   if (!input || !suggestions) { console.error("Cannot initialize suggestions: Elements missing."); return; }
 
   input.addEventListener("input", () => {
-    if (!fuse) { suggestions.innerHTML = ""; return; } // Check if fuse is ready
-
-    const query = input.value.trim();
-    if (!query) { suggestions.innerHTML = ""; return; }
-
-    suggestions.innerHTML = "";
-
-    // Use Fuse.js for suggestions
-    const fuseResults = fuse.search(query, { limit: 8 });
-
-    if (fuseResults.length > 0) {
-        fuseResults.forEach(result => {
-            const item = result.item;
-            if (!item || !item.name) return;
-
-            const li = document.createElement("li");
-            li.textContent = `${item.name} (${item.formula || 'N/A'})`;
-            li.addEventListener("mousedown", () => {
-                input.value = item.name;
-                suggestions.innerHTML = "";
-                performSearch();
-            });
-            suggestions.appendChild(li);
-        });
+    // Check if fuse instance is ready
+    if (!fuse) {
+        console.warn("Suggestions unavailable: Fuse index not ready.");
+        suggestions.innerHTML = ""; // Ensure list is clear
+        return;
     }
-  });
-  console.log("Suggestions initialized.");
-  // updateStatusMessage("Suggestions ready."); // Caller handles this
+
+    const query = input.value.trim(); // Use original case for Fuse search might be better
+    if (!query) {
+      suggestions.innerHTML = ""; // Clear if query is empty
+      return;
+    }
+
+    suggestions.innerHTML = ""; // Clear previous suggestions
+
+    // *** Use Fuse.js for suggestions ***
+    try {
+        const fuseResults = fuse.search(query, {
+            limit: 8, // Limit number of suggestions
+        });
+
+        if (fuseResults.length > 0) {
+            fuseResults.forEach(result => {
+                const item = result.item;
+                if (!item || !item.name) return; // Skip if item or name is invalid
+
+                const li = document.createElement("li");
+                // Display suggestion (Name + Formula)
+                li.textContent = `${item.name} (${item.formula || 'N/A'})`;
+
+                // Add event listener (use mousedown to trigger before blur)
+                li.addEventListener("mousedown", () => {
+                    input.value = item.name; // Set input value to the selected material name
+                    suggestions.innerHTML = ""; // Hide suggestions list
+                    performSearch(); // Trigger a full search based on the selected name
+                });
+                suggestions.appendChild(li);
+            });
+        } else {
+             // Optional: Show "No suggestions"
+             // const li = document.createElement("li");
+             // li.textContent = "No suggestions found";
+             // li.style.color = "#888"; li.style.cursor = "default";
+             // suggestions.appendChild(li);
+        }
+    } catch (error) {
+        console.error("Error during Fuse suggestion search:", error);
+        suggestions.innerHTML = ""; // Clear on error
+    }
+    // *** End Fuse.js suggestion logic ***
+
+  }); // End input event listener
+
+  console.log("Suggestions initialized (using Fuse.js).");
 }
 
 
@@ -335,9 +350,9 @@ function displayResults(results) {
         span.title = tag; // Store the FULL tag (prefix:value) in title
 
         span.addEventListener("click", (event) => {
-            event.preventDefault();
-            const clickedFullTag = event.target.title;
-            performSearchWithTag(clickedFullTag);
+            event.preventDefault(); // Good practice
+            const clickedFullTag = event.target.title; // Get from title
+            performSearchWithTag(clickedFullTag); // Use the full tag from title
         });
         tagContainer.appendChild(span);
       });
@@ -349,7 +364,7 @@ function displayResults(results) {
 }
 
 // ============================================
-// Initialization Sequence (Runs on DOM Load)
+// Initialization Sequence
 // ============================================
 document.addEventListener("DOMContentLoaded", async () => {
   console.log("DOM content loaded. Starting initialization sequence...");
@@ -390,16 +405,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // === STEP 3: Check for Taxonomy and Populate Filters ===
     updateStatusMessage("Populating filters...");
-    // Check if tagTaxonomy is loaded
     if (typeof window.tagTaxonomy === 'undefined') {
-        // Attempt to dynamically load if missing? Or just fail. Let's fail for now.
         throw new Error("tagTaxonomy object not found. Check tagTaxonomy.js loading order and content.");
     }
-    // Proceed only if taxonomy exists
     if (!populateFilterOptions()) throw new Error("Filter population failed.");
 
     // === STEP 4: Initialize Suggestions ===
-    // updateStatusMessage("Initializing suggestions..."); // Less critical status
+    // updateStatusMessage("Initializing suggestions..."); // Less critical status message
     initSuggestions();
 
     // === STEP 5: Initial Search & Cleanup ===
@@ -408,14 +420,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.log("Initialization sequence complete.");
 
   } catch (error) {
-    // Catch errors from any step in the sequence
     console.error("Error during initialization sequence:", error);
     const summaryElement = document.getElementById("result-summary");
-    // Avoid overwriting specific error messages if possible
     if (summaryElement && !summaryElement.querySelector('p[style*="color: red"]')) {
        updateStatusMessage(error.message || "Critical failure during initialization. Check console.", true);
     }
-    disableFilters(); // Ensure filters remain disabled on any init error
+    disableFilters();
   }
 
   // --- Event Listeners Setup (Attach AFTER elements are confirmed) ---
