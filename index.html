@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,11 +5,13 @@
   <title>MaterialsDB</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css" />
+  <!-- Optional: Placeholder favicon -->
+  <link rel="icon" href="data:;base64,iVBORw0KGgo=">
 </head>
 <body>
 
 <header>
-  <!-- Modified to match app.js expectations -->
+  <!-- Ensure ID matches JS -->
   <h1 id="logo" title="Reload MaterialsDB" style="cursor:pointer;">MaterialsDB</h1>
 </header>
 
@@ -19,14 +20,28 @@
   <ul id="suggestions"></ul>
 </div>
 
+<!-- Toolbar: Populated by JS -->
 <section class="toolbar" id="toolbar"></section>
 
-<main id="results">
-  <div id="result-summary"></div>
+<!-- Main content area -->
+<main>
+  <!-- Summary Div (Outside #results) -->
+  <div id="result-summary" style="text-align: center; margin-bottom: 1rem;">
+      <p style="color: #777;">Initializing...</p> <!-- Initial message -->
+  </div>
+
+  <!-- Results Div -->
+  <div id="results">
+      <!-- Material cards will be added here by JS -->
+  </div>
 </main>
 
+<!-- Load Libraries & App Script -->
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+<!-- Load Taxonomy BEFORE app.js -->
 <script src="tagTaxonomy.js"></script>
+<!-- Load App Logic -->
 <script src="app.js"></script>
+
 </body>
 </html>
