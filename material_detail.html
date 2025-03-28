@@ -3,18 +3,25 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <title>Material Detail</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Material Detail - MaterialsDB</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
     <header class="detail-header">
       <h1 id="material-name">Loading...</h1>
-      <div id="material-formula" class="formula"></div>
+      <div id="material-formula" class="formula">Formula</div>
     </header>
-    <main id="material-content">
-      <p style="text-align: center;">Loading material data...</p>
+    <main>
+      <section class="material-section" id="section-overview">
+        <h2>Overview</h2>
+        <p class="description" id="material-description">Loading description...</p>
+      </section>
+      <section class="material-section" id="section-tags">
+        <h2>Tags</h2>
+        <div class="tags-list" id="material-tags">Loading tags...</div>
+      </section>
     </main>
   </div>
   <script src="material_loader.js"></script>

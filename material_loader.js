@@ -1,55 +1,47 @@
 
-async function fetchMaterial(name) {
-  const indexRes = await fetch('data/materials-index.json');
-  const index = await indexRes.json();
-  const entry = index.find(m => m.name.toLowerCase() === name.toLowerCase());
-  if (!entry) throw new Error("Material not found in index.");
-  const fileRes = await fetch('data/' + entry.file);
-  const data = await fileRes.json();
-  return data.find(m => m.name.toLowerCase() === name.toLowerCase());
-}
-
-function getMaterialParam() {
-  const params = new URLSearchParams(window.location.search);
-  return params.get("material");
-}
-
-function populateMaterial(material) {
-  document.getElementById("material-name").textContent = material.name;
-  document.getElementById("material-formula").textContent = material.formula || "";
-
-  const content = document.getElementById("material-content");
-  content.innerHTML = "";
-
-  const section = document.createElement("section");
-  section.className = "material-section";
-  section.innerHTML = "<h2>Basic Information</h2>";
-  const dl = document.createElement("dl");
-  dl.className = "property-list";
-
-  for (const key of ["category", "synonyms", "tags"]) {
-    if (material[key]) {
-      const item = document.createElement("div");
-      item.className = "property-item";
-      item.innerHTML = `
-        <dt class="property-key">${key.charAt(0).toUpperCase() + key.slice(1)}</dt>
-        <dd class="property-value">${Array.isArray(material[key]) ? material[key].join(", ") : material[key]}</dd>
-      `;
-      dl.appendChild(item);
-    }
+document.addEventListener("DOMContentLoaded", async () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const materialName = urlParams.get("material");
+  if (!materialName) {
+    document.getElementById("material-name").textContent = "Material not specified.";
+    return;
   }
 
-  section.appendChild(dl);
-  content.appendChild(section);
-}
-
-(async () => {
-  const name = getMaterialParam();
-  if (!name) return;
   try {
-    const material = await fetchMaterial(name);
-    populateMaterial(material);
-  } catch (err) {
-    document.getElementById("material-content").innerHTML = "<p style='color: red;'>Error loading material: " + err.message + "</p>";
+    const indexRes = await fetch("data/materials-index.json");
+    const indexData = await indexRes.json();
+    const entry = indexData.find(m => m.name.toLowerCase() === materialName.toLowerCase());
+    if (!entry) {
+      document.getElementById("material-name").textContent = "Material not found.";
+      return;
+    }
+
+    const matFile = entry.file;
+    const matRes = await fetch("data/" + matFile);
+    const matData = await matRes.json();
+    const material = matData.find(m => m.name.toLowerCase() === materialName.toLowerCase());
+
+    if (!material) {
+      document.getElementById("material-name").textContent = "Material not found in file.";
+      return;
+    }
+
+    document.getElementById("material-name").textContent = material.name;
+    document.getElementById("material-formula").textContent = material.formula || "";
+    document.getElementById("material-description").textContent = material.description || "No description available.";
+
+    const tagsContainer = document.getElementById("material-tags");
+    tagsContainer.innerHTML = "";
+    if (material.tags && Array.isArray(material.tags)) {
+      material.tags.forEach(tag => {
+        const span = document.createElement("span");
+        span.className = "tag";
+        span.textContent = tag.replace(/^\w+:/, ""); // remove prefix
+        tagsContainer.appendChild(span);
+      });
+    }
+  } catch (e) {
+    console.error("Failed to load material:", e);
+    document.getElementById("material-name").textContent = "Error loading material.";
   }
-})();
+});
