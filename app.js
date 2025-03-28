@@ -1,97 +1,209 @@
-// ============================================
-// Global Variables ... (Keep as before)
-// Helper Functions ... (Keep as before)
-// Core Logic Functions ... (Keep as before)
-// ============================================
 
-// ============================================
-// Initialization Sequence (Runs on DOM Load)
-// ============================================
-document.addEventListener("DOMContentLoaded", async () => { // Make listener async
-  console.log("DOM content loaded. Starting initialization sequence...");
+let materials = [];
+let fuse;
+let filters = {
+  industry: [],
+  class: [],
+  prop: [],
+  proc: [],
+  app: [],
+  env: [],
+  domain: [],
+  element: []
+};
 
-  // Attach logo listener
-  const logoElement = document.getElementById("logo");
-  if (logoElement) {
-      logoElement.addEventListener("click", () => location.reload());
-      console.log("Logo click listener attached.");
-  } else { console.warn("Logo element not found."); }
+function loadMaterials() {
+  const files = [
+    'materials-b.json', 'materials-c.json', 'materials-f.json', 'materials-g.json',
+    'materials-i.json', 'materials-l.json', 'materials-m.json', 'materials-n.json',
+    'materials-o.json', 'materials-p.json', 'materials-r.json', 'materials-s.json',
+    'materials-t.json', 'materials-x.json', 'materials-y.json', 'materials-z.json'
+  ];
+  const promises = files.map(file =>
+    fetch(`data/${file}`)
+      .then(res => res.json())
+      .then(data => {
+        if (!Array.isArray(data)) throw new Error(`Data format error in ${file}`);
+        return data;
+      })
+  );
+  return Promise.all(promises).then(results => results.flat());
+}
 
-  // Ensure essential DOM elements exist
-  const neededIds = ["searchInput", "suggestions", "results", "result-summary", "toolbar"];
-  // ... (keep element check as before) ...
-  let missingElement = false;
-  for (const id of neededIds) {
-      if (!document.getElementById(id)) {
-          console.error(`Essential DOM element missing: #${id}. Aborting initialization.`);
-          updateStatusMessage(`Error: Page structure incorrect (missing #${id}).`, true);
-          missingElement = true;
-      }
+function initializeSearchIndex() {
+  fuse = new Fuse(materials, {
+    keys: ['name', 'formula', 'synonyms', 'tags'],
+    threshold: 0.3
+  });
+}
+
+function populateFilterOptions() {
+  const toolbar = document.getElementById("toolbar");
+  toolbar.innerHTML = "";
+  const taxonomy = window.tagTaxonomy;
+
+  for (const prefix in taxonomy) {
+    const group = taxonomy[prefix];
+    const div = document.createElement("div");
+    div.className = "filter-group";
+
+    const label = document.createElement("label");
+    label.textContent = group.label + ":";
+    div.appendChild(label);
+
+    const select = document.createElement("select");
+    select.id = `${prefix}Filter`;
+
+    const allOption = document.createElement("option");
+    allOption.value = "";
+    allOption.textContent = "All";
+    select.appendChild(allOption);
+
+    group.tags.forEach(tag => {
+      const option = document.createElement("option");
+      option.value = `${prefix}:${tag}`;
+      option.textContent = tag.replace(/_/g, " ");
+      select.appendChild(option);
+    });
+
+    select.addEventListener("change", performSearch);
+    div.appendChild(select);
+    toolbar.appendChild(div);
   }
-  if (missingElement) return;
+}
 
-  disableFilters();
+function getActiveFilters() {
+  const taxonomy = window.tagTaxonomy;
+  const active = [];
+  for (const prefix in taxonomy) {
+    const value = document.getElementById(`${prefix}Filter`)?.value;
+    if (value) active.push(value);
+  }
+  return active;
+}
 
-  try {
-    // === STEP 1: Load Materials ===
-    updateStatusMessage("Loading materials...");
-    materials = await loadMaterials();
-    console.log(`Material loading complete. ${materials.length} entries loaded.`);
-    if (materials.length === 0) throw new Error("No material data loaded successfully.");
+function matchesFilters(material, filters) {
+  return filters.every(filter => material.tags.includes(filter));
+}
 
-    // === STEP 2: Initialize Fuse ===
-    updateStatusMessage("Initializing search index...");
-    if (!initializeSearchIndex()) throw new Error("Search index initialization failed.");
+function performSearch() {
+  const query = document.getElementById("searchInput").value.trim();
+  const activeFilters = getActiveFilters();
 
-    // === STEP 3: Check for Taxonomy and Populate Filters ===
-    updateStatusMessage("Populating filters...");
-    // **** ADDED CHECK ****
-    if (typeof window.tagTaxonomy === 'undefined') {
-        throw new Error("tagTaxonomy object not found. Check tagTaxonomy.js loading order and content.");
-    }
-    // *********************
-    if (!populateFilterOptions()) throw new Error("Filter population failed.");
+  let results = query
+    ? fuse.search(query).map(result => result.item)
+    : [...materials];
 
-    // === STEP 4: Initialize Suggestions ===
-    updateStatusMessage("Initializing suggestions...");
-    initSuggestions();
-
-    // === STEP 5: Initial Search & Cleanup ===
-    updateStatusMessage(""); // Clear loading messages
-    performSearch();
-    console.log("Initialization sequence complete.");
-
-  } catch (error) {
-    // Catch errors from any step in the sequence
-    console.error("Error during initialization sequence:", error);
-    const summaryElement = document.getElementById("result-summary");
-    if (summaryElement && !summaryElement.querySelector('p[style*="color: red"]')) {
-       updateStatusMessage(error.message || "Critical failure during initialization. Check console.", true);
-    }
-    disableFilters();
+  if (activeFilters.length > 0) {
+    results = results.filter(m => matchesFilters(m, activeFilters));
   }
 
-  // --- Event Listeners Setup (Attach AFTER elements are confirmed) ---
-  // Search Input Listeners (now handled within initSuggestions)
-  // Filter Change Listeners (now handled within populateFilterOptions)
+  const summary = document.getElementById("result-summary");
+  if (summary) summary.textContent = `${results.length} materials found`;
+  displayResults(results);
+}
 
-  // Tag Click Listener (Delegate on results container)
-  document.getElementById("results").addEventListener("click", (event) => {
-    if (event.target.classList.contains("tag")) {
-      const fullTag = event.target.title;
-      if (fullTag) {
-          performSearchWithTag(fullTag);
-      } else {
-          console.warn("Clicked tag missing title attribute.");
-      }
+function displayResults(results) {
+  const resultsContainer = document.getElementById("results");
+  resultsContainer.innerHTML = "";
+
+  results.forEach(mat => {
+    const card = document.createElement("div");
+    card.className = "material-card";
+
+    const title = document.createElement("h2");
+    title.textContent = mat.name;
+    card.appendChild(title);
+
+    const formula = document.createElement("p");
+    formula.textContent = mat.formula;
+    card.appendChild(formula);
+
+    if (mat.tags?.length) {
+      const tagContainer = document.createElement("div");
+      tagContainer.className = "tags";
+
+      mat.tags.forEach(tag => {
+        const span = document.createElement("span");
+        span.className = "tag";
+        span.textContent = tag.split(":")[1]?.replace(/_/g, " ") ?? tag;
+        span.title = span.textContent;
+        span.onclick = () => {
+          clearFilters();
+          applyTagFilter(tag);
+        };
+        tagContainer.appendChild(span);
+      });
+
+      card.appendChild(tagContainer);
+    }
+
+    resultsContainer.appendChild(card);
+  });
+}
+
+function clearFilters() {
+  const taxonomy = window.tagTaxonomy;
+  for (const prefix in taxonomy) {
+    const select = document.getElementById(`${prefix}Filter`);
+    if (select) select.value = "";
+  }
+  document.getElementById("searchInput").value = "";
+}
+
+function applyTagFilter(tag) {
+  const [prefix, value] = tag.split(":");
+  const filterElement = document.getElementById(`${prefix}Filter`);
+  if (filterElement) {
+    filterElement.value = tag;
+  }
+  performSearch();
+}
+
+function initSuggestions() {
+  const input = document.getElementById("searchInput");
+  const suggestions = document.getElementById("suggestions");
+
+  input.addEventListener("input", () => {
+    const query = input.value.trim().toLowerCase();
+    if (!query) {
+      suggestions.innerHTML = "";
+      return;
+    }
+
+    const matches = materials.filter(m =>
+      m.name.toLowerCase().includes(query) ||
+      m.formula.toLowerCase().includes(query) ||
+      (m.synonyms || []).some(s => s.toLowerCase().includes(query))
+    ).slice(0, 10);
+
+    suggestions.innerHTML = "";
+    matches.forEach(m => {
+      const li = document.createElement("li");
+      li.textContent = `${m.name} (${m.formula})`;
+      li.onclick = () => {
+        input.value = m.name;
+        suggestions.innerHTML = "";
+        performSearch();
+      };
+      suggestions.appendChild(li);
+    });
+  });
+
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      suggestions.innerHTML = "";
+      performSearch();
     }
   });
-}); // End DOMContentLoaded
+}
 
-console.log("app.js script successfully parsed.");
+document.getElementById("logo").addEventListener("click", () => location.reload());
 
-// --- Make sure ALL function definitions are ABOVE the DOMContentLoaded listener ---
-// (fetchJson, loadMaterials, initializeSearchIndex, updateLoadingMessage, disableFilters,
-// enableFilters, populateFilterOptions, initSuggestions, getActiveFilters,
-// matchesFilters, performSearch, performSearchWithTag, displayResults)
-// Ensure these functions are defined globally or hoisted properly before this point.
+loadMaterials().then(data => {
+  materials = data;
+  initializeSearchIndex();
+  populateFilterOptions();
+  initSuggestions();
+  performSearch();
+});
