@@ -8,6 +8,7 @@
     ],
     "category": "Composite",
     "tags": [
+      "aerospace",
       "composite",
       "heat shield",
       "industry:aerospace",
@@ -33,9 +34,9 @@
       "eye safe",
       "high efficiency",
       "industry:defense",
-      "industry:infrared",
       "industry:lasers",
       "industry:photonics",
+      "infrared",
       "laser",
       "laser gain medium",
       "medical laser",

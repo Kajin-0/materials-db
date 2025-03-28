@@ -8,18 +8,19 @@
     ],
     "category": "Alloy",
     "tags": [
-      "age hardened",
-      "durability",
       "high strength",
+      "tough",
+      "steel",
+      "ultra high strength",
+      "machinable",
+      "age hardened",
+      "aerospace",
+      "durability",
+      "structural",
       "impact resistant",
       "industry:aerospace",
-      "industry:defense",
       "industry:infrastructure",
-      "machinable",
-      "steel",
-      "structural",
-      "tough",
-      "ultra high strength"
+      "industry:defense"
     ]
   },
   {
@@ -32,17 +33,17 @@
     ],
     "category": "Polymer",
     "tags": [
-      "abrasion resistant",
-      "ballistic",
-      "fiber",
       "high strength",
-      "impact resistant",
-      "industry:aerospace",
-      "industry:biomedical",
-      "industry:defense",
       "lightweight",
+      "fiber",
+      "impact resistant",
+      "ballistic",
       "non-conductive",
-      "self-lubricating"
+      "self-lubricating",
+      "abrasion resistant",
+      "industry:defense",
+      "industry:biomedical",
+      "industry:aerospace"
     ]
   },
   {
@@ -54,16 +55,16 @@
     ],
     "category": "Composite",
     "tags": [
-      "hydrogen rich",
-      "industry:nuclear",
-      "industry:radiation",
-      "industry:space",
-      "low-Z",
-      "moderator",
       "neutron shielding",
-      "non-toxic",
+      "radiation resistant",
       "polyethylene",
-      "radiation resistant"
+      "moderator",
+      "hydrogen rich",
+      "non-toxic",
+      "low-Z",
+      "industry:radiation",
+      "industry:nuclear",
+      "industry:space"
     ]
   },
   {
@@ -76,16 +77,16 @@
     ],
     "category": "Crystal",
     "tags": [
+      "radiation shielding",
+      "scintillator",
       "dense",
+      "ionizing radiation",
       "gamma detection",
       "high density",
-      "industry:defense",
-      "industry:medical",
-      "industry:radiation",
-      "ionizing radiation",
       "optical crystal",
-      "radiation shielding",
-      "scintillator"
+      "industry:radiation",
+      "industry:medical",
+      "industry:defense"
     ]
   },
   {
@@ -97,15 +98,15 @@
     ],
     "category": "Ceramic",
     "tags": [
-      "high temperature",
-      "hypersonic",
-      "industry:aerospace",
-      "industry:space",
-      "oxidation resistant",
       "refractory",
-      "rocket nozzle",
+      "high temperature",
+      "thermal conductivity",
       "structural ceramic",
-      "thermal conductivity"
+      "oxidation resistant",
+      "hypersonic",
+      "rocket nozzle",
+      "industry:space",
+      "industry:aerospace"
     ]
   },
   {
@@ -117,16 +118,16 @@
     ],
     "category": "Ceramic",
     "tags": [
+      "ultra high temperature",
       "carbide",
       "hard",
-      "hypersonic",
-      "industry:aerospace",
-      "industry:defense",
-      "industry:space",
       "oxidation resistant",
       "refractory",
+      "hypersonic",
       "thermal protection",
-      "ultra high temperature"
+      "industry:space",
+      "industry:defense",
+      "industry:aerospace"
     ]
   },
   {
@@ -138,16 +139,16 @@
     ],
     "category": "Metal",
     "tags": [
+      "cryogenic",
+      "soft metal",
+      "vacuum seal",
+      "thermal interface",
       "cold welding",
       "corrosion resistant",
+      "low temp",
       "industry:cryogenics",
       "industry:space",
-      "industry:vacuum",
-      "low temp",
-      "prop:cryogenic",
-      "soft metal",
-      "thermal interface",
-      "vacuum seal"
+      "industry:vacuum"
     ]
   },
   {
@@ -159,16 +160,16 @@
     ],
     "category": "Composite",
     "tags": [
-      "env:vacuum_compatible",
-      "flexible",
-      "industry:aerospace",
-      "industry:cryogenics",
-      "industry:space",
+      "thermal insulation",
+      "cryogenic",
+      "vacuum compatible",
       "infrared reflective",
-      "lightweight",
-      "prop:cryogenic",
       "space qualified",
-      "thermal insulation"
+      "lightweight",
+      "flexible",
+      "industry:space",
+      "industry:cryogenics",
+      "industry:aerospace"
     ]
   }
 ]

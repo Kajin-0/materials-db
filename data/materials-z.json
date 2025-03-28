@@ -8,6 +8,7 @@
     ],
     "category": "Composite",
     "tags": [
+      "aerospace",
       "ceramic",
       "hard",
       "industry:aerospace",
@@ -30,19 +31,19 @@
     ],
     "category": "Optical Material",
     "tags": [
-      "domain:swir",
+      "cryogenic",
       "fiber",
-      "industry:infrared",
       "industry:lasers",
       "industry:photonics",
       "industry:space",
+      "infrared",
       "ir transmission",
       "laser",
       "low loss",
       "optical",
       "photonic",
-      "prop:cryogenic",
       "space",
+      "swir",
       "transparent"
     ]
   }

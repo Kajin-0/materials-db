@@ -8,22 +8,23 @@
     ],
     "category": "Semiconductor",
     "tags": [
-      "app:photodiode",
-      "app:photosensor",
-      "app:sensor",
-      "class:III-V",
-      "class:group_13",
-      "class:group_15",
-      "class:semiconductor",
-      "domain:swir",
+      "III-V",
+      "MBE",
+      "MOCVD",
+      "epitaxial",
+      "group 13",
+      "group 15",
       "high mobility",
       "industry:infrared",
       "industry:lasers",
       "industry:photonics",
-      "proc:MBE",
-      "proc:MOCVD",
-      "proc:epitaxial",
-      "prop:tunable_bandgap"
+      "infrared",
+      "photodiode",
+      "photosensor",
+      "semiconductor",
+      "sensor",
+      "swir",
+      "tunable bandgap"
     ]
   }
 ]

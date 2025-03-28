@@ -9,21 +9,21 @@
     "category": "Composite",
     "tags": [
       "boron nitride",
-      "ceramic",
-      "composite",
-      "electrically insulating",
-      "env:vacuum_compatible",
-      "high strength",
-      "industry:aerospace",
-      "industry:cryogenics",
-      "industry:space",
-      "industry:thermal",
-      "lightweight",
       "nanotube",
-      "prop:cryogenic",
+      "composite",
+      "lightweight",
+      "thermal conductor",
+      "electrically insulating",
+      "high strength",
       "radiation shielding",
+      "cryogenic",
+      "vacuum compatible",
       "refractory",
-      "thermal conductor"
+      "ceramic",
+      "industry:aerospace",
+      "industry:thermal",
+      "industry:cryogenics",
+      "industry:space"
     ]
   },
   {
@@ -35,20 +35,20 @@
     ],
     "category": "Composite",
     "tags": [
-      "fragile",
-      "industry:cryogenics",
-      "industry:infrared",
-      "industry:insulation",
-      "industry:space",
-      "industry:thermal",
       "insulator",
       "lightweight",
-      "low density",
       "porous",
-      "prop:cryogenic",
-      "space qualified",
       "thermal insulation",
-      "transparent"
+      "cryogenic",
+      "space qualified",
+      "fragile",
+      "low density",
+      "transparent",
+      "infrared",
+      "industry:space",
+      "industry:cryogenics",
+      "industry:thermal",
+      "industry:insulation"
     ]
   },
   {
@@ -61,16 +61,16 @@
     "category": "Ceramic",
     "tags": [
       "ceramic",
+      "thermal barrier",
       "electrolyte",
+      "oxide",
+      "ion conductor",
+      "wear resistant",
       "fuel cell",
       "high temperature",
-      "industry:automotive",
       "industry:energy",
       "industry:thermal",
-      "ion conductor",
-      "oxide",
-      "thermal barrier",
-      "wear resistant"
+      "industry:automotive"
     ]
   },
   {
@@ -85,14 +85,14 @@
     "tags": [
       "PCB substrate",
       "dielectric",
-      "electrical insulation",
-      "flame retardant",
-      "industry:aerospace",
-      "industry:electronics",
+      "thermoplastic",
       "insulator",
       "laminate",
       "mechanical strength",
-      "thermoplastic"
+      "electrical insulation",
+      "flame retardant",
+      "industry:electronics",
+      "industry:aerospace"
     ]
   },
   {
@@ -104,19 +104,19 @@
     ],
     "category": "Polymer",
     "tags": [
-      "electronics",
-      "env:vacuum_compatible",
-      "film",
+      "polyimide",
       "flexible",
+      "thermal stability",
+      "insulator",
+      "film",
+      "vacuum compatible",
+      "radiation resistant",
+      "electronics",
       "high temperature",
+      "space",
       "industry:aerospace",
       "industry:electronics",
-      "industry:space",
-      "insulator",
-      "polyimide",
-      "radiation resistant",
-      "space",
-      "thermal stability"
+      "industry:space"
     ]
   },
   {
@@ -128,17 +128,17 @@
     ],
     "category": "Composite",
     "tags": [
-      "app:sensor",
-      "conductive",
-      "flexible",
       "graphene",
-      "industry:electronics",
-      "industry:wearables",
+      "flexible",
+      "conductive",
+      "sensor",
+      "wearable",
+      "transparent",
       "layered",
       "printable",
       "stretchable",
-      "transparent",
-      "wearable"
+      "industry:electronics",
+      "industry:wearables"
     ]
   },
   {
@@ -151,16 +151,16 @@
     "category": "Composite",
     "tags": [
       "ceramic matrix",
-      "heat shield",
-      "hypersonic",
-      "industry:aerospace",
-      "industry:defense",
-      "industry:space",
-      "oxidation resistant",
-      "reentry",
       "refractory",
+      "hypersonic",
+      "reentry",
+      "heat shield",
+      "ultra high temp",
+      "oxidation resistant",
       "space",
-      "ultra high temp"
+      "industry:space",
+      "industry:defense",
+      "industry:aerospace"
     ]
   },
   {
@@ -174,15 +174,15 @@
     "category": "Alloy",
     "tags": [
       "amorphous",
-      "corrosion resistant",
-      "elastic",
-      "high strength",
-      "industry:magnetics",
-      "industry:mechanical",
-      "industry:precision",
       "metallic glass",
       "non-crystalline",
-      "soft magnetic"
+      "high strength",
+      "elastic",
+      "corrosion resistant",
+      "soft magnetic",
+      "industry:magnetics",
+      "industry:precision",
+      "industry:mechanical"
     ]
   },
   {
@@ -194,17 +194,17 @@
     ],
     "category": "Crystal",
     "tags": [
-      "acousto-optic",
-      "electro-optic",
-      "ferroelectric",
-      "industry:photonics",
-      "industry:quantum",
-      "laser",
-      "modulator",
       "nonlinear optical",
+      "ferroelectric",
+      "electro-optic",
+      "acousto-optic",
+      "single crystal",
       "photonic",
-      "proc:single_crystal",
-      "quantum"
+      "quantum",
+      "modulator",
+      "laser",
+      "industry:photonics",
+      "industry:quantum"
     ]
   },
   {
@@ -217,17 +217,17 @@
     ],
     "category": "Crystal",
     "tags": [
-      "PET",
-      "crystal",
+      "scintillator",
+      "radiation detection",
+      "high light yield",
       "fast decay",
       "gamma ray",
-      "high light yield",
+      "medical imaging",
+      "PET",
+      "crystal",
       "industry:medical",
       "industry:photonics",
-      "industry:radiation",
-      "medical imaging",
-      "radiation detection",
-      "scintillator"
+      "industry:radiation"
     ]
   }
 ]
