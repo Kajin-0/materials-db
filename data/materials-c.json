@@ -7,7 +7,7 @@
     ],
     "category": "Composite",
     "tags": [
-      "aerospace",
+      "app:sensor",
       "electrically conductive",
       "emi shielding",
       "flexible",
@@ -16,7 +16,6 @@
       "industry:energy",
       "lightweight",
       "nanocomposite",
-      "sensor",
       "strong",
       "structural"
     ]

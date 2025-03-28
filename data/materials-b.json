@@ -31,15 +31,15 @@
     "tags": [
       "contact",
       "corrosion resistant",
-      "cryogenic",
       "electrical connector",
+      "env:vacuum_compatible",
       "high strength",
       "industry:aerospace",
       "industry:cryogenics",
       "industry:electronics",
+      "prop:cryogenic",
       "spring",
-      "thermal conductor",
-      "vacuum compatible"
+      "thermal conductor"
     ]
   }
 ]
