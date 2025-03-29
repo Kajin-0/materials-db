@@ -1740,5 +1740,107 @@
           "impact resistant", "industry:aerospace", "industry:defense", "industry:infrastructure", "industry:nuclear",
           "lightweight", "neutron shielding", "polymer matrix composite", "ceramic reinforced"
         ]
+      },
+    "Boron Nitride Nanotube Composite": {
+        "name": "Boron Nitride Nanotube Composite",
+        "formula": "BNNT/Matrix",
+        "synonyms": [ "BNNT Composite", "BNNT Reinforced Material" ],
+        "category": "Composite",
+        "description": "A composite material incorporating Boron Nitride Nanotubes (BNNTs) as a reinforcing filler within a matrix material (commonly polymers like epoxy, but also ceramics or metals). BNNTs offer exceptional properties including extremely high mechanical strength and modulus, high thermal conductivity, excellent electrical insulation, thermal stability, neutron absorption, and chemical inertness. Composites aim to leverage these properties for applications requiring enhanced thermal management, lightweight structural reinforcement, radiation shielding, and high-performance dielectric materials.",
+        "wiki_link": "https://en.wikipedia.org/wiki/Boron_nitride_nanotube",
+        "safety": {
+          "toxicity": "Research ongoing. Nanotube forms require caution regarding inhalation. Handle BNNT powder/suspensions with respiratory protection and appropriate containment.",
+          "handling": "Handle BNNT materials under controlled conditions (fume hood/glovebox). Cured composites generally safe, but machining dust requires respiratory protection."
+        },
+        "identification": {
+          "cas_number": "N/A (Composite - BNNT structure varies)",
+          "class": "Nanotube Reinforced Composite (Polymer, Ceramic, or Metal Matrix)",
+          "crystal_structure": "BNNTs: Hexagonal Boron Nitride lattice rolled into tubes (analogous to CNTs). Matrix: Varies (e.g., Amorphous Polymer).",
+          "phase_diagram_notes": "Properties highly dependent on BNNT quality (purity, aspect ratio, defects), dispersion within the matrix, volume fraction, and interfacial bonding."
+        },
+        "advanced_fabrication_insights": {
+            "dispersion_challenges": "Critical Challenge: BNNTs tend to agglomerate due to van der Waals forces, making uniform dispersion difficult. Requires surface functionalization or advanced mixing techniques (e.g., high-shear mixing, ultrasonication).",
+            "common_defects_impact": "Agglomerates act as stress concentrators, reducing mechanical properties. Poor dispersion limits thermal/electrical benefits. Poor interface bonding limits load transfer.",
+            "interface_engineering": "Surface functionalization of BNNTs can improve bonding with specific matrix materials, enhancing load transfer and thermal transport across the interface.",
+            "method_specific_notes": "Solution mixing, melt mixing (for thermoplastics), in-situ polymerization are common fabrication approaches for polymer composites. Powder metallurgy for metal/ceramic matrix."
+        },
+        "growth_fabrication_properties": {
+            "common_growth_methods": "BNNT Synthesis: CVD, Laser Ablation, Arc Discharge, High-Temp Furnace methods. Composite Fabrication: Solution mixing, Melt compounding, In-situ polymerization, Powder Metallurgy.",
+            "source_materials_purity": "Requires high-quality BNNTs and appropriate matrix precursors (e.g., epoxy resin, ceramic powder, metal powder).",
+            "preferred_substrates_orientations": "N/A (Bulk composite). Alignment of BNNTs during processing can induce anisotropy.",
+            "typical_growth_parameters": "Composite processing depends heavily on matrix (e.g., epoxy curing cycles, sintering temps for ceramics/metals). BNNT loading typically low (0.1 - 5 wt%) due to dispersion challenges and cost.",
+            "passivation_methods": "BNNTs themselves are chemically inert. Composite surface properties determined by matrix."
+        },
+        "post_growth_processing": {
+            "annealing": "Post-curing for polymer matrix composites.",
+            "lapping_polishing": "Can be polished, properties may be anisotropic.",
+            "etching": "Matrix dependent.",
+            "grinding_milling": "Possible, generates potentially hazardous nanotube-containing dust."
+        },
+         "device_integration_characterization": {
+            "device_architectures": "Thermal interface materials (TIMs), heat spreaders, structural components requiring high stiffness/strength-to-weight, radiation shielding, dielectric layers, sensor components.",
+            "readout_integration": "N/A",
+            "ar_coatings": "N/A (Usually opaque).",
+            "packaging_cooling": "Potential use *in* advanced thermal management and packaging. Operating range often limited by matrix material.",
+            "key_characterization_techniques": ["Microscopy (SEM/TEM - dispersion, BNNT integrity)", "Raman Spectroscopy (BNNT quality/strain)", "Thermal Conductivity/Diffusivity Measurement", "Mechanical Testing (Tensile/Flexural Strength & Modulus)", "Dielectric Spectroscopy", "Neutron Attenuation Measurement"]
+        },
+        "electrical_properties": {
+          "bandgap_type": "BNNT: Wide Bandgap Insulator (~5.5-6 eV). Matrix varies.",
+          "resistivity": {"value": "Very High", "notes": "Composite remains highly insulating due to insulating nature of both BNNTs and typical polymer matrix. Potential for high dielectric strength."},
+          "dielectric_constant": {"notes": "Relatively low, can be tailored by matrix and BNNT loading."},
+          "dielectric_strength": {"notes": "Potentially very high."}
+        },
+        "optical_properties": {
+          "spectral_range": "Generally opaque unless matrix is transparent and BNNT loading is extremely low.", "notes": "BNNTs are strong UV absorbers."
+        },
+        "thermal_properties": {
+          "operating_temperature": {"notes": "Upper limit usually determined by the matrix material (e.g., epoxy Tg ~150-200°C). BNNTs stable to very high temperatures (>800°C in air, >2000°C in vacuum/inert)."},
+          "thermal_conductivity": {"value": "Potentially High (10 ->100+ W/(m·K))", "notes": "Theoretical BNNT conductivity is extremely high (~1000-3000 W/mK). Composite conductivity depends heavily on BNNT quality, loading, dispersion, alignment, and interface resistance. Significant improvements over neat polymers achieved."},
+          "specific_heat": {"notes": "Depends on matrix and loading."},
+          "melting_point": {"notes": "Matrix dependent. BNNTs do not melt."},
+          "thermal_expansion": {"notes": "BNNTs have very low/negative CTE. Composite CTE influenced by matrix and BNNT loading/alignment."}
+        },
+         "mechanical_properties": {
+             "density": {"value": "Low (~1.2-2.0 g/cm³ for polymer matrix)", "notes": "BNNT density ~1.9-2.1 g/cm³. Composite density slightly higher than neat polymer."},
+             "youngs_modulus": {"value": "High potential (Tensile Modulus of individual BNNT ~1 TPa)", "notes": "Composite modulus significantly enhanced compared to matrix, dependent on loading, dispersion, alignment, interface."},
+             "tensile_strength": {"value": "High potential (Tensile Strength of individual BNNT >50 GPa)", "notes": "Composite strength enhanced, but highly dependent on factors above."},
+             "fracture_toughness": {"notes": "Addition of BNNTs can potentially improve toughness via crack deflection/bridging mechanisms, but requires good dispersion/interface."}
+         },
+         "device_applications": {
+             "key_applications": ["Thermal Management Materials (Heat sinks, TIMs, heat spreaders in electronics/aerospace)", "Lightweight Structural Reinforcement (Aerospace, automotive)", "Radiation Shielding (Space applications - neutron absorption)", "High-Performance Dielectrics / Insulators", "Transparent Conductive Films (Potential, research stage)", "Biomedical applications (Drug delivery, scaffolds - research stage)"]
+         },
+         "chemical_properties": {
+             "stability_oxidation": "BNNTs are stable in air up to ~800-900°C. Composite stability usually limited by matrix.",
+             "chemical_inertness": "BNNTs are highly resistant to chemical attack.",
+             "solvent_resistance": "Composite resistance determined by matrix."
+         },
+         "radiation_shielding": {
+            "effectiveness": {"notes": "Boron-10 isotope provides effective thermal neutron absorption. BNNTs also offer potential for shielding against other radiation types (e.g., UV, potentially some ionizing radiation)."}
+         },
+         "comparison_alternatives": {
+             "notes": "Alternative Reinforcements/Composites:",
+             "vs_Carbon_Nanotube_CNT_Composites": "BNNT Comp: Electrically insulating, better thermal stability in air, neutron absorption, transparent (potentially). CNT Comp: Electrically conductive (or semiconducting), more mature technology, generally lower cost.",
+             "vs_Graphene_Composites": "BNNT Comp: Insulating nanotubes vs conductive/semiconducting sheets, potentially better dispersion (1D vs 2D). Graphene Comp: Potential for higher loading, different mechanical reinforcement mechanisms.",
+             "vs_Boron_Nitride_Platelet_Composites": "BNNT Comp: Higher aspect ratio reinforcement, potentially higher intrinsic strength/modulus/thermal conductivity. Platelet Comp: Easier processing/dispersion, lower cost.",
+             "vs_Conventional_Fillers_AlN_Al2O3": "BNNT Comp: Much higher intrinsic thermal conductivity and mechanical properties at lower filler loading, lower density. Conventional Fillers: Much lower cost, established processing."
+         },
+         "references_further_reading": {
+             "notes": "Key Reviews/Articles:",
+             "review_golberg": "Golberg, D. et al. 'Boron Nitride Nanotubes and Nanosheets.' (ACS Nano review or similar)",
+             "review_nano_today": "Review articles on BNNT synthesis and applications in journals like 'Nano Today', 'Advanced Materials'.",
+             "wikipedia": "https://en.wikipedia.org/wiki/Boron_nitride_nanotube"
+         },
+         "vendor_info": {
+            "notes": "Example Vendors (Placeholder):",
+            "vendor_1": "Company A - www.example-vendor-a.com",
+            "vendor_2": "Company B - www.example-vendor-b.com",
+            "vendor_3": "Company C - www.example-vendor-c.com"
+         },
+        "tags": [
+          "boron nitride", "nanotube", "composite", "lightweight", "thermal conductor",
+          "electrically insulating", "high strength", "radiation shielding", "cryogenic",
+          "vacuum compatible", "refractory", "ceramic", "industry:aerospace",
+          "industry:thermal", "industry:cryogenics", "industry:space", "nanomaterial"
+        ]
       } 
 }
