@@ -564,5 +564,120 @@
       "vacuum compatible", "radiation resistant", "electronics", "high temperature",
       "space", "industry:aerospace", "industry:electronics", "industry:space"
     ]
-  }
+  },
+      "Silicon": {
+        "name": "Silicon",
+        "formula": "Si",
+        "synonyms": [ "Si" ],
+        "category": "Semiconductor",
+        "description": "Elemental semiconductor, the cornerstone of modern electronics. Used extensively for transistors, integrated circuits, solar cells, and as a substrate material. Typically produced as high-purity single crystals via Czochralski (CZ) or Float-Zone (FZ) methods.",
+        "wiki_link": "https://en.wikipedia.org/wiki/Silicon",
+        "safety": {
+          "toxicity": "Low in bulk crystalline form. Amorphous silicon dust can irritate. Silane gas (SiH₄), used in processing, is highly pyrophoric and toxic.",
+          "handling": "Standard wafer handling procedures (cleanroom). Process gases (Silane, Dichlorosilane, etc.) require rigorous engineering controls and safety protocols."
+        },
+        "identification": {
+          "cas_number": "7440-21-3",
+          "class": "Elemental Semiconductor (Group IV)",
+          "crystal_structure": "Diamond cubic (FCC Bravais lattice with 2-atom basis)",
+          "lattice_constant": {"value": "5.431", "unit": "Å", "notes": "At 300K"},
+          "phase_diagram_notes": "Simple unary phase diagram. Melts congruently. Stable diamond cubic structure up to melting point under normal pressure."
+        },
+        "advanced_fabrication_insights": {
+            "stoichiometry_control": "N/A (Elemental)",
+            "common_defects_impact": "Point defects (vacancies, self-interstitials), dislocations, stacking faults, metallic impurities (esp. Fe, Cu, Ni). Impact carrier lifetime, leakage current, gate oxide integrity, device yield.",
+            "surface_preparation": "Critical: Native oxide (SiO₂) forms readily and must be controlled/removed (e.g., HF dip). High-quality thermal oxidation (SiO₂) for passivation/gate dielectric is essential for MOS devices.",
+            "method_specific_notes": "CZ growth introduces oxygen (~10¹⁸ cm⁻³), FZ has much lower oxygen/carbon (higher purity/resistivity). Epitaxy (CVD/MBE) provides highly controlled doping/thickness."
+        },
+        "growth_fabrication_properties": {
+            "common_growth_methods": "Bulk: Czochralski (CZ), Float-Zone (FZ). Epitaxial Layers: Chemical Vapor Deposition (CVD - APCVD, LPCVD, PECVD, UHVCVD), Molecular Beam Epitaxy (MBE).",
+            "source_materials_purity": "Metallurgical Grade Si (MGS, ~98-99%) refined via Siemens process or FBR to Electronic Grade Si (EGS, >9N, often >11N purity). Precursors: SiHCl₃ (trichlorosilane), SiH₄ (silane), SiH₂Cl₂ (dichlorosilane).",
+            "preferred_substrates_orientations": "Self-substrate (Si wafers). Common Orientations: (100) for CMOS logic, (111) historically/for some bipolar/epi, (110) for anisotropic etching/MEMS.",
+            "typical_growth_parameters": "CZ/FZ: Near melting point (~1414 °C), controlled pull/rotation rates. Epitaxy: 500-1200°C depending on method/precursor, precise gas flow/pressure control.",
+            "passivation_methods": "Thermal SiO₂ (standard), deposited oxides (e.g., TEOS-based SiO₂), Silicon Nitride (Si₃N₄ - diffusion barrier, passivation), ALD high-k dielectrics."
+        },
+        "post_growth_processing": {
+            "annealing": "Crucial for: Implant activation (RTA, furnace ~600-1100°C), defect reduction, diffusion drive-in, stress relief, silicide formation.",
+            "lapping_polishing": "Lapping followed by Chemical Mechanical Polishing (CMP) using silica slurry in alkaline solution to achieve atomically smooth surfaces.",
+            "etching": "Wet (Isotropic): HNA (HF/HNO₃/Acetic). Wet (Anisotropic): KOH, TMAH, EDP (orientation dependent). Dry (Plasma): RIE/ICP using Fluorine (SF₆, CF₄, CHF₃), Chlorine (Cl₂, BCl₃), or Bromine (HBr) chemistries for pattern transfer.",
+            "grinding_milling": "Wafer backgrinding for thinning. Dicing using diamond saws or laser ablation."
+        },
+         "device_integration_characterization": {
+            "device_architectures": "MOSFETs (Planar, FinFET, GAA), BJTs, JFETs, Diodes (PN, Schottky, Zener, PIN), Photodiodes, APDs, Solar Cells, IGBTs, Thyristors, MEMS/NEMS structures.",
+            "readout_integration": "Foundation of CMOS Read-Out Integrated Circuits (ROICs) via standard IC fabrication.",
+            "ar_coatings": "Common for solar cells (e.g., Si₃N₄) and photodetectors to reduce reflection losses.",
+            "packaging_cooling": "Standard IC packaging techniques (wire bonding, flip-chip). Cooling requirements depend heavily on device power density.",
+            "key_characterization_techniques": ["Four-Point Probe/Sheet Resistance", "Hall Effect (mobility, carrier conc.)", "Secondary Ion Mass Spectrometry (SIMS - doping profiles)", "X-Ray Diffraction (XRD - crystal quality)", "Transmission/Scanning Electron Microscopy (TEM/SEM - defects, structure)", "Capacitance-Voltage (CV - doping, oxide quality)", "Current-Voltage (IV - device characteristics)", "Carrier Lifetime (µ-PCD, SPV)", "Ellipsometry (thin film thickness/index)"]
+        },
+        "electrical_properties": {
+          "bandgap_type": "Indirect",
+          "band_gap": {"value": "1.12", "unit": "eV", "notes": "At 300K. Increases slightly at lower temperatures."},
+          "bandgap_equation": {"varshni_equation": "Eg(T) = 1.17 - (4.73e-4 * T²) / (T + 636) eV"},
+          "common_dopants": "n-type: Phosphorus (P), Arsenic (As), Antimony (Sb). p-type: Boron (B).",
+          "carrier_concentration": {"value": "ni ≈ 1.0 x 10^10", "unit": "cm⁻³", "notes": "Intrinsic @ 300K. Extrinsic doping typically 10¹⁴-10²⁰ cm⁻³ range."},
+          "electron_mobility": {"value": "~1400", "unit": "cm²/Vs", "notes": "Bulk, low doping, 300K. Decreases with doping and temperature."},
+          "hole_mobility": {"value": "~450", "unit": "cm²/Vs", "notes": "Bulk, low doping, 300K. Decreases with doping and temperature."},
+          "dielectric_constant": {"value": "11.7", "notes": "Static relative permittivity (ε_r)."},
+          "resistivity": {"value": "Highly variable (mΩ·cm to >10 kΩ·cm)", "notes": "Function of doping concentration and type."},
+          "breakdown_field": {"value": "~3 x 10^5", "unit": "V/cm", "notes": "Depends on doping."}
+        },
+        "optical_properties": {
+          "spectral_range": "Transparent in IR (> ~1.1 µm). Strong absorption in UV, moderate absorption in visible.",
+          "cutoff_wavelength": {"value": "~1.1", "unit": "µm", "notes": "Absorption edge corresponding to bandgap energy."},
+          "refractive_index": {"value": "~3.4-3.5", "notes": "At NIR wavelengths (~1.3-1.5 µm)."},
+          "absorption_coefficient": {"value": "Low in visible (~10³ cm⁻¹) compared to direct gap materials, increases sharply in UV.", "notes": "Indirect gap requires phonon assistance for absorption near band edge."},
+          "quantum_efficiency": {"value": "High for photodetectors/solar cells.", "notes": "Internal QE can approach 100% with proper design/passivation. Poor light emitter."},
+          "responsivity": {"value": "~0.5-0.7", "unit": "A/W", "notes": "Typical peak for photodiodes without internal gain."}
+        },
+        "thermal_properties": {
+          "operating_temperature": {"value": "Typically < 150-200", "unit": "°C", "notes": "Performance (esp. leakage) degrades significantly at higher temperatures. Max junction temp often limited by packaging/reliability."},
+          "thermal_conductivity": {"value": "~149", "unit": "W/(m·K)", "notes": "At 300K. Decreases with temperature."},
+          "specific_heat": {"value": "0.705", "unit": "J/(g·K)", "notes": "At 300K."},
+          "melting_point": {"value": "1414", "unit": "°C"},
+          "thermal_expansion": {"value": "2.6 x 10⁻⁶", "unit": "/°C", "notes": "Low Coefficient of Thermal Expansion (CTE)."}
+        },
+         "mechanical_properties": {
+             "density": {"value": "2.329", "unit": "g/cm³"},
+             "youngs_modulus": {"value": "~130-188", "unit": "GPa", "notes": "Anisotropic. E.g., E<100>≈130, E<110>≈169, E<111>≈188 GPa."},
+             "hardness_vickers": {"value": "~1100-1150", "unit": "HV", "notes": "Equivalent to Mohs hardness ~7."},
+             "poissons_ratio": {"value": "~0.22-0.28", "notes": "Anisotropic. e.g., ν₁₂ in (100) plane ≈ 0.28"},
+             "fracture_toughness": {"value": "~0.7-1.0", "unit": "MPa·m⁰·⁵", "notes": "Brittle material, sensitive to flaws."}
+         },
+         "device_applications": {
+             "sensor_types": ["Photodiode", "Avalanche Photodiode (APD)", "Single-Photon Avalanche Diode (SPAD)", "CCD/CMOS Image Sensor", "Piezoresistive Pressure Sensor", "Capacitive Accelerometer"],
+             "key_applications": ["Integrated Circuits (Microprocessors, Memory, Logic)", "Discrete Transistors (MOSFET, BJT)", "Photovoltaic Solar Cells", "Microelectromechanical Systems (MEMS)", "Substrate for III-V or Ge epitaxy"]
+         },
+         "chemical_properties": {
+             "stability_oxidation": "Forms a high-quality, stable, insulating native oxide (SiO₂) upon exposure to oxygen, especially at elevated temperatures. This property is fundamental to MOS technology.",
+             "solvent_resistance": "Highly resistant to most organic solvents and water.",
+             "acid_resistance": "Resistant to most acids, except hydrofluoric acid (HF) and mixtures containing HF (e.g., HNA).",
+             "base_resistance": "Slowly etched by strong alkaline solutions (e.g., KOH, NaOH, TMAH), which enables anisotropic etching."
+         },
+         "comparison_alternatives": {
+             "notes": "Dominant material, but comparisons relevant for specific needs:",
+             "vs_GaAs": "Si: Lower cost, mature CMOS integration, superior/stable native oxide, indirect gap (poor light emission). GaAs: Higher electron mobility (high frequency), direct gap (efficient light emission/detection), higher cost, no stable native oxide.",
+             "vs_Ge": "Si: Wider bandgap (lower intrinsic leakage, higher temp operation), stable oxide. Ge: Higher electron/hole mobility, lower bandgap (some IR applications), unstable native oxide, higher cost.",
+             "vs_SiC_GaN": "Si: Much lower cost, extremely mature technology, lower voltage/temperature capability. SiC/GaN: Wide bandgap allows high power/voltage, high temperature, high frequency operation, and blue/UV light emission; significantly higher cost and different processing."
+         },
+         "references_further_reading": {
+             "notes": "Standard Textbooks:",
+             "book_sze": "Sze, S. M., & Ng, K. K. 'Physics of Semiconductor Devices' (Wiley)",
+             "book_pierret": "Pierret, R. F. 'Semiconductor Device Fundamentals' (Addison-Wesley)",
+             "book_streetman": "Streetman, B. G., & Banerjee, S. K. 'Solid State Electronic Devices' (Pearson)",
+             "wikipedia": "https://en.wikipedia.org/wiki/Silicon"
+         },
+         "vendor_info": {
+             "notes": "Major Silicon Wafer Suppliers (Examples):",
+             "vendor_1": "Shin-Etsu Handotai (SEH)",
+             "vendor_2": "SUMCO Corporation",
+             "vendor_3": "GlobalWafers Co., Ltd.",
+             "vendor_4": "Siltronic AG",
+             "vendor_5": "SK Siltron"
+         },
+        "tags": [
+          "aerospace", "bulk grown", "cmos compatible", "computing", "durable", "elemental",
+          "group iv", "high temperature", "indirect bandgap", "industry:aerospace", "industry:computing",
+          "industry:electronics", "low cost", "research", "semiconductor", "substrate", "transistor"
+        ]
+      }
 }
