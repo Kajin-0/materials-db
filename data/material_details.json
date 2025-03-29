@@ -2157,5 +2157,109 @@
           "lightweight", "low frequency", "low loss", "magnetic", "soft magnetic",
           "composite", "polymer matrix composite"
         ]
+      },
+    "G-10/FR-4 Epoxy Glass Laminate": {
+        "name": "G-10/FR-4 Epoxy Glass Laminate",
+        "formula": "Glass Fiber / Epoxy Resin",
+        "synonyms": [ "G-10", "FR-4", "Garolite G-10", "Glass Epoxy Laminate", "PCB Substrate" ],
+        "category": "Composite",
+        "description": "A high-pressure thermoset laminate grade composed of woven fiberglass cloth impregnated with an epoxy resin binder. G-10 is the base designation, known for high mechanical strength, low moisture absorption, and good electrical insulating properties. FR-4 is the flame-retardant version of G-10 (FR stands for Flame Retardant), achieved by adding bromine compounds to the epoxy formulation. FR-4 is the most common material used for printed circuit board (PCB) substrates.",
+        "wiki_link": "https://en.wikipedia.org/wiki/FR-4",
+        "safety": {
+          "toxicity": "Low for the cured laminate. Machining/drilling generates abrasive glass fiber and potentially brominated epoxy dust, requiring respiratory protection (N95 or better) and good ventilation.",
+          "handling": "Handle sheets/boards normally. Be aware of potentially sharp edges after cutting/machining."
+        },
+        "identification": {
+          "cas_number": "N/A (Composite)",
+          "class": "Fiberglass Reinforced Epoxy Laminate",
+          "material_standard": {"notes": "NEMA grades G-10 and FR-4. IPC standards (e.g., IPC-4101) specify properties for PCB laminates."},
+          "appearance": {"notes": "Typically translucent yellowish-green to light green, though color can vary."}
+        },
+        "advanced_fabrication_insights": {
+            "process_control": "Manufactured by layering sheets of woven glass cloth ('prepreg') impregnated with partially cured epoxy resin, then laminating them under high temperature and pressure to fully cure the epoxy.",
+            "common_defects_impact": "Delamination, voids, resin-starved areas, inconsistent thickness. Affect mechanical strength, dimensional stability, electrical properties (impedance control), and reliability during PCB assembly (e.g., drilling, soldering).",
+            "weave_style": {"notes": "Different glass weave styles (e.g., 106, 1080, 2116, 7628) affect dielectric properties, dimensional stability, and ease of drilling for PCBs."},
+            "copper_cladding": {"notes": "For PCB use, typically supplied clad with copper foil (various weights) on one or both sides."}
+        },
+        "growth_fabrication_properties": {
+            "common_growth_methods": "Lamination process using prepreg sheets.",
+            "source_materials_purity": "E-glass woven fabric, Epoxy resin (often brominated for FR-4), Copper foil (for PCB grades).",
+            "preferred_substrates_orientations": "N/A (Self-supporting laminate).",
+            "typical_growth_parameters": "Lamination involves high pressure (~1000-2000 psi) and temperature (~170-190°C) cycles.",
+            "passivation_methods": "Surface is cured epoxy."
+        },
+        "post_growth_processing": {
+            "annealing": "Post-baking may be done to improve dimensional stability or remove moisture.",
+            "lapping_polishing": "Generally not polished; surface finish determined by lamination plates.",
+            "etching": "Copper layer is photolithographically patterned and etched for PCBs. Epoxy/glass is very resistant.",
+            "grinding_milling": "Machinable (routing, drilling, sawing). Requires carbide or diamond tooling due to abrasive glass fibers. Generates hazardous dust."
+        },
+         "device_integration_characterization": {
+            "device_architectures": "Printed Circuit Boards (PCBs - single-sided, double-sided, multi-layer), structural supports, electrical insulators, tooling jigs/fixtures, terminal boards.",
+            "readout_integration": "Serves as the substrate for mounting and interconnecting electronic components.",
+            "ar_coatings": "N/A",
+            "packaging_cooling": "Relatively low thermal conductivity requires thermal management considerations for high-power PCBs.",
+            "key_characterization_techniques": ["Dielectric Constant (Dk) & Dissipation Factor (Df) vs. Frequency", "Glass Transition Temperature (Tg - via DSC, DMA, TMA)", "Coefficient of Thermal Expansion (CTE - X, Y, Z axes)", "Dimensional Stability", "Flexural Strength", "Water Absorption", "Flammability Testing (UL 94V-0 for FR-4)"]
+        },
+        "electrical_properties": {
+          "bandgap_type": "Insulator",
+          "resistivity": {"value": "> 10¹⁰ - 10¹⁴", "unit": "Ω·cm", "notes": "Volume Resistivity. Excellent insulator, decreases with temperature and moisture absorption."},
+          "dielectric_constant": {"value": "~4.0 - 5.0", "notes": "Dk or ε_r. Varies with resin content, weave style, frequency, and temperature. Critical for impedance control in PCBs."},
+          "dissipation_factor": {"value": "~0.01 - 0.025", "notes": "Df or tan(δ). Represents dielectric loss. Increases significantly with frequency. Lower loss materials needed for high-frequency RF/microwave PCBs."},
+          "dielectric_strength": {"value": "~20+", "unit": "kV/mm", "notes": "High breakdown voltage."}
+        },
+        "optical_properties": {
+          "spectral_range": "Generally opaque or translucent.", "notes": "Not used for optical transmission."
+        },
+        "thermal_properties": {
+          "operating_temperature": {"value": "Continuous use typically up to ~110-140", "unit": "°C", "notes": "Limited by Glass Transition Temperature (Tg). Can withstand brief excursions higher (e.g., soldering). High-Tg FR-4 grades exist (>170°C)."},
+          "thermal_conductivity": {"value": "Low (~0.25 - 0.5)", "unit": "W/(m·K)", "notes": "Poor thermal conductor. Anisotropic (higher in-plane than through-plane)."},
+          "specific_heat": {"value": "~0.9-1.1", "unit": "J/(g·K)"},
+          "glass_transition_temp_tg": {"value": "~120-140 (Standard FR-4), >170 (High-Tg FR-4)", "unit": "°C", "notes": "Temperature where mechanical/thermal properties change significantly."},
+          "decomposition_temperature": {"value": "> 300", "unit": "°C"},
+          "thermal_expansion": {"value": "X/Y: ~10-16, Z: ~50-200+ x 10⁻⁶", "unit": "/°C", "notes": "Highly Anisotropic. Low CTE in-plane (X/Y) constrained by glass fibers. High CTE through-plane (Z-axis) above Tg, critical for plated-through-hole reliability."}
+        },
+         "mechanical_properties": {
+             "density": {"value": "~1.70-1.90", "unit": "g/cm³"},
+             "youngs_modulus": {"value": "~18-25", "unit": "GPa", "notes": "In-plane."},
+             "flexural_strength": {"value": "~350-550", "unit": "MPa", "notes": "Good mechanical strength."},
+             "hardness_rockwell": {"value": "M110"},
+             "water_absorption": {"value": "Low (<0.15% after 24hr immersion)"}
+         },
+         "device_applications": {
+             "key_applications": ["Printed Circuit Board (PCB) Substrate (Vast majority of electronics)", "Electrical Insulation (Barriers, washers, spacers)", "Structural Components (where electrical insulation is needed)", "Test Fixtures", "Terminal Boards"]
+         },
+         "chemical_properties": {
+             "stability_oxidation": "Good.",
+             "solvent_resistance": "Excellent resistance to common organic solvents.",
+             "acid_resistance": "Good resistance to weak acids.",
+             "base_resistance": "Good resistance to weak bases.",
+             "flammability": {"notes": "FR-4 meets UL 94V-0 rating (self-extinguishing). G-10 is not flame retardant."}
+         },
+         "comparison_alternatives": {
+             "notes": "Alternative PCB Substrate Materials:",
+             "vs_CEM-1_CEM-3": "G-10/FR-4: Higher mechanical strength, better dimensional stability, higher cost. CEM (Composite Epoxy Material): Lower cost, easier to punch/drill (paper core in CEM-1), lower mechanical properties, suitable for simpler/cheaper electronics.",
+             "vs_Polyimide_Laminates": "G-10/FR-4: Lower cost, lower operating temperature, higher Df (loss). Polyimide: Higher Tg/operating temperature, better dimensional stability at high temp, lower Dk/Df possible (better for high frequency), flexible variants exist, higher cost.",
+             "vs_PTFE_Teflon_Laminates": "G-10/FR-4: Much lower cost, easier processing. PTFE: Excellent low Dk/Df for very high frequency RF/microwave, difficult processing, higher cost.",
+             "vs_Ceramic_Substrates_Alumina": "G-10/FR-4: Lower cost, larger panel sizes, lower processing temps. Alumina: Much higher thermal conductivity, higher operating temp, better dimensional stability, higher cost, suitable for thick/thin film hybrid circuits."
+         },
+         "references_further_reading": {
+             "notes": "Key Standards & Resources:",
+             "ipc_4101": "IPC-4101: Specification for Base Materials for Rigid and Multilayer Printed Boards.",
+             "nema_li1": "NEMA LI 1: Industrial Laminated Thermosetting Products.",
+             "pcb_design_books": "Books on PCB design and fabrication (e.g., by Coombs, Harper).",
+             "wikipedia": "https://en.wikipedia.org/wiki/FR-4"
+         },
+         "vendor_info": {
+            "notes": "Example Vendors (Placeholder):",
+            "vendor_1": "Company A - www.example-vendor-a.com",
+            "vendor_2": "Company B - www.example-vendor-b.com",
+            "vendor_3": "Company C - www.example-vendor-c.com"
+         },
+        "tags": [
+          "PCB substrate", "dielectric", "insulator", "laminate", "mechanical strength",
+          "electrical insulation", "flame retardant", "industry:electronics", "industry:aerospace",
+          "composite", "thermoset", "glass fiber"
+        ]
       } 
 }
