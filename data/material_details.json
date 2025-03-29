@@ -32,7 +32,7 @@
         "etching": "Wet Etching: Br-Methanol (various concentrations, fast, isotropic), Br-Ethylene Glycol (slower, more controlled), Lactic/Nitric/HF mixes (polishing etches). Dry Etching: Reactive Ion Etching (RIE) or Inductively Coupled Plasma (ICP) using methane/hydrogen (CH₄/H₂), Ar, or halogen-based chemistries for device patterning.",
         "grinding_milling": "Generally avoided due to brittleness and contamination risks for device wafers. May be used carefully for source material preparation (e.g., crushing bulk CdTe) but requires specialized equipment and cleaning."
     },
-    "electrical_properties": { /* Same as before */
+    "electrical_properties": {
       "bandgap_type": "Direct, Tunable",
       "band_gap": {"value": "Variable -0.3 (x≈0) to 1.5 (x=1)", "unit": "eV", "notes": "Tunable via Cadmium fraction (x). Commonly targeted: x≈0.2 for LWIR (~0.1 eV), x≈0.3 for MWIR (~0.25 eV)."},
       "bandgap_equation": {"hansen_eg": "Eg(x, T) ≈ -0.302 + 1.93x + 5.35e-4 * T*(1-2x) - 0.810*x^2 + 0.832*x^3 (eV). Empirical.", "wavelength_relation": "λ_cutoff (µm) ≈ 1.24 / Eg (eV)"},
@@ -43,8 +43,8 @@
       "dielectric_constant": {"value": "~15 - 20", "notes": "Static value, varies slightly with x and frequency."},
       "resistivity": {"value": "Highly variable (10⁻³ - 10³+)", "unit": "Ω·cm", "notes": "Depends strongly on composition, temp, doping."},
       "breakdown_field": {"value": "Low (~10³ - 10⁴)", "unit": "V/cm", "notes": "Limits high-field operation."}
-    },
-    "optical_properties": { /* Same as before */
+    }, // <<< COMMA WAS MISSING HERE before optical_properties
+    "optical_properties": {
       "spectral_range": "SWIR, MWIR, LWIR (0.8 µm to >30 µm)", "notes": "Range determined by Eg(x).",
       "cutoff_wavelength": {"value": "Variable 0.8 (x=1) to >30 (x≈0)", "unit": "µm", "notes": "λ_c (µm) ≈ 1.24 / Eg (eV)."},
       "refractive_index": {"value": "~3.4 - 4.0", "notes": "High index, varies with wavelength and x."},
@@ -53,38 +53,37 @@
       "responsivity": {"value": "~1 - 10", "unit": "A/W", "notes": "Typical values at 77 K, depends on λ, bias, device."},
       "noise_equivalent_power": {"value": "~10⁻¹¹ - 10⁻¹³", "unit": "W/√Hz", "notes": "For high-performance cooled detectors."}
     },
-    "thermal_properties": { /* Same as before */
+    "thermal_properties": {
       "operating_temperature": {"value": "Typically 77 K (LN₂ cooled)", "notes": "Required for optimal S/N, reduces dark current."},
       "thermal_conductivity": {"value": "Low (~1 - 5)", "unit": "W/(m·K)", "notes": "Poor thermal conductor."},
       "specific_heat": {"value": "~0.16 - 0.20", "unit": "J/(g·K)", "notes": "At room temperature, varies with x."},
       "melting_point": {"value": "~700 - 800", "unit": "°C", "notes": "Composition dependent (pseudo-binary phase diagram)."}
     },
-     "mechanical_properties": { /* Same as before */
+     "mechanical_properties": {
          "density": {"value": "~5.8 (x=1) to ~8.1 (x=0)", "unit": "g/cm³", "notes": "Increases significantly with higher Hg content."},
          "youngs_modulus": {"value": "~40 - 50", "unit": "GPa"},
          "hardness_vickers": {"value": "~70 - 100", "unit": "HV", "notes": "Relatively soft and brittle."},
          "poissons_ratio": "~0.3",
          "fracture_toughness": {"value": "Low (< 0.5)", "unit": "MPa·m⁰·⁵", "notes": "Brittle, requires careful handling."}
      },
-     "device_applications": { /* Same as before */
+     "device_applications": {
          "sensor_types": ["Photoconductor (PC)", "Photovoltaic (PV) / Photodiode (PD)", "Avalanche Photodiode (APD, less common)"],
          "common_applications": ["Thermal Imaging / FLIR systems", "Military night vision", "Medical diagnostics (thermography)", "Environmental gas sensing", "Astronomy (IR telescopes)", "Process monitoring", "Missile guidance systems"]
      },
-     "chemical_properties": { /* Combined Etching/Stability */
+     "chemical_properties": {
          "stability_oxidation": "Chemically unstable surface without passivation. Readily oxidizes in air, especially at elevated temperatures.",
          "etching": "Wet: Br-Methanol (various conc.), Br-Ethylene Glycol, Lactic/Nitric/HF mixes. Dry: RIE/ICP using CH₄/H₂, Ar, or halogen chemistries for device patterning."
-         // Removed redundant "etchability" and "stability" keys
      },
-     "magnetic_properties": { /* Same as before */
+     "magnetic_properties": {
          "type": "Diamagnetic"
      },
-     "vendor_info": { /* Same as before */
+     "vendor_info": {
          "notes": "List of potential vendors (placeholder).",
          "vendor_1": "Company A - www.example-vendor-a.com (dummy)",
          "vendor_2": "Company B - www.example-vendor-b.com (dummy)",
          "vendor_3": "Company C - www.example-vendor-c.com (dummy)"
      },
-    "tags": [ /* Same as before */
+    "tags": [
       "II-VI", "LPE", "MBE", "MOCVD", "aerospace", "cadmium", "chalcogenide", "cryogenic",
       "epitaxial", "group 12", "group 16", "industry:aerospace", "industry:infrared",
       "industry:photonics", "ir", "lwir", "mercury", "mwir", "nitrogen cooled",
