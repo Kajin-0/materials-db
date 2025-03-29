@@ -1949,5 +1949,105 @@
           "industry:space", "industry:cryogenics", "industry:thermal", "industry:insulation",
           "ceramic", "composite", "low-k"
         ]
+      },
+    "Carbon Nanotube Composite": {
+        "name": "Carbon Nanotube Composite",
+        "formula": "CNT/Epoxy",
+        "synonyms": [ "Carbon Nanotube Reinforced Polymer", "CNT Composite", "CNT/Epoxy" ],
+        "category": "Composite",
+        "description": "A composite material made by dispersing Carbon Nanotubes (CNTs) - typically single-walled (SWNT) or multi-walled (MWNT) - within a polymer matrix, commonly epoxy resin. CNTs possess extraordinary mechanical properties (high strength, high modulus), excellent electrical conductivity, and high thermal conductivity. Incorporating them into polymers aims to enhance strength, stiffness, electrical conductivity (for EMI shielding, static dissipation), and thermal conductivity, while maintaining low density. Achieving good dispersion and interfacial bonding are key challenges.",
+        "wiki_link": "https://en.wikipedia.org/wiki/Carbon_nanotube#Composites",
+        "safety": {
+          "toxicity": "Research ongoing. Raw CNTs, particularly certain types/aspect ratios, are considered a potential inhalation hazard similar to asbestos fibers. Handle CNT powder/suspensions with stringent respiratory protection and containment (glovebox/fume hood).",
+          "handling": "Handle raw CNTs under controlled conditions. Cured composites are generally stable, but machining/sanding generates dust containing CNTs, requiring respiratory protection."
+        },
+        "identification": {
+          "cas_number": "308068-56-6 (CNT, generic), N/A (Epoxy varies)",
+          "class": "Nanotube Reinforced Polymer Composite",
+          "crystal_structure": "CNTs: Rolled graphene sheets (hexagonal lattice). Epoxy: Amorphous polymer.",
+          "phase_diagram_notes": "Properties depend heavily on CNT type (SWNT/MWNT, diameter, length, chirality, defects), dispersion quality, volume fraction, alignment, matrix type, and interfacial adhesion."
+        },
+        "advanced_fabrication_insights": {
+            "dispersion_challenges": "CRITICAL: Strong van der Waals forces cause CNTs to form bundles/agglomerates, hindering effective reinforcement and conductivity. Requires high-energy mixing (shear, calendering, ultrasonication), often combined with surfactants or CNT surface functionalization.",
+            "common_defects_impact": "Agglomerates act as stress risers, reducing strength/toughness. Poor dispersion limits conductivity (percolation threshold not reached or inefficient). Poor interface bonding limits load transfer and thermal transport.",
+            "interface_engineering": "Covalent or non-covalent functionalization of CNT surfaces can improve compatibility and bonding with the epoxy matrix.",
+            "alignment_techniques": "Applying shear forces, electric fields, or magnetic fields during processing can partially align CNTs, leading to anisotropic improvements in mechanical, electrical, and thermal properties."
+        },
+        "growth_fabrication_properties": {
+            "common_growth_methods": "CNT Synthesis: CVD, Arc Discharge, Laser Ablation. Composite Fabrication: Solution mixing, Melt mixing (for thermoplastics), Resin infusion, 3D Printing, In-situ polymerization.",
+            "source_materials_purity": "Requires high-quality CNTs (purity, aspect ratio control) and suitable epoxy resin systems.",
+            "preferred_substrates_orientations": "N/A (Bulk composite).",
+            "typical_growth_parameters": "Composite processing depends on matrix (epoxy cure cycles, thermoplastic processing temps). CNT loading typically 0.1-5 wt% due to dispersion issues and viscosity increase.",
+            "passivation_methods": "Composite surface is epoxy."
+        },
+        "post_growth_processing": {
+            "annealing": "Post-curing of epoxy matrix.",
+            "lapping_polishing": "Possible but challenging due to differing hardness of CNTs and matrix.",
+            "etching": "Matrix dependent (e.g., oxygen plasma for epoxy).",
+            "grinding_milling": "Possible, generates potentially hazardous dust."
+        },
+         "device_integration_characterization": {
+            "device_architectures": "Lightweight structural components (aerospace panels), conductive adhesives/coatings, EMI shielding enclosures/gaskets, electrostatic discharge (ESD) materials, thermal interface materials (TIMs), sensor elements (strain, chemical).",
+            "readout_integration": "N/A",
+            "ar_coatings": "N/A (Typically opaque).",
+            "packaging_cooling": "Operating temperature limited by matrix (epoxy). Potential use *in* thermal management solutions.",
+            "key_characterization_techniques": ["Microscopy (SEM/TEM - dispersion)", "Raman Spectroscopy (CNT quality, interaction)", "Electrical Conductivity/Resistivity Measurement", "EMI Shielding Effectiveness Testing", "Thermal Conductivity Measurement", "Mechanical Testing (Tensile/Flexural Strength & Modulus, Toughness)", "Dynamic Mechanical Analysis (DMA - Tg, viscoelasticity)"]
+        },
+        "electrical_properties": {
+          "bandgap_type": "CNT: Metallic or Semiconducting (chirality dependent). Epoxy: Insulator.",
+          "resistivity": {"value": "Variable (Can range from insulating to ~10⁻² Ω·cm or lower)", "notes": "Highly dependent on CNT type, loading, dispersion, and processing. Exhibits percolation behavior - sharp drop in resistivity above a critical CNT concentration (percolation threshold, often ~0.1-1 wt%)."},
+          "conductivity_electrical": {"notes": "Can be tuned from insulating to conductive."},
+          "emi_shielding_effectiveness": {"notes": "Can provide significant EMI shielding, particularly at higher frequencies, due to electrical conductivity."}
+        },
+        "optical_properties": {
+          "spectral_range": "Opaque", "notes": "Strongly absorbing due to black color of CNTs."
+        },
+        "thermal_properties": {
+          "operating_temperature": {"value": "Limited by Epoxy (~ -50 to 120-180)", "unit": "°C", "notes": "Maximum use temp depends on epoxy Tg."},
+          "thermal_conductivity": {"value": "Moderate Improvement (~1-10+ W/(m·K))", "notes": "Individual CNTs have very high thermal conductivity (~2000-6000 W/mK), but composite conductivity is limited by high interfacial thermal resistance (Kapitza resistance) and dispersion. Alignment helps significantly."},
+          "specific_heat": {"value": "~1.0-1.5", "unit": "J/(g·K)"},
+          "melting_point": {"notes": "Epoxy decomposes/chars. CNTs stable to >2800°C (vacuum)."},
+          "thermal_expansion": {"notes": "Composite CTE generally lower than neat epoxy due to very low CTE of CNTs, but depends on loading/alignment."}
+        },
+         "mechanical_properties": {
+             "density": {"value": "Low (~1.2-1.4 g/cm³)", "notes": "Slightly higher than neat epoxy. CNT density ~1.3-1.4 g/cm³."},
+             "youngs_modulus": {"value": "Significantly Enhanced (e.g., 5-50+ GPa)", "notes": "Individual CNT modulus ~1 TPa. Composite modulus increases significantly with CNT loading/dispersion/alignment compared to neat epoxy (~3 GPa)."},
+             "tensile_strength": {"value": "Enhanced (e.g., 50-200+ MPa)", "notes": "Individual CNT strength ~100 GPa. Composite strength improves, but often less dramatically than modulus due to interface/defect limitations."},
+             "fracture_toughness": {"notes": "Can increase toughness via crack bridging/pullout, but highly sensitive to dispersion and interface quality. Agglomerates can reduce toughness."}
+         },
+         "device_applications": {
+             "key_applications": ["Aerospace/Automotive structural components (strength/stiffness enhancement, lightning strike protection)", "EMI/RFI Shielding materials", "Electrostatic Discharge (ESD) protection", "Conductive adhesives and composites", "Thermal management materials (TIMs, heat spreaders - research focus)", "Sensors (strain, chemical, biological)", "Sporting goods (bicycle frames, tennis rackets)"]
+         },
+         "chemical_properties": {
+             "stability_oxidation": "CNTs oxidize in air above ~500-700°C. Composite stability limited by epoxy.",
+             "chemical_inertness": "CNTs are relatively inert, but can be functionalized.",
+             "solvent_resistance": "Determined by epoxy matrix."
+         },
+         "comparison_alternatives": {
+             "notes": "Alternative Reinforcements/Composites:",
+             "vs_Carbon_Fiber_Composites": "CNT Comp: Potential for higher specific properties (strength/modulus per weight), added electrical/thermal conductivity, nanoscale reinforcement. Carbon Fiber Comp: Mature technology, much easier processing, established design data, macroscopic reinforcement.",
+             "vs_Graphene_Composites": "CNT Comp: 1D reinforcement vs 2D sheets, potentially easier alignment, different percolation behavior. Graphene Comp: Potential for higher loading, different mechanical mechanisms, potential barrier properties.",
+             "vs_BNNT_Composites": "CNT Comp: Electrically conductive/semiconducting, more mature/lower cost CNTs. BNNT Comp: Electrically insulating, higher thermal stability in air, neutron absorption.",
+             "vs_Conductive_Fillers_Carbon_Black_Metal_Particles": "CNT Comp: Achieve similar conductivity at much lower loading levels (lower impact on matrix properties/density), potentially better mechanical reinforcement. Conventional Fillers: Lower cost, easier dispersion."
+         },
+         "references_further_reading": {
+             "notes": "Key Reviews/Books:",
+             "book_cnt_composites": "Books dedicated to Carbon Nanotube Composites (e.g., by Ajayan, Thostenson).",
+             "journal_carbon": "Journal 'Carbon' (many articles on CNTs and composites).",
+             "journal_composites_science_tech": "'Composites Science and Technology' journal.",
+             "wikipedia_cnt": "https://en.wikipedia.org/wiki/Carbon_nanotube"
+         },
+         "vendor_info": {
+            "notes": "Example Vendors (Placeholder):",
+            "vendor_1": "Company A - www.example-vendor-a.com",
+            "vendor_2": "Company B - www.example-vendor-b.com",
+            "vendor_3": "Company C - www.example-vendor-c.com"
+         },
+        "tags": [
+          "aerospace", "electrically conductive", "emi shielding", "flexible",
+          "industry:aerospace", "industry:electronics", "industry:energy",
+          "lightweight", "nanocomposite", "sensor", "strong", "structural",
+          "nanotube", "carbon", "polymer matrix composite"
+        ]
       } 
 }
