@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <!-- Make title dynamic later if needed -->
+  <!-- Title will be set dynamically by JS -->
   <title>Material Detail</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css" />
@@ -19,7 +19,7 @@
 
     <!-- Tags Section -->
     <section class="material-section" id="section-tags">
-      <h2>Tags & Categories</h2> <!-- Title is hidden by CSS, but good for structure -->
+      <h2 style="display: none;">Tags & Categories</h2> <!-- Title is hidden by CSS, but good for structure -->
       <div class="tags-list" id="material-tags">Loading...</div>
     </section>
 
@@ -198,21 +198,16 @@
          </dl>
        </section>
 
-       <!-- Comparison with Alternatives (MODIFIED FOR DYNAMIC CONTENT) -->
+       <!-- Comparison with Alternatives (STRUCTURE UPDATED FOR DYNAMIC CONTENT) -->
        <section class="material-section" id="section-comparison">
          <h2>Comparison with Alternatives</h2>
-          <dl class="property-list">
-           <div class="property-item">
+          <dl class="property-list" id="comparison-list"> <!-- Added ID to DL -->
+           <div class="property-item"> <!-- Keep the notes item -->
                 <dt class="property-key">Notes:</dt>
                 <dd class="property-value" id="prop-comparison-notes">Loading...</dd>
             </div>
-           <!-- Dynamic comparison items will be inserted here by JS -->
-           <div id="comparison-items-placeholder">
-               <!-- Placeholder structure (optional, will be replaced) -->
-               <div class="property-item">
-                   <dd class="property-value"><span class="na-value">Loading comparisons...</span></dd>
-               </div>
-           </div>
+           <!-- Dynamic comparison items will be inserted DIRECTLY HERE by JS -->
+           <!-- Placeholder removed -->
           </dl>
        </section>
 
