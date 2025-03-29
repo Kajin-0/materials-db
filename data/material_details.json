@@ -446,5 +446,123 @@
       "infrared", "ir transmission", "laser", "low loss", "optical", "photonic",
       "space", "swir", "transparent"
     ]
+  },
+  "Kapton Polyimide Film": {
+    "name": "Kapton Polyimide Film",
+    "formula": "Polyimide (C₂₂H₁₀N₂O₅)n",
+    "synonyms": [ "Kapton", "Polyimide Film", "Kapton HN", "Kapton VN" ],
+    "category": "Polymer",
+    "description": "A high-performance polyimide film known for its excellent thermal stability over a wide temperature range (cryogenic up to ~400°C), good chemical resistance, high dielectric strength, and mechanical toughness. Widely used as an electrical insulator, flexible substrate, and thermal barrier in demanding aerospace, electronics, and industrial applications.",
+    "wiki_link": "https://en.wikipedia.org/wiki/Kapton",
+    "safety": {
+      "toxicity": "Generally considered low/non-toxic in film form.",
+      "handling": "Standard film handling. Be aware of potential static buildup. Combustion products can be hazardous."
+    },
+    "identification": {
+      "cas_number": "25038-81-7 (Generic Polyimide)",
+      "class": "Aromatic Polyimide Polymer Film",
+      "crystal_structure": "Amorphous or Semi-crystalline (depends on type/processing)",
+      "lattice_constant": {"value": "N/A", "notes": "Not typically defined for polymers like this."},
+      "phase_diagram_notes": "Does not melt; decomposes at high temperatures (>500°C). Has a glass transition temperature (Tg)."
+    },
+    "advanced_fabrication_insights": {
+        "stoichiometry_control": "Polymerization process controls molecular weight and properties.",
+        "common_defects_impact": "Pinholes, surface contamination, thickness variations affect electrical insulation and mechanical properties.",
+        "surface_preparation": "Surface treatment (e.g., plasma, chemical etching) often needed for adhesion (metallization, coatings).",
+        "method_specific_notes": "Typically produced via casting of polyamic acid followed by thermal or chemical imidization."
+    },
+    "growth_fabrication_properties": {
+        "common_growth_methods": "Film Casting and Imidization.",
+        "source_materials_purity": "Requires high purity monomers (diamines and dianhydrides).",
+        "preferred_substrates_orientations": "N/A (Self-supporting film)",
+        "typical_growth_parameters": "Parameters involve solution viscosity, casting speed, imidization temperature profile and time.",
+        "passivation_methods": "Generally stable, but coatings (e.g., SiO₂, metal) can be applied for specific functions (barrier, conductivity)."
+    },
+    "post_growth_processing": {
+        "annealing": "Can be annealed to optimize dimensional stability or other properties.",
+        "lapping_polishing": "N/A for thin film.",
+        "etching": "Can be etched using plasma (O₂, CF₄) or specific wet etchants (e.g., hot KOH).",
+        "grinding_milling": "N/A (Converted via cutting, slitting, die-cutting)."
+    },
+     "device_integration_characterization": {
+        "device_architectures": "Used as flexible substrate (FPCs), insulation layers, thermal blankets (MLI), wire insulation, diaphragms, gaskets.",
+        "readout_integration": "N/A",
+        "ar_coatings": "N/A (Generally opaque or amber, not used where AR is primary need)",
+        "packaging_cooling": "Used from cryogenic temperatures up to ~400°C.",
+        "key_characterization_techniques": ["Tensile Strength/Elongation", "Dielectric Strength", "Dielectric Constant/Loss Tangent", "Thermal Stability (TGA)", "Glass Transition Temp (Tg - DMA/DSC)", "Thickness Measurement", "Surface Energy/Adhesion Tests"]
+    },
+    "electrical_properties": {
+      "bandgap_type": "N/A (Insulator)",
+      "band_gap": {"value": "Wide (> 3 eV approx)", "notes": "Good electrical insulator."},
+      "bandgap_equation": {"notes": "N/A"},
+      "common_dopants": "Generally not doped; fillers (e.g., conductive particles) can be added for specific properties.",
+      "carrier_concentration": {"notes": "N/A (Insulator)"},
+      "electron_mobility": {"notes": "N/A (Insulator)"},
+      "hole_mobility": {"notes": "N/A (Insulator)"},
+      "dielectric_constant": {"value": "~3.0-3.5", "notes": "At 1 kHz - 1 MHz, depends on type/frequency/temp."},
+      "dielectric_strength": {"value": ">100", "unit": "kV/mm", "notes": "Excellent insulator. Depends on thickness."},
+      "dissipation_factor": {"value": "~0.001-0.003", "notes": "Low electrical loss (at 1 kHz)."},
+      "resistivity": {"value": "> 10^14", "unit": "Ohm-cm", "notes": "Volume resistivity; very high."}
+    },
+    "optical_properties": {
+      "spectral_range": "Some transparency in visible/NIR depending on type, opaque in UV/Deep IR.", "notes": "Typically amber colored.",
+      "refractive_index": {"value": "~1.6-1.7", "notes": "In visible range."},
+      "absorption_coefficient": {"value": "High in UV, specific absorption bands elsewhere."},
+      "haze": {"value": "Low for clear types."}
+    },
+    "thermal_properties": {
+      "operating_temperature": {"value": "-269 to +400", "unit": "°C", "notes": "Excellent thermal stability range."},
+      "thermal_conductivity": {"value": "Low (~0.1-0.2)", "unit": "W/(m K)"},
+      "specific_heat": {"value": "~1.1", "unit": "J/(g K)"},
+      "glass_transition_temp_tg": {"value": ">360", "unit": "°C", "notes": "Very high Tg for a polymer."},
+      "thermal_expansion": {"value": "~20-50 x 10⁻⁶", "unit": "/°C", "notes": "CTE depends on type and direction."},
+      "decomposition_temperature": {"value": "> 500", "unit": "°C"}
+    },
+     "mechanical_properties": {
+         "density": {"value": "~1.42", "unit": "g/cm^3"},
+         "youngs_modulus": {"value": "~2.5-5", "unit": "GPa", "notes": "Depends on type (e.g., HN vs VN)."},
+         "tensile_strength": {"value": "~150-250", "unit": "MPa", "notes": "High for a polymer film."},
+         "elongation_at_break": {"value": "~30-70", "unit": "%", "notes": "Good flexibility/toughness."},
+         "tear_strength": {"value": "High"},
+         "dimensional_stability": {"value": "Good"}
+     },
+     "device_applications": {
+         "sensor_types": ["Substrate for flexible sensors (strain, temp, pressure)"],
+         "key_applications": ["Flexible Printed Circuits (FPCs)", "Wire & Cable Insulation", "Motor/Transformer Insulation", "Thermal Blankets (MLI)", "Speaker Cones", "Gaskets & Seals", "Medical Tubing", "Substrate for Flexible Displays/Solar"]
+     },
+     "chemical_properties": {
+         "stability_oxidation": "Good resistance to oxidation at moderate temperatures.",
+         "solvent_resistance": "Excellent resistance to most organic solvents.",
+         "acid_resistance": "Good resistance to weak acids.",
+         "base_resistance": "Susceptible to strong bases (hydrolysis).",
+         "radiation_resistance": "Excellent resistance to ionizing radiation.",
+         "uv_resistance": "Good, but may yellow over long exposure."
+     },
+     "magnetic_properties": {
+         "type": "Diamagnetic"
+     },
+     "comparison_alternatives": {
+         "notes": "Alternative Polymer Films:",
+         "vs_Mylar_PET": "Kapton: Much higher temperature resistance, better radiation resistance. Mylar: Cheaper, better optical clarity (if needed), lower Tg.",
+         "vs_PEEK_Film": "Kapton: Higher max operating temp, better radiation resistance. PEEK: Better chemical resistance (esp. bases), higher strength/stiffness (usually).",
+         "vs_PEN_Film": "Kapton: Higher temperature resistance. PEN: Better dimensional stability than PET, good barrier properties."
+     },
+     "references_further_reading": {
+         "notes": "Key Resources (Examples):",
+         "dupont_datasheets": "DuPont Kapton Technical Data Sheets",
+         "polymer_handbook": "Polymer Handbook (Brandrup, Immergut, Grulke)",
+         "wikipedia": "https://en.wikipedia.org/wiki/Kapton"
+     },
+     "vendor_info": {
+         "notes": "Example Vendors (Placeholder):",
+         "vendor_1": "Company A - www.example-vendor-a.com",
+         "vendor_2": "Company B - www.example-vendor-b.com",
+         "vendor_3": "Company C - www.example-vendor-c.com"
+     },
+    "tags": [
+      "polyimide", "flexible", "thermal stability", "insulator", "film",
+      "vacuum compatible", "radiation resistant", "electronics", "high temperature",
+      "space", "industry:aerospace", "industry:electronics", "industry:space"
+    ]
   }
 }
