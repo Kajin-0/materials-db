@@ -2,10 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Material Detail</title> <!-- Title will be set dynamically by JS -->
+  <!-- Title will be set dynamically by JS -->
+  <title>Material Detail</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css" />
-  <link rel="icon" href="data:;base64,iVBORw0KGgo="> <!-- Placeholder Favicon -->
+  <!-- Optional: Placeholder favicon -->
+  <link rel="icon" href="data:;base64,iVBORw0KGgo=">
 </head>
 <body>
   <div class="container">
@@ -21,15 +23,162 @@
       <div class="tags-list" id="material-tags">Loading...</div>
     </section>
 
-    <!-- Main Content Area (SIMPLIFIED - SECTIONS WILL BE ADDED HERE) -->
+    <!-- Main Content Area -->
     <main id="material-content-container">
+        <!-- Sections will be dynamically added here by material_loader.js -->
+        <!-- Initial Loading Message (will be cleared by JS) -->
         <p id="loading-message" style="text-align: center; color: #777; padding: 2rem;">Loading details...</p>
-        <!-- Dynamically generated sections will appear here -->
+
+        <!-- Static Periodic Table Structure -->
+        <!-- (This can be moved by JS later if needed, but simpler to include here) -->
+        <section class="material-section" id="section-periodic-table">
+          <h2>Constituent Elements</h2>
+          <div class="periodic-table-container">
+            <div class="pt-element p-1 s-block alkali-metal" data-symbol="H" data-number="1"><span>1</span><br>H</div>
+            <div class="pt-element p-1 s-block noble-gas" data-symbol="He" data-number="2" style="grid-column: 18;"><span>2</span><br>He</div>
+
+            <div class="pt-element p-2 s-block alkali-metal" data-symbol="Li" data-number="3"><span>3</span><br>Li</div>
+            <div class="pt-element p-2 s-block alkaline-earth" data-symbol="Be" data-number="4"><span>4</span><br>Be</div>
+            <div class="pt-element p-2 p-block metalloid" data-symbol="B" data-number="5" style="grid-column: 13;"><span>5</span><br>B</div>
+            <div class="pt-element p-2 p-block nonmetal" data-symbol="C" data-number="6"><span>6</span><br>C</div>
+            <div class="pt-element p-2 p-block nonmetal" data-symbol="N" data-number="7"><span>7</span><br>N</div>
+            <div class="pt-element p-2 p-block nonmetal" data-symbol="O" data-number="8"><span>8</span><br>O</div>
+            <div class="pt-element p-2 p-block halogen" data-symbol="F" data-number="9"><span>9</span><br>F</div>
+            <div class="pt-element p-2 p-block noble-gas" data-symbol="Ne" data-number="10"><span>10</span><br>Ne</div>
+
+            <div class="pt-element p-3 s-block alkali-metal" data-symbol="Na" data-number="11"><span>11</span><br>Na</div>
+            <div class="pt-element p-3 s-block alkaline-earth" data-symbol="Mg" data-number="12"><span>12</span><br>Mg</div>
+            <div class="pt-element p-3 p-block post-transition-metal" data-symbol="Al" data-number="13" style="grid-column: 13;"><span>13</span><br>Al</div>
+            <div class="pt-element p-3 p-block metalloid" data-symbol="Si" data-number="14"><span>14</span><br>Si</div>
+            <div class="pt-element p-3 p-block nonmetal" data-symbol="P" data-number="15"><span>15</span><br>P</div>
+            <div class="pt-element p-3 p-block nonmetal" data-symbol="S" data-number="16"><span>16</span><br>S</div>
+            <div class="pt-element p-3 p-block halogen" data-symbol="Cl" data-number="17"><span>17</span><br>Cl</div>
+            <div class="pt-element p-3 p-block noble-gas" data-symbol="Ar" data-number="18"><span>18</span><br>Ar</div>
+
+            <div class="pt-element p-4 s-block alkali-metal" data-symbol="K" data-number="19"><span>19</span><br>K</div>
+            <div class="pt-element p-4 s-block alkaline-earth" data-symbol="Ca" data-number="20"><span>20</span><br>Ca</div>
+            <div class="pt-element p-4 d-block transition-metal" data-symbol="Sc" data-number="21"><span>21</span><br>Sc</div>
+            <div class="pt-element p-4 d-block transition-metal" data-symbol="Ti" data-number="22"><span>22</span><br>Ti</div>
+            <div class="pt-element p-4 d-block transition-metal" data-symbol="V" data-number="23"><span>23</span><br>V</div>
+            <div class="pt-element p-4 d-block transition-metal" data-symbol="Cr" data-number="24"><span>24</span><br>Cr</div>
+            <div class="pt-element p-4 d-block transition-metal" data-symbol="Mn" data-number="25"><span>25</span><br>Mn</div>
+            <div class="pt-element p-4 d-block transition-metal" data-symbol="Fe" data-number="26"><span>26</span><br>Fe</div>
+            <div class="pt-element p-4 d-block transition-metal" data-symbol="Co" data-number="27"><span>27</span><br>Co</div>
+            <div class="pt-element p-4 d-block transition-metal" data-symbol="Ni" data-number="28"><span>28</span><br>Ni</div>
+            <div class="pt-element p-4 d-block transition-metal" data-symbol="Cu" data-number="29"><span>29</span><br>Cu</div>
+            <div class="pt-element p-4 d-block transition-metal" data-symbol="Zn" data-number="30"><span>30</span><br>Zn</div>
+            <div class="pt-element p-4 p-block post-transition-metal" data-symbol="Ga" data-number="31"><span>31</span><br>Ga</div>
+            <div class="pt-element p-4 p-block metalloid" data-symbol="Ge" data-number="32"><span>32</span><br>Ge</div>
+            <div class="pt-element p-4 p-block metalloid" data-symbol="As" data-number="33"><span>33</span><br>As</div>
+            <div class="pt-element p-4 p-block nonmetal" data-symbol="Se" data-number="34"><span>34</span><br>Se</div>
+            <div class="pt-element p-4 p-block halogen" data-symbol="Br" data-number="35"><span>35</span><br>Br</div>
+            <div class="pt-element p-4 p-block noble-gas" data-symbol="Kr" data-number="36"><span>36</span><br>Kr</div>
+
+            <div class="pt-element p-5 s-block alkali-metal" data-symbol="Rb" data-number="37"><span>37</span><br>Rb</div>
+            <div class="pt-element p-5 s-block alkaline-earth" data-symbol="Sr" data-number="38"><span>38</span><br>Sr</div>
+            <div class="pt-element p-5 d-block transition-metal" data-symbol="Y" data-number="39"><span>39</span><br>Y</div>
+            <div class="pt-element p-5 d-block transition-metal" data-symbol="Zr" data-number="40"><span>40</span><br>Zr</div>
+            <div class="pt-element p-5 d-block transition-metal" data-symbol="Nb" data-number="41"><span>41</span><br>Nb</div>
+            <div class="pt-element p-5 d-block transition-metal" data-symbol="Mo" data-number="42"><span>42</span><br>Mo</div>
+            <div class="pt-element p-5 d-block transition-metal" data-symbol="Tc" data-number="43"><span>43</span><br>Tc</div>
+            <div class="pt-element p-5 d-block transition-metal" data-symbol="Ru" data-number="44"><span>44</span><br>Ru</div>
+            <div class="pt-element p-5 d-block transition-metal" data-symbol="Rh" data-number="45"><span>45</span><br>Rh</div>
+            <div class="pt-element p-5 d-block transition-metal" data-symbol="Pd" data-number="46"><span>46</span><br>Pd</div>
+            <div class="pt-element p-5 d-block transition-metal" data-symbol="Ag" data-number="47"><span>47</span><br>Ag</div>
+            <div class="pt-element p-5 d-block transition-metal" data-symbol="Cd" data-number="48"><span>48</span><br>Cd</div>
+            <div class="pt-element p-5 p-block post-transition-metal" data-symbol="In" data-number="49"><span>49</span><br>In</div>
+            <div class="pt-element p-5 p-block post-transition-metal" data-symbol="Sn" data-number="50"><span>50</span><br>Sn</div>
+            <div class="pt-element p-5 p-block metalloid" data-symbol="Sb" data-number="51"><span>51</span><br>Sb</div>
+            <div class="pt-element p-5 p-block metalloid" data-symbol="Te" data-number="52"><span>52</span><br>Te</div>
+            <div class="pt-element p-5 p-block halogen" data-symbol="I" data-number="53"><span>53</span><br>I</div>
+            <div class="pt-element p-5 p-block noble-gas" data-symbol="Xe" data-number="54"><span>54</span><br>Xe</div>
+
+            <div class="pt-element p-6 s-block alkali-metal" data-symbol="Cs" data-number="55"><span>55</span><br>Cs</div>
+            <div class="pt-element p-6 s-block alkaline-earth" data-symbol="Ba" data-number="56"><span>56</span><br>Ba</div>
+            <div class="pt-element p-6 f-block lanthanide pt-placeholder" style="grid-column: 3;">57-71</div>
+            <div class="pt-element p-6 d-block transition-metal" data-symbol="Hf" data-number="72"><span>72</span><br>Hf</div>
+            <div class="pt-element p-6 d-block transition-metal" data-symbol="Ta" data-number="73"><span>73</span><br>Ta</div>
+            <div class="pt-element p-6 d-block transition-metal" data-symbol="W" data-number="74"><span>74</span><br>W</div>
+            <div class="pt-element p-6 d-block transition-metal" data-symbol="Re" data-number="75"><span>75</span><br>Re</div>
+            <div class="pt-element p-6 d-block transition-metal" data-symbol="Os" data-number="76"><span>76</span><br>Os</div>
+            <div class="pt-element p-6 d-block transition-metal" data-symbol="Ir" data-number="77"><span>77</span><br>Ir</div>
+            <div class="pt-element p-6 d-block transition-metal" data-symbol="Pt" data-number="78"><span>78</span><br>Pt</div>
+            <div class="pt-element p-6 d-block transition-metal" data-symbol="Au" data-number="79"><span>79</span><br>Au</div>
+            <div class="pt-element p-6 d-block transition-metal" data-symbol="Hg" data-number="80"><span>80</span><br>Hg</div>
+            <div class="pt-element p-6 p-block post-transition-metal" data-symbol="Tl" data-number="81"><span>81</span><br>Tl</div>
+            <div class="pt-element p-6 p-block post-transition-metal" data-symbol="Pb" data-number="82"><span>82</span><br>Pb</div>
+            <div class="pt-element p-6 p-block post-transition-metal" data-symbol="Bi" data-number="83"><span>83</span><br>Bi</div>
+            <div class="pt-element p-6 p-block metalloid" data-symbol="Po" data-number="84"><span>84</span><br>Po</div>
+            <div class="pt-element p-6 p-block halogen" data-symbol="At" data-number="85"><span>85</span><br>At</div>
+            <div class="pt-element p-6 p-block noble-gas" data-symbol="Rn" data-number="86"><span>86</span><br>Rn</div>
+
+            <div class="pt-element p-7 s-block alkali-metal" data-symbol="Fr" data-number="87"><span>87</span><br>Fr</div>
+            <div class="pt-element p-7 s-block alkaline-earth" data-symbol="Ra" data-number="88"><span>88</span><br>Ra</div>
+            <div class="pt-element p-7 f-block actinide pt-placeholder" style="grid-column: 3;">89-103</div>
+            <div class="pt-element p-7 d-block transition-metal" data-symbol="Rf" data-number="104"><span>104</span><br>Rf</div>
+            <div class="pt-element p-7 d-block transition-metal" data-symbol="Db" data-number="105"><span>105</span><br>Db</div>
+            <div class="pt-element p-7 d-block transition-metal" data-symbol="Sg" data-number="106"><span>106</span><br>Sg</div>
+            <div class="pt-element p-7 d-block transition-metal" data-symbol="Bh" data-number="107"><span>107</span><br>Bh</div>
+            <div class="pt-element p-7 d-block transition-metal" data-symbol="Hs" data-number="108"><span>108</span><br>Hs</div>
+            <div class="pt-element p-7 d-block transition-metal" data-symbol="Mt" data-number="109"><span>109</span><br>Mt</div>
+            <div class="pt-element p-7 d-block transition-metal" data-symbol="Ds" data-number="110"><span>110</span><br>Ds</div>
+            <div class="pt-element p-7 d-block transition-metal" data-symbol="Rg" data-number="111"><span>111</span><br>Rg</div>
+            <div class="pt-element p-7 d-block transition-metal" data-symbol="Cn" data-number="112"><span>112</span><br>Cn</div>
+            <div class="pt-element p-7 p-block unknown-properties" data-symbol="Nh" data-number="113"><span>113</span><br>Nh</div>
+            <div class="pt-element p-7 p-block unknown-properties" data-symbol="Fl" data-number="114"><span>114</span><br>Fl</div>
+            <div class="pt-element p-7 p-block unknown-properties" data-symbol="Mc" data-number="115"><span>115</span><br>Mc</div>
+            <div class="pt-element p-7 p-block unknown-properties" data-symbol="Lv" data-number="116"><span>116</span><br>Lv</div>
+            <div class="pt-element p-7 p-block unknown-properties" data-symbol="Ts" data-number="117"><span>117</span><br>Ts</div>
+            <div class="pt-element p-7 p-block unknown-properties" data-symbol="Og" data-number="118"><span>118</span><br>Og</div>
+
+            {/* Lanthanides Row */}
+            <div class="pt-element f-block lanthanide pt-series-label" style="grid-row: 9; grid-column: 1 / span 2;">Lanthanides</div>
+            <div class="pt-element f-block lanthanide" data-symbol="La" data-number="57" style="grid-row: 9; grid-column: 3;"><span>57</span><br>La</div>
+            <div class="pt-element f-block lanthanide" data-symbol="Ce" data-number="58" style="grid-row: 9;"><span>58</span><br>Ce</div>
+            <div class="pt-element f-block lanthanide" data-symbol="Pr" data-number="59" style="grid-row: 9;"><span>59</span><br>Pr</div>
+            <div class="pt-element f-block lanthanide" data-symbol="Nd" data-number="60" style="grid-row: 9;"><span>60</span><br>Nd</div>
+            <div class="pt-element f-block lanthanide" data-symbol="Pm" data-number="61" style="grid-row: 9;"><span>61</span><br>Pm</div>
+            <div class="pt-element f-block lanthanide" data-symbol="Sm" data-number="62" style="grid-row: 9;"><span>62</span><br>Sm</div>
+            <div class="pt-element f-block lanthanide" data-symbol="Eu" data-number="63" style="grid-row: 9;"><span>63</span><br>Eu</div>
+            <div class="pt-element f-block lanthanide" data-symbol="Gd" data-number="64" style="grid-row: 9;"><span>64</span><br>Gd</div>
+            <div class="pt-element f-block lanthanide" data-symbol="Tb" data-number="65" style="grid-row: 9;"><span>65</span><br>Tb</div>
+            <div class="pt-element f-block lanthanide" data-symbol="Dy" data-number="66" style="grid-row: 9;"><span>66</span><br>Dy</div>
+            <div class="pt-element f-block lanthanide" data-symbol="Ho" data-number="67" style="grid-row: 9;"><span>67</span><br>Ho</div>
+            <div class="pt-element f-block lanthanide" data-symbol="Er" data-number="68" style="grid-row: 9;"><span>68</span><br>Er</div>
+            <div class="pt-element f-block lanthanide" data-symbol="Tm" data-number="69" style="grid-row: 9;"><span>69</span><br>Tm</div>
+            <div class="pt-element f-block lanthanide" data-symbol="Yb" data-number="70" style="grid-row: 9;"><span>70</span><br>Yb</div>
+            <div class="pt-element f-block lanthanide" data-symbol="Lu" data-number="71" style="grid-row: 9;"><span>71</span><br>Lu</div>
+
+             {/* Actinides Row */}
+             <div class="pt-element f-block actinide pt-series-label" style="grid-row: 10; grid-column: 1 / span 2;">Actinides</div>
+             <div class="pt-element f-block actinide" data-symbol="Ac" data-number="89" style="grid-row: 10; grid-column: 3;"><span>89</span><br>Ac</div>
+             <div class="pt-element f-block actinide" data-symbol="Th" data-number="90" style="grid-row: 10;"><span>90</span><br>Th</div>
+             <div class="pt-element f-block actinide" data-symbol="Pa" data-number="91" style="grid-row: 10;"><span>91</span><br>Pa</div>
+             <div class="pt-element f-block actinide" data-symbol="U" data-number="92" style="grid-row: 10;"><span>92</span><br>U</div>
+             <div class="pt-element f-block actinide" data-symbol="Np" data-number="93" style="grid-row: 10;"><span>93</span><br>Np</div>
+             <div class="pt-element f-block actinide" data-symbol="Pu" data-number="94" style="grid-row: 10;"><span>94</span><br>Pu</div>
+             <div class="pt-element f-block actinide" data-symbol="Am" data-number="95" style="grid-row: 10;"><span>95</span><br>Am</div>
+             <div class="pt-element f-block actinide" data-symbol="Cm" data-number="96" style="grid-row: 10;"><span>96</span><br>Cm</div>
+             <div class="pt-element f-block actinide" data-symbol="Bk" data-number="97" style="grid-row: 10;"><span>97</span><br>Bk</div>
+             <div class="pt-element f-block actinide" data-symbol="Cf" data-number="98" style="grid-row: 10;"><span>98</span><br>Cf</div>
+             <div class="pt-element f-block actinide" data-symbol="Es" data-number="99" style="grid-row: 10;"><span>99</span><br>Es</div>
+             <div class="pt-element f-block actinide" data-symbol="Fm" data-number="100" style="grid-row: 10;"><span>100</span><br>Fm</div>
+             <div class="pt-element f-block actinide" data-symbol="Md" data-number="101" style="grid-row: 10;"><span>101</span><br>Md</div>
+             <div class="pt-element f-block actinide" data-symbol="No" data-number="102" style="grid-row: 10;"><span>102</span><br>No</div>
+             <div class="pt-element f-block actinide" data-symbol="Lr" data-number="103" style="grid-row: 10;"><span>103</span><br>Lr</div>
+
+          </div><!-- End periodic-table-container -->
+        </section>
+        <!-- End Constituent Elements Section -->
+
+        <!-- Other dynamically generated sections will follow -->
+
     </main>
     <!-- End Main Content Area -->
 
   </div> <!-- End Container -->
 
-  <script src="material_loader.js"></script>
+  <script src="periodic_table_data.js"></script> <!-- Load periodic table data -->
+  <script src="material_loader.js"></script>   <!-- Load main script -->
 </body>
 </html>
