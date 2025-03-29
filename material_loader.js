@@ -1,6 +1,6 @@
 /**
  * Loads DETAILED material data for the detail page.
- * 1. Fetches a dedicated JSON file (data/material_details.json) containing detailed objects mapped by material name.
+ * 1. Fetches a dedicated JSON file (data/material_details.json).
  * 2. Looks up the material using the name from the URL parameter.
  * 3. Populates the detail page using the nested data found.
  */
@@ -28,7 +28,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.log("[Detail Page] Fetching dedicated detail data file:", detailDataPath);
         const detailRes = await fetch(detailDataPath);
         if (!detailRes.ok) {
-            // Handle 404 specifically - means the detail file itself is missing
             if (detailRes.status === 404) {
                  throw new Error(`Detailed data file not found at ${detailDataPath}. Create this file to enable detail views.`);
             } else {
@@ -36,8 +35,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
         }
 
-        // Assume the file contains an OBJECT mapping names to detail objects
-        const allDetailData = await detailRes.json(); // Expecting { "Material Name": { details... }, ... }
+        const allDetailData = await detailRes.json();
         console.log("[Detail Page] Detailed data loaded:", allDetailData);
 
          if (typeof allDetailData !== 'object' || allDetailData === null) {
@@ -45,18 +43,15 @@ document.addEventListener("DOMContentLoaded", async () => {
          }
 
         // --- Find the specific material data using the name as the key ---
-        const material = allDetailData[materialName]; // Direct lookup using the name
+        const material = allDetailData[materialName];
 
         if (!material) {
-            // Material exists in index/simple files, but not in the details file yet
-            console.warn(`[Detail Page] Detailed data for "${materialName}" not found in ${detailDataPath}. Displaying basic info or error.`);
-            // Throw error to indicate detail is missing from the detail source.
              throw new Error(`Detailed information for "${materialName}" is not yet available in ${detailDataPath}.`);
         }
         console.log("[Detail Page] Specific detailed material object found:", material);
 
         // --- Populate the Page using the nested data ---
-        populatePage(material); // Use the updated populatePage function below
+        populatePage(material);
 
     } catch (e) {
         console.error("[Detail Page] Failed to load material details:", e);
@@ -73,25 +68,28 @@ document.addEventListener("DOMContentLoaded", async () => {
 function populatePage(material) {
     // Helper function to safely get potentially nested data and provide fallback
     const getData = (obj, path, fallback = 'N/A') => {
-        // Navigate path e.g., 'electrical_properties.band_gap.value'
-        const value = path.split('.').reduce((o, key) => (o && o[key] !== 'undefined' && o[key] !== null) ? o[key] : undefined, obj);
-
-        // Format values that are objects with value/unit/notes
+        const value = path.split('.').reduce((o, key) => (o && typeof o === 'object' && o[key] !== 'undefined' && o[key] !== null) ? o[key] : undefined, obj);
         if (typeof value === 'object' && typeof value.value !== 'undefined') {
            let text = String(value.value);
            if (value.unit) text += ` ${value.unit}`;
            if (value.notes) text += ` (${value.notes})`;
            return text;
         }
-        // Format simple arrays
         if (Array.isArray(value)) {
-            // Format arrays, join with newline for lists like applications/methods
-            if (['device_applications.common_applications', 'processing_availability.synthesis_methods', 'processing_availability.forms', 'device_applications.sensor_types'].includes(path)) {
-                 return value.length > 0 ? value.map(item => `• ${item}`).join('<br>') : fallback; // Use line breaks for lists
+            // Format arrays, join with newline for lists
+            const listPaths = [
+                'device_applications.common_applications',
+                'processing_availability.synthesis_methods',
+                'processing_availability.forms',
+                'device_applications.sensor_types',
+                'growth_fabrication.common_growth_methods', // Added path
+                // Add other paths here if they contain arrays needing list format
+            ];
+            if (listPaths.includes(path)) {
+                 return value.length > 0 ? value.map(item => `• ${item}`).join('<br>') : fallback;
             }
             return value.length > 0 ? value.join(', ') : fallback; // Default comma join
         }
-        // Return strings/numbers directly, or fallback
         return (value !== null && typeof value !== 'undefined' && value !== '') ? String(value) : fallback;
     };
 
@@ -99,10 +97,19 @@ function populatePage(material) {
     const updateContent = (id, value, isHtml = false) => {
        const element = document.getElementById(id);
        if (element) {
+           // Clear existing "Loading..." before setting new content
+           if (element.textContent === 'Loading...') element.innerHTML = ''; // Use innerHTML to clear potential leftover HTML
+
            if (isHtml) {
                element.innerHTML = value;
            } else {
                element.textContent = value;
+           }
+           // Add 'N/A' class if value is the fallback
+           if (value === 'N/A') {
+                element.classList.add('na-value');
+           } else {
+                element.classList.remove('na-value');
            }
        } else {
             console.warn(`[Detail Page] Element with ID "${id}" not found.`);
@@ -130,7 +137,7 @@ function populatePage(material) {
                 tagsContainer.appendChild(tagElement);
             });
         } else {
-            updateContent('material-tags', 'N/A'); // Use updateContent here
+            updateContent('material-tags', 'N/A');
         }
     }
 
@@ -140,16 +147,25 @@ function populatePage(material) {
 
     // --- Populate Identification & Structure ---
     updateContent('prop-cas', getData(material, 'identification.cas_number'));
-    updateContent('prop-category', getData(material, 'category')); // Top-level
+    updateContent('prop-category', getData(material, 'category'));
     updateContent('prop-class', getData(material, 'identification.class'));
     updateContent('prop-crystal-structure', getData(material, 'identification.crystal_structure'));
     updateContent('prop-lattice-constant', getData(material, 'identification.lattice_constant'));
+    updateContent('prop-phase-diagram', getData(material, 'identification.phase_diagram_notes')); // New
 
-    // --- Populate Growth & Fabrication ---
-    updateContent('prop-preferred-substrate', getData(material, 'growth_fabrication.preferred_substrate'));
-    updateContent('prop-crystal-orientations', getData(material, 'growth_fabrication.crystal_orientations'));
-    updateContent('prop-fabrication-compounds', getData(material, 'growth_fabrication.fabrication_compounds'));
-    updateContent('prop-purity-requirements', getData(material, 'growth_fabrication.purity_requirements'));
+    // --- Populate Growth & Fabrication Properties ---
+    updateContent('prop-common-growth-methods', getData(material, 'growth_fabrication_properties.common_growth_methods')); // New
+    updateContent('prop-source-materials', getData(material, 'growth_fabrication_properties.source_materials_purity')); // New, renamed path slightly
+    updateContent('prop-preferred-substrates', getData(material, 'growth_fabrication_properties.preferred_substrates_orientations')); // Renamed path
+    updateContent('prop-crystal-orientations', getData(material, 'growth_fabrication_properties.preferred_substrates_orientations')); // Re-use same data for now, or split in JSON
+    updateContent('prop-growth-parameters', getData(material, 'growth_fabrication_properties.typical_growth_parameters')); // New
+    updateContent('prop-passivation', getData(material, 'growth_fabrication_properties.passivation_methods')); // Path fixed
+
+    // --- Populate Post-Growth Processing ---
+    updateContent('prop-annealing', getData(material, 'post_growth_processing.annealing')); // New
+    updateContent('prop-lapping-polishing', getData(material, 'post_growth_processing.lapping_polishing')); // New
+    updateContent('prop-etching', getData(material, 'post_growth_processing.etching')); // New, replacing chemical_properties.etchability
+    updateContent('prop-grinding-milling', getData(material, 'post_growth_processing.grinding_milling')); // New
 
     // --- Populate Electrical Properties ---
     updateContent('prop-bandgap-type', getData(material, 'electrical_properties.bandgap_type'));
@@ -166,8 +182,7 @@ function populatePage(material) {
 
     // --- Populate Optical Properties ---
     updateContent('prop-spectral-range', getData(material, 'optical_properties.spectral_range'));
-    // Add notes for spectral range if they exist separately
-     const spectralNotes = getData(material, 'optical_properties.notes', '');
+     const spectralNotes = getData(material, 'optical_properties.notes', ''); // Notes handled as before
      const spectralRangeElement = document.getElementById('prop-spectral-range');
      if (spectralRangeElement && spectralNotes && spectralNotes !== 'N/A') {
          if (!spectralRangeElement.textContent.includes(spectralNotes)) {
@@ -195,76 +210,50 @@ function populatePage(material) {
     updateContent('prop-fracture-toughness', getData(material, 'mechanical_properties.fracture_toughness'));
 
     // --- Populate Device Applications ---
-    // Using isHtml=true because getData now formats arrays with <br> for these specific paths
-    updateContent('prop-sensor-types', getData(material, 'device_applications.sensor_types'), true);
-    updateContent('prop-common-applications', getData(material, 'device_applications.common_applications'), true);
+    updateContent('prop-sensor-types', getData(material, 'device_applications.sensor_types'), true); // Use HTML for lists
+    updateContent('prop-common-applications', getData(material, 'device_applications.common_applications'), true); // Use HTML for lists
 
     // --- Populate Chemical Properties ---
-    updateContent('prop-oxidation', getData(material, 'chemical_properties.oxidation'));
-    updateContent('prop-etchability', getData(material, 'chemical_properties.etchability'));
-    updateContent('prop-stability', getData(material, 'chemical_properties.stability'));
+    updateContent('prop-stability-oxidation', getData(material, 'chemical_properties.stability_oxidation')); // Renamed ID
 
     // --- Populate Magnetic Properties ---
     updateContent('prop-magnetic-type', getData(material, 'magnetic_properties.type'));
 
-    // --- Populate Processing & Availability ---
-    updateContent('prop-synth', getData(material, 'processing_availability.synthesis_methods'), true); // Use HTML for list
-    updateContent('prop-forms', getData(material, 'processing_availability.forms'), true); // Use HTML for list
+    // --- Populate Processing & Availability (Now only has synthesis/forms) ---
+    // updateContent('prop-synth', getData(material, 'processing_availability.synthesis_methods'), true); // Redundant? Already in growth_fabrication
+    // updateContent('prop-forms', getData(material, 'processing_availability.forms'), true); // Redundant?
 
-    // --- Populate Vendor Info (Placeholder) ---
+    // --- Populate Vendor Info ---
     const vendorList = document.getElementById('vendor-list');
     if (vendorList && material.vendor_info) {
         vendorList.innerHTML = ''; // Clear loading
         let vendorsFound = false;
-        // Prepend notes if they exist
         if(material.vendor_info.notes) {
             const li = document.createElement('li');
             li.innerHTML = `<small><em>${material.vendor_info.notes}</em></small>`;
-            vendorList.appendChild(li); // Append notes at the top of the list items
+            vendorList.appendChild(li);
         }
-        // Create list items from vendor data
         Object.entries(material.vendor_info).forEach(([key, value]) => {
-            if (key.startsWith('vendor_')) { // Simple check for vendor entries
+            if (key.startsWith('vendor_')) {
                  vendorsFound = true;
                  const li = document.createElement('li');
-                 const vendorName = key.replace('vendor_', '').replace(/_/g, ' '); // Format key to name if needed
-                 // Try to make it a link if it looks like a URL
-                 let isUrl = false;
-                 try {
-                     if (value && typeof value === 'string') {
-                         new URL(value); // Check if it's a valid URL string
-                         isUrl = true;
-                     }
-                 } catch (_) {
-                     isUrl = false;
-                 }
-
+                 const vendorName = key.replace('vendor_', '').replace(/_/g, ' ');
+                 let isUrl = false; try { if (value && typeof value === 'string') { new URL(value); isUrl = true; } } catch (_) {}
                  if(isUrl) {
                      const a = document.createElement('a');
-                     // Extract a sensible display name if possible, otherwise use URL
-                     let displayName = vendorName; // Default to formatted key
-                     try { displayName = new URL(value).hostname.replace('www.', ''); } catch (_) {} // Try to get hostname
-                     a.href = value;
-                     a.textContent = displayName;
-                     a.target = "_blank"; // Open in new tab
-                     a.rel = "noopener noreferrer";
+                     let displayName = vendorName; try { displayName = new URL(value).hostname.replace('www.', ''); } catch (_) {}
+                     a.href = value; a.textContent = displayName; a.target = "_blank"; a.rel = "noopener noreferrer";
                      li.appendChild(a);
-                 } else {
-                     // If not a URL, just display text
-                     li.textContent = `${vendorName}: ${value}`;
-                 }
+                 } else { li.textContent = `${vendorName}: ${value}`; }
                  vendorList.appendChild(li);
             }
         });
-        // If only notes were added or no vendors found, show placeholder
          if (!vendorsFound) {
-            const li = document.createElement('li');
-            li.textContent = "Vendor information not available.";
-            // Append if notes weren't present, otherwise it might look odd alone
+            const li = document.createElement('li'); li.textContent = "Vendor information not available.";
             if(!material.vendor_info.notes) vendorList.appendChild(li);
         }
     } else if (vendorList) {
-         vendorList.innerHTML = '<li>Vendor information not available.</li>'; // Handle case where vendor_info object is missing
+         vendorList.innerHTML = '<li>Vendor information not available.</li>';
     }
 
 
