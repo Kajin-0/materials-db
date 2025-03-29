@@ -485,11 +485,12 @@ span.na-value {
 
 
 /* ======================================== */
-/* NEW Periodic Table Styles              */
+/* Periodic Table Styles                    */
 /* ======================================== */
 
 #section-periodic-table h2 { /* Section title */
   margin-bottom: 1rem; /* Space below title */
+  /* Inherits general section h2 styles */
 }
 
 .periodic-table-container {
@@ -523,7 +524,7 @@ span.na-value {
   cursor: default; /* Default cursor */
 }
 
-.pt-element span { /* Style for atomic number */
+.pt-element span:first-child { /* Style for atomic number (target the first span) */
   font-size: 0.6rem;
   display: block;
   position: absolute;
@@ -532,12 +533,23 @@ span.na-value {
   color: #666;
 }
 
+/* --- Style for Atomic Mass --- */
+.pt-mass {
+  font-size: 0.55rem; /* Even smaller */
+  color: #444;       /* Slightly darker than atomic number */
+  display: block;     /* Ensure it takes its own line/space */
+  margin-top: 1px;    /* Tiny space above mass */
+  line-height: 1;     /* Reduce line height */
+}
+
 .pt-placeholder { /* Style for the La/Ac placeholders in main table */
   background-color: #dee2e6;
   border-style: dashed;
   font-size: 0.8em;
   align-items: center; /* Center text vertically */
 }
+.pt-placeholder .pt-mass { display: none; } /* Hide mass for placeholders */
+
 
 .pt-series-label { /* Style for Lanthanides/Actinides labels */
    grid-column: 1 / span 2; /* Span first two columns */
@@ -549,19 +561,26 @@ span.na-value {
    font-size: 0.7rem;
    align-items: center; /* Center text vertically */
 }
+.pt-series-label .pt-mass { display: none; } /* Hide mass for labels */
 
 /* --- Element Category Colors (Example) --- */
-.pt-element.nonmetal { background-color: #a0ffa0; color: #333;}
-.pt-element.noble-gas { background-color: #c0ffff; color: #333;}
-.pt-element.alkali-metal { background-color: #ffc0c0; color: #333;}
-.pt-element.alkaline-earth { background-color: #ffe0c0; color: #333;}
-.pt-element.metalloid { background-color: #cccc90; color: #333;}
-.pt-element.halogen { background-color: #ffffc0; color: #333;}
-.pt-element.post-transition-metal { background-color: #cccccc; color: #333;}
-.pt-element.transition-metal { background-color: #ffecf0; color: #333;}
-.pt-element.lanthanide { background-color: #ffc0ff; color: #333;}
-.pt-element.actinide { background-color: #ffc0cc; color: #333;}
-.pt-element.unknown-properties { background-color: #e8e8e8; color: #555;}
+/* Note: HTML needs corresponding classes like 'alkali-metal', 'nonmetal' etc. */
+.pt-element.alkali-metal           { background-color: #ffc0c0; color: #333; } /* Light Red */
+.pt-element.alkaline-earth-metal   { background-color: #ffe0c0; color: #333; } /* Light Orange */
+.pt-element.lanthanide             { background-color: #ffc0ff; color: #333; } /* Light Purple */
+.pt-element.actinide               { background-color: #ffc0cc; color: #333; } /* Light Pink */
+.pt-element.transition-metal       { background-color: #ffecf0; color: #333; } /* Very Light Pink/Off-white */
+.pt-element.post-transition-metal  { background-color: #cccccc; color: #333; } /* Light Gray */
+.pt-element.metalloid              { background-color: #cccc90; color: #333; } /* Khaki */
+.pt-element.polyatomic-nonmetal,
+.pt-element.diatomic-nonmetal      { background-color: #a0ffa0; color: #333; } /* Light Green */
+.pt-element.noble-gas              { background-color: #c0ffff; color: #333; } /* Light Cyan */
+.pt-element.unknown                { background-color: #e8e8e8; color: #555; } /* Lighter Gray */
+
+/* Adjust category names if needed based on periodic_table_data.js */
+.pt-element.diatomic.nonmetal { background-color: #a0ffa0; color: #333; } /* Ensure this matches if used */
+.pt-element.halogen { background-color: #ffffc0; color: #333;} /* Specific Halogen color */
+
 
 /* --- Highlight Style --- */
 .pt-element.highlighted-element {
@@ -574,7 +593,11 @@ span.na-value {
 }
 /* Ensure text color remains readable when highlighted */
 .pt-element.highlighted-element {
-   color: #000; /* Or contrast color */
+   color: #000; /* Black text when highlighted */
+}
+/* Make mass slightly bolder too when highlighted */
+.pt-element.highlighted-element .pt-mass {
+   font-weight: 500;
 }
 
 
@@ -605,7 +628,8 @@ span.na-value {
       font-size: 0.7rem;
   }
    .pt-element { min-height: 35px; }
-   .pt-element span { font-size: 0.55rem; }
+   .pt-element span:first-child { font-size: 0.55rem; } /* Adjust atomic number size */
+   .pt-mass { font-size: 0.5rem; } /* Adjust mass size */
 
   /* Index page adjustments */
   header, .toolbar, main#results, #search-container { /* Target index main */
@@ -640,9 +664,13 @@ span.na-value {
         font-size: 0.55rem; /* Even smaller font */
         padding: 3px;
     }
-     .pt-element { min-height: 28px; padding: 1px; }
-     .pt-element span { font-size: 0.45rem; top: 1px; left: 1px; }
+     .pt-element { min-height: 28px; padding: 1px; line-height: 1.1; } /* Adjust line height */
+     .pt-element span:first-child { font-size: 0.45rem; top: 1px; left: 1px; } /* Adjust atomic number size/pos */
+     .pt-mass { font-size: 0.4rem; margin-top: 0; } /* Adjust mass size */
      .pt-series-label { font-size: 0.55rem; }
+     /* Ensure highlight border isn't too thick */
+     .pt-element.highlighted-element { border-width: 2px; }
+
 
     /* Index page adjustments */
      header, .toolbar, main#results, #search-container {
