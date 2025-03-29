@@ -4,149 +4,109 @@
     "formula": "Hg(1-x)Cd(x)Te",
     "synonyms": [ "HgCdTe", "MCT" ],
     "category": "Semiconductor",
-    "description": "II-VI alloy for SWIR/MWIR/LWIR detectors via tunable bandgap (by Cd fraction 'x'). Requires cryogenic cooling. Preferred substrate: CdZnTe (~4% Zn).", // More concise
+    "description": "II-VI alloy semiconductor with bandgap tuned via Cadmium mole fraction (x). Key material for high-performance SWIR/MWIR/LWIR detectors, typically requiring cryogenic cooling. Preferred substrate: CdZnTe (~4% Zn).",
     "wiki_link": "https://en.wikipedia.org/wiki/Mercury_cadmium_telluride",
     "safety": {
-      "toxicity": "High (Hg, Cd). Strict protocols required.", // Very concise
-      "handling": "Requires PPE, fume hood/glovebox, hazardous waste disposal." // Kept essential keywords
+      "toxicity": "High (Contains Hg, Cd). Follow strict safety protocols.",
+      "handling": "Requires PPE, fume hood/glovebox, hazardous waste disposal."
     },
     "identification": {
       "cas_number": "30784-21-9 (generic)",
       "class": "II-VI Compound Semiconductor Alloy",
       "crystal_structure": "Zinc blende (FCC)",
-      "lattice_constant": {"value": "~6.461 to ~6.481", "unit": "Å", "notes": "Near-linear with x."}, // Shortened note
-      "phase_diagram_notes": "Pseudo-binary. Narrow liquidus-solidus. Critical Hg pressure control needed." // Key takeaway
-    },
-    "advanced_fabrication_insights": { // Concise points
-        "stoichiometry_control": "Challenge: High Hg vapor pressure. Requires precise Temp/Hg pressure management (MBE, MOCVD, Annealing).",
-        "common_defects_impact": "Hg vacancies (acceptors), Te precipitates (shunts), dislocations (mismatch). Impact lifetime, noise, yield.",
-        "surface_preparation": "Critical pre-epitaxy step (cleaning, oxide removal) for interface quality.",
-        "method_specific_notes": "LPE: Te-rich, simpler. MBE: Low temp, precise layers. MOCVD: Conformal, precursor challenges."
-    },
-    "growth_fabrication_properties": { // Concise points
-        "common_growth_methods (likely mismatched paths/IDs). This section *should* contain practical points. We will fix the JS and significantly shorten the content to be punchy bullet points.
-2.  **Comparison with Alternatives:** Drastically shorten this to highlight only the core trade-offs.
-3.  **Advanced Fabrication Insights:** Condense this to critical keywords and challenges.
-4.  **Other Sections:** Ensure conciseness carries through.
-
-**Step 1: Update `data/material_details.json` (Concise & Refined)**
-
-Replace the **entire content** of `data/material_details.json` with this streamlined version:
-
-```json
-{
-  "Mercury Cadmium Telluride": {
-    "name": "Mercury Cadmium Telluride",
-    "formula": "Hg(1-x)Cd(x)Te",
-    "synonyms": [ "HgCdTe", "MCT" ],
-    "category": "Semiconductor",
-    "description": "II-VI alloy semiconductor with bandgap tuned via Cadmium mole fraction (x). Key material for high-performance SWIR/MWIR/LWIR detectors, typically requiring cryogenic cooling. Preferred substrate: CdZnTe (~4% Zn).",
-    "wiki_link": "https://en.wikipedia.org/wiki/Mercury_cadmium_telluride",
-    "safety": { // Kept concise
-      "toxicity": "High (Contains Hg, Cd). Follow strict safety protocols.",
-      "handling": "Requires PPE, fume hood/glovebox, hazardous waste disposal."
-    },
-    "identification": { // Kept concise
-      "cas_number": "30784-21-9 (generic)",
-      "class": "II-VI Compound Semiconductor Alloy",
-      "crystal_structure": "Zinc blende (FCC)",
       "lattice_constant": {"value": "~6.461 to ~6.481", "unit": "Å", "notes": "Near-linear variation with x"},
-      "phase_diagram_notes": "Pseudo-binary. Narrow liquidus-solidus gap. Critical Hg partial pressure control needed." // Shortened
+      "phase_diagram_notes": "Pseudo-binary. Narrow liquidus-solidus gap. Critical Hg partial pressure control needed."
     },
-    "advanced_fabrication_insights": { // Condensed
+    "advanced_fabrication_insights": {
         "stoichiometry_control": "Challenge: High Hg vapor pressure. Requires precise Temp/Pressure control (MBE, MOCVD, Annealing).",
         "common_defects_impact": "Hg vacancies (acceptors, ↓lifetime), Te precipitates (shunts, noise), Dislocations (mismatch, ↓lifetime/noise).",
         "surface_preparation": "Critical for epitaxy (cleaning, oxide removal). Surface easily damaged.",
         "method_specific_notes": "LPE: Te-rich, simpler. MBE: Precise, lower temp, UHV. MOCVD: Conformal, precursor challenges."
     },
-    "growth_fabrication_properties": { // Kept concise
+    "growth_fabrication_properties": {
         "common_growth_methods": "LPE, MBE, MOCVD, Bulk (less common).",
         "source_materials_purity": "Elemental Hg, Cd, Te (>6N purity essential).",
-        "preferred_substrates_orientations": "Substrate: CdZnTe (~4% Zn); Si, GaAs, Ge (w/ buffers). Orientation: (111)B (LPE); (211)B, (100) (MBE/MOCVD).",
-        "typical_growth_parameters": "Method/x dependent. Rates: ~1-5 um/hr. Precise Temp/Pressure vital.",
-        "passivation_methods": "Essential. Common: ZnS, CdTe, SiO2 (Sputter, MBE, ALD)."
+        "preferred_substrates_orientations": "Substrate: CdZnTe (~4% Zn); Si/GaAs/Ge usable (w/ buffers). Orientation: (111)B (LPE); (211)B, (100) (MBE/MOCVD).",
+        "typical_growth_parameters": "Rates: ~1-5 um/hr (MBE/MOCVD). Precise Temp/Pressure control vital.",
+        "passivation_methods": "Essential. Common: ZnS, CdTe, SiO2 via Sputtering, MBE, ALD."
     },
-    "post_growth_processing": { // Kept concise
-        "annealing": "CRITICAL. Purpose: Reduce Hg vacancies, activate p-dopants, improve crystal. Temps: ~200-450C. Requires Hg overpressure.",
-        "lapping_polishing": "Lapping: Al2O3/SiC slurries. Polishing: Diamond (<1um) or CMP (Br-Methanol). Low pressure (brittle).",
-        "etching": "Wet: Br-Methanol/EG mixes. Dry: RIE/ICP (CH4/H2, Ar, Halogens) for patterning.",
+    "post_growth_processing": {
+        "annealing": "CRITICAL: Reduces Hg vacancies, activates dopants. Temps ~200-450C. Requires Hg overpressure.",
+        "lapping_polishing": "Lapping: Al2O3/SiC slurries. Polishing: Diamond slurries (<1um) or CMP (Br-Methanol). Low pressure.",
+        "etching": "Wet: Br-Methanol/Ethylene Glycol. Dry: RIE/ICP (CH4/H2, Ar, Halogens) for patterning.",
         "grinding_milling": "Avoid for wafers (brittle/contamination)."
     },
-     "device_integration_characterization": { // Condensed & Focused
+     "device_integration_characterization": {
         "device_architectures": "Photoconductors (PC), Photovoltaic Diodes (PV/PD). Mesa or planar.",
         "readout_integration": "Flip-chip bonding to Si ROIC via Indium bumps (FPAs).",
-        "ar_coatings": "Needed (high n). Common: ZnS, Ge, dielectric stacks.",
+        "ar_coatings": "Required (high n). Common: ZnS, Ge, dielectric stacks.",
         "packaging_cooling": "Requires vacuum package & cryogenic cooling (e.g., Stirling, LN2) for low noise.",
-        "key_characterization_techniques": [ // Focused List
-            "Hall Effect (mobility, conc.)", "FTIR (cutoff λ, thickness)", "PL (quality)",
-            "XRD (crystal)", "SIMS/EDX (composition)", "Spectral Response/QE", "I-V (diodes)"
-         ]
+        "key_characterization_techniques": ["Hall (mobility, conc.)", "FTIR (λc, thickness)", "PL (quality)", "XRD (crystal)", "SIMS (composition)", "Spectral Response", "I-V (diodes)"]
     },
-    "electrical_properties": { // Kept Concise
+    "electrical_properties": {
       "bandgap_type": "Direct, Tunable",
-      "band_gap": {"value": "0 - 1.5", "unit": "eV", "notes": "Tunable via x. LWIR x≈0.2, MWIR x≈0.3."},
-      "bandgap_equation": {"hansen_eg": "Eg(x,T) Empirical Eq. (See Hansen '82)", "wavelength_relation": "λ_c (um) ≈ 1.24 / Eg (eV)"},
-      "common_dopants": "n-type: In (mid 10^14+). p-type: As, Au, Hg-vacancies (mid 10^15+).",
-      "carrier_concentration": {"value": "ni ~10^16 (300K, x=0.2).", "notes": "Strong T dependence."},
-      "electron_mobility": {"value": ">10,000", "unit": "cm^2/Vs", "notes": "Very high at 77K (low x)."},
+      "band_gap": {"value": "0 - 1.5", "unit": "eV", "notes": "Tunable via x. Target: x≈0.2 LWIR, x≈0.3 MWIR."},
+      "bandgap_equation": {"hansen_eg": "Eg(x,T) Empirical Eq.", "wavelength_relation": "λ_c (um) ≈ 1.24 / Eg (eV)"},
+      "common_dopants": "n-type: In; p-type: As, Au, Hg-vacancies (10^14-10^17 cm^-3 typical).",
+      "carrier_concentration": {"value": "ni ~10^16 (300K), ~10^13 (77K) @ x=0.2.", "notes": "Extrinsic via doping."},
+      "electron_mobility": {"value": ">10,000", "unit": "cm^2/Vs", "notes": "High @ 77K (low x)."},
       "hole_mobility": {"value": "100 - 600", "unit": "cm^2/Vs", "notes": "Lower than μe (77K)."},
       "dielectric_constant": {"value": "~15 - 20", "notes": "Static."},
       "resistivity": {"value": "Variable (10^-3 - 10^3+)", "unit": "Ohm-cm", "notes": "Depends on x, T, doping."},
-      "breakdown_field": {"value": "Low (~10^3-10^4)", "unit": "V/cm"}
+      "breakdown_field": {"value": "Low (~10^3 - 10^4)", "unit": "V/cm", "notes": "Limits high-field use."}
     },
-    "optical_properties": { // Kept Concise
+    "optical_properties": {
       "spectral_range": "SWIR, MWIR, LWIR (0.8 to >30 um)", "notes": "Determined by Eg(x).",
-      "cutoff_wavelength": {"value": "0.8 to >30", "unit": "um", "notes": "λ_c ≈ 1.24 / Eg (eV)."},
+      "cutoff_wavelength": {"value": "0.8 to >30", "unit": "um", "notes": "λ_c ≈ 1.24 / Eg."},
       "refractive_index": {"value": "~3.4 - 4.0", "notes": "High index."},
       "absorption_coefficient": {"value": ">10^4", "unit": "cm^-1", "notes": "High near band edge."},
-      "quantum_efficiency": {"value": "High (>70%)", "notes": "Internal QE."},
+      "quantum_efficiency": {"value": ">70-80%", "notes": "With good material/AR coating."},
       "responsivity": {"value": "~1 - 10", "unit": "A/W", "notes": "At 77K."},
-      "noise_equivalent_power": {"value": "~10^-11-10^-13", "unit": "W/Hz^0.5", "notes": "Cooled."}
+      "noise_equivalent_power": {"value": "~10^-11 - 10^-13", "unit": "W/Hz^0.5", "notes": "Cooled detectors."}
     },
-    "thermal_properties": { // Kept Concise
+    "thermal_properties": {
       "operating_temperature": {"value": "Typically 77 K (LN2)", "notes": "Reduces dark current."},
-      "thermal_conductivity": {"value": "Low (~1 - 5)", "unit": "W/(m K)"},
-      "specific_heat": {"value": "~0.16 - 0.20", "unit": "J/(g K)"},
+      "thermal_conductivity": {"value": "Low (~1 - 5)", "unit": "W/(m K)", "notes": "Poor conductor."},
+      "specific_heat": {"value": "~0.16 - 0.20", "unit": "J/(g K)", "notes": "RT."},
       "melting_point": {"value": "~700 - 800", "unit": "C", "notes": "Composition dependent."}
     },
-     "mechanical_properties": { // Kept Concise
+     "mechanical_properties": {
          "density": {"value": "~5.8 to ~8.1", "unit": "g/cm^3", "notes": "Increases with Hg."},
          "youngs_modulus": {"value": "~40 - 50", "unit": "GPa"},
          "hardness_vickers": {"value": "~70 - 100", "unit": "HV", "notes": "Soft, brittle."},
          "poissons_ratio": "~0.3",
          "fracture_toughness": {"value": "< 0.5", "unit": "MPa m^0.5", "notes": "Brittle."}
      },
-     "device_applications": { // Condensed
-         "sensor_types": ["Photoconductor (PC)", "Photovoltaic (PV/PD)", "APD (less common)"],
-         "key_applications": ["Thermal Imaging/FLIR", "Night Vision", "Gas Sensing", "IR Astronomy", "Missile Guidance"]
+     "device_applications": {
+         "sensor_types": ["Photoconductor (PC)", "Photovoltaic (PV / Photodiode)", "APD (less common)"],
+         "key_applications": ["Thermal Imaging/FLIR", "Night Vision", "Medical Thermography", "Gas Sensing", "IR Astronomy", "Missile Guidance"]
      },
-     "chemical_properties": { // Condensed
-         "stability_oxidation": "Surface unstable; requires passivation; readily oxidizes.",
-         "etching": "Wet: Br-MeOH/EG. Dry: RIE/ICP (CH4/H2, Ar, Halogens)."
+     "chemical_properties": {
+         "stability_oxidation": "Surface unstable; requires passivation. Readily oxidizes."
      },
-     "magnetic_properties": { // Kept as is
+     "magnetic_properties": {
          "type": "Diamagnetic"
      },
-     "comparison_alternatives": { // Condensed
-         "notes": "Key Trade-offs:",
-         "vs_InSb": "HgCdTe: Wider tuning (LWIR+), higher T_op possible (MWIR). InSb: Cheaper, mature (MWIR).",
-         "vs_QWIPs": "HgCdTe: Higher QE & T_op. QWIPs: Better uniformity, lower cost potential (GaAs based).",
-         "vs_T2SLs": "T2SLs: Potential for higher T_op, lower dark current, lower Auger. Complex growth."
+     "comparison_alternatives": {
+         "notes": "Key IR Competitors:",
+         "vs_InSb": "MCT: Wider tuning (LWIR+), higher T_op (MWIR). InSb: Cheaper, mature (MWIR).",
+         "vs_QWIPs": "MCT: Higher QE, T_op. QWIPs (GaAs): Better uniformity, lower cost potential.",
+         "vs_T2SLs": "T2SLs (e.g., InAs/GaSb): Potential for higher T_op, lower dark current, better uniformity; complex growth."
      },
-     "references_further_reading": { // Kept as is, concise enough
-         "notes": "Key resources (examples):",
-         "book_rogozkin": "Rogalski, A. 'Infrared Detectors' (SPIE Press)",
-         "review_hansen": "Hansen, G. L., et al. (1982). J. Appl. Phys. 53, 7099 (Eg eqn.)",
-         "review_norton": "Norton, P. R. (2002). Opto-Electron. Rev., 10(3), 159 (Overview)",
+     "references_further_reading": {
+         "notes": "Key Resources:",
+         "book_rogalski": "Rogalski, A. 'Infrared Detectors' (SPIE Press)",
+         "review_hansen": "Hansen, G. L. et al. J. Appl. Phys. 53, 7099 (1982) - Eg(x,T)",
+         "review_norton": "Norton, P. R. Opto-Electron. Rev., 10(3), 159 (2002) - Detector Overview",
          "wikipedia": "https://en.wikipedia.org/wiki/Mercury_cadmium_telluride"
      },
-     "vendor_info": { // Kept as is
-         "notes": "List of potential vendors (placeholder).",
-         "vendor_1": "Company A - www.example-vendor-a.com (dummy)",
-         "vendor_2": "Company B - www.example-vendor-b.com (dummy)",
-         "vendor_3": "Company C - www.example-vendor-c.com (dummy)"
+     "vendor_info": {
+         "notes": "Example Vendors (Placeholder):",
+         "vendor_1": "Company A - www.example-vendor-a.com",
+         "vendor_2": "Company B - www.example-vendor-b.com",
+         "vendor_3": "Company C - www.example-vendor-c.com"
      },
-    "tags": [ // Kept as is
+    "tags": [
       "II-VI", "LPE", "MBE", "MOCVD", "aerospace", "cadmium", "chalcogenide", "cryogenic",
       "epitaxial", "group 12", "group 16", "industry:aerospace", "industry:infrared",
       "industry:photonics", "ir", "lwir", "mercury", "mwir", "nitrogen cooled",
