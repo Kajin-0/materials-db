@@ -323,9 +323,9 @@
      },
      "vendor_info": {
          "notes": "Example Vendors (Placeholder):",
-         "vendor_1": "Bruker EAS (formerly OST)",
-         "vendor_2": "Luvata",
-         "vendor_3": "Western Superconducting Technologies (WST)"
+         "vendor_1": "Company A - www.example-vendor-a.com",
+         "vendor_2": "Company B - www.example-vendor-b.com",
+         "vendor_3": "Company C - www.example-vendor-c.com"
      },
     "tags": [
       "composite", "cryogenic", "ductile", "fusion", "industry:cryogenics",
