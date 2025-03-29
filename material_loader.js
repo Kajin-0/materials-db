@@ -3,11 +3,11 @@
  * Fetches data/material_details.json, finds the material, populates page.
  */
 document.addEventListener("DOMContentLoaded", async () => {
+    // ... (Keep the top part of the script the same - fetch, error handling etc.) ...
     const urlParams = new URLSearchParams(window.location.search);
     const materialNameParam = urlParams.get("material");
     let materialName = null;
 
-    // Wrap decodeURIComponent in try-catch for malformed URIs
     try {
         materialName = materialNameParam ? decodeURIComponent(materialNameParam) : null;
     } catch (uriError) {
@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
         const nameElement = document.getElementById("material-name");
         if(nameElement) nameElement.textContent = "Error";
-        return; // Stop execution if URL is malformed
+        return;
     }
 
 
@@ -71,14 +71,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
         console.log("[Detail Page] Specific detailed material object found:", material);
 
-        // Set page title dynamically
         document.title = `${material.name || 'Material'} Detail - MaterialsDB`;
 
-        populatePage(material); // Call populate function
+        populatePage(material);
 
     } catch (e) {
         console.error("[Detail Page] Failed to load material details:", e);
-        document.title = `Error Loading Material - MaterialsDB`; // Update title on error
+        document.title = `Error Loading Material - MaterialsDB`;
         if (nameElement) nameElement.textContent = "Error loading details";
         mainContainer.innerHTML = `<p class="error-message" style="color: red; padding: 1rem;">Error loading material details: ${e.message}. Please check the console for more information.</p>`;
     }
@@ -89,22 +88,17 @@ document.addEventListener("DOMContentLoaded", async () => {
  * @param {object} material - The detailed material data object.
  */
 function populatePage(material) {
-    // Define fallback value for consistency
-    const fallbackValue = '<span class="na-value">N/A</span>'; // HTML for N/A
+    const fallbackValue = '<span class="na-value">N/A</span>';
 
-    // Helper to get potentially nested data and format it
-    const getData = (obj, path, fallback = fallbackValue) => { // Default fallback is HTML N/A
+    const getData = (obj, path, fallback = fallbackValue) => {
         const value = path.split('.').reduce((o, key) => (o && typeof o === 'object' && o[key] !== undefined && o[key] !== null) ? o[key] : undefined, obj);
-
         if (value === undefined) return fallback;
-
         if (typeof value === 'object' && !Array.isArray(value) && value.value !== undefined) {
            let text = String(value.value);
            if (value.unit) text += ` <span class="unit">${value.unit}</span>`;
            if (value.notes) text += ` <span class="notes">(${value.notes})</span>`;
-           return text; // Return as HTML string
+           return text;
         }
-
         if (Array.isArray(value)) {
             const listPathsForBullets = [
                 'device_applications.key_applications',
@@ -112,67 +106,59 @@ function populatePage(material) {
             ];
             const filteredValues = value.filter(item => item !== null && item !== undefined && String(item).trim() !== '');
             if (filteredValues.length === 0) return fallback;
-
             if (listPathsForBullets.includes(path)) {
-                 return filteredValues.map(item => `<li>${item}</li>`).join(''); // Use <li> for lists
+                 return filteredValues.map(item => `<li>${item}</li>`).join('');
             }
-            return filteredValues.join(', '); // Comma-separated string
+            return filteredValues.join(', ');
         }
-
-        // Handle simple non-empty values
         const stringValue = String(value);
         return stringValue.trim() === '' ? fallback : stringValue;
     };
 
-    // Helper to update element content (text or HTML)
     const updateContent = (id, value, isHtml = false) => {
        const element = document.getElementById(id);
        if (element) {
-           element.classList.remove('na-value'); // Reset NA class
-
-           // Check if the effective value is the fallback
+           element.classList.remove('na-value');
            const isFallback = (value === fallbackValue || value === 'N/A' || value === '');
-
            if (isFallback) {
-               element.innerHTML = fallbackValue; // Use HTML fallback
+               element.innerHTML = fallbackValue;
                element.classList.add('na-value');
            } else if (isHtml) {
-               // If expecting list items, wrap in <ul>
                if (value.startsWith('<li>')) {
                    element.innerHTML = `<ul class="property-list-items">${value}</ul>`;
                } else {
-                   element.innerHTML = value; // Value already contains HTML spans etc.
+                   element.innerHTML = value;
                }
            } else {
-               element.textContent = value; // Value is plain text
+               element.textContent = value;
            }
        } else {
            console.warn(`[Detail Page] Element with ID "${id}" not found in the HTML.`);
        }
    };
 
-
     console.log("[Detail Page] Populating page with detailed data:", material);
 
     // --- Populate Header, Overview, Wiki Link, Tags ---
-    updateContent('material-name', getData(material, 'name', 'Unknown Material'), false); // Name is text
-    updateContent('material-formula', getData(material, 'formula', ''), true); // Allow HTML in formula (subscripts)
-    updateContent('material-description', getData(material, 'description'), false); // Description is text
+    // ... (keep this section as it was) ...
+    updateContent('material-name', getData(material, 'name', 'Unknown Material'), false);
+    updateContent('material-formula', getData(material, 'formula', ''), true);
+    updateContent('material-description', getData(material, 'description'), false);
 
     const wikiLinkElement = document.getElementById('wiki-link');
     if (wikiLinkElement) {
-        const wikiUrl = getData(material, 'wiki_link', '#'); // getData returns fallbackValue if not found
+        const wikiUrl = getData(material, 'wiki_link', '#');
         if (wikiUrl && wikiUrl !== '#' && wikiUrl !== fallbackValue) {
             wikiLinkElement.href = wikiUrl;
-            wikiLinkElement.style.display = ''; // Ensure it's visible
+            wikiLinkElement.style.display = '';
         } else {
-            wikiLinkElement.style.display = 'none'; // Hide if no valid link
+            wikiLinkElement.style.display = 'none';
         }
     }
 
     const tagsContainer = document.getElementById('material-tags');
     if (tagsContainer) {
-        tagsContainer.innerHTML = ''; // Clear previous
+        tagsContainer.innerHTML = '';
         const tags = material.tags || [];
         let tagsAdded = false;
         if (Array.isArray(tags) && tags.length > 0) {
@@ -186,32 +172,35 @@ function populatePage(material) {
                 }
              });
         }
-        if (!tagsAdded) { // If no valid tags found
+        if (!tagsAdded) {
             tagsContainer.innerHTML = fallbackValue;
             tagsContainer.classList.add('na-value');
         }
     } else { console.warn("[Detail Page] Element with ID 'material-tags' not found."); }
 
-
     // --- Populate Safety ---
+    // ... (keep this section) ...
     updateContent('prop-toxicity', getData(material, 'safety.toxicity'), false);
     updateContent('prop-handling', getData(material, 'safety.handling'), false);
 
     // --- Populate Identification & Structure ---
+    // ... (keep this section) ...
     updateContent('prop-cas', getData(material, 'identification.cas_number'), false);
     updateContent('prop-category', getData(material, 'category'), false);
     updateContent('prop-class', getData(material, 'identification.class'), false);
     updateContent('prop-crystal-structure', getData(material, 'identification.crystal_structure'), false);
-    updateContent('prop-lattice-constant', getData(material, 'identification.lattice_constant'), true); // HTML for spans
+    updateContent('prop-lattice-constant', getData(material, 'identification.lattice_constant'), true);
     updateContent('prop-phase-diagram', getData(material, 'identification.phase_diagram_notes'), false);
 
     // --- Populate Advanced Fabrication Insights ---
+    // ... (keep this section) ...
     updateContent('prop-stoichiometry', getData(material, 'advanced_fabrication_insights.stoichiometry_control'), false);
     updateContent('prop-defects', getData(material, 'advanced_fabrication_insights.common_defects_impact'), false);
     updateContent('prop-surface-prep', getData(material, 'advanced_fabrication_insights.surface_preparation'), false);
     updateContent('prop-method-nuances', getData(material, 'advanced_fabrication_insights.method_specific_notes'), false);
 
     // --- Populate Growth & Fabrication Properties ---
+    // ... (keep this section) ...
     updateContent('prop-common-growth-methods', getData(material, 'growth_fabrication_properties.common_growth_methods'), false);
     updateContent('prop-source-materials', getData(material, 'growth_fabrication_properties.source_materials_purity'), false);
     updateContent('prop-substrates-orientations', getData(material, 'growth_fabrication_properties.preferred_substrates_orientations'), false);
@@ -219,119 +208,140 @@ function populatePage(material) {
     updateContent('prop-passivation', getData(material, 'growth_fabrication_properties.passivation_methods'), false);
 
     // --- Populate Post-Growth Processing ---
+    // ... (keep this section) ...
     updateContent('prop-annealing', getData(material, 'post_growth_processing.annealing'), false);
     updateContent('prop-lapping-polishing', getData(material, 'post_growth_processing.lapping_polishing'), false);
     updateContent('prop-etching', getData(material, 'post_growth_processing.etching'), false);
     updateContent('prop-grinding-milling', getData(material, 'post_growth_processing.grinding_milling'), false);
 
     // --- Populate Device Integration & Characterization ---
+    // ... (keep this section) ...
     updateContent('prop-device-arch', getData(material, 'device_integration_characterization.device_architectures'), false);
     updateContent('prop-readout-integration', getData(material, 'device_integration_characterization.readout_integration'), false);
     updateContent('prop-ar-coatings', getData(material, 'device_integration_characterization.ar_coatings'), false);
     updateContent('prop-packaging-cooling', getData(material, 'device_integration_characterization.packaging_cooling'), false);
-    updateContent('prop-char-techniques', getData(material, 'device_integration_characterization.key_characterization_techniques'), true); // HTML list
+    updateContent('prop-char-techniques', getData(material, 'device_integration_characterization.key_characterization_techniques'), true);
 
     // --- Populate Electrical Properties ---
+    // ... (keep this section) ...
     updateContent('prop-bandgap-type', getData(material, 'electrical_properties.bandgap_type'), false);
-    updateContent('prop-bandgap', getData(material, 'electrical_properties.band_gap'), true); // HTML for spans
+    updateContent('prop-bandgap', getData(material, 'electrical_properties.band_gap'), true);
     updateContent('prop-hansen-eq', getData(material, 'electrical_properties.bandgap_equation.hansen_eg'), false);
     updateContent('prop-lambda-eq', getData(material, 'electrical_properties.bandgap_equation.wavelength_relation'), false);
     updateContent('prop-common-dopants', getData(material, 'electrical_properties.common_dopants'), false);
-    updateContent('prop-carrier-concentration', getData(material, 'electrical_properties.carrier_concentration'), true); // HTML for spans
-    updateContent('prop-e-mobility', getData(material, 'electrical_properties.electron_mobility'), true); // HTML for spans
-    updateContent('prop-h-mobility', getData(material, 'electrical_properties.hole_mobility'), true); // HTML for spans
-    updateContent('prop-dielectric-constant', getData(material, 'electrical_properties.dielectric_constant'), true); // HTML for spans
-    updateContent('prop-resistivity', getData(material, 'electrical_properties.resistivity'), true); // HTML for spans
-    updateContent('prop-breakdown-field', getData(material, 'electrical_properties.breakdown_field'), true); // HTML for spans
+    updateContent('prop-carrier-concentration', getData(material, 'electrical_properties.carrier_concentration'), true);
+    updateContent('prop-e-mobility', getData(material, 'electrical_properties.electron_mobility'), true);
+    updateContent('prop-h-mobility', getData(material, 'electrical_properties.hole_mobility'), true);
+    updateContent('prop-dielectric-constant', getData(material, 'electrical_properties.dielectric_constant'), true);
+    updateContent('prop-resistivity', getData(material, 'electrical_properties.resistivity'), true);
+    updateContent('prop-breakdown-field', getData(material, 'electrical_properties.breakdown_field'), true);
 
     // --- Populate Optical Properties ---
-    updateContent('prop-spectral-range', getData(material, 'optical_properties.spectral_range'), true); // HTML for spans
-    updateContent('prop-cutoff-wl', getData(material, 'optical_properties.cutoff_wavelength'), true); // HTML for spans
-    updateContent('prop-ref-index', getData(material, 'optical_properties.refractive_index'), true); // HTML for spans
-    updateContent('prop-absorption-coefficient', getData(material, 'optical_properties.absorption_coefficient'), true); // HTML for spans
-    updateContent('prop-quantum-efficiency', getData(material, 'optical_properties.quantum_efficiency'), true); // HTML for spans
-    updateContent('prop-responsivity', getData(material, 'optical_properties.responsivity'), true); // HTML for spans
-    updateContent('prop-noise-equivalent-power', getData(material, 'optical_properties.noise_equivalent_power'), true); // HTML for spans
+    // ... (keep this section) ...
+    updateContent('prop-spectral-range', getData(material, 'optical_properties.spectral_range'), true);
+    updateContent('prop-cutoff-wl', getData(material, 'optical_properties.cutoff_wavelength'), true);
+    updateContent('prop-ref-index', getData(material, 'optical_properties.refractive_index'), true);
+    updateContent('prop-absorption-coefficient', getData(material, 'optical_properties.absorption_coefficient'), true);
+    updateContent('prop-quantum-efficiency', getData(material, 'optical_properties.quantum_efficiency'), true);
+    updateContent('prop-responsivity', getData(material, 'optical_properties.responsivity'), true);
+    updateContent('prop-noise-equivalent-power', getData(material, 'optical_properties.noise_equivalent_power'), true);
 
     // --- Populate Thermal Properties ---
-    updateContent('prop-op-temp', getData(material, 'thermal_properties.operating_temperature'), true); // HTML for spans
-    updateContent('prop-therm-cond', getData(material, 'thermal_properties.thermal_conductivity'), true); // HTML for spans
-    updateContent('prop-specific-heat', getData(material, 'thermal_properties.specific_heat'), true); // HTML for spans
-    updateContent('prop-melt-pt', getData(material, 'thermal_properties.melting_point'), true); // HTML for spans
+    // ... (keep this section) ...
+    updateContent('prop-op-temp', getData(material, 'thermal_properties.operating_temperature'), true);
+    updateContent('prop-therm-cond', getData(material, 'thermal_properties.thermal_conductivity'), true);
+    updateContent('prop-specific-heat', getData(material, 'thermal_properties.specific_heat'), true);
+    updateContent('prop-melt-pt', getData(material, 'thermal_properties.melting_point'), true);
 
     // --- Populate Mechanical Properties ---
-    updateContent('prop-density', getData(material, 'mechanical_properties.density'), true); // HTML for spans
-    updateContent('prop-youngs-modulus', getData(material, 'mechanical_properties.youngs_modulus'), true); // HTML for spans
-    updateContent('prop-hardness-vickers', getData(material, 'mechanical_properties.hardness_vickers'), true); // HTML for spans
-    updateContent('prop-poissons-ratio', getData(material, 'mechanical_properties.poissons_ratio'), false); // Plain number
-    updateContent('prop-fracture-toughness', getData(material, 'mechanical_properties.fracture_toughness'), true); // HTML for spans
+    // ... (keep this section) ...
+    updateContent('prop-density', getData(material, 'mechanical_properties.density'), true);
+    updateContent('prop-youngs-modulus', getData(material, 'mechanical_properties.youngs_modulus'), true);
+    updateContent('prop-hardness-vickers', getData(material, 'mechanical_properties.hardness_vickers'), true);
+    updateContent('prop-poissons-ratio', getData(material, 'mechanical_properties.poissons_ratio'), false);
+    updateContent('prop-fracture-toughness', getData(material, 'mechanical_properties.fracture_toughness'), true);
 
     // --- Populate Key Applications & Sensor Types ---
-    updateContent('prop-sensor-types', getData(material, 'device_applications.sensor_types'), false); // Comma-separated list
-    updateContent('prop-key-applications', getData(material, 'device_applications.key_applications'), true); // HTML list
+    // ... (keep this section) ...
+    updateContent('prop-sensor-types', getData(material, 'device_applications.sensor_types'), false);
+    updateContent('prop-key-applications', getData(material, 'device_applications.key_applications'), true);
 
     // --- Populate Chemical Properties ---
+    // ... (keep this section) ...
     updateContent('prop-stability-oxidation', getData(material, 'chemical_properties.stability_oxidation'), false);
 
     // --- Populate Magnetic Properties ---
+    // ... (keep this section) ...
     updateContent('prop-magnetic-type', getData(material, 'magnetic_properties.type'), false);
 
 
-    // --- Populate Comparison (DYNAMICALLY) ---
+    // --- Populate Comparison (DYNAMICALLY) --- MODIFIED ---
     updateContent('prop-comparison-notes', getData(material, 'comparison_alternatives.notes'), false); // Update notes field
 
-    const comparisonPlaceholder = document.getElementById('comparison-items-placeholder');
-    const comparisonData = material.comparison_alternatives; // Get the comparison object
+    const comparisonDL = document.getElementById('comparison-list'); // Get the DL element by its new ID
+    const comparisonData = material.comparison_alternatives;
 
-    if (comparisonPlaceholder) {
-        comparisonPlaceholder.innerHTML = ''; // Clear placeholder content first
+    if (comparisonDL) {
+        // Clear only dynamically added comparison items (optional, good practice)
+        // You could give dynamic items a class like 'dynamic-comparison-item' to select them
+        // Example: comparisonDL.querySelectorAll('.dynamic-comparison-item').forEach(el => el.remove());
 
         let comparisonsFound = false;
         if (comparisonData && typeof comparisonData === 'object') {
             Object.entries(comparisonData).forEach(([key, value]) => {
-                // Process only keys starting with 'vs_' and having a non-fallback value
                 const valueStr = getData(material, `comparison_alternatives.${key}`, 'CHECK_FALLBACK');
                 if (key.startsWith('vs_') && valueStr !== 'CHECK_FALLBACK' && valueStr !== fallbackValue && valueStr !== 'N/A' && valueStr !== '') {
                     const comparisonItemDiv = document.createElement('div');
-                    comparisonItemDiv.className = 'property-item';
+                    comparisonItemDiv.className = 'property-item dynamic-comparison-item'; // Added a class for potential clearing
 
                     const dt = document.createElement('dt');
                     dt.className = 'property-key';
-                    const displayName = key.replace(/^vs_/, 'vs. ') + ':'; // Format key nicely
+                    const displayName = key.replace(/^vs_/, 'vs. ') + ':';
                     dt.textContent = displayName;
 
                     const dd = document.createElement('dd');
                     dd.className = 'property-value';
-                    dd.textContent = valueStr; // Use textContent for safety, value is already processed by getData
+                    dd.textContent = valueStr; // Use textContent
 
                     comparisonItemDiv.appendChild(dt);
                     comparisonItemDiv.appendChild(dd);
-                    comparisonPlaceholder.appendChild(comparisonItemDiv);
+                    comparisonDL.appendChild(comparisonItemDiv); // Append directly to the DL
                     comparisonsFound = true;
                 }
             });
         }
 
-        // Show N/A only if NO specific 'vs_' comparisons were found AND no general notes exist
-         const notesValue = getData(material, 'comparison_alternatives.notes', 'CHECK_FALLBACK');
-         if (!comparisonsFound && (notesValue === 'CHECK_FALLBACK' || notesValue === fallbackValue || notesValue === 'N/A' || notesValue === '')) {
-            comparisonPlaceholder.innerHTML = `<div class="property-item"><dd class="property-value">${fallbackValue}</dd></div>`;
-        } else if (!comparisonsFound) {
-            // If notes exist but no 'vs_' items, the placeholder remains empty, which is fine.
+        // Add N/A message if needed (only if notes are also absent)
+        const notesValue = getData(material, 'comparison_alternatives.notes', 'CHECK_FALLBACK');
+        if (!comparisonsFound && (notesValue === 'CHECK_FALLBACK' || notesValue === fallbackValue || notesValue === 'N/A' || notesValue === '')) {
+           // Check if N/A message already exists to prevent duplicates
+           if (!comparisonDL.querySelector('.comparison-na-message')) {
+                const naItem = document.createElement('div');
+                naItem.className = 'property-item comparison-na-message'; // Add class to identify it
+                naItem.innerHTML = `<dd class="property-value">${fallbackValue}</dd>`; // Span full width
+                comparisonDL.appendChild(naItem);
+            }
+        } else {
+            // Remove any previous N/A message if comparisons were found
+             const existingNaMessage = comparisonDL.querySelector('.comparison-na-message');
+             if (existingNaMessage) {
+                 existingNaMessage.remove();
+             }
         }
 
     } else {
-        console.warn("[Detail Page] Element with ID 'comparison-items-placeholder' not found.");
+        console.warn("[Detail Page] Element with ID 'comparison-list' not found.");
     }
     // --- END DYNAMIC COMPARISON POPULATION ---
 
 
     // --- Populate References ---
+    // ... (keep this section) ...
     const refList = document.getElementById('reference-list');
     if (refList && material.references_further_reading) {
         const refs = material.references_further_reading;
         let listContent = '';
-        if(refs.notes) { listContent += `<li class="ref-notes"><em>${getData(material, 'references_further_reading.notes', '')}</em></li>`; } // Use getData for notes
+        if(refs.notes) { listContent += `<li class="ref-notes"><em>${getData(material, 'references_further_reading.notes', '')}</em></li>`; }
 
         let refsAdded = false;
         Object.entries(refs).forEach(([key, value]) => {
@@ -352,20 +362,20 @@ function populatePage(material) {
             }
         });
         refList.innerHTML = listContent || `<li>Reference information ${fallbackValue}</li>`;
-        if (!refsAdded && !refs.notes) { // Ensure N/A shows if truly nothing
+        if (!refsAdded && !refs.notes) {
              refList.innerHTML = `<li>Reference information ${fallbackValue}</li>`;
         }
     } else if (refList) {
         refList.innerHTML = `<li>Reference information ${fallbackValue}</li>`;
     } else { console.warn("[Detail Page] Element with ID 'reference-list' not found."); }
 
-
     // --- Populate Vendor Info ---
+    // ... (keep this section) ...
     const vendorList = document.getElementById('vendor-list');
     if (vendorList && material.vendor_info) {
         const vendors = material.vendor_info;
         let listContent = '';
-        if(vendors.notes) { listContent += `<li class="vendor-notes"><em>${getData(material, 'vendor_info.notes', '')}</em></li>`; } // Use getData for notes
+        if(vendors.notes) { listContent += `<li class="vendor-notes"><em>${getData(material, 'vendor_info.notes', '')}</em></li>`; }
 
         let vendorsAdded = false;
         Object.entries(vendors).forEach(([key, value]) => {
@@ -387,7 +397,7 @@ function populatePage(material) {
              }
         });
         vendorList.innerHTML = listContent || `<li>Vendor information ${fallbackValue}</li>`;
-        if (!vendorsAdded && !vendors.notes) { // Ensure N/A shows if truly nothing
+        if (!vendorsAdded && !vendors.notes) {
             vendorList.innerHTML = `<li>Vendor information ${fallbackValue}</li>`;
         }
     } else if (vendorList) {
