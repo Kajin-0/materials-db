@@ -11,7 +11,7 @@ Unchecked items `[ ]` are missing a matching key in `material_details.json`.
 - [ ] Carbon Nanotube Composite
 - [ ] Ferrite-Polymer Composite
 - [ ] G-10/FR-4 Epoxy Glass Laminate
-- [ ] Gadolinium Gallium Garnet (GGG)
+- [x] Gadolinium Gallium Garnet (GGG)
 - [x] Gallium Arsenide
 - [ ] Graphene Oxide Paper
 - [ ] Graphene Polymer Composite
