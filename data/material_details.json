@@ -54,7 +54,7 @@
       "dielectric_constant": {"value": "~15 - 20", "notes": "Static."},
       "resistivity": {"value": "Variable (10^-3 - 10^3+)", "unit": "Ohm-cm", "notes": "Depends on x, T, doping."},
       "breakdown_field": {"value": "Low (~10^3 - 10^4)", "unit": "V/cm", "notes": "Limits high-field use."}
-    }, // <<< NO COMMA HERE if next is thermal_properties
+    }, // <<< COMMA **IS** NEEDED here because optical_properties follows
     "optical_properties": {
       "spectral_range": "SWIR, MWIR, LWIR (0.8 to >30 um)", "notes": "Determined by Eg(x).",
       "cutoff_wavelength": {"value": "0.8 to >30", "unit": "um", "notes": "λ_c ≈ 1.24 / Eg."},
@@ -69,51 +69,51 @@
       "thermal_conductivity": {"value": "Low (~1 - 5)", "unit": "W/(m K)", "notes": "Poor conductor."},
       "specific_heat": {"value": "~0.16 - 0.20", "unit": "J/(g K)", "notes": "RT."},
       "melting_point": {"value": "~700 - 800", "unit": "C", "notes": "Composition dependent."}
-    }, // <<< COMMA NEEDED HERE
+    },
      "mechanical_properties": {
          "density": {"value": "~5.8 to ~8.1", "unit": "g/cm^3", "notes": "Increases with Hg."},
          "youngs_modulus": {"value": "~40 - 50", "unit": "GPa"},
          "hardness_vickers": {"value": "~70 - 100", "unit": "HV", "notes": "Soft, brittle."},
          "poissons_ratio": "~0.3",
          "fracture_toughness": {"value": "< 0.5", "unit": "MPa m^0.5", "notes": "Brittle."}
-     }, // <<< COMMA NEEDED HERE
+     },
      "device_applications": {
          "sensor_types": ["Photoconductor (PC)", "Photovoltaic (PV / Photodiode)", "APD (less common)"],
          "key_applications": ["Thermal Imaging/FLIR", "Night Vision", "Medical Thermography", "Gas Sensing", "IR Astronomy", "Missile Guidance"]
-     }, // <<< COMMA NEEDED HERE
+     },
      "chemical_properties": {
          "stability_oxidation": "Surface unstable; requires passivation. Readily oxidizes."
-     }, // <<< COMMA NEEDED HERE
+     },
      "magnetic_properties": {
          "type": "Diamagnetic"
-     }, // <<< COMMA NEEDED HERE
+     },
      "comparison_alternatives": {
          "notes": "Key IR Competitors:",
          "vs_InSb": "MCT: Wider tuning (LWIR+), higher T_op (MWIR). InSb: Cheaper, mature (MWIR).",
          "vs_QWIPs": "MCT: Higher QE, T_op. QWIPs (GaAs): Better uniformity, lower cost potential.",
          "vs_T2SLs": "T2SLs (e.g., InAs/GaSb): Potential for higher T_op, lower dark current, better uniformity; complex growth."
-     }, // <<< COMMA NEEDED HERE
+     },
      "references_further_reading": {
          "notes": "Key Resources:",
          "book_rogalski": "Rogalski, A. 'Infrared Detectors' (SPIE Press)",
          "review_hansen": "Hansen, G. L. et al. J. Appl. Phys. 53, 7099 (1982) - Eg(x,T)",
          "review_norton": "Norton, P. R. Opto-Electron. Rev., 10(3), 159 (2002) - Detector Overview",
          "wikipedia": "https://en.wikipedia.org/wiki/Mercury_cadmium_telluride"
-     }, // <<< COMMA NEEDED HERE
+     },
      "vendor_info": {
          "notes": "Example Vendors (Placeholder):",
          "vendor_1": "Company A - www.example-vendor-a.com",
          "vendor_2": "Company B - www.example-vendor-b.com",
          "vendor_3": "Company C - www.example-vendor-c.com"
-     }, // <<< COMMA NEEDED HERE
+     },
     "tags": [
       "II-VI", "LPE", "MBE", "MOCVD", "aerospace", "cadmium", "chalcogenide", "cryogenic",
       "epitaxial", "group 12", "group 16", "industry:aerospace", "industry:infrared",
       "industry:photonics", "ir", "lwir", "mercury", "mwir", "nitrogen cooled",
       "photoconductive", "photoconductor", "photodiode", "photosensor", "semiconductor",
       "sensor", "single crystal", "tellurium", "toxic", "tunable bandgap"
-    ] // <<< NO COMMA HERE - Last property of HgCdTe object
-  }, // <<< COMMA NEEDED HERE - Separates HgCdTe from GaAs
+    ] // NO COMMA after last property in this object
+  }, // COMMA separating HgCdTe from GaAs
   "Gallium Arsenide": {
     "name": "Gallium Arsenide",
     "formula": "GaAs",
@@ -169,7 +169,7 @@
       "dielectric_constant": {"value": "~12.9", "notes": "Static."},
       "resistivity": {"value": "Variable (Semi-insulating >10^7)", "unit": "Ohm-cm", "notes": "Doping dependent."},
       "breakdown_field": {"value": "~4 x 10^5", "unit": "V/cm"}
-    }, // <<< COMMA NEEDED HERE
+    },
     "optical_properties": {
       "spectral_range": "Visible (limited), NIR", "notes": "Absorption edge ~870 nm.",
       "cutoff_wavelength": {"value": "~0.87", "unit": "um", "notes": "λ_c ≈ 1.24 / Eg."},
@@ -178,56 +178,56 @@
       "quantum_efficiency": {"value": "High", "notes": "Good internal QE for detectors/emitters."},
       "responsivity": {"value": "~0.6", "unit": "A/W", "notes": "Typical for photodiodes near peak."},
       "noise_equivalent_power": {"value": "Device dependent", "unit": "W/Hz^0.5"}
-    }, // <<< COMMA NEEDED HERE
+    },
     "thermal_properties": {
       "operating_temperature": {"value": "-55 to 150+", "unit": "°C", "notes": "Device/package dependent."},
       "thermal_conductivity": {"value": "~45-55", "unit": "W/(m K)", "notes": "Moderate."},
       "specific_heat": {"value": "~0.33", "unit": "J/(g K)", "notes": "RT."},
       "melting_point": {"value": "~1238", "unit": "C"}
-    }, // <<< COMMA NEEDED HERE
+    },
      "mechanical_properties": {
          "density": {"value": "~5.32", "unit": "g/cm^3"},
          "youngs_modulus": {"value": "~85", "unit": "GPa", "notes": "[100] direction."},
          "hardness_vickers": {"value": "~750", "unit": "HV"},
          "poissons_ratio": "~0.31",
          "fracture_toughness": {"value": "~0.3-0.4", "unit": "MPa m^0.5", "notes": "Brittle."}
-     }, // <<< COMMA NEEDED HERE
+     },
      "device_applications": {
          "sensor_types": ["Photodiode", "Phototransistor", "LED", "Laser Diode", "Solar Cell"],
          "key_applications": ["RF/Microwave ICs", "High-speed electronics", "LEDs (Red/IR)", "Laser Diodes (CD/DVD, Telecom)", "Solar Cells (esp. space)", "Photodetectors"]
-     }, // <<< COMMA NEEDED HERE
+     },
      "chemical_properties": {
          "stability_oxidation": "Forms native oxides (unstable/poor passivation). Sensitive to acids/bases."
-     }, // <<< COMMA NEEDED HERE
+     },
      "magnetic_properties": {
          "type": "Diamagnetic"
-     }, // <<< COMMA NEEDED HERE
+     },
      "comparison_alternatives": {
          "notes": "Key Competitors/Comparisons:",
          "vs_Si": "GaAs: Higher electron mobility, direct bandgap (better optical emission/detection). Si: Cheaper, mature CMOS, better thermal conductivity, stable oxide.",
          "vs_InP": "InP: Better suited for longer wavelength (1.3-1.55um) telecom lasers/detectors. GaAs: More mature for RF/microwave.",
          "vs_GaN": "GaN: Wider bandgap (higher power/temp electronics, blue/UV LEDs/lasers). GaAs: Lower cost (currently), better for some RF apps."
-     }, // <<< COMMA NEEDED HERE
+     },
      "references_further_reading": {
          "notes": "Key Resources (Examples):",
          "book_sze": "Sze, S. M. 'Physics of Semiconductor Devices'",
          "review_paper": "Review article on GaAs devices (e.g., IEEE)",
          "wikipedia": "https://en.wikipedia.org/wiki/Gallium_arsenide"
-     }, // <<< COMMA NEEDED HERE
+     },
      "vendor_info": {
          "notes": "Example Vendors (Placeholder):",
          "vendor_1": "Company A - www.example-vendor-a.com",
          "vendor_2": "Company B - www.example-vendor-b.com",
          "vendor_3": "Company C - www.example-vendor-c.com"
-     }, // <<< COMMA NEEDED HERE
+     },
     "tags": [
       "III-V", "MBE", "MOCVD", "aerospace", "cmos compatible", "commercial",
       "cryogenic", "direct bandgap", "epitaxial", "group 13", "group 15",
       "high mobility", "industry:aerospace", "industry:lasers", "industry:photonics",
       "infrared", "laser diode", "photodiode", "photosensing", "photosensor",
       "semiconductor", "sensor", "single crystal", "swir", "vacuum compatible"
-    ] // <<< NO COMMA HERE - Last property of GaAs object
-  }, // <<< COMMA NEEDED HERE - Separates GaAs from NbTi
+    ] // NO COMMA after last property in this object
+  }, // COMMA separating GaAs from NbTi
   "Niobium Titanium (NbTi) Wire": {
     "name": "Niobium Titanium (NbTi) Wire",
     "formula": "Nb-Ti/Cu",
@@ -283,54 +283,54 @@
       "dielectric_constant": {"notes": "N/A (Metallic)"},
       "resistivity": {"value": "Matrix (Cu): ~1.7e-8 Ohm-m (RT), much lower at 4K. NbTi: Superconducting below Tc.", "notes": "RRR of Cu matrix is important (>100)."},
       "breakdown_field": {"notes": "N/A (Superconductor quenching is relevant limit)."}
-    }, // <<< NO COMMA HERE - Optical properties removed
+    }, // NO COMMA HERE before thermal_properties
     "thermal_properties": {
       "operating_temperature": {"value": "< ~9.2", "unit": "K", "notes": "Typically operated in LHe at 4.2 K."},
       "thermal_conductivity": {"value": "Matrix (Cu) dominates. High at 4K.", "unit": "W/(m K)", "notes": "Important for stability."},
       "specific_heat": {"value": "Low at 4K.", "unit": "J/(g K)", "notes": "Follows T^3 dependence at low T."},
       "melting_point": {"value": "Cu: ~1084°C, NbTi: >2000°C", "notes": "Matrix melts first."}
-    }, // <<< COMMA NEEDED HERE
+    },
      "mechanical_properties": {
          "density": {"value": "~6-8", "unit": "g/cm^3", "notes": "Depends on Cu/NbTi ratio."},
          "youngs_modulus": {"value": "~80-120", "unit": "GPa", "notes": "Composite value."},
          "hardness_vickers": {"notes": "Depends on work hardening."},
          "poissons_ratio": "~0.3-0.35",
          "fracture_toughness": {"notes": "Generally ductile."}
-     }, // <<< COMMA NEEDED HERE
+     },
      "device_applications": {
          "sensor_types": ["Not typically used as a sensor itself."],
          "key_applications": ["MRI magnets", "Particle accelerator magnets (LHC, Tevatron)", "Fusion research magnets (ITER)", "High-field laboratory magnets", "Superconducting Magnetic Energy Storage (SMES)"]
-     }, // <<< COMMA NEEDED HERE
+     },
      "chemical_properties": {
          "stability_oxidation": "Cu matrix oxidizes. NbTi alloy stable but needs protection at high temp processing."
-     }, // <<< COMMA NEEDED HERE
+     },
      "magnetic_properties": {
          "type": "Type-II Superconductor",
          "critical_temperature_tc": {"value": "~9.2", "unit": "K"},
          "upper_critical_field_bc2": {"value": "~15", "unit": "T", "notes": "At 0 K. Lower at 4.2 K (~10-12 T practical limit)."},
          "critical_current_density_jc": {"value": "1000-3000+", "unit": "A/mm^2", "notes": "At 5 T, 4.2 K. Highly dependent on processing."}
-     }, // <<< COMMA NEEDED HERE
+     },
      "comparison_alternatives": {
          "notes": "Superconducting Wire Competitors:",
          "vs_Nb3Sn": "NbTi: More ductile, easier to handle/wind, lower cost. Nb3Sn: Higher Tc (~18K), higher Bc2 (~25-30T), brittle, requires react-and-wind or wind-and-react.",
          "vs_HTS": "NbTi: Mature, lower cost, requires LHe cooling. HTS (e.g., REBCO, BSCCO): Higher Tc (LN2 possible), much higher Bc2 potential, higher cost, complex manufacturing."
-     }, // <<< COMMA NEEDED HERE
+     },
      "references_further_reading": {
          "notes": "Key Resources (Examples):",
          "book_wilson": "Wilson, M. N. 'Superconducting Magnets'",
          "review_paper": "Review on NbTi processing and properties (e.g., Cryogenics journal, IEEE Trans. Appl. Supercond.)",
          "wikipedia": "https://en.wikipedia.org/wiki/Niobium%E2%80%93titanium"
-     }, // <<< COMMA NEEDED HERE
+     },
      "vendor_info": {
          "notes": "Example Vendors (Placeholder):",
          "vendor_1": "Bruker EAS (formerly OST)",
          "vendor_2": "Luvata",
          "vendor_3": "Western Superconducting Technologies (WST)"
-     }, // <<< COMMA NEEDED HERE
+     },
     "tags": [
       "composite", "cryogenic", "ductile", "fusion", "industry:cryogenics",
       "industry:energy", "industry:quantum", "low temperature", "magnet",
       "quantum computing", "superconductor", "vacuum compatible", "wire"
-    ] // <<< NO COMMA HERE - Last property of NbTi object
-  } // <<< NO COMMA HERE - Last material entry in the file
+    ] // NO COMMA after last property in this object
+  } // NO COMMA after last material entry
 }
