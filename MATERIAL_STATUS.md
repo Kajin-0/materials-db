@@ -32,7 +32,7 @@ Unchecked items `[ ]` are missing a matching key in `material_details.json`.
 - [ ] PTFE Glass Fiber Composite
 - [ ] Polyethylene Neutron Shielding
 - [ ] Reinforced Carbon–Carbon (RCC)
-- [ ] Sapphire Substrate
+- [x] Sapphire Substrate
 - [ ] Silica Aerogel
 - [x] Silicon
 - [ ] Silicon Carbide Fiber Reinforced Composite
