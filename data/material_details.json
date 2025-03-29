@@ -101,10 +101,10 @@
          "wikipedia": "https://en.wikipedia.org/wiki/Mercury_cadmium_telluride"
      },
      "vendor_info": {
-         "notes": "Example Vendors (Placeholder):",
-         "vendor_1": "Company A - www.example-vendor-a.com",
-         "vendor_2": "Company B - www.example-vendor-b.com",
-         "vendor_3": "Company C - www.example-vendor-c.com"
+        "notes": "Example Vendors (Placeholder):",
+        "vendor_1": "Company A - www.example-vendor-a.com",
+        "vendor_2": "Company B - www.example-vendor-b.com",
+        "vendor_3": "Company C - www.example-vendor-c.com"
      },
     "tags": [
       "II-VI", "LPE", "MBE", "MOCVD", "aerospace", "cadmium", "chalcogenide", "cryogenic",
@@ -218,11 +218,10 @@
          "wikipedia": "https://en.wikipedia.org/wiki/Gallium_arsenide"
      },
      "vendor_info": {
-         "notes": "Major GaAs Wafer/Epi Suppliers (Examples):",
-         "vendor_1": "AXT, Inc.",
-         "vendor_2": "Freiberger Compound Materials GmbH",
-         "vendor_3": "Sumitomo Electric Industries, Ltd.",
-         "vendor_4": "IQE plc (Epiwafers)"
+        "notes": "Example Vendors (Placeholder):",
+        "vendor_1": "Company A - www.example-vendor-a.com",
+        "vendor_2": "Company B - www.example-vendor-b.com",
+        "vendor_3": "Company C - www.example-vendor-c.com"
      },
     "tags": [
       "III-V", "MBE", "MOCVD", "aerospace", "cmos compatible", "commercial",
@@ -326,10 +325,10 @@
          "wikipedia": "https://en.wikipedia.org/wiki/Niobium%E2%80%93titanium"
      },
      "vendor_info": {
-         "notes": "Example Vendors (Placeholder):",
-         "vendor_1": "Bruker EAS (formerly OST)",
-         "vendor_2": "Luvata",
-         "vendor_3": "Western Superconducting Technologies (WST)"
+        "notes": "Example Vendors (Placeholder):",
+        "vendor_1": "Company A - www.example-vendor-a.com",
+        "vendor_2": "Company B - www.example-vendor-b.com",
+        "vendor_3": "Company C - www.example-vendor-c.com"
      },
     "tags": [
       "composite", "cryogenic", "ductile", "fusion", "industry:cryogenics",
@@ -440,10 +439,10 @@
          "wikipedia": "https://en.wikipedia.org/wiki/ZBLAN"
      },
      "vendor_info": {
-         "notes": "Example Vendors (Fiber/Preform - Placeholder):",
-         "vendor_1": "Thorlabs (Fiber)",
-         "vendor_2": "Le Verre Fluoré (Fiber/Components)",
-         "vendor_3": "IRflex Corporation (Fiber)"
+        "notes": "Example Vendors (Placeholder):",
+        "vendor_1": "Company A - www.example-vendor-a.com",
+        "vendor_2": "Company B - www.example-vendor-b.com",
+        "vendor_3": "Company C - www.example-vendor-c.com"
      },
     "tags": [
       "cryogenic", "fiber", "industry:lasers", "industry:photonics", "industry:space",
@@ -558,10 +557,10 @@
          "wikipedia": "https://en.wikipedia.org/wiki/Kapton"
      },
      "vendor_info": {
-         "notes": "Example Vendors (Placeholder):",
-         "vendor_1": "Company A - www.example-vendor-a.com",
-         "vendor_2": "Company B - www.example-vendor-b.com",
-         "vendor_3": "Company C - www.example-vendor-c.com"
+        "notes": "Example Vendors (Placeholder):",
+        "vendor_1": "Company A - www.example-vendor-a.com",
+        "vendor_2": "Company B - www.example-vendor-b.com",
+        "vendor_3": "Company C - www.example-vendor-c.com"
      },
     "tags": [
       "polyimide", "flexible", "thermal stability", "insulator", "film",
@@ -671,12 +670,10 @@
          "wikipedia": "https://en.wikipedia.org/wiki/Silicon"
      },
      "vendor_info": {
-         "notes": "Major Silicon Wafer Suppliers (Examples):",
-         "vendor_1": "Shin-Etsu Handotai (SEH)",
-         "vendor_2": "SUMCO Corporation",
-         "vendor_3": "GlobalWafers Co., Ltd.",
-         "vendor_4": "Siltronic AG",
-         "vendor_5": "SK Siltron"
+        "notes": "Example Vendors (Placeholder):",
+        "vendor_1": "Company A - www.example-vendor-a.com",
+        "vendor_2": "Company B - www.example-vendor-b.com",
+        "vendor_3": "Company C - www.example-vendor-c.com"
      },
     "tags": [
       "aerospace", "bulk grown", "cmos compatible", "computing", "durable", "elemental",
@@ -783,11 +780,10 @@
          "wikipedia": "https://en.wikipedia.org/wiki/Indium_gallium_arsenide"
      },
      "vendor_info": {
-         "notes": "Epitaxial Wafer Suppliers (Examples):",
-         "vendor_1": "IQE plc",
-         "vendor_2": "Landmark Optoelectronics Corporation",
-         "vendor_3": "IntelliEPI",
-         "vendor_4": "Global Communication Semiconductors (GCS)"
+        "notes": "Example Vendors (Placeholder):",
+        "vendor_1": "Company A - www.example-vendor-a.com",
+        "vendor_2": "Company B - www.example-vendor-b.com",
+        "vendor_3": "Company C - www.example-vendor-c.com"
      },
     "tags": [
       "III-V", "MBE", "MOCVD", "epitaxial", "group 13", "group 15",
