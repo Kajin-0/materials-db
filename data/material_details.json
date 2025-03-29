@@ -1634,5 +1634,111 @@
           "industry:aerospace", "industry:defense", "industry:space", "oxidation resistant",
           "refractory", "space shuttle", "structural", "thermal protection", "lightweight"
         ]
+      },
+    "Boron Carbide Reinforced Epoxy": {
+        "name": "Boron Carbide Reinforced Epoxy",
+        "formula": "B₄C-Epoxy",
+        "synonyms": [ "Boron Carbide Composite", "B4C Epoxy", "B4C Reinforced Polymer" ],
+        "category": "Composite",
+        "description": "A composite material consisting of hard Boron Carbide (B₄C) particles or fibers dispersed within an epoxy polymer matrix. This combination leverages the extreme hardness, high stiffness, low density, and neutron absorption capabilities of B₄C with the processability, toughness (relative to monolithic B₄C), and adhesion properties of epoxy resin. Often used in lightweight armor applications, wear-resistant components, and neutron shielding.",
+        "wiki_link": "https://en.wikipedia.org/wiki/Boron_carbide",
+        "safety": {
+          "toxicity": "Low for the cured composite. Boron carbide dust generated during processing is an abrasive irritant and requires respiratory protection. Epoxy resins and hardeners can be skin/respiratory sensitizers before curing.",
+          "handling": "Handle cured parts normally. Use appropriate PPE when mixing/handling uncured epoxy components and when machining/sanding the cured composite."
+        },
+        "identification": {
+          "cas_number": "12069-32-8 (B₄C), N/A (Epoxy varies)",
+          "class": "Ceramic Particle Reinforced Polymer Composite",
+          "crystal_structure": "B₄C: Rhombohedral. Epoxy: Amorphous polymer.",
+          "phase_diagram_notes": "Not applicable in the traditional sense. Properties depend on B₄C particle size/shape/loading, epoxy type, curing conditions, and interface bonding."
+        },
+        "advanced_fabrication_insights": {
+            "particle_dispersion": "Achieving uniform dispersion of B₄C particles within the viscous epoxy resin is critical to avoid clumping and ensure consistent properties. Surface treatment of B₄C particles can improve wetting and adhesion.",
+            "common_defects_impact": "Porosity (voids from mixing/curing), particle agglomeration, poor interfacial bonding. Degrade mechanical strength, toughness, and shielding effectiveness.",
+            "interface_engineering": "The bond strength between the B₄C particles and the epoxy matrix significantly influences the composite's toughness and load transfer capabilities.",
+            "method_specific_notes": "Mixing techniques (mechanical stirring, ultrasonication), vacuum degassing (to remove trapped air), and controlled curing cycles (temperature, time) are important process parameters."
+        },
+        "growth_fabrication_properties": {
+            "common_growth_methods": "Mixing B₄C powder into epoxy resin/hardener system, followed by Casting, Compression Molding, or Layup (if using B₄C fibers/fabric prepregs) and Curing.",
+            "source_materials_purity": "Boron Carbide powder (various particle sizes), Epoxy resin system (e.g., Bisphenol A based) and appropriate hardener.",
+            "preferred_substrates_orientations": "N/A (Bulk composite, or molded shape).",
+            "typical_growth_parameters": "Curing temperature/time depends on specific epoxy system (can range from room temp to ~150-180°C). B₄C loading typically 10-60 vol%.",
+            "passivation_methods": "Surface is generally stable epoxy."
+        },
+        "post_growth_processing": {
+            "annealing": "Post-curing cycles may be used to ensure full cure and optimize epoxy properties.",
+            "lapping_polishing": "Can be machined/polished, requires diamond tooling due to B₄C hardness.",
+            "etching": "Epoxy matrix can be etched by strong solvents/acids, B₄C resistant.",
+            "grinding_milling": "Possible with diamond tools, generates hazardous dust."
+        },
+         "device_integration_characterization": {
+            "device_architectures": "Armor plates (often with backing), wear-resistant linings/tiles, neutron shielding components, tooling fixtures.",
+            "readout_integration": "N/A",
+            "ar_coatings": "N/A",
+            "packaging_cooling": "Operating temperature limited by the epoxy matrix.",
+            "key_characterization_techniques": ["Density Measurement", "Hardness Testing (Rockwell, Shore D)", "Mechanical Testing (Flexural/Tensile Strength, Modulus, Impact Toughness)", "Microscopy (SEM - particle dispersion, interface)", "Neutron Attenuation Testing", "Wear/Abrasion Testing"]
+        },
+        "electrical_properties": {
+          "bandgap_type": "B₄C: Semiconductor (~0.8-2 eV). Epoxy: Insulator.",
+          "resistivity": {"value": "Generally High (>10⁸ Ω·cm)", "notes": "Dominated by insulating epoxy matrix unless B₄C loading is extremely high and particles form conductive paths (percolation)."},
+          "dielectric_constant": {"value": "~4-6", "notes": "Primarily determined by epoxy matrix at moderate loadings."},
+          "dielectric_strength": {"notes": "Good, depends on epoxy and presence of voids."}
+        },
+        "optical_properties": {
+          "spectral_range": "Opaque", "notes": "Typically black or dark gray."
+        },
+        "thermal_properties": {
+          "operating_temperature": {"value": "Limited by Epoxy (~ -50 to 120-180)", "unit": "°C", "notes": "Maximum continuous use temperature depends on the specific epoxy system's Glass Transition Temp (Tg). Degrades rapidly above Tg."},
+          "thermal_conductivity": {"value": "Low (~0.5-5 W/(m·K))", "notes": "Higher than neat epoxy, but much lower than metals or bulk ceramics. Increases with B₄C loading."},
+          "specific_heat": {"value": "~1.0-1.5", "unit": "J/(g·K)"},
+          "melting_point": {"notes": "Does not melt. Epoxy decomposes/chars at high temp (~300-500°C). B₄C melts >2400°C."},
+          "thermal_expansion": {"value": "Relatively High (~30-60 x 10⁻⁶ /°C)", "notes": "Dominated by epoxy matrix CTE. Can cause internal stress due to CTE mismatch with B₄C (~5-6 x 10⁻⁶ /°C)."}
+        },
+         "mechanical_properties": {
+             "density": {"value": "~1.5-2.4", "unit": "g/cm³", "notes": "Low density compared to metals/ceramics. Increases with B₄C loading (B₄C density ~2.5 g/cm³)."},
+             "youngs_modulus": {"value": "~10-50+", "unit": "GPa", "notes": "Significantly higher than neat epoxy (~3 GPa), increases with B₄C loading. Much lower than bulk B₄C (~450 GPa)."},
+             "flexural_strength": {"value": "~50-150+", "unit": "MPa", "notes": "Increases with B₄C loading up to a point, then can decrease due to brittleness/defects."},
+             "hardness_shore_d": {"value": "~80-90+", "notes": "Very hard surface due to B₄C."},
+             "fracture_toughness": {"value": "Moderate (~2-5 MPa·m⁰·⁵)", "notes": "Significantly tougher than monolithic B₄C (~2-3 MPa·m⁰·⁵) due to polymer matrix, but still relatively brittle compared to metals."}
+         },
+         "device_applications": {
+             "key_applications": ["Lightweight Body/Vehicle Armor Plates (often as strike face)", "Wear-resistant linings and components", "Neutron Absorbing Materials (Nuclear industry, medical shielding)", "Abrasive blast nozzles", "Tooling and fixtures requiring stiffness and low weight"]
+         },
+         "chemical_properties": {
+             "stability_oxidation": "Epoxy limits high-temp oxidation resistance.",
+             "solvent_resistance": "Good, determined by epoxy matrix.",
+             "acid_resistance": "Good, determined by epoxy matrix.",
+             "base_resistance": "Good, determined by epoxy matrix.",
+             "water_solubility": "Very low (negligible)."
+         },
+         "neutron_shielding": {
+            "effectiveness": {"notes": "Boron-10 isotope in B₄C has a very large neutron absorption cross-section, making these composites effective thermal neutron shields."}
+         },
+         "comparison_alternatives": {
+             "notes": "Alternative Armor/Wear/Shielding Materials:",
+             "vs_Alumina_Epoxy": "B₄C-Epoxy: Lower density, higher hardness, neutron absorption. Al₂O₃-Epoxy: Higher toughness possible, lower cost.",
+             "vs_SiC_Epoxy": "B₄C-Epoxy: Lower density, higher hardness, neutron absorption. SiC-Epoxy: Potentially better toughness/strength depending on formulation.",
+             "vs_Monolithic_B4C": "B₄C-Epoxy: Much higher toughness, easier/cheaper to form complex shapes, lower operating temperature, lower stiffness/strength. Monolithic B₄C: Extremely hard/stiff, high temp capability, very brittle.",
+             "vs_UHMWPE_Fiber_Composites": "B₄C-Epoxy: Much higher hardness/stiffness (good as strike face), neutron absorption. UHMWPE: Extremely high toughness (good as backing plate), very low density, flexible.",
+             "vs_Borated_Polyethylene": "B₄C-Epoxy: Higher stiffness/strength/hardness, better dimensional stability. Borated PE: Lower cost, easier processing for large shielding shapes, lower mechanical properties."
+         },
+         "references_further_reading": {
+             "notes": "Key Literature:",
+             "book_composite_materials": "Chapters on ceramic particle reinforced polymers in composite materials handbooks (e.g., ASM Handbook Vol 21).",
+             "journal_wear": "Articles on wear properties in 'Wear' journal.",
+             "journal_composites_b": "Articles on mechanical properties in 'Composites Part B: Engineering'.",
+             "wikipedia_b4c": "https://en.wikipedia.org/wiki/Boron_carbide"
+         },
+         "vendor_info": {
+            "notes": "Example Vendors (Placeholder):",
+            "vendor_1": "Company A - www.example-vendor-a.com",
+            "vendor_2": "Company B - www.example-vendor-b.com",
+            "vendor_3": "Company C - www.example-vendor-c.com"
+         },
+        "tags": [
+          "abrasion resistant", "armor", "composite", "defense", "ductile", "hard",
+          "impact resistant", "industry:aerospace", "industry:defense", "industry:infrastructure", "industry:nuclear",
+          "lightweight", "neutron shielding", "polymer matrix composite", "ceramic reinforced"
+        ]
       } 
 }
