@@ -35,7 +35,10 @@
     "electrical_properties": {
       "bandgap_type": "Direct, Tunable",
       "band_gap": {"value": "Variable -0.3 (x≈0) to 1.5 (x=1)", "unit": "eV", "notes": "Tunable via Cadmium fraction (x). Commonly targeted: x≈0.2 for LWIR (~0.1 eV), x≈0.3 for MWIR (~0.25 eV)."},
-      "bandgap_equation": {"hansen_eg": "Eg(x, T) ≈ -0.302 + 1.93x + 5.35e-4 * T*(1-2x) - 0.810*x^2 + 0.832*x^3 (eV). Empirical.", "wavelength_relation": "λ_cutoff (µm) ≈ 1.24 / Eg (eV)"},
+      "bandgap_equation": {
+          "hansen_eg": "Eg(x, T) ≈ -0.302 + 1.93x + 5.35e-4 * T*(1-2x) - 0.810*x^2 + 0.832*x^3 (eV). Empirical.",
+          "wavelength_relation": "λ_cutoff (µm) ≈ 1.24 / Eg (eV)"
+      }, // <<< COMMA WAS MISSING HERE
       "common_dopants": "n-type: Indium (In), typically 10¹⁴-10¹⁶ cm⁻³. p-type: Arsenic (As), Gold (Au), or Hg vacancies, typically 10¹⁵-10¹⁷ cm⁻³.",
       "carrier_concentration": {"value": "Intrinsic (ni) ~10¹⁶ cm⁻³ at 300K (x=0.2), ~10¹³ cm⁻³ at 77K.", "notes": "Strongly temperature dependent. Extrinsic control via doping."},
       "electron_mobility": {"value": "10,000 - 100,000+", "unit": "cm²/Vs", "notes": "Very high at 77 K for low x. Decreases with higher x and temperature."},
@@ -43,7 +46,7 @@
       "dielectric_constant": {"value": "~15 - 20", "notes": "Static value, varies slightly with x and frequency."},
       "resistivity": {"value": "Highly variable (10⁻³ - 10³+)", "unit": "Ω·cm", "notes": "Depends strongly on composition, temp, doping."},
       "breakdown_field": {"value": "Low (~10³ - 10⁴)", "unit": "V/cm", "notes": "Limits high-field operation."}
-    }, // <<< COMMA WAS MISSING HERE before optical_properties
+    }, // Comma here before optical_properties is correct
     "optical_properties": {
       "spectral_range": "SWIR, MWIR, LWIR (0.8 µm to >30 µm)", "notes": "Range determined by Eg(x).",
       "cutoff_wavelength": {"value": "Variable 0.8 (x=1) to >30 (x≈0)", "unit": "µm", "notes": "λ_c (µm) ≈ 1.24 / Eg (eV)."},
