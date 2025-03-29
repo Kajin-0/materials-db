@@ -16,6 +16,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!materialName) {
         if (nameElement) nameElement.textContent = "Material not specified.";
         console.error("[Detail Page] No material specified in URL.");
+        // Optionally display error in main container
+        if(mainContainer) mainContainer.innerHTML = '<p class="error-message">Error: No material specified in the URL.</p>';
+        return;
+    }
+
+    if (!mainContainer) {
+        console.error("Essential element 'main' not found.");
+        // Cannot display errors if main container is missing
         return;
     }
 
@@ -24,21 +32,30 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.log("[Detail Page] Fetching dedicated detail data file:", detailDataPath);
         const detailRes = await fetch(detailDataPath);
         if (!detailRes.ok) {
-            if (detailRes.status === 404) { throw new Error(`Detailed data file not found at ${detailDataPath}.`); }
+            if (detailRes.status === 404) { throw new Error(`Detailed data file not found at ${detailDataPath}. Ensure the file exists and the path is correct.`); }
             else { throw new Error(`HTTP error! status: ${detailRes.status} - Could not fetch ${detailDataPath}`); }
         }
 
-        const allDetailData = await detailRes.json();
-        console.log("[Detail Page] Detailed data loaded:", allDetailData);
+        // Attempt to parse JSON, catching syntax errors here
+        let allDetailData;
+        try {
+            allDetailData = await detailRes.json();
+        } catch (jsonError) {
+            console.error(`[Detail Page] Failed to parse JSON from ${detailDataPath}:`, jsonError);
+            throw new Error(`Invalid JSON format in ${detailDataPath}. Check the file content for syntax errors (e.g., trailing commas, missing quotes). ${jsonError.message}`);
+        }
+
+        console.log("[Detail Page] Detailed data loaded and parsed:", allDetailData);
 
          if (typeof allDetailData !== 'object' || allDetailData === null) {
-             throw new Error(`Data format error in ${detailDataPath}. Expected object.`);
+             // This check might be redundant if JSON parsing already succeeded, but good practice.
+             throw new Error(`Data format error in ${detailDataPath}. Expected a top-level JSON object.`);
          }
 
-        const material = allDetailData[materialName]; // Direct lookup
+        const material = allDetailData[materialName]; // Direct lookup using the decoded name
 
         if (!material) {
-             throw new Error(`Detailed information for "${materialName}" not found in ${detailDataPath}.`);
+             throw new Error(`Detailed information for "${materialName}" not found within the data loaded from ${detailDataPath}. Check if the material name exists as a key.`);
         }
         console.log("[Detail Page] Specific detailed material object found:", material);
 
@@ -47,291 +64,281 @@ document.addEventListener("DOMContentLoaded", async () => {
     } catch (e) {
         console.error("[Detail Page] Failed to load material details:", e);
         if (nameElement) nameElement.textContent = "Error loading details.";
-        if (mainContainer) mainContainer.innerHTML = `<p class="error-message">Error loading material details: ${e.message}. Check console.</p>`;
+        // Display error message in the main content area
+        mainContainer.innerHTML = `<p class="error-message" style="color: red; padding: 1rem;">Error loading material details: ${e.message}. Please check the console for more information.</p>`;
     }
 });
 
 /**
- * Populates the HTML": "LPE, MBE, MOCVD, Bulk (less common).",
-        "source_materials_purity": "Elemental Hg, Cd, Te (>6N purity essential).",
-        "preferred_substrates_orientations": "Substrate: CdZnTe (~4% Zn); Si/GaAs/Ge usable (w/ buffers). Orientation: (111)B (LPE); (211)B, (100) (MBE/MOCVD).",
-        "typical_growth_parameters": "Rates: ~1-5 um/hr (MBE/MOCVD). Precise Temp/Pressure control vital.",
-        "passivation_methods": "Essential. Common: ZnS, CdTe, SiO2 via Sputtering, MBE, ALD."
-    },
-    "post_growth_processing": { // Concise points
-        "annealing": "CRITICAL: Reduces Hg vacancies, activates dopants. Temps ~200-450C. Requires Hg overpressure.",
-        "lapping_polishing": "Lapping: Al2O3/SiC slurries. Polishing: Diamond slurries (<1um) or CMP (Br-Methanol). Low pressure.",
-        "etching": "Wet: Br-Methanol/Ethylene Glycol. Dry: RIE/ICP (CH4/H2, Ar, Halogens) for patterning.",
-        "grinding_milling": "Avoid for wafers (brittle/contamination)."
-    },
-     "device_integration_characterization": { // Concise points
-        "device_architectures": "Photoconductors (PC), Photovoltaic Diodes (PV/PD). Mesa or planar.",
-        "readout_integration": "Flip-chip bonding to Si ROIC via Indium bumps (FPAs).",
-        "ar_coatings": "Required (high n). Common: ZnS, Ge, dielectric stacks.",
-        "packaging_cooling": "Requires vacuum package & cryogenic cooling (e.g., Stirling, LN2) for low noise.",
-        "characterization_techniques": ["Hall (mobility, conc.)", "FTIR (λc, thickness)", "PL (quality)", "XRD (crystal)", "SIMS (composition)", "Spectral Response", "I-V (diodes)"] // List format
-    },
-    "electrical_properties": { // Kept concise data
-      "bandgap_type": "Direct, Tunable",
-      "band_gap": {"value": "0 - 1.5", "unit": "eV", "notes": "Tunable via x. Target: x≈0.2 LWIR, x≈0.3 MWIR."},
-      "bandgap_equation": {"hansen_eg": "Eg(x,T) Empirical Eq.", "wavelength_relation": "λ_c (um) ≈ 1.24 / Eg (eV)"},
-      "common_dopants": "n-type: In; p-type: As, Au, Hg-vacancies (10^14-10^17 cm^-3 typical).",
-      "carrier_concentration": {"value": "ni ~10^16 (300K), ~10^13 (77K) @ x=0.2.", "notes": "Extrinsic via doping."},
-      "electron_mobility": {"value": ">10,000", "unit": "cm^2/Vs", "notes": "High @ 77K (low x)."},
-      "hole_mobility": {"value": "100 - 600", "unit": "cm^2/Vs", "notes": "Lower than μe (77K)."},
-      "dielectric_constant": {"value": "~15 - 20", "notes": "Static."},
-      "resistivity": {"value": "Variable (10^-3 - 10^3+)", "unit": "Ohm-cm", "notes": "Depends on x, T, doping."},
-      "breakdown_field": {"value": "Low (~10^3 - 10^4)", "unit": "V/cm", "notes": "Limits high-field use."}
-    },
-    "optical_properties": { // Kept concise data
-      "spectral_range": "SWIR, MWIR, LWIR (0.8 to >30 um)", "notes": "Determined by Eg(x).",
-      "cutoff_wavelength": {"value": "0.8 to >30", "unit": "um", "notes": "λ_c ≈ 1.24 / Eg."},
-      "refractive_index": {"value": "~3.4 - 4.0", "notes": "High index."},
-      "absorption_coefficient": {"value": ">10^4", "unit": "cm^-1", "notes": "High near band edge."},
-      "quantum_efficiency": {"value": ">70-80%", "notes": "With good material/AR coating."},
-      "responsivity": {"value": "~1 - 10", "unit": "A/W", "notes": "At 77K."},
-      "noise_equivalent_power": {"value": "~10^-11 - 10^-13", "unit": "W/Hz^0.5", "notes": "Cooled detectors."}
-    },
-    "thermal_properties": { // Kept concise data
-      "operating_temperature": {"value": "Typically 77 K (LN2)", "notes": "Reduces dark current."},
-      "thermal_conductivity": {"value": "Low (~1 - 5)", "unit": "W/(m K)", "notes": "Poor conductor."},
-      "specific_heat": {"value": "~0.16 - 0.20", "unit": "J/(g K)", "notes": "RT."},
-      "melting_point": {"value": "~700 - 800", "unit": "C", "notes": "Composition dependent."}
-    },
-     "mechanical_properties": { // Kept concise data
-         "density": {"value": "~5.8 to ~8.1", "unit": "g/cm^3", "notes": "Increases with Hg."},
-         "youngs_modulus": {"value": "~40 - 50", "unit": "GPa"},
-         "hardness_vickers": {"value": "~70 - 100", "unit": "HV", "notes": "Soft, brittle."},
-         "poissons_ratio": "~0.3",
-         "fracture_toughness": {"value": "< 0.5", "unit": "MPa m^0.5", "notes": "Brittle."}
-     },
-     "device_applications": { // Renamed key, kept lists
-         "sensor_types": ["Photoconductor (PC)", "Photovoltaic (PV / Photodiode)", "APD (less common)"],
-         "key_applications": ["Thermal Imaging/FLIR", "Night Vision", "Medical Thermography", "Gas Sensing", "IR Astronomy", "Missile Guidance"]
-     },
-     "chemical_properties": { // Simplified
-         "stability_oxidation": "Surface unstable; requires passivation. Readily oxidizes." elements with data from the material object.
+ * Populates the HTML elements with data from the material object.
  * @param {object} material - The detailed material data object.
  */
 function populatePage(material) {
-    // Helper to get potentially nested data
+    // Helper to get potentially nested data and format it
     const getData = (obj, path, fallback = 'N/A') => {
-        const value = path.split('.').reduce((o, key) => (o && typeof o === 'object' && o[key] !== 'undefined' && o[key] !== null) ? o[key] : undefined, obj);
-        if (typeof value === 'object' && typeof value.value !== 'undefined') {
-           let text = String(value.value);
-           if (value.unit) text += ` ${value.unit}`;
-           if (value.notes) text += ` (${value.notes})`;
-           return text;
+        // Navigate the path
+        const value = path.split('.').reduce((o, key) => (o && typeof o === 'object' && o[key] !== undefined && o[key] !== null) ? o[key] : undefined, obj);
+
+        // Handle undefined or null results from navigation
+        if (value === undefined) {
+            return fallback;
         }
+
+        // Format objects with value/unit/notes
+        if (typeof value === 'object' && !Array.isArray(value) && value.value !== undefined) {
+           let text = String(value.value); // Ensure value is string
+           if (value.unit) text += ` <span class="unit">${value.unit}</span>`; // Add unit span
+           if (value.notes) text += ` <span class="notes">(${value.notes})</span>`; // Add notes span
+           return text; // Return as HTML string
+        }
+
+        // Format arrays
         if (Array.isArray(value)) {
-            const listPaths = [
-                'device_applications.key_applications', // Note key change
-                //'processing_availability.synthesis_methods', // Removed from explicit list format here
-                //'processing_availability.forms', // Removed from explicit list format here
-                'device_applications.sensor_types',
-                //'growth_fabrication_properties.common_growth_methods', // Use comma join for this one
-                'device_integration_characterization.key_characterization_techniques' // Updated key
+            // Specific paths intended for bulleted lists
+            const listPathsForBullets = [
+                'device_applications.key_applications',
+                'device_integration_characterization.key_characterization_techniques'
             ];
-            if (listPaths.includes(path)) {
-                 return value.length > 0 ? value.map(item => `• ${item}`).join('<br>') : fallback;
+            if (value.length === 0) return fallback; // Handle empty arrays
+
+            // Check if the path needs bulleted list format
+            if (listPathsForBullets.includes(path)) {
+                 // Filter out empty/null items before mapping
+                 return value.filter(item => item !== null && item !== undefined && String(item).trim() !== '')
+                             .map(item => `<li>${item}</li>`).join(''); // Use <li> for lists
             }
-            return value.length > 0 ? value.join(', ') : fallback;
+            // Default for other arrays: comma-separated string
+            // Filter out empty/null items before joining
+            return value.filter(item => item !== null && item !== undefined && String(item).trim() !== '').join(', ');
         }
-        return (value !== null && typeof value !== 'undefined' && value !== '') ? String(value) : fallback;
+
+        // Handle simple values (string, number, boolean)
+        return String(value); // Ensure result is always a string
     };
 
     // Helper to update element content (text or HTML)
     const updateContent = (id, value, isHtml = false) => {
        const element = document.getElementById(id);
        if (element) {
-           if (element.textContent === 'Loading...') element.innerHTML = '';
-           if (isHtml) { element.innerHTML = value; }
-           else { element.textContent = value; }
-           if (value === 'N/A') { element.classList.add('na-value'); } // Optional: Add class for styling N/A
-           else { element.classList.remove('na-value'); }
-       } else { console.warn(`[Detail Page] Element with ID "${id}" not found: ${id}`); }
+           // Clear potential "Loading..." placeholder if needed
+           // if (element.textContent === 'Loading...') element.innerHTML = ''; // Can be simplified
+           element.classList.remove('na-value'); // Reset NA class
+
+           if (value === 'N/A' || value === '') {
+               element.innerHTML = fallbackValue; // Use a consistent fallback display
+               element.classList.add('na-value'); // Style N/A values
+           } else if (isHtml) {
+               // If expecting list items, wrap in <ul>
+               if (value.startsWith('<li>')) {
+                   element.innerHTML = `<ul class="property-list-items">${value}</ul>`;
+               } else {
+                   element.innerHTML = value;
+               }
+           } else {
+               element.textContent = value;
+           }
+       } else {
+           // Only log warning if the ID was expected based on HTML structure
+           const expectedIds = [ /* list all expected IDs here if needed for stricter check */ ];
+           // if (expectedIds.includes(id)) {
+               console.warn(`[Detail Page] Element with ID "${id}" not found in the HTML.`);
+           // }
+       }
    };
 
+    // Define fallback value for consistency
+    const fallbackValue = '<span class="na-value">N/A</span>';
 
-    console.log("[Detail Page] Populating page with concise detailed data:", material);
+    console.log("[Detail Page] Populating page with detailed data:", material);
 
     // --- Populate Header, Overview, Wiki Link, Tags ---
     updateContent('material-name', getData(material, 'name', 'Unknown Material'));
-    updateContent('material-formula', getData(material, 'formula', ''));
-    updateContent('material-description', getData(material, 'description'));
-    const wikiLink = document.getElementById('wiki-link');
-    if (wikiLink) wikiLink.href = getData(material, 'wiki_link', '#'); // Set Wiki Link Href
+    // Formula might contain subscripts, treat as HTML might be safer if formatting needed
+    updateContent('material-formula', getData(material, 'formula', ''), true); // Use HTML for potential formatting
+    updateContent('material-description', getData(material, 'description', fallbackValue));
 
+    // Wiki Link specific handling
+    const wikiLinkElement = document.getElementById('wiki-link');
+    if (wikiLinkElement) {
+        const wikiUrl = getData(material, 'wiki_link', '#');
+        if (wikiUrl && wikiUrl !== '#' && wikiUrl !== fallbackValue) {
+            wikiLinkElement.href = wikiUrl;
+            wikiLinkElement.style.display = ''; // Ensure it's visible
+        } else {
+            wikiLinkElement.style.display = 'none'; // Hide if no valid link
+        }
+    }
+
+    // Tags specific handling
     const tagsContainer = document.getElementById('material-tags');
-    if (tagsContainer) { // Logic unchanged
-        tagsContainer.innerHTML = '';
+    if (tagsContainer) {
+        tagsContainer.innerHTML = ''; // Clear previous
         const tags = material.tags || [];
         if (Array.isArray(tags) && tags.length > 0) {
             tags.forEach(tag => {
-                const tagElement = document.createElement('span');
-                tagElement.className = 'tag';
-                tagElement.textContent = typeof tag === 'string' ? tag.replace(/^\w+:/, "") : tag;
-                tagsContainer.appendChild(tagElement);
+                if (typeof tag === 'string' && tag.trim() !== '') {
+                    const tagElement = document.createElement('span');
+                    tagElement.className = 'tag';
+                    tagElement.textContent = tag.replace(/^\w+:/, ""); // Remove prefixes like 'industry:'
+                    tagsContainer.appendChild(tagElement);
+                }
              });
-        } else { updateContent('material-tags', 'N/A'); }
-    }
+             // Check if any tags were actually added
+             if (tagsContainer.children.length === 0) {
+                 updateContent('material-tags', fallbackValue, true);
+             }
+        } else {
+            updateContent('material-tags', fallbackValue, true); // Display N/A if no tags array or empty
+        }
+    } else { console.warn("[Detail Page] Element with ID 'material-tags' not found."); }
+
 
     // --- Populate Safety ---
-    updateContent('prop-toxicity', getData(material, 'safety.toxicity'));
-    updateContent('prop-handling', getData(material, 'safety.handling'));
+    updateContent('prop-toxicity', getData(material, 'safety.toxicity', fallbackValue));
+    updateContent('prop-handling', getData(material, 'safety.handling', fallbackValue));
 
     // --- Populate Identification & Structure ---
-    updateContent('prop-cas', getData(material, 'identification.cas_number'));
-    updateContent('prop-category', getData(material, 'category'));
-    updateContent('prop-class', getData(material, 'identification.class'));
-    updateContent('prop-crystal-structure', getData(material, 'identification.crystal_structure'));
-    updateContent('prop-lattice-constant', getData(material, 'identification.lattice_constant'));
-    updateContent('prop-phase-diagram', getData(material, 'identification.phase_diagram_notes'));
+    updateContent('prop-cas', getData(material, 'identification.cas_number', fallbackValue));
+    updateContent('prop-category', getData(material, 'category', fallbackValue));
+    updateContent('prop-class', getData(material, 'identification.class', fallbackValue));
+    updateContent('prop-crystal-structure', getData(material, 'identification.crystal_structure', fallbackValue));
+    updateContent('prop-lattice-constant', getData(material, 'identification.lattice_constant', fallbackValue), true); // Use HTML for potential spans
+    updateContent('prop-phase-diagram', getData(material, 'identification.phase_diagram_notes', fallbackValue));
 
     // --- Populate Advanced Fabrication Insights ---
-    updateContent('prop-stoichiometry', getData(material, 'advanced_fabrication_insights.stoichiometry_control'));
-    updateContent('prop-defects', getData(material, 'advanced_fabrication_insights.common_defects_impact'));
-    updateContent('prop-surface-prep', getData(material, 'advanced_fabrication_insights.surface_preparation'));
-    updateContent('prop-method-nuances', getData(material, 'advanced_fabrication_insights.method_specific_notes'));
+    updateContent('prop-stoichiometry', getData(material, 'advanced_fabrication_insights.stoichiometry_control', fallbackValue));
+    updateContent('prop-defects', getData(material, 'advanced_fabrication_insights.common_defects_impact', fallbackValue));
+    updateContent('prop-surface-prep', getData(material, 'advanced_fabrication_insights.surface_preparation', fallbackValue));
+    updateContent('prop-method-nuances', getData(material, 'advanced_fabrication_insights.method_specific_notes', fallbackValue));
 
     // --- Populate Growth & Fabrication Properties ---
-    updateContent('prop-common-growth-methods', getData(material, 'growth_fabrication_properties.common_growth_methods')); // Now comma joined
-    updateContent('prop-source-materials', getData(material, 'growth_fabrication_properties.source_materials_purity'));
-    updateContent('prop-substrates-orientations', getData(material, 'growth_fabrication_properties.preferred_substrates_orientations')); // Use combined ID
-    // No need to update prop-crystal-orientations separately if using combined ID above
-    updateContent('prop-growth-parameters', getData(material, 'growth_fabrication_properties.typical_growth_parameters'));
-    updateContent('prop-passivation', getData(material, 'growth_fabrication_properties.passivation_methods'));
+    updateContent('prop-common-growth-methods', getData(material, 'growth_fabrication_properties.common_growth_methods', fallbackValue));
+    updateContent('prop-source-materials', getData(material, 'growth_fabrication_properties.source_materials_purity', fallbackValue));
+    updateContent('prop-substrates-orientations', getData(material, 'growth_fabrication_properties.preferred_substrates_orientations', fallbackValue));
+    updateContent('prop-growth-parameters', getData(material, 'growth_fabrication_properties.typical_growth_parameters', fallbackValue));
+    updateContent('prop-passivation', getData(material, 'growth_fabrication_properties.passivation_methods', fallbackValue));
 
     // --- Populate Post-Growth Processing ---
-    updateContent('prop-annealing', getData(material, 'post_growth_processing.annealing'));
-    updateContent('prop-lapping-polishing', getData(material, 'post_growth_processing.lapping_polishing'));
-    updateContent('prop-etching', getData(material, 'post_growth_processing.etching'));
-    updateContent('prop-grinding-milling', getData(material, 'post_growth_processing.grinding_milling'));
+    updateContent('prop-annealing', getData(material, 'post_growth_processing.annealing', fallbackValue));
+    updateContent('prop-lapping-polishing', getData(material, 'post_growth_processing.lapping_polishing', fallbackValue));
+    updateContent('prop-etching', getData(material, 'post_growth_processing.etching', fallbackValue));
+    updateContent('prop-grinding-milling', getData(material, 'post_growth_processing.grinding_milling', fallbackValue));
 
     // --- Populate Device Integration & Characterization ---
-    updateContent('prop-device-arch', getData(material, 'device_integration_characterization.device_architectures'));
-    updateContent('prop-readout-integration', getData(material, 'device_integration_characterization.readout_integration'));
-    updateContent('prop-ar-coatings', getData(material, 'device_integration_characterization.ar_coatings'));
-    updateContent('prop-packaging-cooling', getData(material, 'device_integration_characterization.packaging_cooling'));
-    updateContent('prop-char-techniques', getData(material, 'device_integration_characterization.key_characterization_techniques'), true); // Use HTML list
+    updateContent('prop-device-arch', getData(material, 'device_integration_characterization.device_architectures', fallbackValue));
+    updateContent('prop-readout-integration', getData(material, 'device_integration_characterization.readout_integration', fallbackValue));
+    updateContent('prop-ar-coatings', getData(material, 'device_integration_characterization.ar_coatings', fallbackValue));
+    updateContent('prop-packaging-cooling', getData(material, 'device_integration_characterization.packaging_cooling', fallbackValue));
+    // Use HTML list format by passing isHtml=true (getData returns <li> items)
+    updateContent('prop-char-techniques', getData(material, 'device_integration_characterization.key_characterization_techniques', fallbackValue), true);
 
-    // --- Populate Electrical Properties --- (Paths unchanged)
-    updateContent('prop-bandgap-type', getData(material, 'electrical_properties.bandgap_type'));
-    updateContent('prop-bandgap', getData(material, 'electrical_properties.band_gap'));
-    updateContent('prop-hansen-eq', getData(material, 'electrical_properties.bandgap_equation.hansen_eg'));
-    updateContent('prop-lambda-eq', getData(material, 'electrical_properties.bandgap_equation.wavelength_relation'));
-    updateContent('prop-common-dopants', getData(material, 'electrical_properties.common_dopants'));
-    updateContent('prop-carrier-concentration', getData(material, 'electrical_properties.carrier_concentration'));
-    updateContent('prop-e-mobility', getData(material, 'electrical_properties.electron_mobility'));
-    updateContent('prop-h-mobility', getData(material, 'electrical_properties.hole_mobility'));
-    updateContent('prop-dielectric-constant', getData(material, 'electrical_properties.dielectric_constant'));
-    updateContent('prop-resistivity', getData(material, 'electrical_properties.resistivity'));
-    updateContent('prop-breakdown-field', getData(material, 'electrical_properties.breakdown_field'));
+    // --- Populate Electrical Properties ---
+    updateContent('prop-bandgap-type', getData(material, 'electrical_properties.bandgap_type', fallbackValue));
+    updateContent('prop-bandgap', getData(material, 'electrical_properties.band_gap', fallbackValue), true); // HTML for spans
+    updateContent('prop-hansen-eq', getData(material, 'electrical_properties.bandgap_equation.hansen_eg', fallbackValue));
+    updateContent('prop-lambda-eq', getData(material, 'electrical_properties.bandgap_equation.wavelength_relation', fallbackValue));
+    updateContent('prop-common-dopants', getData(material, 'electrical_properties.common_dopants', fallbackValue));
+    updateContent('prop-carrier-concentration', getData(material, 'electrical_properties.carrier_concentration', fallbackValue), true); // HTML for spans
+    updateContent('prop-e-mobility', getData(material, 'electrical_properties.electron_mobility', fallbackValue), true); // HTML for spans
+    updateContent('prop-h-mobility', getData(material, 'electrical_properties.hole_mobility', fallbackValue), true); // HTML for spans
+    updateContent('prop-dielectric-constant', getData(material, 'electrical_properties.dielectric_constant', fallbackValue), true); // HTML for spans
+    updateContent('prop-resistivity', getData(material, 'electrical_properties.resistivity', fallbackValue), true); // HTML for spans
+    updateContent('prop-breakdown-field', getData(material, 'electrical_properties.breakdown_field', fallbackValue), true); // HTML for spans
 
-    // --- Populate Optical Properties --- (Paths unchanged, notes handled)
-    updateContent('prop-spectral-range', getData(material, 'optical_properties.spectral_range'));
-     const spectralNotes = getData(material, 'optical_properties.notes', '');
-     const spectralRangeElement = document.getElementById('prop-spectral-range');
-     if (spectralRangeElement && spectralNotes && spectralNotes !== 'N/A') {
-         if (!spectralRangeElement.textContent.includes(spectralNotes)) { spectralRangeElement.textContent += ` (${spectralNotes})`; }
-     }
-    updateContent('prop-cutoff-wl', getData(material, 'optical_properties.cutoff_wavelength'));
-    updateContent('prop-ref-index', getData(material, 'optical_properties.refractive_index'));
-    updateContent('prop-absorption-coefficient', getData(material, 'optical_properties.absorption_coefficient'));
-    updateContent('prop-quantum-efficiency', getData(material, 'optical_properties.quantum_efficiency'));
-    updateContent('prop-responsivity', getData(material, 'optical_properties.responsivity'));
-    updateContent('prop-noise-equivalent-power', getData(material, 'optical_properties.noise_equivalent_power'));
+    // --- Populate Optical Properties ---
+    // Combine value and notes for spectral range if notes exist, handle spans
+    updateContent('prop-spectral-range', getData(material, 'optical_properties.spectral_range', fallbackValue), true);
+    // Remaining optical props
+    updateContent('prop-cutoff-wl', getData(material, 'optical_properties.cutoff_wavelength', fallbackValue), true); // HTML for spans
+    updateContent('prop-ref-index', getData(material, 'optical_properties.refractive_index', fallbackValue), true); // HTML for spans
+    updateContent('prop-absorption-coefficient', getData(material, 'optical_properties.absorption_coefficient', fallbackValue), true); // HTML for spans
+    updateContent('prop-quantum-efficiency', getData(material, 'optical_properties.quantum_efficiency', fallbackValue), true); // HTML for spans
+    updateContent('prop-responsivity', getData(material, 'optical_properties.responsivity', fallbackValue), true); // HTML for spans
+    updateContent('prop-noise-equivalent-power', getData(material, 'optical_properties.noise_equivalent_power', fallbackValue), true); // HTML for spans
 
-    // --- Populate Thermal Properties --- (Paths unchanged)
-    updateContent('prop-op-temp', getData(material, 'thermal_properties.operating_temperature'));
-    updateContent('prop-therm-cond', getData(material, 'thermal_properties.thermal_conductivity'));
-    updateContent('prop-specific-heat', getData(material, 'thermal_properties.specific_heat'));
-    updateContent('prop-melt-pt', getData(material, 'thermal_properties.melting_point'));
+    // --- Populate Thermal Properties ---
+    updateContent('prop-op-temp', getData(material, 'thermal_properties.operating_temperature', fallbackValue), true); // HTML for spans
+    updateContent('prop-therm-cond', getData(material, 'thermal_properties.thermal_conductivity', fallbackValue), true); // HTML for spans
+    updateContent('prop-specific-heat', getData(material, 'thermal_properties.specific_heat', fallbackValue), true); // HTML for spans
+    updateContent('prop-melt-pt', getData(material, 'thermal_properties.melting_point', fallbackValue), true); // HTML for spans
 
-    // --- Populate Mechanical Properties --- (Paths unchanged)
-    updateContent('prop-density', getData(material, 'mechanical_properties.density'));
-    updateContent('prop-youngs-modulus', getData(material, 'mechanical_properties.youngs_modulus'));
-    updateContent('prop-hardness-vickers', getData(material, 'mechanical_properties.hardness_vickers'));
-    updateContent('prop-poissons-ratio', getData(material, 'mechanical_properties.poissons_ratio'));
-    updateContent('prop-fracture-toughness', getData(material, 'mechanical_properties.fracture_toughness'));
+    // --- Populate Mechanical Properties ---
+    updateContent('prop-density', getData(material, 'mechanical_properties.density', fallbackValue), true); // HTML for spans
+    updateContent('prop-youngs-modulus', getData(material, 'mechanical_properties.youngs_modulus', fallbackValue), true); // HTML for spans
+    updateContent('prop-hardness-vickers', getData(material, 'mechanical_properties.hardness_vickers', fallbackValue), true); // HTML for spans
+    updateContent('prop-poissons-ratio', getData(material, 'mechanical_properties.poissons_ratio', fallbackValue));
+    updateContent('prop-fracture-toughness', getData(material, 'mechanical_properties.fracture_toughness', fallbackValue), true); // HTML for spans
 
-    // --- Populate Key Applications & Sensor Types --- (Using correct IDs)
-    updateContent('prop-sensor-types', getData(material, 'device_applications.sensor_types')); // Use comma join
-    updateContent('prop-key-applications', getData(material, 'device_applications.key_applications'), true); // Use HTML list
+    // --- Populate Key Applications & Sensor Types ---
+    // Use comma join (default array handling in getData)
+    updateContent('prop-sensor-types', getData(material, 'device_applications.sensor_types', fallbackValue));
+    // Use HTML list format by passing isHtml=true (getData returns <li> items)
+    updateContent('prop-key-applications', getData(material, 'device_applications.key_applications', fallbackValue), true);
 
     // --- Populate Chemical Properties ---
-    updateContent('prop-stability-oxidation', getData(material, 'chemical_properties.stability_oxidation'));
-    // Note: 'etching' data is now handled under 'post_growth_processing'
+    updateContent('prop-stability-oxidation', getData(material, 'chemical_properties.stability_oxidation', fallbackValue));
+    // Etching is now under post_growth_processing ('prop-etching')
 
     // --- Populate Magnetic Properties ---
-    updateContent('prop-magnetic-type', getData(material, 'magnetic_properties.type'));
+    updateContent('prop-magnetic-type', getData(material, 'magnetic_properties.type', fallbackValue));
 
     // --- Populate Comparison ---
-    updateContent('prop-comparison-notes', getData(material, 'comparison_alternatives.notes'));
-    updateContent('prop-vs-insb', getData(material, 'comparison_alternatives.vs_InSb'));
-    updateContent('prop-vs-qwips', getData(material, 'comparison_alternatives.vs_QWIPs'));
-    updateContent('prop-vs-t2sls', getData(material, 'comparison_alternatives.vs_T2SLs'));
+    updateContent('prop-comparison-notes', getData(material, 'comparison_alternatives.notes', fallbackValue));
+    updateContent('prop-vs-insb', getData(material, 'comparison_alternatives.vs_InSb', fallbackValue));
+    updateContent('prop-vs-qwips', getData(material, 'comparison_alternatives.vs_QWIPs', fallbackValue));
+    updateContent('prop-vs-t2sls', getData(material, 'comparison_alternatives.vs_T2SLs', fallbackValue));
 
-    // --- Populate References --- (Using simplified logic)
+    // --- Populate References ---
     const refList = document.getElementById('reference-list');
     if (refList && material.references_further_reading) {
-        refList.innerHTML = ''; // Clear loading
         const refs = material.references_further_reading;
-        if(refs.notes) { refList.innerHTML += `<li><small><em>${refs.notes}</em></small></li>`; } // Add notes
+        let listContent = '';
+        if(refs.notes) { listContent += `<li class="ref-notes"><em>${refs.notes}</em></li>`; }
 
         Object.entries(refs).forEach(([key, value]) => {
-            if (key !== 'notes' && value) { // Add only if value exists
+            if (key !== 'notes' && value && value !== fallbackValue) {
                 let itemHtml = '';
                 if (key === 'wikipedia' && typeof value === 'string' && value.startsWith('http')) {
                     itemHtml = `Wikipedia: <a href="${value}" target="_blank" rel="noopener noreferrer">${value}</a>`;
                 } else if (typeof value === 'string') {
-                     itemHtml = value; // Display the reference text directly
+                     itemHtml = value; // Display text directly
                 }
-                 if (itemHtml) { refList.innerHTML += `<li>${itemHtml}</li>`; }
+                 if (itemHtml) { listContent += `<li>${itemHtml}</li>`; }
             }
         });
-        if (refList.children.length === 0 || (refList.children.length === 1 && refList.querySelector('small'))) {
-            refList.innerHTML = '<li>Reference information not available.</li>'; // Fallback if only notes or nothing
-        }
-    } else if (refList) { refList.innerHTML = '<li>Reference information not available.</li>'; }
+        refList.innerHTML = listContent || `<li>Reference information ${fallbackValue}</li>`; // Show N/A if empty
+    } else if (refList) {
+        refList.innerHTML = `<li>Reference information ${fallbackValue}</li>`;
+    } else { console.warn("[Detail Page] Element with ID 'reference-list' not found."); }
 
 
-    // --- Populate Vendor Info --- (Logic unchanged)
+    // --- Populate Vendor Info ---
     const vendorList = document.getElementById('vendor-list');
     if (vendorList && material.vendor_info) {
-        vendorList.innerHTML = '';
-        let vendorsFound = false;
-        if(material.vendor_info.notes) { /* ... add notes ... */
+        const vendors = material.vendor_info;
+        let listContent = '';
+         if(vendors.notes) { listContent += `<li class="vendor-notes"><em>${vendors.notes}</em></li>`; }
 
-     },
-     "magnetic_properties": { // Kept as is
-         "type": "Diamagnetic"
-     },
-     "comparison_alternatives": { // Concise points
-         "notes": "Key IR Competitors:",
-         "vs_InSb": "MCT: Wider tuning (LWIR+), higher T_op (MWIR). InSb: Cheaper, mature (MWIR).",
-         "vs_QWIPs": "MCT: Higher QE, T_op. QWIPs (GaAs): Better uniformity, lower cost potential.",
-         "vs_T2SLs": "T2SLs (e.g., InAs/GaSb): Potential for higher T_op, lower dark current, better uniformity; complex growth."
-     },
-     "references_further_reading": { // Key references only
-         "notes": "Key Resources:",
-         "book_rogalski": "Rogalski, A. 'Infrared Detectors' (SPIE Press)",
-         "review_hansen": "Hansen, G. L. et al. J. Appl. Phys. 53, 7099 (1982) - Eg(x,T)",
-         "review_norton": "Norton, P. R. Opto-Electron. Rev., 10(3), 159 (2002) - Detector Overview",
-         "wikipedia": "https://en.wikipedia.org/wiki/Mercury_cadmium_telluride"
-     },
-     "vendor_info": { // Kept as is
-         "notes": "Example Vendors (Placeholder):",
-         "vendor_1": "Company A - www.example-vendor-a.com",
-         "vendor_2": "Company B - www.example-vendor-b.com",
-         "vendor_3": "Company C - www.example-vendor-c.com"
-     },
-    "tags": [ // Kept as is
-      "II-VI", "LPE", "MBE", "MOCVD", "aerospace", "cadmium", "chalcogenide", "cryogenic",
-      "epitaxial", "group 12", "group 16", "industry:aerospace", "industry:infrared",
-      "industry:photonics", "ir", "lwir", "mercury", "mwir", "nitrogen cooled",
-      "photoconductive", "photoconductor", "photodiode", "photosensor", "semiconductor",
-      "sensor", "single crystal", "tellurium", "toxic", "tunable bandgap"
-    ]
-  }
-}
+        Object.entries(vendors).forEach(([key, value]) => {
+             if (key !== 'notes' && value && value !== fallbackValue) {
+                 let itemHtml = value; // Default display
+                 // Attempt to make links clickable
+                 try {
+                    const urlMatch = value.match(/(https?:\/\/[^\s]+)|(www\.[^\s]+)/);
+                    if (urlMatch) {
+                        const url = urlMatch[0].startsWith('http') ? urlMatch[0] : 'http://' + urlMatch[0];
+                        itemHtml = value.replace(urlMatch[0], `<a href="${url}" target="_blank" rel="noopener noreferrer">${urlMatch[0]}</a>`);
+                    }
+                 } catch (linkError) { console.warn("Error parsing vendor link:", linkError); }
+
+                 listContent += `<li>${itemHtml}</li>`;
+             }
+        });
+        vendorList.innerHTML = listContent || `<li>Vendor information ${fallbackValue}</li>`; // Show N/A if empty
+    } else if (vendorList) {
+        vendorList.innerHTML = `<li>Vendor information ${fallbackValue}</li>`;
+    } else { console.warn("[Detail Page] Element with ID 'vendor-list' not found."); }
+
+    console.log("[Detail Page] Page population complete.");
+
+} // End of populatePage function
