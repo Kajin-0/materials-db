@@ -1328,5 +1328,106 @@
           "single crystal", "photonic", "quantum", "modulator", "laser",
           "industry:photonics", "industry:quantum", "crystal", "piezoelectric", "pyroelectric"
         ]
+      },
+    "Amorphous Alloy (Vitreloy)": {
+        "name": "Amorphous Alloy (Vitreloy)",
+        "formula": "Zr-based BMG",
+        "synonyms": [ "Vitreloy", "Bulk Metallic Glass", "Amorphous Metal", "Liquidmetal", "BMG" ],
+        "category": "Alloy",
+        "description": "A metallic alloy with a disordered, non-crystalline (amorphous) atomic structure, similar to glass, rather than the ordered crystalline structure of conventional metals. Specific compositions, like Zr-Ti-Cu-Ni-Be (Vitreloy 1), exhibit high glass-forming ability allowing them to be cast into bulk shapes (>1 mm thick) while retaining the amorphous structure. BMGs offer unique properties including very high strength and hardness, large elastic limit, good corrosion resistance, and potentially soft magnetic behavior depending on composition.",
+        "wiki_link": "https://en.wikipedia.org/wiki/Bulk_metallic_glass",
+        "safety": {
+          "toxicity": "Depends on constituent elements. Zr-based alloys are generally low toxicity in solid form. Some compositions contain Be, requiring strict precautions during melting/processing generating fumes/dust.",
+          "handling": "Solid parts are generally safe. Sharp fracture surfaces can occur. Be aware of Beryllium hazards if applicable to the specific alloy."
+        },
+        "identification": {
+          "cas_number": "N/A (Alloy class, specific compositions vary)",
+          "class": "Bulk Metallic Glass (BMG)",
+          "crystal_structure": "Amorphous (Non-crystalline)",
+          "xrd_pattern": {"notes": "Characterized by broad, diffuse scattering peaks in X-ray Diffraction (XRD), lacking sharp Bragg peaks typical of crystalline materials."},
+          "phase_diagram_notes": "Compositionally complex (often 4+ elements) designed to frustrate crystallization upon cooling from the melt. Typically located near deep eutectics in the multi-component phase diagram."
+        },
+        "advanced_fabrication_insights": {
+            "cooling_rate_control": "CRITICAL. Requires cooling faster than the critical cooling rate (Rc) to bypass crystallization. Rc varies greatly with composition (can be <1 K/s for best glass formers, >10⁶ K/s for marginal ones).",
+            "common_defects_impact": "Crystalline inclusions (formed if cooling is too slow) severely degrade mechanical properties (embrittlement). Porosity from casting. Surface oxidation during processing.",
+            "surface_preparation": "Surface quality important for corrosion resistance and appearance. Can be polished.",
+            "method_specific_notes": "Processing often involves rapid solidification techniques: Copper mold casting (suction, injection), thermoplastic forming (above Tg, below Tx), additive manufacturing (requires careful thermal control)."
+        },
+        "growth_fabrication_properties": {
+            "common_growth_methods": "Casting (primarily copper mold suction or injection casting), Thermoplastic Forming (TPF), Additive Manufacturing (e.g., SLM - Selective Laser Melting, requires optimization). Not 'grown' in the traditional sense.",
+            "source_materials_purity": "High purity constituent metals required to avoid heterogeneous nucleation sites.",
+            "preferred_substrates_orientations": "N/A",
+            "typical_growth_parameters": "Key parameters are cooling rate, melt superheat, casting atmosphere (vacuum or inert gas).",
+            "passivation_methods": "Often forms a passive oxide layer (e.g., ZrO₂) contributing to corrosion resistance."
+        },
+        "post_growth_processing": {
+            "annealing": "Annealing below the glass transition temperature (Tg) can induce structural relaxation, affecting properties. Annealing above the crystallization temperature (Tx) causes crystallization and loss of amorphous properties.",
+            "lapping_polishing": "Can be polished using standard metallographic techniques.",
+            "etching": "Can be etched, but specific etchants depend on composition.",
+            "grinding_milling": "Machinable, but high hardness can cause tool wear. Generates heat which can risk local crystallization if not controlled."
+        },
+         "device_integration_characterization": {
+            "device_architectures": "Casings for electronics, sporting goods (golf clubs), medical implants/tools, springs, gears, decorative components.",
+            "readout_integration": "N/A",
+            "ar_coatings": "N/A",
+            "packaging_cooling": "Stable at room temperature. Avoid prolonged exposure above Tg.",
+            "key_characterization_techniques": ["X-Ray Diffraction (XRD - verify amorphous structure)", "Differential Scanning Calorimetry (DSC - measure Tg, Tx, ΔHx)", "Transmission Electron Microscopy (TEM - nanostructure analysis)", "Mechanical Testing (Tensile/Compression - strength, elasticity, hardness)", "Corrosion Testing"]
+        },
+        "electrical_properties": {
+          "bandgap_type": "N/A (Metal)",
+          "band_gap": {"value": "0", "unit": "eV"},
+          "resistivity": {"value": "Relatively High (~100-300)", "unit": "µΩ·cm", "notes": "Higher than corresponding crystalline alloys due to electron scattering from disordered structure. Weak temperature dependence."},
+          "magnetic_properties": {"notes": "Can be paramagnetic, diamagnetic, or ferromagnetic depending strongly on composition (e.g., Fe, Co, Ni-based BMGs can be soft magnets). Zr-based are typically non-magnetic."}
+        },
+        "optical_properties": {
+          "spectral_range": "Opaque", "notes": "Lustrous metallic appearance."
+        },
+        "thermal_properties": {
+          "operating_temperature": {"notes": "Limited by the glass transition temperature (Tg), typically 300-500°C for Zr-based alloys. Above Tg, thermoplastic forming is possible but prolonged exposure leads to crystallization."},
+          "thermal_conductivity": {"value": "Low (~5-15)", "unit": "W/(m·K)", "notes": "Lower than crystalline counterparts."},
+          "specific_heat": {"value": "~0.3-0.5", "unit": "J/(g·K)"},
+          "glass_transition_temp_tg": {"value": "~350-450", "unit": "°C", "notes": "Typical range for Zr-based BMGs like Vitreloy."},
+          "crystallization_temp_tx": {"value": "~450-550", "unit": "°C", "notes": "Onset temperature for crystallization."},
+          "thermal_expansion": {"value": "~8-12 x 10⁻⁶", "unit": "/°C", "notes": "Similar to some steels."}
+        },
+         "mechanical_properties": {
+             "density": {"value": "~6-8", "unit": "g/cm³", "notes": "Depends on composition (e.g., Vitreloy 1 ~6.0 g/cm³)."},
+             "youngs_modulus": {"value": "~80-110", "unit": "GPa", "notes": "Lower than typical steels, but higher than Al or Mg alloys."},
+             "yield_strength": {"value": "Very High (1.5-2.0+)", "unit": "GPa", "notes": "Significantly higher than crystalline counterparts or high-strength steels/Ti alloys."},
+             "elastic_limit": {"value": "~1.8-2.0%", "notes": "Very large elastic strain limit compared to crystalline metals (~0.2%)."},
+             "hardness_vickers": {"value": "~450-550", "unit": "HV", "notes": "Very hard."},
+             "fracture_toughness": {"value": "Variable (can be low to moderate)", "unit": "MPa·m⁰·⁵", "notes": "Lack of work hardening; failure can be brittle via shear band propagation, though some BMGs show plasticity."}
+         },
+         "device_applications": {
+             "key_applications": ["Casings/Housings (Consumer Electronics - durability, scratch resistance)", "Sporting Goods (Golf clubs - high elastic energy return)", "Medical Devices/Implants (Biocompatible compositions, high strength)", "Micro-gears and mechanisms (Precision molding)", "Springs (High elastic limit)", "Cutting Tools/Blades (High hardness)", "Decorative coatings/parts"]
+         },
+         "chemical_properties": {
+             "stability_oxidation": "Good to excellent, often better than stainless steels due to formation of stable passive oxide layers (e.g., ZrO₂, TiO₂).",
+             "corrosion_resistance": {"notes": "Generally very good due to homogeneous amorphous structure (no grain boundaries) and passivating elements."}
+         },
+         "comparison_alternatives": {
+             "notes": "Compared to conventional structural materials:",
+             "vs_Titanium_Alloys": "BMG: Higher strength, higher elastic limit, higher hardness, potentially better corrosion resistance, lower toughness (generally), processing limitations (size, cooling rate). Ti-Alloys: Excellent strength-to-weight, good toughness, established processing.",
+             "vs_High_Strength_Steels": "BMG: Higher yield strength, much higher elastic limit, often better corrosion resistance, non-magnetic (Zr-based), lower toughness, processing limitations. Steels: High toughness, lower cost, well-established processing.",
+             "vs_Aluminum_Alloys": "BMG: Much higher strength and hardness, higher density. Al-Alloys: Lower density, good formability, lower cost."
+         },
+         "references_further_reading": {
+             "notes": "Key Reviews/Books:",
+             "review_inoue": "Inoue, A. 'Stabilization of metallic supercooled liquid and bulk amorphous alloys.' (Acta Materialia review)",
+             "review_teller": "Telford, M. 'The case for bulk metallic glass.' (Materials Today review)",
+             "book_greer_ma": "Book chapters in 'Bulk Metallic Glasses' edited by e.g., Greer, Ma, Schuh.",
+             "wikipedia": "https://en.wikipedia.org/wiki/Bulk_metallic_glass"
+         },
+         "vendor_info": {
+            "notes": "Example Vendors (Placeholder):",
+            "vendor_1": "Company A - www.example-vendor-a.com",
+            "vendor_2": "Company B - www.example-vendor-b.com",
+            "vendor_3": "Company C - www.example-vendor-c.com"
+         },
+        "tags": [
+          "amorphous", "metallic glass", "non-crystalline", "high strength", "elastic",
+          "corrosion resistant", "soft magnetic", "industry:magnetics", "industry:precision",
+          "industry:mechanical", "alloy", "casting"
+        ]
       } 
 }
