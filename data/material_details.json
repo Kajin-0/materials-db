@@ -54,7 +54,7 @@
       "dielectric_constant": {"value": "~15 - 20", "notes": "Static."},
       "resistivity": {"value": "Variable (10^-3 - 10^3+)", "unit": "Ohm-cm", "notes": "Depends on x, T, doping."},
       "breakdown_field": {"value": "Low (~10^3 - 10^4)", "unit": "V/cm", "notes": "Limits high-field use."}
-    }, // <<< COMMA **IS** NEEDED here because optical_properties follows
+    },
     "optical_properties": {
       "spectral_range": "SWIR, MWIR, LWIR (0.8 to >30 um)", "notes": "Determined by Eg(x).",
       "cutoff_wavelength": {"value": "0.8 to >30", "unit": "um", "notes": "λ_c ≈ 1.24 / Eg."},
@@ -63,7 +63,7 @@
       "quantum_efficiency": {"value": ">70-80%", "notes": "With good material/AR coating."},
       "responsivity": {"value": "~1 - 10", "unit": "A/W", "notes": "At 77K."},
       "noise_equivalent_power": {"value": "~10^-11 - 10^-13", "unit": "W/Hz^0.5", "notes": "Cooled detectors."}
-    }, // <<< COMMA NEEDED HERE before thermal_properties
+    },
     "thermal_properties": {
       "operating_temperature": {"value": "Typically 77 K (LN2)", "notes": "Reduces dark current."},
       "thermal_conductivity": {"value": "Low (~1 - 5)", "unit": "W/(m K)", "notes": "Poor conductor."},
@@ -112,8 +112,8 @@
       "industry:photonics", "ir", "lwir", "mercury", "mwir", "nitrogen cooled",
       "photoconductive", "photoconductor", "photodiode", "photosensor", "semiconductor",
       "sensor", "single crystal", "tellurium", "toxic", "tunable bandgap"
-    ] // NO COMMA after last property in this object
-  }, // COMMA separating HgCdTe from GaAs
+    ]
+  },
   "Gallium Arsenide": {
     "name": "Gallium Arsenide",
     "formula": "GaAs",
@@ -226,8 +226,8 @@
       "high mobility", "industry:aerospace", "industry:lasers", "industry:photonics",
       "infrared", "laser diode", "photodiode", "photosensing", "photosensor",
       "semiconductor", "sensor", "single crystal", "swir", "vacuum compatible"
-    ] // NO COMMA after last property in this object
-  }, // COMMA separating GaAs from NbTi
+    ]
+  },
   "Niobium Titanium (NbTi) Wire": {
     "name": "Niobium Titanium (NbTi) Wire",
     "formula": "Nb-Ti/Cu",
@@ -283,7 +283,7 @@
       "dielectric_constant": {"notes": "N/A (Metallic)"},
       "resistivity": {"value": "Matrix (Cu): ~1.7e-8 Ohm-m (RT), much lower at 4K. NbTi: Superconducting below Tc.", "notes": "RRR of Cu matrix is important (>100)."},
       "breakdown_field": {"notes": "N/A (Superconductor quenching is relevant limit)."}
-    }, // NO COMMA HERE before thermal_properties
+    },
     "thermal_properties": {
       "operating_temperature": {"value": "< ~9.2", "unit": "K", "notes": "Typically operated in LHe at 4.2 K."},
       "thermal_conductivity": {"value": "Matrix (Cu) dominates. High at 4K.", "unit": "W/(m K)", "notes": "Important for stability."},
@@ -331,6 +331,6 @@
       "composite", "cryogenic", "ductile", "fusion", "industry:cryogenics",
       "industry:energy", "industry:quantum", "low temperature", "magnet",
       "quantum computing", "superconductor", "vacuum compatible", "wire"
-    ] // NO COMMA after last property in this object
-  } // NO COMMA after last material entry
+    ]
+  }
 }
