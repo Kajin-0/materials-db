@@ -1,43 +1,42 @@
 /**
  * Loads DETAILED material data for the detail page.
- * Fetches data/material_details.json, finds the material, populates page.
+ * Fetches data/material_details.json, finds the material, populates page dynamically.
  */
 document.addEventListener("DOMContentLoaded", async () => {
-    // ... (Keep the top part of the script the same - fetch, error handling etc.) ...
     const urlParams = new URLSearchParams(window.location.search);
     const materialNameParam = urlParams.get("material");
     let materialName = null;
+    const mainContainer = document.getElementById('material-content-container'); // Target for dynamic sections
+    const headerNameElement = document.getElementById("material-name"); // Header element
+
+    // Utility to display errors prominently
+    const displayError = (message) => {
+        console.error("[Detail Page] Error:", message);
+        if (headerNameElement) headerNameElement.textContent = "Error";
+        if (mainContainer) {
+             mainContainer.innerHTML = `<p class="error-message" style="color: red; padding: 1rem;">Error loading material details: ${message}. Please check the console for more information.</p>`;
+        }
+        document.title = "Error - MaterialsDB";
+    };
 
     try {
         materialName = materialNameParam ? decodeURIComponent(materialNameParam) : null;
     } catch (uriError) {
-        console.error("[Detail Page] Error decoding material name from URL:", uriError);
-        const mainContainer = document.querySelector('main');
-        if (mainContainer) {
-            mainContainer.innerHTML = `<p class="error-message" style="color: red; padding: 1rem;">Error: Invalid material name in URL (${materialNameParam}). Please check the link.</p>`;
-        }
-        const nameElement = document.getElementById("material-name");
-        if(nameElement) nameElement.textContent = "Error";
+        displayError(`Invalid material name in URL (${materialNameParam}). ${uriError.message}`);
         return;
     }
-
 
     console.log("[Detail Page] Attempting to load DETAILED view for:", materialName);
 
-    const header = document.querySelector('.detail-header');
-    const mainContainer = document.querySelector('main');
-    const nameElement = document.getElementById("material-name");
-
     if (!materialName) {
-        if (nameElement) nameElement.textContent = "Material not specified.";
-        console.error("[Detail Page] No material specified in URL.");
-        if(mainContainer) mainContainer.innerHTML = '<p class="error-message" style="color: red; padding: 1rem;">Error: No material specified in the URL.</p>';
+        displayError("No material specified in the URL.");
         return;
     }
-
     if (!mainContainer) {
-        console.error("Essential element 'main' not found.");
-        if(nameElement) nameElement.textContent = "Page Error";
+         // Critical error, can't display anything useful if main container is missing
+         console.error("Essential element '#material-content-container' not found.");
+         if(headerNameElement) headerNameElement.textContent = "Page Structure Error";
+         document.title = "Page Error - MaterialsDB";
         return;
     }
 
@@ -54,42 +53,42 @@ document.addEventListener("DOMContentLoaded", async () => {
         try {
             allDetailData = await detailRes.json();
         } catch (jsonError) {
-            console.error(`[Detail Page] Failed to parse JSON from ${detailDataPath}:`, jsonError);
-            throw new Error(`Invalid JSON format in ${detailDataPath}. Check the file content for syntax errors. ${jsonError.message}`);
+            throw new Error(`Invalid JSON format in ${detailDataPath}. Check the file content. ${jsonError.message}`);
         }
-
-        console.log("[Detail Page] Detailed data loaded and parsed:", allDetailData);
+        console.log("[Detail Page] Detailed data loaded and parsed.");
 
          if (typeof allDetailData !== 'object' || allDetailData === null) {
-             throw new Error(`Data format error in ${detailDataPath}. Expected a top-level JSON object.`);
+             throw new Error(`Data format error: ${detailDataPath} should contain a top-level JSON object.`);
          }
 
         const material = allDetailData[materialName];
 
         if (!material) {
-             throw new Error(`Detailed information for "${materialName}" not found within the data loaded from ${detailDataPath}. Check if the material name exists as a key in the JSON file.`);
+             throw new Error(`Information for "${materialName}" not found in ${detailDataPath}.`);
         }
-        console.log("[Detail Page] Specific detailed material object found:", material);
+        console.log("[Detail Page] Specific material object found:", materialName);
 
-        document.title = `${material.name || 'Material'} Detail - MaterialsDB`;
+        // Clear loading message before populating
+        mainContainer.innerHTML = '';
 
-        populatePage(material);
+        populatePage(material, mainContainer); // Pass container to populate function
 
     } catch (e) {
-        console.error("[Detail Page] Failed to load material details:", e);
-        document.title = `Error Loading Material - MaterialsDB`;
-        if (nameElement) nameElement.textContent = "Error loading details";
-        mainContainer.innerHTML = `<p class="error-message" style="color: red; padding: 1rem;">Error loading material details: ${e.message}. Please check the console for more information.</p>`;
+        displayError(e.message); // Use the centralized error display
     }
 });
 
-/**
- * Populates the HTML elements with data from the material object.
- * @param {object} material - The detailed material data object.
- */
-function populatePage(material) {
-    const fallbackValue = '<span class="na-value">N/A</span>';
 
+/**
+ * Dynamically populates the main content container with sections and properties
+ * based on the provided material data object.
+ * @param {object} material - The detailed material data object.
+ * @param {HTMLElement} container - The main HTML element to append sections to.
+ */
+function populatePage(material, container) {
+    const fallbackValue = '<span class="na-value">N/A</span>'; // HTML for N/A
+
+    // --- Helper Function: getData --- (Handles nested access and formatting)
     const getData = (obj, path, fallback = fallbackValue) => {
         const value = path.split('.').reduce((o, key) => (o && typeof o === 'object' && o[key] !== undefined && o[key] !== null) ? o[key] : undefined, obj);
         if (value === undefined) return fallback;
@@ -97,68 +96,181 @@ function populatePage(material) {
            let text = String(value.value);
            if (value.unit) text += ` <span class="unit">${value.unit}</span>`;
            if (value.notes) text += ` <span class="notes">(${value.notes})</span>`;
-           return text;
+           return text; // Return as HTML string
         }
         if (Array.isArray(value)) {
-            const listPathsForBullets = [
+            const listPathsForBullets = [ // Define paths that should be bulleted lists
                 'device_applications.key_applications',
                 'device_integration_characterization.key_characterization_techniques'
+                // Add other array paths here if they need bullet points
             ];
             const filteredValues = value.filter(item => item !== null && item !== undefined && String(item).trim() !== '');
             if (filteredValues.length === 0) return fallback;
             if (listPathsForBullets.includes(path)) {
-                 return filteredValues.map(item => `<li>${item}</li>`).join('');
+                 return `<ul class="property-list-items">${filteredValues.map(item => `<li>${item}</li>`).join('')}</ul>`; // Use UL/LI
             }
-            return filteredValues.join(', ');
+            return filteredValues.join(', '); // Comma-separated string otherwise
         }
         const stringValue = String(value);
-        return stringValue.trim() === '' ? fallback : stringValue;
+        return stringValue.trim() === '' ? fallback : stringValue; // Handle empty strings
     };
 
-    const updateContent = (id, value, isHtml = false) => {
-       const element = document.getElementById(id);
-       if (element) {
-           element.classList.remove('na-value');
-           const isFallback = (value === fallbackValue || value === 'N/A' || value === '');
-           if (isFallback) {
-               element.innerHTML = fallbackValue;
-               element.classList.add('na-value');
-           } else if (isHtml) {
-               if (value.startsWith('<li>')) {
-                   element.innerHTML = `<ul class="property-list-items">${value}</ul>`;
-               } else {
-                   element.innerHTML = value;
-               }
-           } else {
-               element.textContent = value;
-           }
-       } else {
-           console.warn(`[Detail Page] Element with ID "${id}" not found in the HTML.`);
-       }
-   };
-
-    console.log("[Detail Page] Populating page with detailed data:", material);
-
-    // --- Populate Header, Overview, Wiki Link, Tags ---
-    // ... (keep this section as it was) ...
-    updateContent('material-name', getData(material, 'name', 'Unknown Material'), false);
-    updateContent('material-formula', getData(material, 'formula', ''), true);
-    updateContent('material-description', getData(material, 'description'), false);
-
-    const wikiLinkElement = document.getElementById('wiki-link');
-    if (wikiLinkElement) {
-        const wikiUrl = getData(material, 'wiki_link', '#');
-        if (wikiUrl && wikiUrl !== '#' && wikiUrl !== fallbackValue) {
-            wikiLinkElement.href = wikiUrl;
-            wikiLinkElement.style.display = '';
-        } else {
-            wikiLinkElement.style.display = 'none';
+    // --- Helper Function: createPropertyItem --- (Creates a DT/DD pair)
+    const createPropertyItem = (keyText, valueHtml, isKey = false) => {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'property-item';
+        if (isKey) {
+            itemDiv.classList.add('key-property'); // Add class for key properties
         }
-    }
+
+        const dt = document.createElement('dt');
+        dt.className = 'property-key';
+        dt.textContent = keyText + ':'; // Add colon to key text
+
+        const dd = document.createElement('dd');
+        dd.className = 'property-value';
+        dd.innerHTML = valueHtml; // Use innerHTML as getData can return HTML
+
+        // Add na-value class if the content matches the fallback
+        if (valueHtml === fallbackValue) {
+            dd.classList.add('na-value');
+        }
+
+        itemDiv.appendChild(dt);
+        itemDiv.appendChild(dd);
+        return itemDiv;
+    };
+
+     // --- Helper Function: createSection --- (Creates a complete section)
+     const createSection = (id, title, icon = null) => {
+        const section = document.createElement('section');
+        section.className = 'material-section';
+        section.id = id;
+
+        const h2 = document.createElement('h2');
+        if (icon) {
+            const iconSpan = document.createElement('span');
+            iconSpan.setAttribute('aria-hidden', 'true');
+            iconSpan.textContent = icon;
+            h2.appendChild(iconSpan);
+            h2.appendChild(document.createTextNode(' ')); // Add space after icon
+        }
+        h2.appendChild(document.createTextNode(title));
+        section.appendChild(h2);
+
+        // Add safety-info class specifically for the safety section
+        if (id === 'section-safety') {
+            section.classList.add('safety-info');
+        }
+
+        return section;
+    };
+
+    // --- Configuration for Sections and Properties ---
+    // Defines the order, title, and properties for each section.
+    // 'dataKey' points to the top-level key in the material JSON object.
+    // 'properties' maps JSON sub-keys to display labels and marks key properties.
+    const sectionConfig = [
+        { id: 'section-overview', title: 'Overview', isSpecial: true }, // Handled separately
+        { id: 'section-safety', title: 'Safety Information', icon: '⚠️', dataKey: 'safety', properties: {
+            'toxicity': { label: 'Toxicity', isKey: true },
+            'handling': { label: 'Handling' }
+        }},
+        { id: 'section-identification', title: 'Identification & Structure', dataKey: 'identification', properties: {
+            'cas_number': { label: 'CAS Number' },
+            // 'category' and 'class' are handled slightly differently below
+            'crystal_structure': { label: 'Crystal Structure', isKey: true },
+            'lattice_constant': { label: 'Lattice Constant', isKey: true, isHtml: true }, // Allow HTML for spans
+            'phase_diagram_notes': { label: 'Phase Diagram Notes' }
+        }},
+        { id: 'section-fab-insights', title: 'Advanced Fabrication Insights', dataKey: 'advanced_fabrication_insights', properties: {
+            'stoichiometry_control': { label: 'Stoichiometry Control', isKey: true },
+            'common_defects_impact': { label: 'Common Defects' },
+            'surface_preparation': { label: 'Surface Preparation' },
+            'method_specific_notes': { label: 'Method Nuances' }
+        }},
+        { id: 'section-growth', title: 'Growth & Fabrication Properties', dataKey: 'growth_fabrication_properties', properties: {
+            'common_growth_methods': { label: 'Common Methods' },
+            'source_materials_purity': { label: 'Source Materials' },
+            'preferred_substrates_orientations': { label: 'Substrates/Orientations', isKey: true },
+            'typical_growth_parameters': { label: 'Growth Parameters' },
+            'passivation_methods': { label: 'Passivation', isKey: true }
+        }},
+        { id: 'section-processing', title: 'Post-Growth Processing', dataKey: 'post_growth_processing', properties: {
+            'annealing': { label: 'Annealing', isKey: true },
+            'lapping_polishing': { label: 'Lapping & Polishing' },
+            'etching': { label: 'Etching Methods' },
+            'grinding_milling': { label: 'Grinding/Milling Notes' }
+        }},
+        { id: 'section-device-char', title: 'Device Integration & Characterization', dataKey: 'device_integration_characterization', properties: {
+            'device_architectures': { label: 'Device Architectures' },
+            'readout_integration': { label: 'Readout Integration', isKey: true },
+            'ar_coatings': { label: 'AR Coatings' },
+            'packaging_cooling': { label: 'Packaging/Cooling', isKey: true },
+            'key_characterization_techniques': { label: 'Key Characterization', isHtml: true } // Renders as list
+        }},
+        { id: 'section-electrical', title: 'Electrical Properties', dataKey: 'electrical_properties', properties: {
+            'bandgap_type': { label: 'Bandgap Type' },
+            'band_gap': { label: 'Bandgap (Eg)', isKey: true, isHtml: true },
+            'bandgap_equation.hansen_eg': { label: 'Hansen Eg Eq' }, // Nested property example
+            'bandgap_equation.varshni_equation': { label: 'Varshni Eg Eq' }, // Nested property example
+            'bandgap_equation.wavelength_relation': { label: 'Cutoff λ Eq' }, // Nested property example
+            'common_dopants': { label: 'Common Dopants', isKey: true },
+            'carrier_concentration': { label: 'Carrier Conc', isHtml: true },
+            'electron_mobility': { label: 'Electron Mobility (μₑ)', isKey: true, isHtml: true },
+            'hole_mobility': { label: 'Hole Mobility (μ<0xE2><0x82><0x95>)', isHtml: true }, // Note: Use actual subscript in HTML if needed
+            'dielectric_constant': { label: 'Dielectric Const (ε)', isHtml: true },
+            'resistivity': { label: 'Resistivity (ρ)', isHtml: true },
+            'breakdown_field': { label: 'Breakdown Field', isHtml: true }
+        }},
+        { id: 'section-optical', title: 'Optical Properties', dataKey: 'optical_properties', properties: {
+            'spectral_range': { label: 'Spectral Range', isKey: true, isHtml: true },
+            'cutoff_wavelength': { label: 'Cutoff Wavelength (λc)', isKey: true, isHtml: true },
+            'refractive_index': { label: 'Refractive Index (n)', isHtml: true },
+            'absorption_coefficient': { label: 'Absorption Coeff (α)', isHtml: true },
+            'quantum_efficiency': { label: 'Quantum Efficiency (η)', isKey: true, isHtml: true },
+            'responsivity': { label: 'Responsivity (R)', isKey: true, isHtml: true },
+            'noise_equivalent_power': { label: 'Noise Equiv. Power (NEP)', isHtml: true }
+        }},
+         { id: 'section-thermal', title: 'Thermal Properties', dataKey: 'thermal_properties', properties: {
+            'operating_temperature': { label: 'Operating Temperature', isKey: true, isHtml: true },
+            'thermal_conductivity': { label: 'Thermal Conductivity (k)', isHtml: true },
+            'specific_heat': { label: 'Specific Heat (Cp)', isHtml: true },
+            'melting_point': { label: 'Melting Point', isHtml: true }
+        }},
+        { id: 'section-mechanical', title: 'Mechanical Properties', dataKey: 'mechanical_properties', properties: {
+             'density': { label: 'Density', isHtml: true },
+             'youngs_modulus': { label: 'Young\'s Modulus (E)', isHtml: true },
+             'hardness_vickers': { label: 'Hardness (Vickers)', isHtml: true },
+             'poissons_ratio': { label: 'Poisson\'s Ratio (ν)' }, // Plain number usually
+             'fracture_toughness': { label: 'Fracture Toughness (K<small>IC</small>)', isHtml: true } // Allow small tag
+        }},
+        { id: 'section-applications', title: 'Key Applications & Sensor Types', dataKey: 'device_applications', properties: {
+            'sensor_types': { label: 'Common Sensor Types' }, // Comma list
+            'key_applications': { label: 'Key Applications', isKey: true, isHtml: true } // Bulleted list
+        }},
+        { id: 'section-chemical', title: 'Chemical Properties', dataKey: 'chemical_properties', properties: {
+            'stability_oxidation': { label: 'Stability & Oxidation' }
+        }},
+        { id: 'section-magnetic', title: 'Magnetic Properties', dataKey: 'magnetic_properties', properties: { // Adjusted for Superconductors too
+            'type': { label: 'Magnetic Type', isKey: true },
+            'critical_temperature_tc': { label: 'Critical Temp (Tc)', isHtml: true },
+             'upper_critical_field_bc2': { label: 'Upper Critical Field (Bc2)', isHtml: true },
+             'critical_current_density_jc': { label: 'Critical Current (Jc)', isHtml: true }
+        }},
+        { id: 'section-comparison', title: 'Comparison with Alternatives', dataKey: 'comparison_alternatives', isSpecial: true }, // Handled separately
+        { id: 'section-references', title: 'References & Further Reading', dataKey: 'references_further_reading', isSpecial: true }, // Handled separately
+        { id: 'section-vendors', title: 'Commercial Vendors (Example)', dataKey: 'vendor_info', isSpecial: true } // Handled separately
+    ];
+
+    // --- Populate Header & Tags (Outside Main Container) ---
+    document.getElementById('material-name').textContent = getData(material, 'name', 'Unknown Material');
+    const formulaElement = document.getElementById('material-formula');
+    if(formulaElement) formulaElement.innerHTML = getData(material, 'formula', ''); // Allow HTML
 
     const tagsContainer = document.getElementById('material-tags');
     if (tagsContainer) {
-        tagsContainer.innerHTML = '';
+        tagsContainer.innerHTML = ''; // Clear
         const tags = material.tags || [];
         let tagsAdded = false;
         if (Array.isArray(tags) && tags.length > 0) {
@@ -172,238 +284,219 @@ function populatePage(material) {
                 }
              });
         }
-        if (!tagsAdded) {
-            tagsContainer.innerHTML = fallbackValue;
-            tagsContainer.classList.add('na-value');
-        }
-    } else { console.warn("[Detail Page] Element with ID 'material-tags' not found."); }
-
-    // --- Populate Safety ---
-    // ... (keep this section) ...
-    updateContent('prop-toxicity', getData(material, 'safety.toxicity'), false);
-    updateContent('prop-handling', getData(material, 'safety.handling'), false);
-
-    // --- Populate Identification & Structure ---
-    // ... (keep this section) ...
-    updateContent('prop-cas', getData(material, 'identification.cas_number'), false);
-    updateContent('prop-category', getData(material, 'category'), false);
-    updateContent('prop-class', getData(material, 'identification.class'), false);
-    updateContent('prop-crystal-structure', getData(material, 'identification.crystal_structure'), false);
-    updateContent('prop-lattice-constant', getData(material, 'identification.lattice_constant'), true);
-    updateContent('prop-phase-diagram', getData(material, 'identification.phase_diagram_notes'), false);
-
-    // --- Populate Advanced Fabrication Insights ---
-    // ... (keep this section) ...
-    updateContent('prop-stoichiometry', getData(material, 'advanced_fabrication_insights.stoichiometry_control'), false);
-    updateContent('prop-defects', getData(material, 'advanced_fabrication_insights.common_defects_impact'), false);
-    updateContent('prop-surface-prep', getData(material, 'advanced_fabrication_insights.surface_preparation'), false);
-    updateContent('prop-method-nuances', getData(material, 'advanced_fabrication_insights.method_specific_notes'), false);
-
-    // --- Populate Growth & Fabrication Properties ---
-    // ... (keep this section) ...
-    updateContent('prop-common-growth-methods', getData(material, 'growth_fabrication_properties.common_growth_methods'), false);
-    updateContent('prop-source-materials', getData(material, 'growth_fabrication_properties.source_materials_purity'), false);
-    updateContent('prop-substrates-orientations', getData(material, 'growth_fabrication_properties.preferred_substrates_orientations'), false);
-    updateContent('prop-growth-parameters', getData(material, 'growth_fabrication_properties.typical_growth_parameters'), false);
-    updateContent('prop-passivation', getData(material, 'growth_fabrication_properties.passivation_methods'), false);
-
-    // --- Populate Post-Growth Processing ---
-    // ... (keep this section) ...
-    updateContent('prop-annealing', getData(material, 'post_growth_processing.annealing'), false);
-    updateContent('prop-lapping-polishing', getData(material, 'post_growth_processing.lapping_polishing'), false);
-    updateContent('prop-etching', getData(material, 'post_growth_processing.etching'), false);
-    updateContent('prop-grinding-milling', getData(material, 'post_growth_processing.grinding_milling'), false);
-
-    // --- Populate Device Integration & Characterization ---
-    // ... (keep this section) ...
-    updateContent('prop-device-arch', getData(material, 'device_integration_characterization.device_architectures'), false);
-    updateContent('prop-readout-integration', getData(material, 'device_integration_characterization.readout_integration'), false);
-    updateContent('prop-ar-coatings', getData(material, 'device_integration_characterization.ar_coatings'), false);
-    updateContent('prop-packaging-cooling', getData(material, 'device_integration_characterization.packaging_cooling'), false);
-    updateContent('prop-char-techniques', getData(material, 'device_integration_characterization.key_characterization_techniques'), true);
-
-    // --- Populate Electrical Properties ---
-    // ... (keep this section) ...
-    updateContent('prop-bandgap-type', getData(material, 'electrical_properties.bandgap_type'), false);
-    updateContent('prop-bandgap', getData(material, 'electrical_properties.band_gap'), true);
-    updateContent('prop-hansen-eq', getData(material, 'electrical_properties.bandgap_equation.hansen_eg'), false);
-    updateContent('prop-lambda-eq', getData(material, 'electrical_properties.bandgap_equation.wavelength_relation'), false);
-    updateContent('prop-common-dopants', getData(material, 'electrical_properties.common_dopants'), false);
-    updateContent('prop-carrier-concentration', getData(material, 'electrical_properties.carrier_concentration'), true);
-    updateContent('prop-e-mobility', getData(material, 'electrical_properties.electron_mobility'), true);
-    updateContent('prop-h-mobility', getData(material, 'electrical_properties.hole_mobility'), true);
-    updateContent('prop-dielectric-constant', getData(material, 'electrical_properties.dielectric_constant'), true);
-    updateContent('prop-resistivity', getData(material, 'electrical_properties.resistivity'), true);
-    updateContent('prop-breakdown-field', getData(material, 'electrical_properties.breakdown_field'), true);
-
-    // --- Populate Optical Properties ---
-    // ... (keep this section) ...
-    updateContent('prop-spectral-range', getData(material, 'optical_properties.spectral_range'), true);
-    updateContent('prop-cutoff-wl', getData(material, 'optical_properties.cutoff_wavelength'), true);
-    updateContent('prop-ref-index', getData(material, 'optical_properties.refractive_index'), true);
-    updateContent('prop-absorption-coefficient', getData(material, 'optical_properties.absorption_coefficient'), true);
-    updateContent('prop-quantum-efficiency', getData(material, 'optical_properties.quantum_efficiency'), true);
-    updateContent('prop-responsivity', getData(material, 'optical_properties.responsivity'), true);
-    updateContent('prop-noise-equivalent-power', getData(material, 'optical_properties.noise_equivalent_power'), true);
-
-    // --- Populate Thermal Properties ---
-    // ... (keep this section) ...
-    updateContent('prop-op-temp', getData(material, 'thermal_properties.operating_temperature'), true);
-    updateContent('prop-therm-cond', getData(material, 'thermal_properties.thermal_conductivity'), true);
-    updateContent('prop-specific-heat', getData(material, 'thermal_properties.specific_heat'), true);
-    updateContent('prop-melt-pt', getData(material, 'thermal_properties.melting_point'), true);
-
-    // --- Populate Mechanical Properties ---
-    // ... (keep this section) ...
-    updateContent('prop-density', getData(material, 'mechanical_properties.density'), true);
-    updateContent('prop-youngs-modulus', getData(material, 'mechanical_properties.youngs_modulus'), true);
-    updateContent('prop-hardness-vickers', getData(material, 'mechanical_properties.hardness_vickers'), true);
-    updateContent('prop-poissons-ratio', getData(material, 'mechanical_properties.poissons_ratio'), false);
-    updateContent('prop-fracture-toughness', getData(material, 'mechanical_properties.fracture_toughness'), true);
-
-    // --- Populate Key Applications & Sensor Types ---
-    // ... (keep this section) ...
-    updateContent('prop-sensor-types', getData(material, 'device_applications.sensor_types'), false);
-    updateContent('prop-key-applications', getData(material, 'device_applications.key_applications'), true);
-
-    // --- Populate Chemical Properties ---
-    // ... (keep this section) ...
-    updateContent('prop-stability-oxidation', getData(material, 'chemical_properties.stability_oxidation'), false);
-
-    // --- Populate Magnetic Properties ---
-    // ... (keep this section) ...
-    updateContent('prop-magnetic-type', getData(material, 'magnetic_properties.type'), false);
-
-
-    // --- Populate Comparison (DYNAMICALLY) --- MODIFIED ---
-    updateContent('prop-comparison-notes', getData(material, 'comparison_alternatives.notes'), false); // Update notes field
-
-    const comparisonDL = document.getElementById('comparison-list'); // Get the DL element by its new ID
-    const comparisonData = material.comparison_alternatives;
-
-    if (comparisonDL) {
-        // Clear only dynamically added comparison items (optional, good practice)
-        // You could give dynamic items a class like 'dynamic-comparison-item' to select them
-        // Example: comparisonDL.querySelectorAll('.dynamic-comparison-item').forEach(el => el.remove());
-
-        let comparisonsFound = false;
-        if (comparisonData && typeof comparisonData === 'object') {
-            Object.entries(comparisonData).forEach(([key, value]) => {
-                const valueStr = getData(material, `comparison_alternatives.${key}`, 'CHECK_FALLBACK');
-                if (key.startsWith('vs_') && valueStr !== 'CHECK_FALLBACK' && valueStr !== fallbackValue && valueStr !== 'N/A' && valueStr !== '') {
-                    const comparisonItemDiv = document.createElement('div');
-                    comparisonItemDiv.className = 'property-item dynamic-comparison-item'; // Added a class for potential clearing
-
-                    const dt = document.createElement('dt');
-                    dt.className = 'property-key';
-                    const displayName = key.replace(/^vs_/, 'vs. ') + ':';
-                    dt.textContent = displayName;
-
-                    const dd = document.createElement('dd');
-                    dd.className = 'property-value';
-                    dd.textContent = valueStr; // Use textContent
-
-                    comparisonItemDiv.appendChild(dt);
-                    comparisonItemDiv.appendChild(dd);
-                    comparisonDL.appendChild(comparisonItemDiv); // Append directly to the DL
-                    comparisonsFound = true;
-                }
-            });
-        }
-
-        // Add N/A message if needed (only if notes are also absent)
-        const notesValue = getData(material, 'comparison_alternatives.notes', 'CHECK_FALLBACK');
-        if (!comparisonsFound && (notesValue === 'CHECK_FALLBACK' || notesValue === fallbackValue || notesValue === 'N/A' || notesValue === '')) {
-           // Check if N/A message already exists to prevent duplicates
-           if (!comparisonDL.querySelector('.comparison-na-message')) {
-                const naItem = document.createElement('div');
-                naItem.className = 'property-item comparison-na-message'; // Add class to identify it
-                naItem.innerHTML = `<dd class="property-value">${fallbackValue}</dd>`; // Span full width
-                comparisonDL.appendChild(naItem);
-            }
-        } else {
-            // Remove any previous N/A message if comparisons were found
-             const existingNaMessage = comparisonDL.querySelector('.comparison-na-message');
-             if (existingNaMessage) {
-                 existingNaMessage.remove();
-             }
-        }
-
-    } else {
-        console.warn("[Detail Page] Element with ID 'comparison-list' not found.");
+        if (!tagsAdded) tagsContainer.innerHTML = fallbackValue;
     }
-    // --- END DYNAMIC COMPARISON POPULATION ---
 
+    // --- Dynamically Create and Populate Sections ---
+    console.log("[Detail Page] Dynamically building sections...");
+    const fragment = document.createDocumentFragment(); // Use fragment for performance
 
-    // --- Populate References ---
-    // ... (keep this section) ...
-    const refList = document.getElementById('reference-list');
-    if (refList && material.references_further_reading) {
-        const refs = material.references_further_reading;
-        let listContent = '';
-        if(refs.notes) { listContent += `<li class="ref-notes"><em>${getData(material, 'references_further_reading.notes', '')}</em></li>`; }
+    sectionConfig.forEach(config => {
+        const { id, title, icon, dataKey, properties, isSpecial } = config;
 
-        let refsAdded = false;
-        Object.entries(refs).forEach(([key, value]) => {
-            if (key !== 'notes') {
-                const refValue = getData(material, `references_further_reading.${key}`, 'CHECK_FALLBACK');
-                 if (refValue !== 'CHECK_FALLBACK' && refValue !== fallbackValue && refValue !== 'N/A' && refValue !== '') {
-                    let itemHtml = '';
-                    if (key === 'wikipedia' && typeof refValue === 'string' && refValue.startsWith('http')) {
-                        itemHtml = `Wikipedia: <a href="${refValue}" target="_blank" rel="noopener noreferrer">${refValue}</a>`;
-                    } else if (typeof refValue === 'string') {
-                        itemHtml = refValue;
-                    }
-                    if (itemHtml) {
-                        listContent += `<li>${itemHtml}</li>`;
-                        refsAdded = true;
-                    }
+        // Check if the top-level data key exists for standard sections
+        if (dataKey && !material[dataKey]) {
+            // console.log(`Skipping section "${title}" - data key "${dataKey}" not found in material data.`);
+            return; // Skip section if its main data key is missing
+        }
+
+        // Handle Special Sections Separately
+        if (isSpecial) {
+            // --- Overview Section ---
+            if (id === 'section-overview') {
+                const section = createSection(id, title);
+                const descP = document.createElement('p');
+                descP.className = 'description';
+                descP.textContent = getData(material, 'description', 'No description available.'); // Use textContent
+                section.appendChild(descP);
+
+                const wikiUrl = getData(material, 'wiki_link', '#');
+                if (wikiUrl !== '#' && wikiUrl !== fallbackValue) {
+                    const wikiP = document.createElement('p');
+                    const wikiA = document.createElement('a');
+                    wikiA.id = 'wiki-link'; // Keep ID if needed
+                    wikiA.href = wikiUrl;
+                    wikiA.target = '_blank';
+                    wikiA.rel = 'noopener noreferrer';
+                    wikiA.textContent = 'Wikipedia Article';
+                    wikiP.appendChild(document.createTextNode('See also: '));
+                    wikiP.appendChild(wikiA);
+                    section.appendChild(wikiP);
                 }
+                 // Add placeholder image div
+                 const imgPlaceholder = document.createElement('div');
+                 imgPlaceholder.className = 'image-placeholder';
+                 imgPlaceholder.textContent = 'Image Placeholder / Diagram';
+                 section.appendChild(imgPlaceholder);
+
+                 fragment.appendChild(section);
             }
-        });
-        refList.innerHTML = listContent || `<li>Reference information ${fallbackValue}</li>`;
-        if (!refsAdded && !refs.notes) {
-             refList.innerHTML = `<li>Reference information ${fallbackValue}</li>`;
-        }
-    } else if (refList) {
-        refList.innerHTML = `<li>Reference information ${fallbackValue}</li>`;
-    } else { console.warn("[Detail Page] Element with ID 'reference-list' not found."); }
+            // --- Comparison Section ---
+            else if (id === 'section-comparison' && material.comparison_alternatives) {
+                 const section = createSection(id, title);
+                 const dl = document.createElement('dl');
+                 dl.className = 'property-list';
+                 dl.id = 'comparison-list'; // Keep ID if useful
 
-    // --- Populate Vendor Info ---
-    // ... (keep this section) ...
-    const vendorList = document.getElementById('vendor-list');
-    if (vendorList && material.vendor_info) {
-        const vendors = material.vendor_info;
-        let listContent = '';
-        if(vendors.notes) { listContent += `<li class="vendor-notes"><em>${getData(material, 'vendor_info.notes', '')}</em></li>`; }
-
-        let vendorsAdded = false;
-        Object.entries(vendors).forEach(([key, value]) => {
-             if (key !== 'notes') {
-                const vendorValue = getData(material, `vendor_info.${key}`, 'CHECK_FALLBACK');
-                 if (vendorValue !== 'CHECK_FALLBACK' && vendorValue !== fallbackValue && vendorValue !== 'N/A' && vendorValue !== '') {
-                     let itemHtml = vendorValue;
-                     try {
-                        const urlMatch = String(vendorValue).match(/(https?:\/\/[^\s]+)|(www\.[^\s]+)/);
-                        if (urlMatch) {
-                            const url = urlMatch[0].startsWith('http') ? urlMatch[0] : 'http://' + urlMatch[0];
-                            itemHtml = String(vendorValue).replace(urlMatch[0], `<a href="${url}" target="_blank" rel="noopener noreferrer">${urlMatch[0]}</a>`);
-                        }
-                     } catch (linkError) { console.warn("Error parsing vendor link:", linkError); }
-
-                     listContent += `<li>${itemHtml}</li>`;
-                     vendorsAdded = true;
+                 // Add Notes first if they exist
+                 const notesValue = getData(material, 'comparison_alternatives.notes', 'CHECK_FALLBACK');
+                 if (notesValue !== 'CHECK_FALLBACK' && notesValue !== fallbackValue) {
+                    dl.appendChild(createPropertyItem('Notes', notesValue));
                  }
-             }
-        });
-        vendorList.innerHTML = listContent || `<li>Vendor information ${fallbackValue}</li>`;
-        if (!vendorsAdded && !vendors.notes) {
-            vendorList.innerHTML = `<li>Vendor information ${fallbackValue}</li>`;
-        }
-    } else if (vendorList) {
-        vendorList.innerHTML = `<li>Vendor information ${fallbackValue}</li>`;
-    } else { console.warn("[Detail Page] Element with ID 'vendor-list' not found."); }
 
-    console.log("[Detail Page] Page population complete.");
+                 // Add dynamic 'vs_' items
+                 let comparisonsFound = false;
+                 Object.entries(material.comparison_alternatives).forEach(([key, value]) => {
+                    if (key.startsWith('vs_')) {
+                         const valueStr = getData(material, `comparison_alternatives.${key}`, fallbackValue); // Get formatted value
+                         if (valueStr !== fallbackValue) {
+                             const label = key.replace(/^vs_/, 'vs. ');
+                             dl.appendChild(createPropertyItem(label, valueStr));
+                             comparisonsFound = true;
+                         }
+                    }
+                 });
+
+                 // Add N/A message if nothing was added (and notes were also absent/NA)
+                 if (!comparisonsFound && (notesValue === 'CHECK_FALLBACK' || notesValue === fallbackValue)) {
+                     const naItem = document.createElement('div');
+                     naItem.className = 'property-item comparison-na-message';
+                     naItem.innerHTML = `<dd class="property-value">${fallbackValue}</dd>`;
+                     dl.appendChild(naItem);
+                 }
+
+                 section.appendChild(dl);
+                 fragment.appendChild(section);
+            }
+            // --- References Section ---
+            else if (id === 'section-references' && material.references_further_reading) {
+                 const section = createSection(id, title);
+                 const ul = document.createElement('ul');
+                 ul.id = 'reference-list';
+                 let listContent = '';
+                 const notesValue = getData(material, 'references_further_reading.notes', 'CHECK_FALLBACK');
+                  if (notesValue !== 'CHECK_FALLBACK' && notesValue !== fallbackValue) {
+                      listContent += `<li class="ref-notes"><em>${notesValue}</em></li>`;
+                  }
+                  let refsAdded = false;
+                  Object.entries(material.references_further_reading).forEach(([key, value])=>{
+                      if(key !== 'notes'){
+                          const refValue = getData(material, `references_further_reading.${key}`, fallbackValue);
+                           if (refValue !== fallbackValue) {
+                                let itemHtml = '';
+                                if (key === 'wikipedia' && typeof refValue === 'string' && refValue.startsWith('http')) {
+                                    itemHtml = `Wikipedia: <a href="${refValue}" target="_blank" rel="noopener noreferrer">${refValue}</a>`;
+                                } else if (typeof refValue === 'string') { itemHtml = refValue; }
+                                if(itemHtml){ listContent += `<li>${itemHtml}</li>`; refsAdded = true;}
+                           }
+                      }
+                  });
+                  ul.innerHTML = listContent || `<li>Reference information ${fallbackValue}</li>`;
+                   if (!refsAdded && (notesValue === 'CHECK_FALLBACK' || notesValue === fallbackValue)) {
+                        ul.innerHTML = `<li>Reference information ${fallbackValue}</li>`;
+                   }
+                 section.appendChild(ul);
+                 fragment.appendChild(section);
+            }
+             // --- Vendors Section ---
+             else if (id === 'section-vendors' && material.vendor_info) {
+                  const section = createSection(id, title);
+                  // Add standard introductory text
+                  const introP = document.createElement('p');
+                  introP.textContent = 'This space can list companies supplying materials or related services.';
+                  section.appendChild(introP);
+
+                  const ul = document.createElement('ul');
+                  ul.id = 'vendor-list';
+                  let listContent = '';
+                  const notesValue = getData(material, 'vendor_info.notes', 'CHECK_FALLBACK');
+                   if (notesValue !== 'CHECK_FALLBACK' && notesValue !== fallbackValue) {
+                       listContent += `<li class="vendor-notes"><em>${notesValue}</em></li>`;
+                   }
+                   let vendorsAdded = false;
+                    Object.entries(material.vendor_info).forEach(([key, value])=>{
+                        if(key !== 'notes'){
+                            const vendorValue = getData(material, `vendor_info.${key}`, fallbackValue);
+                             if (vendorValue !== fallbackValue) {
+                                 let itemHtml = vendorValue;
+                                 try { // Attempt to linkify URLs
+                                    const urlMatch = String(vendorValue).match(/(https?:\/\/[^\s]+)|(www\.[^\s]+)/);
+                                    if (urlMatch) {
+                                        const url = urlMatch[0].startsWith('http') ? urlMatch[0] : 'http://' + urlMatch[0];
+                                        itemHtml = String(vendorValue).replace(urlMatch[0], `<a href="${url}" target="_blank" rel="noopener noreferrer">${urlMatch[0]}</a>`);
+                                    }
+                                 } catch (linkError) { /* ignore */ }
+                                 listContent += `<li>${itemHtml}</li>`;
+                                 vendorsAdded = true;
+                             }
+                        }
+                    });
+                  ul.innerHTML = listContent || `<li>Vendor information ${fallbackValue}</li>`;
+                    if (!vendorsAdded && (notesValue === 'CHECK_FALLBACK' || notesValue === fallbackValue)) {
+                        ul.innerHTML = `<li>Vendor information ${fallbackValue}</li>`;
+                    }
+                   section.appendChild(ul);
+
+                  // Add standard disclaimer text
+                  const disclaimerP = document.createElement('p');
+                  const small = document.createElement('small');
+                  small.textContent = 'Note: Listing does not imply endorsement. Contact vendors directly for current offerings.';
+                  disclaimerP.appendChild(small);
+                  section.appendChild(disclaimerP);
+
+                  fragment.appendChild(section);
+             }
+        }
+        // --- Handle Standard Sections with Property Lists ---
+        else if (dataKey && properties && material[dataKey]) {
+            const sectionData = material[dataKey];
+            let hasContent = false; // Flag to check if section has any real data
+
+            const section = createSection(id, title, icon);
+            const dl = document.createElement('dl');
+            dl.className = 'property-list';
+
+            // Add specific properties like Category/Class if they belong logically here
+            // (Example for identification section)
+            if (id === 'section-identification') {
+                 let catVal = getData(material, 'category', fallbackValue);
+                 if (catVal !== fallbackValue) {
+                     dl.appendChild(createPropertyItem('Material Category', catVal)); hasContent = true;
+                 }
+                 let classVal = getData(material, 'identification.class', fallbackValue); // Get class from its specific path
+                 if (classVal !== fallbackValue) {
+                     dl.appendChild(createPropertyItem('Material Class', classVal)); hasContent = true;
+                 }
+            }
+
+
+            // Iterate through configured properties for the section
+            Object.entries(properties).forEach(([propKey, propConfig]) => {
+                 // Construct the full path to the data (e.g., 'electrical_properties.band_gap')
+                 const dataPath = `${dataKey}.${propKey}`;
+                 const value = getData(material, dataPath, fallbackValue); // Use HTML fallback
+
+                 // Only add item if data is not the fallback value
+                 if (value !== fallbackValue) {
+                     // Use label from config, allow HTML for units/notes/lists
+                     dl.appendChild(createPropertyItem(propConfig.label, value, propConfig.isKey || false));
+                     hasContent = true; // Mark that we found content
+                 }
+            });
+
+            // Only append the section if it has actual content
+            if (hasContent) {
+                section.appendChild(dl);
+                fragment.appendChild(section);
+            } else {
+                 console.log(`Skipping section "${title}" - No valid data found for its properties.`);
+            }
+        }
+    });
+
+    // Append the completed fragment to the main container
+    container.appendChild(fragment);
+
+    console.log("[Detail Page] Dynamic page population complete.");
 
 } // End of populatePage function
