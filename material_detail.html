@@ -16,7 +16,7 @@
 
     <!-- Tags Section -->
     <section class="material-section" id="section-tags">
-      <h2>Tags & Categories</h2> <!-- Hidden by CSS -->
+      <h2>Tags & Categories</h2>
       <div class="tags-list" id="material-tags">Loading...</div>
     </section>
 
@@ -25,6 +25,7 @@
       <section class="material-section" id="section-overview">
         <h2>Overview</h2>
         <p class="description" id="material-description">Loading...</p>
+        <p>See also: <a id="wiki-link" href="#" target="_blank" rel="noopener noreferrer">Wikipedia Article</a></p> <!-- Wiki Link -->
         <div class="image-placeholder">Image Placeholder / Diagram</div>
       </section>
 
@@ -47,84 +48,58 @@
       <section class="material-section" id="section-identification">
         <h2>Identification & Structure</h2>
         <dl class="property-list">
-          <div class="property-item">
-            <dt class="property-key">CAS Number:</dt>
-            <dd class="property-value" id="prop-cas">Loading...</dd>
-          </div>
-           <div class="property-item">
-            <dt class="property-key">Material Category:</dt>
-            <dd class="property-value" id="prop-category">Loading...</dd>
-          </div>
-          <div class="property-item">
-            <dt class="property-key">Material Class:</dt>
-            <dd class="property-value" id="prop-class">Loading...</dd>
-          </div>
-          <div class="property-item key-property">
-            <dt class="property-key">Crystal Structure:</dt>
-            <dd class="property-value" id="prop-crystal-structure">Loading...</dd>
-          </div>
-          <div class="property-item key-property">
-            <dt class="property-key">Lattice Constant:</dt>
-            <dd class="property-value" id="prop-lattice-constant">Loading...</dd>
-          </div>
-           <div class="property-item">
-            <dt class="property-key">Phase Diagram Notes:</dt>
-            <dd class="property-value" id="prop-phase-diagram">Loading...</dd>
-          </div>
+          <div class="property-item"> <dt class="property-key">CAS Number:</dt> <dd class="property-value" id="prop-cas">Loading...</dd> </div>
+          <div class="property-item"> <dt class="property-key">Material Category:</dt> <dd class="property-value" id="prop-category">Loading...</dd> </div>
+          <div class="property-item"> <dt class="property-key">Material Class:</dt> <dd class="property-value" id="prop-class">Loading...</dd> </div>
+          <div class="property-item key-property"> <dt class="property-key">Crystal Structure:</dt> <dd class="property-value" id="prop-crystal-structure">Loading...</dd> </div>
+          <div class="property-item key-property"> <dt class="property-key">Lattice Constant:</dt> <dd class="property-value" id="prop-lattice-constant">Loading...</dd> </div>
+          <div class="property-item"> <dt class="property-key">Phase Diagram Notes:</dt> <dd class="property-value" id="prop-phase-diagram">Loading...</dd> </div>
         </dl>
+      </section>
+
+      <!-- Advanced Fabrication Insights (New Section) -->
+      <section class="material-section" id="section-fab-insights">
+          <h2>Advanced Fabrication Insights</h2>
+          <dl class="property-list">
+              <div class="property-item key-property"> <dt class="property-key">Stoichiometry Control:</dt> <dd class="property-value" id="prop-stoichiometry">Loading...</dd> </div>
+              <div class="property-item"> <dt class="property-key">Common Defects:</dt> <dd class="property-value" id="prop-defects">Loading...</dd> </div>
+              <div class="property-item"> <dt class="property-key">Surface Preparation:</dt> <dd class="property-value" id="prop-surface-prep">Loading...</dd> </div>
+              <div class="property-item"> <dt class="property-key">Method Nuances:</dt> <dd class="property-value" id="prop-method-nuances">Loading...</dd> </div>
+          </dl>
       </section>
 
       <!-- Growth & Fabrication Properties -->
       <section class="material-section" id="section-growth">
         <h2>Growth & Fabrication Properties</h2>
         <dl class="property-list">
-           <div class="property-item">
-            <dt class="property-key">Common Methods:</dt>
-            <dd class="property-value" id="prop-common-growth-methods">Loading...</dd>
-          </div>
-           <div class="property-item">
-            <dt class="property-key">Source Materials:</dt>
-            <dd class="property-value" id="prop-source-materials">Loading...</dd>
-           </div>
-           <div class="property-item key-property">
-            <dt class="property-key">Preferred Substrates:</dt>
-            <dd class="property-value" id="prop-preferred-substrates">Loading...</dd>
-          </div>
-          <div class="property-item">
-            <dt class="property-key">Typical Orientations:</dt>
-            <dd class="property-value" id="prop-crystal-orientations">Loading...</dd>
-          </div>
-          <div class="property-item">
-            <dt class="property-key">Growth Parameters:</dt>
-            <dd class="property-value" id="prop-growth-parameters">Loading...</dd>
-          </div>
-          <div class="property-item key-property">
-            <dt class="property-key">Passivation:</dt>
-            <dd class="property-value" id="prop-passivation">Loading...</dd>
-          </div>
+           <div class="property-item"> <dt class="property-key">Common Methods:</dt> <dd class="property-value" id="prop-common-growth-methods">Loading...</dd> </div>
+           <div class="property-item"> <dt class="property-key">Source Materials:</dt> <dd class="property-value" id="prop-source-materials">Loading...</dd> </div>
+           <div class="property-item key-property"> <dt class="property-key">Substrates/Orientations:</dt> <dd class="property-value" id="prop-substrates-orientations">Loading...</dd> </div>
+           <div class="property-item"> <dt class="property-key">Growth Parameters:</dt> <dd class="property-value" id="prop-growth-parameters">Loading...</dd> </div>
+           <div class="property-item key-property"> <dt class="property-key">Passivation:</dt> <dd class="property-value" id="prop-passivation">Loading...</dd> </div>
         </dl>
       </section>
 
-       <!-- Post-Growth Processing (New Section) -->
+       <!-- Post-Growth Processing -->
        <section class="material-section" id="section-processing">
          <h2>Post-Growth Processing</h2>
          <dl class="property-list">
-            <div class="property-item key-property">
-              <dt class="property-key">Annealing:</dt>
-              <dd class="property-value" id="prop-annealing">Loading...</dd>
-            </div>
-            <div class="property-item">
-              <dt class="property-key">Lapping & Polishing:</dt>
-              <dd class="property-value" id="prop-lapping-polishing">Loading...</dd>
-            </div>
-             <div class="property-item">
-              <dt class="property-key">Etching Methods:</dt>
-              <dd class="property-value" id="prop-etching">Loading...</dd>
-            </div>
-             <div class="property-item">
-              <dt class="property-key">Grinding/Milling Notes:</dt>
-              <dd class="property-value" id="prop-grinding-milling">Loading...</dd>
-            </div>
+            <div class="property-item key-property"> <dt class="property-key">Annealing:</dt> <dd class="property-value" id="prop-annealing">Loading...</dd> </div>
+            <div class="property-item"> <dt class="property-key">Lapping & Polishing:</dt> <dd class="property-value" id="prop-lapping-polishing">Loading...</dd> </div>
+            <div class="property-item"> <dt class="property-key">Etching Methods:</dt> <dd class="property-value" id="prop-etching">Loading...</dd> </div>
+            <div class="property-item"> <dt class="property-key">Grinding/Milling Notes:</dt> <dd class="property-value" id="prop-grinding-milling">Loading...</dd> </div>
+         </dl>
+       </section>
+
+       <!-- Device Integration & Characterization (New Section) -->
+       <section class="material-section" id="section-device-char">
+         <h2>Device Integration & Characterization</h2>
+         <dl class="property-list">
+            <div class="property-item"> <dt class="property-key">Device Architectures:</dt> <dd class="property-value" id="prop-device-arch">Loading...</dd> </div>
+            <div class="property-item key-property"> <dt class="property-key">Readout Integration:</dt> <dd class="property-value" id="prop-readout-integration">Loading...</dd> </div>
+            <div class="property-item"> <dt class="property-key">AR Coatings:</dt> <dd class="property-value" id="prop-ar-coatings">Loading...</dd> </div>
+            <div class="property-item key-property"> <dt class="property-key">Packaging/Cooling:</dt> <dd class="property-value" id="prop-packaging-cooling">Loading...</dd> </div>
+            <div class="property-item"> <dt class="property-key">Key Characterization:</dt> <dd class="property-value" id="prop-char-techniques">Loading...</dd> </div>
          </dl>
        </section>
 
@@ -132,50 +107,17 @@
       <section class="material-section" id="section-electrical">
         <h2>Electrical Properties</h2>
         <dl class="property-list">
-          <div class="property-item">
-            <dt class="property-key">Bandgap Type:</dt>
-            <dd class="property-value" id="prop-bandgap-type">Loading...</dd>
-          </div>
-          <div class="property-item key-property">
-            <dt class="property-key">Bandgap (Eg):</dt>
-            <dd class="property-value" id="prop-bandgap">Loading...</dd>
-          </div>
-          <div class="property-item">
-            <dt class="property-key">Hansen Eg Eq (Approx):</dt>
-            <dd class="property-value" id="prop-hansen-eq">Loading...</dd>
-          </div>
-           <div class="property-item">
-            <dt class="property-key">Cutoff λ Eq:</dt>
-            <dd class="property-value" id="prop-lambda-eq">Loading...</dd>
-          </div>
-           <div class="property-item key-property">
-            <dt class="property-key">Common Dopants:</dt>
-            <dd class="property-value" id="prop-common-dopants">Loading...</dd>
-          </div>
-           <div class="property-item">
-            <dt class="property-key">Carrier Conc (Typical):</dt>
-            <dd class="property-value" id="prop-carrier-concentration">Loading...</dd>
-          </div>
-          <div class="property-item key-property">
-            <dt class="property-key">Electron Mobility (μₑ):</dt>
-            <dd class="property-value" id="prop-e-mobility">Loading...</dd>
-          </div>
-          <div class="property-item">
-            <dt class="property-key">Hole Mobility (μ<0xE2><0x82><0x95>):</dt>
-            <dd class="property-value" id="prop-h-mobility">Loading...</dd>
-          </div>
-           <div class="property-item">
-            <dt class="property-key">Dielectric Constant (ε):</dt>
-            <dd class="property-value" id="prop-dielectric-constant">Loading...</dd>
-          </div>
-          <div class="property-item">
-            <dt class="property-key">Resistivity (ρ):</dt>
-            <dd class="property-value" id="prop-resistivity">Loading...</dd>
-          </div>
-           <div class="property-item">
-            <dt class="property-key">Breakdown Field:</dt>
-            <dd class="property-value" id="prop-breakdown-field">Loading...</dd>
-          </div>
+          <div class="property-item"> <dt class="property-key">Bandgap Type:</dt> <dd class="property-value" id="prop-bandgap-type">Loading...</dd> </div>
+          <div class="property-item key-property"> <dt class="property-key">Bandgap (Eg):</dt> <dd class="property-value" id="prop-bandgap">Loading...</dd> </div>
+          <div class="property-item"> <dt class="property-key">Hansen Eg Eq:</dt> <dd class="property-value" id="prop-hansen-eq">Loading...</dd> </div>
+          <div class="property-item"> <dt class="property-key">Cutoff λ Eq:</dt> <dd class="property-value" id="prop-lambda-eq">Loading...</dd> </div>
+          <div class="property-item key-property"> <dt class="property-key">Common Dopants:</dt> <dd class="property-value" id="prop-common-dopants">Loading...</dd> </div>
+          <div class="property-item"> <dt class="property-key">Carrier Conc:</dt> <dd class="property-value" id="prop-carrier-concentration">Loading...</dd> </div>
+          <div class="property-item key-property"> <dt class="property-key">Electron Mobility (μₑ):</dt> <dd class="property-value" id="prop-e-mobility">Loading...</dd> </div>
+          <div class="property-item"> <dt class="property-key">Hole Mobility (μ<0xE2><0x82><0x95>):</dt> <dd class="property-value" id="prop-h-mobility">Loading...</dd> </div>
+          <div class="property-item"> <dt class="property-key">Dielectric Const (ε):</dt> <dd class="property-value" id="prop-dielectric-constant">Loading...</dd> </div>
+          <div class="property-item"> <dt class="property-key">Resistivity (ρ):</dt> <dd class="property-value" id="prop-resistivity">Loading...</dd> </div>
+          <div class="property-item"> <dt class="property-key">Breakdown Field:</dt> <dd class="property-value" id="prop-breakdown-field">Loading...</dd> </div>
         </dl>
       </section>
 
@@ -183,34 +125,13 @@
       <section class="material-section" id="section-optical">
         <h2>Optical Properties</h2>
         <dl class="property-list">
-          <div class="property-item key-property">
-            <dt class="property-key">Spectral Range:</dt>
-            <dd class="property-value" id="prop-spectral-range">Loading...</dd>
-          </div>
-          <div class="property-item key-property">
-            <dt class="property-key">Cutoff Wavelength (λc):</dt>
-            <dd class="property-value" id="prop-cutoff-wl">Loading...</dd>
-          </div>
-          <div class="property-item">
-            <dt class="property-key">Refractive Index (n):</dt>
-            <dd class="property-value" id="prop-ref-index">Loading...</dd>
-          </div>
-           <div class="property-item">
-            <dt class="property-key">Absorption Coeff (α):</dt>
-            <dd class="property-value" id="prop-absorption-coefficient">Loading...</dd>
-          </div>
-           <div class="property-item key-property">
-            <dt class="property-key">Quantum Efficiency (η):</dt>
-            <dd class="property-value" id="prop-quantum-efficiency">Loading...</dd>
-          </div>
-          <div class="property-item key-property">
-            <dt class="property-key">Responsivity (R):</dt>
-            <dd class="property-value" id="prop-responsivity">Loading...</dd>
-          </div>
-          <div class="property-item">
-            <dt class="property-key">Noise Equiv. Power (NEP):</dt>
-            <dd class="property-value" id="prop-noise-equivalent-power">Loading...</dd>
-          </div>
+          <div class="property-item key-property"> <dt class="property-key">Spectral Range:</dt> <dd class="property-value" id="prop-spectral-range">Loading...</dd> </div>
+          <div class="property-item key-property"> <dt class="property-key">Cutoff Wavelength (λc):</dt> <dd class="property-value" id="prop-cutoff-wl">Loading...</dd> </div>
+          <div class="property-item"> <dt class="property-key">Refractive Index (n):</dt> <dd class="property-value" id="prop-ref-index">Loading...</dd> </div>
+          <div class="property-item"> <dt class="property-key">Absorption Coeff (α):</dt> <dd class="property-value" id="prop-absorption-coefficient">Loading...</dd> </div>
+          <div class="property-item key-property"> <dt class="property-key">Quantum Efficiency (η):</dt> <dd class="property-value" id="prop-quantum-efficiency">Loading...</dd> </div>
+          <div class="property-item key-property"> <dt class="property-key">Responsivity (R):</dt> <dd class="property-value" id="prop-responsivity">Loading...</dd> </div>
+          <div class="property-item"> <dt class="property-key">Noise Equiv. Power (NEP):</dt> <dd class="property-value" id="prop-noise-equivalent-power">Loading...</dd> </div>
         </dl>
       </section>
 
@@ -218,22 +139,10 @@
       <section class="material-section" id="section-thermal">
         <h2>Thermal Properties</h2>
         <dl class="property-list">
-          <div class="property-item key-property">
-            <dt class="property-key">Operating Temperature:</dt>
-            <dd class="property-value" id="prop-op-temp">Loading...</dd>
-          </div>
-          <div class="property-item">
-            <dt class="property-key">Thermal Conductivity (k):</dt>
-            <dd class="property-value" id="prop-therm-cond">Loading...</dd>
-          </div>
-           <div class="property-item">
-            <dt class="property-key">Specific Heat (Cp):</dt>
-            <dd class="property-value" id="prop-specific-heat">Loading...</dd>
-          </div>
-          <div class="property-item">
-            <dt class="property-key">Melting Point:</dt>
-            <dd class="property-value" id="prop-melt-pt">Loading...</dd>
-          </div>
+          <div class="property-item key-property"> <dt class="property-key">Operating Temperature:</dt> <dd class="property-value" id="prop-op-temp">Loading...</dd> </div>
+          <div class="property-item"> <dt class="property-key">Thermal Conductivity (k):</dt> <dd class="property-value" id="prop-therm-cond">Loading...</dd> </div>
+          <div class="property-item"> <dt class="property-key">Specific Heat (Cp):</dt> <dd class="property-value" id="prop-specific-heat">Loading...</dd> </div>
+          <div class="property-item"> <dt class="property-key">Melting Point:</dt> <dd class="property-value" id="prop-melt-pt">Loading...</dd> </div>
         </dl>
       </section>
 
@@ -241,40 +150,25 @@
        <section class="material-section" id="section-mechanical">
          <h2>Mechanical Properties</h2>
          <dl class="property-list">
-           <div class="property-item">
-             <dt class="property-key">Density:</dt>
-             <dd class="property-value" id="prop-density">Loading...</dd>
-           </div>
-           <div class="property-item">
-             <dt class="property-key">Young's Modulus (E):</dt>
-             <dd class="property-value" id="prop-youngs-modulus">Loading...</dd>
-           </div>
-           <div class="property-item">
-             <dt class="property-key">Hardness (Vickers):</dt>
-             <dd class="property-value" id="prop-hardness-vickers">Loading...</dd>
-           </div>
-           <div class="property-item">
-             <dt class="property-key">Poisson's Ratio (ν):</dt>
-             <dd class="property-value" id="prop-poissons-ratio">Loading...</dd>
-           </div>
-           <div class="property-item">
-             <dt class="property-key">Fracture Toughness (K<small>IC</small>):</dt>
-             <dd class="property-value" id="prop-fracture-toughness">Loading...</dd>
-           </div>
+           <div class="property-item"> <dt class="property-key">Density:</dt> <dd class="property-value" id="prop-density">Loading...</dd> </div>
+           <div class="property-item"> <dt class="property-key">Young's Modulus (E):</dt> <dd class="property-value" id="prop-youngs-modulus">Loading...</dd> </div>
+           <div class="property-item"> <dt class="property-key">Hardness (Vickers):</dt> <dd class="property-value" id="prop-hardness-vickers">Loading...</dd> </div>
+           <div class="property-item"> <dt class="property-key">Poisson's Ratio (ν):</dt> <dd class="property-value" id="prop-poissons-ratio">Loading...</dd> </div>
+           <div class="property-item"> <dt class="property-key">Fracture Toughness (K<small>IC</small>):</dt> <dd class="property-value" id="prop-fracture-toughness">Loading...</dd> </div>
          </dl>
        </section>
 
-       <!-- Device Applications -->
+       <!-- Key Applications & Sensor Types -->
        <section class="material-section" id="section-applications">
-         <h2>Device & Applications</h2>
+         <h2>Key Applications & Sensor Types</h2> <!-- Renamed title -->
          <dl class="property-list">
            <div class="property-item">
              <dt class="property-key">Common Sensor Types:</dt>
-             <dd class="property-value" id="prop-sensor-types">Loading...</dd>
+             <dd class="property-value" id="prop-sensor-types">Loading...</dd> <!-- Renamed ID -->
            </div>
            <div class="property-item key-property">
-             <dt class="property-key">Primary Applications:</dt>
-             <dd class="property-value" id="prop-common-applications">Loading...</dd>
+             <dt class="property-key">Key Applications:</dt>
+             <dd class="property-value" id="prop-key-applications">Loading...</dd> <!-- Renamed ID -->
            </div>
          </dl>
        </section>
@@ -285,9 +179,9 @@
          <dl class="property-list">
            <div class="property-item">
              <dt class="property-key">Stability & Oxidation:</dt>
-             <dd class="property-value" id="prop-stability-oxidation">Loading...</dd> <!-- Renamed ID -->
+             <dd class="property-value" id="prop-stability-oxidation">Loading...</dd>
            </div>
-            <!-- Etching moved to Post-Growth Processing -->
+           <!-- Etching moved to Post-Growth Processing -->
          </dl>
        </section>
 
@@ -300,6 +194,25 @@
              <dd class="property-value" id="prop-magnetic-type">Loading...</dd>
            </div>
          </dl>
+       </section>
+
+       <!-- Comparison with Alternatives (New Section) -->
+       <section class="material-section" id="section-comparison">
+         <h2>Comparison with Alternatives</h2>
+          <dl class="property-list">
+           <div class="property-item"> <dt class="property-key">Notes:</dt> <dd class="property-value" id="prop-comparison-notes">Loading...</dd> </div>
+           <div class="property-item"> <dt class="property-key">vs. InSb:</dt> <dd class="property-value" id="prop-vs-insb">Loading...</dd> </div>
+           <div class="property-item"> <dt class="property-key">vs. QWIPs:</dt> <dd class="property-value" id="prop-vs-qwips">Loading...</dd> </div>
+           <div class="property-item"> <dt class="property-key">vs. T2SLs:</dt> <dd class="property-value" id="prop-vs-t2sls">Loading...</dd> </div>
+          </dl>
+       </section>
+
+       <!-- References & Further Reading (New Section) -->
+       <section class="material-section" id="section-references">
+         <h2>References & Further Reading</h2>
+         <ul id="reference-list">
+            <li>Loading references...</li>
+         </ul>
        </section>
 
       <!-- Vendor Placeholder -->
