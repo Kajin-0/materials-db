@@ -5,35 +5,53 @@
     "synonyms": [ "HgCdTe", "MCT" ],
     "category": "Semiconductor",
     "description": "II-VI alloy semiconductor with bandgap tuned via Cadmium mole fraction (x). Key material for high-performance SWIR/MWIR/LWIR detectors, typically requiring cryogenic cooling. Preferred substrate: CdZnTe (~4% Zn).",
-    "safety": {
+    "wiki_link": "https://en.wikipedia.org/wiki/Mercury_cadmium_telluride", // Added Wiki Link
+    "safety": { // Kept concise
       "toxicity": "High (Contains Hg, Cd). Follow strict safety protocols.",
       "handling": "Requires PPE, fume hood/glovebox, hazardous waste disposal."
     },
-    "identification": {
+    "identification": { // Added Phase Diagram notes
       "cas_number": "30784-21-9 (generic)",
       "class": "II-VI Compound Semiconductor Alloy",
       "crystal_structure": "Zinc blende (FCC)",
-      "lattice_constant": {
-         "value": "~6.461 to ~6.481",
-         "unit": "Å",
-         "notes": "Near-linear variation with x (Vegard's approx.)"
-      },
-      "phase_diagram_notes": "Pseudo-binary. Narrow liquidus-solidus gap (esp. x~0.2). Critical Hg partial pressure control needed during processing."
+      "lattice_constant": {"value": "~6.461 to ~6.481", "unit": "Å", "notes": "Near-linear variation with x (Vegard's approx.)"},
+      "phase_diagram_notes": "Pseudo-binary. Narrow liquidus-solidus gap. Hg partial pressure control during growth/annealing is CRITICAL for stoichiometry (affects defects, doping, lifetime)."
     },
-    "growth_fabrication_properties": {
-        "common_growth_methods": "LPE (Te-rich, ~450-500C), MBE (~180-210C, precise), MOCVD (~350-400C, Hg precursor needed).",
-        "source_materials_purity": "Elemental Hg, Cd, Te (typically >6N purity essential for high performance).",
-        "preferred_substrates_orientations": "Substrate: CdZnTe (~4% Zn) optimal; Si, GaAs, Ge, Sapphire usable with buffer layers. Orientation: (111)B for LPE; (211)B, (100) for MBE/MOCVD.",
-        "typical_growth_parameters": "Method/x dependent. Rates: ~1-5 um/hr (MBE/MOCVD). Requires precise Temp. and Hg flux/pressure control.",
-        "passivation_methods": "Essential for stability/performance. Common: ZnS, CdTe, SiO2 via Sputtering, MBE, MOCVD, ALD etc."
+    "advanced_fabrication_insights": { // New Section Data
+        "stoichiometry_control": "Major challenge due to high Hg vapor pressure. Requires precise temperature control and Hg overpressure sources/management in MBE, MOCVD, and especially annealing.",
+        "common_defects_impact": "Hg vacancies (acceptor-like, reduced lifetime), Te precipitates/inclusions (shunting paths, noise), dislocations (from substrate mismatch, affect lifetime/noise). Defect density impacts device yield and performance.",
+        "surface_preparation": "Substrate cleaning and preparation (oxide removal, etch) is critical before epitaxy for nucleation and interface quality. HgCdTe surface easily damaged.",
+        "method_specific_notes": "LPE: Simpler, Te-rich melts limit max 'x', potential for melt carry-over. MBE: Lower temps, precise layer control, UHV requirement. MOCVD: Conformal growth, precursor stability/purity challenges (esp. Hg)."
     },
-    "post_growth_processing": {
-        "annealing": "CRITICAL step. Purpose: Reduce Hg vacancies, activate p-dopants (As), improve crystallinity. Temps: ~200-450C (depends on goal/x). Requires Hg overpressure.",
-        "lapping_polishing": "Lapping: Al2O3/SiC slurries. Polishing: Fine diamond slurries (<1um) or CMP (e.g., Br-Methanol). Use low pressure (brittle).",
-        "etching": "Wet: Br-Methanol, Br-Ethylene Glycol, Lactic/Nitric/HF mixes. Dry: RIE/ICP (CH4/H2, Ar, halogens) for patterning.",
-        "grinding_milling": "Generally avoided for wafers (brittleness/contamination). Careful use for source prep possible."
+    "growth_fabrication_properties": { // Kept concise
+        "common_growth_methods": "LPE, MBE, MOCVD, Bulk (Bridgman - less common for arrays).",
+        "source_materials_purity": "Elemental Hg, Cd, Te (typically >6N purity essential).",
+        "preferred_substrates_orientations": "Substrate: CdZnTe (~4% Zn) optimal; Si, GaAs, Ge also used (w/ buffers). Orientation: (111)B for LPE; (211)B, (100) for MBE/MOCVD.",
+        "typical_growth_parameters": "Method/x dependent. Rates: ~1-5 um/hr (MBE/MOCVD). Requires precise Temp/Pressure control.",
+        "passivation_methods": "Essential. Common: ZnS, CdTe, SiO2 via Sputtering, MBE, ALD etc."
     },
-    "electrical_properties": {
+    "post_growth_processing": { // Kept concise
+        "annealing": "CRITICAL. Purpose: Reduce Hg vacancies, activate dopants, improve crystallinity. Temps: ~200-450C. Requires Hg overpressure.",
+        "lapping_polishing": "Lapping: Al2O3/SiC slurries. Polishing: Diamond slurries (<1um) or CMP (e.g., Br-Methanol). Low pressure.",
+        "etching": "Wet: Br-Methanol, Br-Ethylene Glycol, Acid mixes. Dry: RIE/ICP (CH4/H2, Ar, Halogens) for patterning.",
+        "grinding_milling": "Generally avoided for wafers. Possible for source prep."
+    },
+     "device_integration_characterization": { // New Section Data
+        "device_architectures": "Primarily Photoconductors (PC - simpler, require bias) and Photovoltaic Diodes (PV/PD - complex fab, lower noise, zero bias). Mesa or planar structures.",
+        "readout_integration": "Typically flip-chip bonded to a Silicon Read-Out Integrated Circuit (ROIC) using Indium bumps to form Focal Plane Arrays (FPAs).",
+        "ar_coatings": "Needed due to high refractive index. Common materials: Zinc Sulfide (ZnS), Germanium (Ge), multi-layer dielectric stacks.",
+        "packaging_cooling": "Requires vacuum packaging and cryogenic cooling (Stirling cycle coolers common, LN2 for lab tests) to minimize thermal noise (dark current).",
+        "characterization_techniques": [
+            "Hall Effect: Carrier type, concentration, mobility (temp dependent).",
+            "FTIR Spectroscopy: Cutoff wavelength (determines 'x'), layer thickness.",
+            "Photoluminescence (PL): Material quality, defect levels, bandgap.",
+            "X-Ray Diffraction (XRD): Crystallinity, orientation, lattice parameter.",
+            "SIMS/EDX: Elemental composition, dopant profiles.",
+            "Spectral Response/QE: Detector performance vs. wavelength.",
+            "I-V Curves: Diode characteristics (dark current, R₀A)."
+         ]
+    },
+    "electrical_properties": { // Kept Concise
       "bandgap_type": "Direct, Tunable",
       "band_gap": {"value": "0 - 1.5", "unit": "eV", "notes": "Tunable via x. Target: x≈0.2 LWIR (~0.1eV), x≈0.3 MWIR (~0.25eV)."},
       "bandgap_equation": {"hansen_eg": "Eg(x,T) Empirical Eq. (See Hansen et al.)", "wavelength_relation": "λ_c (um) approx = 1.24 / Eg (eV)"},
@@ -45,7 +63,7 @@
       "resistivity": {"value": "Variable (10^-3 - 10^3+)", "unit": "Ohm-cm", "notes": "Depends on x, Temp, doping."},
       "breakdown_field": {"value": "Low (~10^3 - 10^4)", "unit": "V/cm", "notes": "Limits high-field use."}
     },
-    "optical_properties": {
+    "optical_properties": { // Kept Concise
       "spectral_range": "SWIR, MWIR, LWIR (0.8 um to >30 um)", "notes": "Determined by Eg(x).",
       "cutoff_wavelength": {"value": "0.8 (x=1) to >30 (x≈0)", "unit": "um", "notes": "λ_c (um) ≈ 1.24 / Eg (eV)."},
       "refractive_index": {"value": "~3.4 - 4.0", "notes": "High index. Varies with λ, x."},
@@ -54,37 +72,49 @@
       "responsivity": {"value": "~1 - 10", "unit": "A/W", "notes": "At 77K. Depends on λ, bias, etc."},
       "noise_equivalent_power": {"value": "~10^-11 - 10^-13", "unit": "W/Hz^0.5", "notes": "Cooled detectors."}
     },
-    "thermal_properties": {
+    "thermal_properties": { // Kept Concise
       "operating_temperature": {"value": "Typically 77 K (LN2)", "notes": "Reduces dark current for optimal S/N."},
       "thermal_conductivity": {"value": "Low (~1 - 5)", "unit": "W/(m K)", "notes": "Poor conductor."},
       "specific_heat": {"value": "~0.16 - 0.20", "unit": "J/(g K)", "notes": "RT, varies with x."},
       "melting_point": {"value": "~700 - 800", "unit": "C", "notes": "Composition dependent."}
     },
-     "mechanical_properties": {
+     "mechanical_properties": { // Kept Concise
          "density": {"value": "~5.8 to ~8.1", "unit": "g/cm^3", "notes": "Increases with Hg content."},
          "youngs_modulus": {"value": "~40 - 50", "unit": "GPa"},
          "hardness_vickers": {"value": "~70 - 100", "unit": "HV", "notes": "Soft, brittle."},
          "poissons_ratio": "~0.3",
          "fracture_toughness": {"value": "< 0.5", "unit": "MPa m^0.5", "notes": "Brittle."}
      },
-     "device_applications": {
+     "device_applications": { // Renamed slightly, data moved here
          "sensor_types": ["Photoconductor (PC)", "Photovoltaic (PV) / Photodiode", "Avalanche Photodiode (APD)"],
-         "common_applications": ["Thermal Imaging / FLIR", "Night Vision", "Medical Thermography", "Gas Sensing", "IR Astronomy", "Process Monitoring", "Missile Guidance"]
+         "key_applications": ["Thermal Imaging / FLIR", "Night Vision", "Medical Thermography", "Gas Sensing", "IR Astronomy", "Process Monitoring", "Missile Guidance"] // Renamed key
      },
-     "chemical_properties": {
-         "stability_oxidation": "Surface unstable without passivation; readily oxidizes.",
-         "etching": "Wet: Br-Methanol, Br-Ethylene Glycol, Acid mixes. Dry: RIE/ICP (CH4/H2, Ar, Halogens)."
+     "chemical_properties": { // Simplified
+         "stability_oxidation": "Surface unstable without passivation; readily oxidizes."
      },
-     "magnetic_properties": {
+     "magnetic_properties": { // Kept as is
          "type": "Diamagnetic"
      },
-     "vendor_info": {
+     "comparison_alternatives": { // New Section Data
+         "notes": "Compared to other IR materials:",
+         "vs_InSb": "HgCdTe offers wider spectral tuning (esp. LWIR), higher operating temps possible for MWIR. InSb often cheaper, mature tech for MWIR.",
+         "vs_QWIPs": "HgCdTe generally has higher QE and operating temps than GaAs-based QWIPs, but QWIPs have excellent uniformity and lower cost potential.",
+         "vs_T2SLs": "Type-II Superlattices (e.g., InAs/GaSb) are a major competitor, offering potentially better uniformity, lower dark currents (higher op. temps), and reduced Auger recombination, but growth/processing is complex."
+     },
+     "references_further_reading": { // New Section Data
+         "notes": "Key resources (examples only):",
+         "book_rogozkin": "Rogalski, A. 'Infrared Detectors' (SPIE Press) - Comprehensive overview.",
+         "review_hansen": "Hansen, G. L., Schmit, J. L., & Casselman, T. N. (1982). J. Appl. Phys. 53, 7099 - Seminal paper on Eg(x,T).",
+         "review_norton": "Norton, P. R. (2002). Opto-Electron. Rev., 10(3), 159 - HgCdTe detector overview.",
+         "wikipedia": "https://en.wikipedia.org/wiki/Mercury_cadmium_telluride"
+     },
+     "vendor_info": { // Kept as is
          "notes": "List of potential vendors (placeholder).",
          "vendor_1": "Company A - www.example-vendor-a.com (dummy)",
          "vendor_2": "Company B - www.example-vendor-b.com (dummy)",
          "vendor_3": "Company C - www.example-vendor-c.com (dummy)"
      },
-    "tags": [
+    "tags": [ // Kept as is
       "II-VI", "LPE", "MBE", "MOCVD", "aerospace", "cadmium", "chalcogenide", "cryogenic",
       "epitaxial", "group 12", "group 16", "industry:aerospace", "industry:infrared",
       "industry:photonics", "ir", "lwir", "mercury", "mwir", "nitrogen cooled",
