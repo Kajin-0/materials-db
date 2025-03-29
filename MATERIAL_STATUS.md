@@ -6,7 +6,7 @@ Unchecked items `[ ]` are missing a matching key in `material_details.json`.
 
 - [x] Amorphous Alloy (Vitreloy)
 - [x] Beryllium-Copper Alloy
-- [ ] Boron Carbide Reinforced Epoxy
+- [x] Boron Carbide Reinforced Epoxy
 - [ ] Boron Nitride Nanotube Composite
 - [ ] Carbon Nanotube Composite
 - [ ] Ferrite-Polymer Composite
