@@ -1,11 +1,10 @@
 /**
  * Loads material data for the detail page.
- * 1. Infers the data filename based on the material name's first letter (e.g., M -> materials-m.json).
+ * 1. Infers the data filename based on the material name's first letter.
  * 2. Validates this filename against the sources listed in materials-index.json.
- * 3. Fetches the specific data file (expected to be an array, like materials-m.json).
+ * 3. Fetches the specific data file (expected to be an array).
  * 4. Finds the material object within the array by name.
- * 5. Populates the detail page using AVAILABLE FLAT data from the object.
- * 6. Marks fields requiring unavailable nested data as N/A.
+ * 5. Populates the detail page using data from the object, including NESTED properties.
  */
 document.addEventListener("DOMContentLoaded", async () => {
     // 1. Get Material Name from URL Parameter
@@ -17,7 +16,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const header = document.querySelector('.detail-header');
     const mainContainer = document.querySelector('main');
-    const nameElement = document.getElementById("material-name"); // Get reference early
+    const nameElement = document.getElementById("material-name");
 
     if (!materialName) {
         if (nameElement) nameElement.textContent = "Material not specified.";
@@ -27,60 +26,48 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     try {
         // --- Infer Filename and Validate Against Index ---
-        if (materialName.length === 0) {
-            throw new Error("Material name is empty.");
-        }
+        if (materialName.length === 0) { throw new Error("Material name is empty."); }
         const firstLetter = materialName.charAt(0).toLowerCase();
         const targetFilename = `materials-${firstLetter}.json`;
         console.log(`[Detail Page] Inferred target data file: ${targetFilename}`);
 
-        // Fetch index to validate the inferred filename exists
-        console.log("[Detail Page] Fetching index: data/materials-index.json (expecting {sources: [...]} format)");
+        console.log("[Detail Page] Fetching index: data/materials-index.json");
         const indexRes = await fetch("data/materials-index.json");
-        if (!indexRes.ok) {
-            throw new Error(`HTTP error! status: ${indexRes.status} - Could not fetch index.`);
-        }
-        const indexData = await indexRes.json(); // Expecting { sources: [...] }
+        if (!indexRes.ok) { throw new Error(`HTTP error! status: ${indexRes.status} - Could not fetch index.`); }
+        const indexData = await indexRes.json();
 
-        // Validate index structure
         if (!indexData || typeof indexData !== 'object' || !Array.isArray(indexData.sources)) {
-             throw new Error(`Invalid index format in data/materials-index.json. Expected object with a "sources" array.`);
+             throw new Error(`Invalid index format in data/materials-index.json.`);
         }
         console.log("[Detail Page] Index loaded. Sources:", indexData.sources);
 
-        // Check if the inferred filename is listed in the sources
         if (!indexData.sources.includes(targetFilename)) {
-            console.error(`[Detail Page] Inferred file "${targetFilename}" not found in sources listed in data/materials-index.json.`);
             throw new Error(`Could not locate the data file (${targetFilename}) for "${materialName}" in the index.`);
         }
         console.log(`[Detail Page] Validated: "${targetFilename}" exists in index sources.`);
 
         // --- Fetch the Specific Material Data File ---
-        const materialFilePath = "data/" + targetFilename; // e.g., data/materials-m.json
-        console.log("[Detail Page] Fetching material file:", materialFilePath, "(expecting array format inside)");
+        const materialFilePath = "data/" + targetFilename;
+        console.log("[Detail Page] Fetching material file:", materialFilePath);
         const matRes = await fetch(materialFilePath);
-        if (!matRes.ok) {
-            throw new Error(`HTTP error! status: ${matRes.status} - Could not fetch ${materialFilePath}`);
-        }
+        if (!matRes.ok) { throw new Error(`HTTP error! status: ${matRes.status} - Could not fetch ${materialFilePath}`); }
 
-        // Assume the file contains an ARRAY - find the material within it using 'name' key
-        const matDataArray = await matRes.json(); // Expecting Array e.g., [{...HgCdTe...}]
+        const matDataArray = await matRes.json();
          if (!Array.isArray(matDataArray)) {
-             throw new Error(`Data format error: ${materialFilePath} MUST be a JSON array [...]. Received type: ${typeof matDataArray}`);
+             throw new Error(`Data format error: ${materialFilePath} MUST be a JSON array.`);
          }
         console.log("[Detail Page] Material data file loaded (as array):", matDataArray);
 
         // Find the specific material object within the loaded array (case-insensitive)
-        const material = matDataArray.find(m => m.name && m.name.toLowerCase() === materialName.toLowerCase());
+        const material = matDataArray.find(m => m.name && m.name.toLowerCase() === materialName.toLowerCase()); // Use name key as in materials-m.json
 
         if (!material) {
-            console.error(`[Detail Page] Material "${materialName}" not found within the file ${materialFilePath}.`);
             throw new Error(`Data for "${materialName}" not found in ${targetFilename}.`);
         }
         console.log("[Detail Page] Specific material object found:", material);
 
 
-        // --- Populate the Page with AVAILABLE data ---
+        // --- Populate the Page with AVAILABLE data (now expecting nested structure) ---
         populatePage(material);
 
     } catch (e) {
@@ -90,30 +77,87 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 });
 
-
 /**
- * Populates the HTML elements with data found in the material object.
- * Uses data directly available in the FLAT object loaded (e.g., from materials-m.json).
- * Sets other fields requiring nested data to N/A.
- * @param {object} material - The FLAT material data object (e.g., from materials-m.json).
+ * Populates the HTML elements with data from the material object,
+ * including accessing nested properties using dot notation paths.
+ * @param {object} material - The material data object (expected to have nested structure now).
  */
 function populatePage(material) {
-     // Helper to update element text content IF element exists
-     const updateText = (id, value, fallback = null) => {
-        const element = document.getElementById(id);
-        if (element) {
-            element.textContent = (value !== null && typeof value !== 'undefined' && value !== '') ? String(value) : (fallback !== null ? fallback : element.textContent);
-         }
+    // Helper function to safely get potentially nested data and provide fallback
+    const getData = (obj, path, fallback = 'N/A') => {
+        // Navigate path e.g., 'electrical_properties.band_gap.value'
+        const value = path.split('.').reduce((o, key) => (o && o[key] !== 'undefined' && o[key] !== null) ? o[key] : undefined, obj);
+
+        // Format values that are objects with value/unit/notes
+        if (typeof value === 'object' && typeof value.value !== 'undefined') {
+           let text = String(value.value);
+           if (value.unit) text += ` ${value.unit}`;
+           if (value.notes) text += ` (${value.notes})`;
+           return text;
+        }
+        // Format simple arrays
+        if (Array.isArray(value)) {
+            return value.length > 0 ? value.join(', ') : fallback;
+        }
+        // Return strings/numbers directly, or fallback
+        return (value !== null && typeof value !== 'undefined' && value !== '') ? String(value) : fallback;
     };
 
-    console.log("[Detail Page] Populating page with data:", material);
+     // Helper to update element text content
+     const updateText = (id, value) => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.textContent = value;
+        } else {
+             console.warn(`[Detail Page] Element with ID "${id}" not found.`);
+        }
+    };
 
-    // Populate Core Fields (Should work with materials-m.json)
-    updateText('material-name', material.name, 'Unknown Material');
-    updateText('material-formula', material.formula, '');
-    updateText('material-description', material.description, 'No description available.');
+    console.log("[Detail Page] Populating page with potentially nested data:", material);
 
-    // Populate Tags (Should work with materials-m.json)
+    // --- Populate Header ---
+    updateText('material-name', getData(material, 'name', 'Unknown Material')); // 'name' is top-level
+    updateText('material-formula', getData(material, 'formula', '')); // 'formula' is top-level
+
+    // --- Populate Overview ---
+    updateText('material-description', getData(material, 'description')); // 'description' is top-level
+
+    // --- Populate Safety (using nested path) ---
+    updateText('prop-toxicity', getData(material, 'safety.toxicity'));
+    updateText('prop-handling', getData(material, 'safety.handling'));
+
+    // --- Populate Identification (using nested path) ---
+    updateText('prop-cas', getData(material, 'identification.cas_number'));
+    updateText('prop-category', getData(material, 'category')); // 'category' is top-level
+    updateText('prop-class', getData(material, 'identification.class'));
+
+    // --- Populate Electrical Properties (using nested path) ---
+    updateText('prop-bandgap-type', getData(material, 'electrical_properties.bandgap_type'));
+    updateText('prop-bandgap', getData(material, 'electrical_properties.band_gap')); // Helper handles {value, unit, notes}
+    updateText('prop-e-mobility', getData(material, 'electrical_properties.electron_mobility')); // Helper handles {value, unit, notes}
+    updateText('prop-h-mobility', getData(material, 'electrical_properties.hole_mobility')); // Helper handles {value, unit, notes}
+
+    // --- Populate Optical Properties (using nested path) ---
+    // Note: Adding the 'notes' field separately for spectral_range as it doesn't fit the {value,unit,notes} pattern well
+    updateText('prop-spectral-range', getData(material, 'optical_properties.spectral_range'));
+    const spectralNotes = getData(material, 'optical_properties.notes', '');
+    const spectralRangeElement = document.getElementById('prop-spectral-range');
+    if (spectralRangeElement && spectralNotes && spectralNotes !== 'N/A') {
+        spectralRangeElement.textContent += ` (${spectralNotes})`;
+    }
+    updateText('prop-cutoff-wl', getData(material, 'optical_properties.cutoff_wavelength')); // Helper handles {value, unit, notes}
+    updateText('prop-ref-index', getData(material, 'optical_properties.refractive_index')); // Helper handles {value, unit, notes}
+
+    // --- Populate Thermal Properties (using nested path) ---
+    updateText('prop-op-temp', getData(material, 'thermal_properties.operating_temperature')); // Helper handles {value, unit, notes}
+    updateText('prop-therm-cond', getData(material, 'thermal_properties.thermal_conductivity')); // Helper handles {value, unit, notes}
+    updateText('prop-melt-pt', getData(material, 'thermal_properties.melting_point')); // Helper handles {value, unit, notes}
+
+    // --- Populate Processing & Availability (using nested path) ---
+    updateText('prop-synth', getData(material, 'processing_availability.synthesis_methods')); // Helper joins array
+    updateText('prop-forms', getData(material, 'processing_availability.forms')); // Helper joins array
+
+    // --- Populate Tags (using top-level 'tags') ---
     const tagsContainer = document.getElementById('material-tags');
     if (tagsContainer) {
         tagsContainer.innerHTML = ''; // Clear loading text
@@ -122,46 +166,13 @@ function populatePage(material) {
             tags.forEach(tag => {
                 const tagElement = document.createElement('span');
                 tagElement.className = 'tag';
-                tagElement.textContent = typeof tag === 'string' ? tag.replace(/^\w+:/, "") : tag; // Keep user's tag formatting
+                tagElement.textContent = typeof tag === 'string' ? tag.replace(/^\w+:/, "") : tag;
                 tagsContainer.appendChild(tagElement);
             });
         } else {
             updateText('material-tags', 'N/A');
         }
     }
-
-    // Attempt generic population for prop-* fields from top-level data
-    console.log("[Detail Page] Attempting generic population for prop-* fields from flat data...");
-    Object.entries(material).forEach(([key, value]) => {
-        const elementId = "prop-" + key.toLowerCase().replace(/_/g, '-'); // e.g., category -> prop-category
-        const element = document.getElementById(elementId);
-        if (element) {
-            if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
-                 element.textContent = String(value);
-                 console.log(`[Detail Page] Populated ${elementId} with top-level value: ${value}`);
-            } else if (key === 'synonyms' && Array.isArray(value)) {
-                 element.textContent = value.join(', ');
-                 console.log(`[Detail Page] Populated ${elementId} with synonyms: ${value.join(', ')}`);
-            }
-        }
-    });
-
-    // Explicitly Set N/A for fields known to require NESTED data (not in materials-m.json)
-    console.log("[Detail Page] Setting N/A for fields requiring nested data...");
-    const detailedPropsIDs = [
-        'prop-toxicity', 'prop-handling', 'prop-cas', 'prop-class',
-        'prop-bandgap-type', 'prop-bandgap', 'prop-e-mobility', 'prop-h-mobility',
-        'prop-spectral-range', 'prop-cutoff-wl', 'prop-ref-index',
-        'prop-op-temp', 'prop-therm-cond', 'prop-melt-pt',
-        'prop-synth', 'prop-forms'
-    ];
-    detailedPropsIDs.forEach(id => {
-        const element = document.getElementById(id);
-        // Only set to N/A if it's still showing "Loading..." (or empty)
-        if (element && (element.textContent === 'Loading...' || element.textContent === '')) {
-             updateText(id, 'N/A');
-        }
-    });
 
     console.log("[Detail Page] Page population attempt complete.");
 }
