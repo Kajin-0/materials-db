@@ -563,23 +563,19 @@ span.na-value {
 }
 .pt-series-label .pt-mass { display: none; } /* Hide mass for labels */
 
-/* --- Element Category Colors (Example) --- */
-/* Note: HTML needs corresponding classes like 'alkali-metal', 'nonmetal' etc. */
-.pt-element.alkali-metal           { background-color: #ffc0c0; color: #333; } /* Light Red */
-.pt-element.alkaline-earth-metal   { background-color: #ffe0c0; color: #333; } /* Light Orange */
-.pt-element.lanthanide             { background-color: #ffc0ff; color: #333; } /* Light Purple */
-.pt-element.actinide               { background-color: #ffc0cc; color: #333; } /* Light Pink */
-.pt-element.transition-metal       { background-color: #ffecf0; color: #333; } /* Very Light Pink/Off-white */
-.pt-element.post-transition-metal  { background-color: #cccccc; color: #333; } /* Light Gray */
-.pt-element.metalloid              { background-color: #cccc90; color: #333; } /* Khaki */
-.pt-element.polyatomic-nonmetal,
-.pt-element.diatomic-nonmetal      { background-color: #a0ffa0; color: #333; } /* Light Green */
-.pt-element.noble-gas              { background-color: #c0ffff; color: #333; } /* Light Cyan */
-.pt-element.unknown                { background-color: #e8e8e8; color: #555; } /* Lighter Gray */
-
-/* Adjust category names if needed based on periodic_table_data.js */
-.pt-element.diatomic.nonmetal { background-color: #a0ffa0; color: #333; } /* Ensure this matches if used */
-.pt-element.halogen { background-color: #ffffc0; color: #333;} /* Specific Halogen color */
+/* --- Element Category Colors (Match periodic_table_data.js) --- */
+.pt-element.alkali-metal           { background-color: #ffc0c0; color: #333; }
+.pt-element.alkaline-earth-metal   { background-color: #ffe0c0; color: #333; }
+.pt-element.lanthanide             { background-color: #ffc0ff; color: #333; }
+.pt-element.actinide               { background-color: #ffc0cc; color: #333; }
+.pt-element.transition-metal       { background-color: #ffecf0; color: #333; }
+.pt-element.post-transition-metal  { background-color: #cccccc; color: #333; }
+.pt-element.metalloid              { background-color: #cccc90; color: #333; }
+.pt-element.polyatomic-nonmetal    { background-color: #a0ffa0; color: #333; }
+.pt-element.diatomic-nonmetal      { background-color: #a0ffa0; color: #333; } /* Can share color */
+.pt-element.noble-gas              { background-color: #c0ffff; color: #333; }
+.pt-element.unknown                { background-color: #e8e8e8; color: #555; } /* For synthetic/unknown */
+.pt-element.halogen                { background-color: #ffffc0; color: #333;} /* Specific Halogen override if needed */
 
 
 /* --- Highlight Style --- */
