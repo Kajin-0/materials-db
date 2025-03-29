@@ -22,7 +22,7 @@ Unchecked items `[ ]` are missing a matching key in `material_details.json`.
 - [ ] LI-900 Silica Tile
 - [ ] LYSO:Ce Scintillator
 - [ ] Lead Tungstate
-- [ ] Lithium Niobate
+- [x] Lithium Niobate
 - [ ] Maraging Steel
 - [x] Mercury Cadmium Telluride
 - [ ] Nextel 720 Fiber
