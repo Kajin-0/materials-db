@@ -1217,5 +1217,116 @@
           "industry:electronics", "spring", "thermal conductor", "vacuum compatible",
           "alloy", "non-magnetic", "non-sparking"
         ]
+      },
+    "Lithium Niobate": {
+        "name": "Lithium Niobate",
+        "formula": "LiNbO₃",
+        "synonyms": [ "LiNbO3", "LN" ],
+        "category": "Crystal",
+        "description": "A synthetic ferroelectric crystal known for its excellent electro-optic, nonlinear optical, piezoelectric, photorefractive, and acousto-optic properties. It is transparent from the near-UV to the mid-infrared. Widely used in optical modulators, frequency converters (SHG, OPO), surface acoustic wave (SAW) devices, Pockels cells, and holographic storage.",
+        "wiki_link": "https://en.wikipedia.org/wiki/Lithium_niobate",
+        "safety": {
+          "toxicity": "Low in solid crystal form. Dust can be an irritant.",
+          "handling": "Handle carefully as optical components; can be brittle."
+        },
+        "identification": {
+          "cas_number": "12031-63-9",
+          "class": "Ferroelectric Oxide Crystal, Niobate",
+          "crystal_structure": "Trigonal (R3c space group), Perovskite-like structure.",
+          "lattice_constant": {"value": "a=5.148, c=13.863", "unit": "Å", "notes": "Hexagonal setting, room temperature. Stoichiometry affects lattice parameters."},
+          "phase_diagram_notes": "Grown from a congruent melt (Li₂O ≈ 48.6 mol%). Stoichiometry control is critical as non-stoichiometry (Li deficiency) strongly affects optical properties (e.g., refractive index, photorefractivity)."
+        },
+        "advanced_fabrication_insights": {
+            "stoichiometry_control": "Crucial during crystal growth (CZ method). Controlling Li₂O/Nb₂O₅ ratio in melt determines congruent vs. stoichiometric composition. Vapor Transport Equilibration (VTE) used to achieve near-stoichiometric crystals.",
+            "common_defects_impact": "Li vacancies, Nb antisites (Nb on Li sites), oxygen vacancies, domain walls. Affect refractive index homogeneity, photorefractive damage threshold, coercive field, optical loss.",
+            "surface_preparation": "Requires high-quality optical polishing (e.g., CMP) for low scattering loss and device fabrication (waveguides, electrodes).",
+            "method_specific_notes": "Czochralski (CZ) growth is standard. Doping (e.g., with MgO, Fe, Er, Nd) used to tailor properties (reduce photorefractivity, enable lasers)."
+        },
+        "growth_fabrication_properties": {
+            "common_growth_methods": "Czochralski (CZ) method from platinum or iridium crucibles.",
+            "source_materials_purity": "High purity Li₂CO₃ and Nb₂O₅ powders.",
+            "preferred_substrates_orientations": "N/A (Bulk crystal growth). Wafers cut along specific crystallographic axes (X, Y, Z-cut) depending on application.",
+            "typical_growth_parameters": "Melting point ~1257°C. Requires precise temperature control, pull/rotation rates. Poling (applying electric field near Curie temp) needed to align ferroelectric domains.",
+            "passivation_methods": "Surface generally stable, but coatings (AR, electrode) are standard for devices."
+        },
+        "post_growth_processing": {
+            "annealing": "Used for stress relief and domain stabilization.",
+            "lapping_polishing": "Precision optical grinding, lapping, and polishing (e.g., CMP) to achieve low surface roughness (<1 nm) and flatness.",
+            "etching": "Can be etched using HF-based solutions for defect visualization or structuring.",
+            "grinding_milling": "Diamond tooling for slicing, dicing, and shaping."
+        },
+         "device_integration_characterization": {
+            "device_architectures": "Electro-optic modulators (Mach-Zehnder, phase), Pockels cells, Q-switches, Frequency doublers (SHG), Optical Parametric Oscillators (OPOs), Surface Acoustic Wave (SAW) filters, Photorefractive devices, Waveguides (Ti-indiffused, proton-exchanged).",
+            "readout_integration": "N/A",
+            "ar_coatings": "Standard for optical components to reduce Fresnel reflection losses (~14% per surface).",
+            "packaging_cooling": "Generally operated at room temperature. Temperature control can be critical for phase matching in nonlinear optics.",
+            "key_characterization_techniques": ["Refractive Index Measurement (Ellipsometry, Prism Coupling)", "Electro-Optic Coefficient Measurement", "Nonlinear Coefficient Measurement (SHG)", "Curie Temperature Measurement (DSC, dielectric)", "Photorefractive Damage Testing", "XRD (orientation, quality)", "Piezoelectric/SAW Characterization"]
+        },
+        "electrical_properties": {
+          "bandgap_type": "Insulator (Wide Bandgap)",
+          "band_gap": {"value": "~3.7-4.0", "unit": "eV"},
+          "dielectric_constant": {"value": "ε₁₁≈84, ε₃₃≈30", "notes": "Highly anisotropic. Values at low frequency."},
+          "resistivity": {"value": "> 10¹⁴", "unit": "Ω·cm", "notes": "Excellent insulator."},
+          "piezoelectric_coefficients": {"notes": "Strong piezoelectric effect (e.g., d₃₃ ≈ 6-30 pC/N depending on stoichiometry)."},
+          "pyroelectric_coefficient": {"notes": "Strong pyroelectric effect along c-axis."},
+          "curie_temperature": {"value": "~1140-1210", "unit": "°C", "notes": "Ferroelectric phase transition temperature, sensitive to stoichiometry."}
+        },
+        "optical_properties": {
+          "spectral_range": "Transparent from ~350 nm to ~5 µm.",
+          "refractive_index": {"value": "nₒ≈2.28, nₑ≈2.20", "notes": "Birefringent (uniaxial negative). Values at 633 nm. Dispersion exists."},
+          "electro_optic_coefficients": {"value": "Large (r₃₃ ≈ 31 pm/V, r₁₃ ≈ 10 pm/V)", "notes": "Key property for modulators."},
+          "nonlinear_coefficients": {"value": "Large (d₃₃ ≈ -25 pm/V, d₃₁ ≈ -5 pm/V)", "notes": "For SHG, OPO. Requires quasi-phase-matching (QPM) via periodic poling to utilize largest coefficient (d₃₃)."},
+          "photorefractive_effect": {"notes": "Can suffer from photorefractive damage (light-induced index change) at high intensities, especially in visible. MgO doping significantly increases resistance."}
+        },
+        "thermal_properties": {
+          "operating_temperature": {"value": "Wide range, often near room temp.", "notes": "Temperature control needed for phase matching stability."},
+          "thermal_conductivity": {"value": "~4-6", "unit": "W/(m·K)", "notes": "Relatively low."},
+          "specific_heat": {"value": "~0.5-0.6", "unit": "J/(g·K)"},
+          "melting_point": {"value": "1257", "unit": "°C"},
+          "thermal_expansion": {"value": "α_a≈15, α_c≈4 x 10⁻⁶", "unit": "/°C", "notes": "Anisotropic."}
+        },
+         "mechanical_properties": {
+             "density": {"value": "4.65", "unit": "g/cm³"},
+             "youngs_modulus": {"value": "~170-200", "unit": "GPa", "notes": "Anisotropic."},
+             "hardness_mohs": {"value": "5", "notes": "Relatively soft for an oxide."},
+             "poissons_ratio": "~0.25",
+             "fracture_toughness": {"value": "Low (<1)", "unit": "MPa·m⁰·⁵", "notes": "Brittle."}
+         },
+         "device_applications": {
+             "sensor_types": ["SAW sensors", "Pyroelectric detectors"],
+             "key_applications": ["Electro-optic Modulators (Telecom, RF photonics)", "Frequency Conversion (SHG lasers - green pointers, OPOs - tunable IR sources)", "SAW Filters & Devices (Mobile phones, RF)", "Pockels Cells & Q-switches (Lasers)", "Integrated Optics (Waveguides, photonic circuits)", "Holographic Data Storage", "Acousto-Optic Devices"]
+         },
+         "chemical_properties": {
+             "stability_oxidation": "Highly stable oxide.",
+             "solvent_resistance": "Excellent.",
+             "acid_resistance": "Resistant to most acids except HF.",
+             "base_resistance": "Resistant.",
+             "water_solubility": "Insoluble."
+         },
+         "comparison_alternatives": {
+             "notes": "Alternative Electro-optic/Nonlinear Crystals:",
+             "vs_Lithium_Tantalate_LiTaO3": "LiNbO₃: Larger electro-optic/nonlinear coefficients, lower Curie temp. LiTaO₃: Higher damage threshold (less photorefractive), higher Curie temp, lower coefficients, commonly used for SAW.",
+             "vs_Potassium_Titanyl_Phosphate_KTP": "LiNbO₃: Higher coefficients, broader transparency, can be periodically poled (QPM). KTP: Higher damage threshold, suitable for high power SHG without QPM (uses birefringent phase matching).",
+             "vs_Beta_Barium_Borate_BBO": "LiNbO₃: Higher coefficients, lower UV transparency cutoff. BBO: Wider phase matching range, transparent deeper into UV, lower coefficients, hygroscopic.",
+             "vs_Electro_Optic_Polymers": "LiNbO₃: Higher coefficients, better stability, mature technology. E-O Polymers: Potential for lower cost, easier processing (spin coating), lower coefficients, stability challenges."
+         },
+         "references_further_reading": {
+             "notes": "Key Resources:",
+             "book_yariv_yeh": "Yariv, A., & Yeh, P. 'Optical Waves in Crystals'.",
+             "book_weis_gaylord": "Weis, R. S., & Gaylord, T. K. 'Lithium Niobate: Summary of Physical Properties and Crystal Structure.' (Applied Physics A)",
+             "review_jqe_apl": "Review articles on LiNbO₃ applications in Journal of Quantum Electronics or Applied Physics Letters.",
+             "wikipedia": "https://en.wikipedia.org/wiki/Lithium_niobate"
+         },
+         "vendor_info": {
+            "notes": "Example Vendors (Placeholder):",
+            "vendor_1": "Company A - www.example-vendor-a.com",
+            "vendor_2": "Company B - www.example-vendor-b.com",
+            "vendor_3": "Company C - www.example-vendor-c.com"
+         },
+        "tags": [
+          "nonlinear optical", "ferroelectric", "electro-optic", "acousto-optic",
+          "single crystal", "photonic", "quantum", "modulator", "laser",
+          "industry:photonics", "industry:quantum", "crystal", "piezoelectric", "pyroelectric"
+        ]
       } 
 }
