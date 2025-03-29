@@ -6,76 +6,154 @@
       "HgCdTe",
       "MCT"
     ],
+    "category":**Action: Fix `data/material_details.json`**
+
+1.  Go to your `data/material_details.json` file on GitHub.
+2.  **DELETE** the entire content of the file.
+3.  **PASTE** the following **corrected** code as the new, complete content. I have added the missing comma:
+
+```json
+{
+  "Mercury Cadmium Telluride": {
+    "name": "Mercury Cadmium Telluride",
+    "formula": "Hg(1-x)Cd(x)Te",
+    "synonyms": [
+      "Hg "Semiconductor",
+    "description": "Mercury Cadmium Telluride (HgCdTe or MCT) is a II-VI semiconductor alloy where the bandgap, and thus the optical/electrical properties, are precisely tuned by adjusting the Cadmium mole fraction (x). Values typically range from x=0 (HgTe, semimetal) to x=1 (CdTe, ~1.5eV bandgap). It is widely used in high-performance infrared sensors and thermal imaging systems, especially those requiring cryogenic cooling. The preferred substrate for highest quality epitaxial growth is often lattice-matched Cadmium Zinc Telluride (CdZnTe orCdTe",
+      "MCT"
+    ],
     "category": "Semiconductor",
-    "description": "Mercury Cadmium Telluride (HgCdTe or MCT) is a II-VI semiconductor alloy where the bandgap, and thus the optical/electrical properties, are precisely tuned by adjusting the Cadmium mole fraction (x). Values typically range from x=0 (HgTe, semimetal) to x=1 (CdTe, ~1.5eV bandgap). It is widely used in high-performance infrared sensors and thermal imaging systems, especially those requiring cryogenic cooling. The preferred substrate for highest quality epitaxial growth is often lattice-matched Cadmium Zinc Telluride (CdZnTe or CZT) with approximately 4% Zn concentration.",
+    "description": "Mercury Cadmium Telluride (HgCdTe or MCT) is a II-VI semiconductor alloy known for its tunable bandgap, enabling detection across SWIR, MWIR, and LWIR bands. It is widely used in infrared sensors and thermal imaging systems, especially in cryogenically cooled applications.",
     "safety": {
-      "toxicity": "High. Contains Mercury (neurotoxin, heavy metal) and Cadmium (carcinogen). Elemental Tellurium is also toxic.",
-      "handling": "Requires specialized handling under strict protocols: Use appropriate PPE (nitrile gloves, safety glasses, respirator if generating dust/fumes), work only in certified fume hoods or glove boxes. Follow designated hazardous waste disposal procedures."
+      "toxicity": "High. Contains Mercury (toxic heavy metal) and Cadmium (carcinogen). Elemental Tellurium is also toxic.",
+      "handling": "Requires specialized handling: Use appropriate PPE (gloves, respirator if generating dust/fumes), work in well-ventilated areas or fume hoods. Follow strict waste disposal protocols."
     },
     "identification": {
-      "cas_number": "30784-21-9 (generic, composition dependent)",
+      "cas_number": "30784-21-9 (generic, CZT) with approximately 4% Zn concentration.",
+    "safety": {
+      "toxicity": "High. Contains Mercury (neurotoxin, heavy metal) and Cadmium (carcinogen). Elemental Tellurium is also toxic.",
+      "handling": "Requires specialized handling under strict protocols: Use specific composition varies)",
       "class": "II-VI Compound Semiconductor Alloy",
       "crystal_structure": "Zinc blende (FCC)",
       "lattice_constant": {
-         "value": "~6.461 Å (for x=0, HgTe) to ~6.481 Å (for x=1, CdTe)",
+         "value": "~6.461 Å (for x=0, HgTe) to ~6.48 appropriate PPE (nitrile gloves, safety glasses, respirator if generating dust/fumes), work only in certified fume hoods or glove boxes. Follow designated hazardous waste disposal procedures."
+    },
+    "identification": {
+      "cas_number": "30784-21-9 (generic, composition1 Å (for x=1, CdTe)",
          "notes": "Varies nearly linearly with x (Vegard's Law applies approximately)."
       }
     },
     "growth_fabrication": {
-        "preferred_substrate": "Cadmium Zinc Telluride (CdZnTe, often with ~4% Zn) for lattice matching. Si, GaAs, Sapphire also used with buffer layers.",
-        "crystal_orientations": "(111)B [Te-face] often preferred for LPE; (211)B and (100) common for MBE/MOCVD depending on application and growth dynamics.",
-        "fabrication_compounds": "High-purity elemental sources: Mercury (Hg, often 6N-7N+), Cadmium (Cd, 6N-7N+), Tellurium (Te, 6N-7N+). CdTe compound source also used.",
+        "preferred_substrate": "Cadmium Zinc Telluride (CdZnTe, often with dependent)",
+      "class": "II-VI Compound Semiconductor Alloy",
+      "crystal_structure": "Zinc blende (FCC)",
+      "lattice_constant": {
+        "value": "~6.461 Å (for x=0, HgTe) to ~6.481 ~4% Zn) for lattice matching. Si, GaAs, Sapphire also used with buffer layers.",
+        "crystal_orientations": "(111)B [Te-face] often preferred for LPE; (211)B and (100) common for MBE/MOCVD Å (for x=1, CdTe)",
+        "notes": "Varies nearly linearly with x (Vegard's Law applies approximately)."
+      }
+    },
+    "growth_fabrication": {
+      "preferred_substrate": "Cadmium Zinc Telluride (CdZnTe, often with depending on application and growth dynamics.",
+        "fabrication_compounds": "High-purity elemental sources: Mercury (Hg, often 6N-7N+), Cadmium (Cd, 6N-7N+), Tellurium (Te, 6N-7N+). Cd ~4% Zn) for lattice matching. Si, GaAs, Sapphire also used with buffer layers.",
+      "crystal_orientations": "(111)B [Te-face] often preferred for LPE; (211)B and (100) common for MBE/MOCVD dependingTe compound source also used.",
         "purity_requirements": "Extremely high purity (typically 99.9999% [6N] or better) is critical to minimize unintentional doping and defects affecting carrier lifetime and noise."
     },
     "electrical_properties": {
-      "bandgap_type": "Direct, Tunable",
+      "bandgap on application and growth dynamics.",
+      "fabrication_compounds": "High-purity elemental sources: Mercury (Hg, often 6N-7N+), Cadmium (Cd, 6N-7N+), Tellurium (Te, 6N-7N+). CdTe compound source also_type": "Direct, Tunable",
       "band_gap": {
         "value": "Variable -0.3 (x≈0) to 1.5 (x=1)",
         "unit": "eV",
-        "notes": "Tunable via Cadmium fraction (x). Commonly targeted: x≈0.2 for LWIR (~0.1 eV), x≈0.3 for MWIR (~0.25 eV)."
+        "notes": "Tunable via Cadmium fraction ( used.",
+      "purity_requirements": "Extremely high purity (typically 99.9999% [6N] or better) is critical to minimize unintentional doping and defects affecting carrier lifetime and noise."
+    },
+    "electrical_properties": {
+      "bandgap_type": "x). Commonly targeted: x≈0.2 for LWIR (~0.1 eV), x≈0.3 for MWIR (~0.25 eV)."
       },
       "bandgap_equation": {
           "hansen_eg": "Eg(x, T) ≈ -0.302 + 1.93x + 5.35e-4 * T*(1-2x) - 0.810*x^2 + 0.832*x^3 (eV). Empirical, various forms exist.",
-          "wavelength_relation": "λ_cutoff (µm) ≈ 1.24 / Eg (eV)"
+          "wavelength_relation": "λ_cutoffDirect, Tunable",
+      "band_gap": {
+        "value": "Variable -0.3 (x≈0) to 1.5 (x=1)",
+        "unit": "eV",
+        "notes": "Tunable via Cadmium fraction (x). Commonly targeted: x≈ (µm) ≈ 1.24 / Eg (eV)"
       },
-      "common_dopants": "n-type: Indium (In), typically 10¹⁴-10¹⁶ cm⁻³. p-type: Arsenic (As), Gold (Au), or Hg vacancies, typically 10¹⁵-10¹⁷ cm⁻³.",
+      "common_dopants": "n-type: Indium (In), typically 10¹⁴-10¹⁶ cm⁻³. p-type: Arsenic (As), Gold (Au),0.2 for LWIR (~0.1 eV), x≈0.3 for MWIR (~0.25 eV)."
+      },
+      "bandgap_equation": {
+        "hansen_eg": "Eg(x, T) ≈ -0.302 + 1 or Hg vacancies, typically 10¹⁵-10¹⁷ cm⁻³.",
       "carrier_concentration": {
-          "value": "Intrinsic (ni) ~10¹⁶ cm⁻³ at 300K (x=0.2), ~10¹³ cm⁻³ at 77K. Extrinsic control via doping.",
+          "value": "Intrinsic (ni) ~10¹⁶ cm⁻³ at 300K (x=0.2), ~10¹³ cm⁻³ at.93x + 5.35e-4 * T*(1-2x) - 0.810*x^2 + 0.832*x^3 (eV). Empirical, various forms exist.",
+        "wavelength_relation": "λ_cutoff (µm) 77K. Extrinsic control via doping.",
           "notes": "Strongly temperature dependent, especially intrinsic."
       },
       "electron_mobility": {
         "value": "10,000 - 100,000+",
-        "unit": "cm²/Vs",
+        "unit": "cm²/ ≈ 1.24 / Eg (eV)"
+      },
+      "common_dopants": "n-type: Indium (In), typically 10¹⁴-10¹⁶ cm⁻³. p-type: Arsenic (As), Gold (Au), or Hg vacancies,Vs",
         "notes": "Very high at 77 K for low x (e.g., x=0.2), decreases with higher x and higher temperature."
       },
       "hole_mobility": {
         "value": "100 - 600",
-        "unit": "cm²/Vs",
+        "unit typically 10¹⁵-10¹⁷ cm⁻³.",
+      "carrier_concentration": {
+        "value": "Intrinsic (ni) ~10¹⁶ cm⁻³ at 300K (x=0.2), ~10¹³ cm⁻³ at 77": "cm²/Vs",
         "notes": "Significantly lower than electron mobility, also temp/composition dependent (77 K values)."
       },
        "dielectric_constant": {
            "value": "~15 - 20",
-           "notes": "Static value, varies slightly with x and frequency."
+           "notes": "Static value, varies slightly withK. Extrinsic control via doping.",
+        "notes": "Strongly temperature dependent, especially intrinsic."
+      },
+      "electron_mobility": {
+        "value": "10,000 - 100,000+",
+        "unit": "cm²/Vs x and frequency."
        },
        "resistivity": {
            "value": "Highly variable (10⁻³ - 10³+)",
            "unit": "Ω·cm",
            "notes": "Depends strongly on composition, temperature, and doping level/type."
-       },
+       ",
+        "notes": "Very high at 77 K for low x (e.g., x=0.2), decreases with higher x and higher temperature."
+      },
+      "hole_mobility": {
+        "value": "100 - 600",
+        "unit},
        "breakdown_field": {
            "value": "Low (~10³ - 10⁴)",
            "unit": "V/cm",
            "notes": "Limits high-field device operation, sensitive to defects."
        }
     },
-    "optical_properties": {
+    "optical_": "cm²/Vs",
+        "notes": "Significantly lower than electron mobility, also temp/composition dependent (77 K values)."
+      },
+      "dielectric_constant": {
+        "value": "~15 - 20",
+        "notes": "Static value, varies slightly withproperties": {
       "spectral_range": "SWIR, MWIR, LWIR (0.8 µm to >30 µm)",
+      "notes": "Range is determined by bandgap (composition x).",
       "cutoff_wavelength": {
-        "value": "Variable 0.8 (x=1) to >30 (x≈0)",
+        "value": "Variable x and frequency."
+      },
+      "resistivity": {
+        "value": "Highly variable (10⁻³ - 10³+)",
+        "unit": "Ω·cm",
+        "notes": "Depends strongly on composition, temperature, and doping level/type."
+      },
+ 0.8 (x=1) to >30 (x≈0)",
         "unit": "µm",
         "notes": "Determined by Eg(x). λ_c (µm) ≈ 1.24 / Eg (eV)."
       },
-      "refractive_index": {
+      "ref      "breakdown_field": {
+        "value": "Low (~10³ - 10⁴)",
+        "unit": "V/cm",
+        "notes": "Limits high-field device operation, sensitive to defects."
+      }
+    },
+    "optical_properties":ractive_index": {
         "value": "~3.4 - 4.0",
         "notes": "High index, varies with wavelength and composition (x)."
       },
@@ -86,44 +164,82 @@
        },
        "quantum_efficiency": {
            "value": "High (>70-80%)",
-           "notes": "Internal QE can be very high in good material with appropriate AR coating."
+           "notes": "Internal QE can be very high in good material with appropriate AR {
+      "spectral_range": "SWIR, MWIR, LWIR (0.8 µm to >30 µm)",
+      "notes": "Range is determined by bandgap (composition x).",
+      "cutoff_wavelength": {
+        "value": "Variable 0. coating."
        },
        "responsivity": {
            "value": "~1 - 10",
            "unit": "A/W",
            "notes": "Typical values at 77 K, depends on wavelength, bias, device type."
        },
-       "noise_equivalent_power": {
+       "noise8 (x=1) to >30 (x≈0)",
+        "unit": "µm",
+        "notes": "Determined by Eg(x). λ_c (µm) ≈ 1.24 / Eg (eV)."
+      },
+      "refractive_index":_equivalent_power": {
            "value": "~10⁻¹¹ - 10⁻¹³",
            "unit": "W/√Hz",
            "notes": "For high-performance cooled detectors."
        }
     },
     "thermal_properties": {
-      "operating_temperature": {
+       {
+        "value": "~3.4 - 4.0",
+        "notes": "High index, varies with wavelength and composition (x)."
+      },
+      "absorption_coefficient": {
+        "value": ">10⁴",
+        "unit": "cm⁻¹",
+        "operating_temperature": {
         "value": "Typically 77 K (LN₂ cooled)",
         "notes": "Required for optimal S/N ratio, especially for LWIR detection, by reducing thermally generated carriers (dark current)."
       },
       "thermal_conductivity": {
-        "value": "Low (~1 - 5)", // Corrected range based on sources
+        ""notes": "Very high near the band edge for efficient photon absorption."
+      },
+      "quantum_efficiency": {
+        "value": "High (>70-80%)",
+        "notes": "Internal QE can be very high in good material with appropriate AR coating."
+      },value": "Low (~1 - 5)",
         "unit": "W/(m·K)",
         "notes": "Poor thermal conductor compared to Si or GaAs."
       },
        "specific_heat": {
            "value": "~0.16 - 0.20",
-           "unit": "J/(g·K)",
+           
+      "responsivity": {
+        "value": "~1 - 10",
+        "unit": "A/W",
+        "notes": "Typical values at 77 K, depends on wavelength, bias, device type."
+      },
+      "noise_equivalent_power":"unit": "J/(g·K)",
            "notes": "At room temperature, varies with x."
        },
       "melting_point": {
-        "value": "~700 - 800", // Narrowed range based on sources for typical x
+        "value": "~700 - 800",
         "unit": "°C",
-        "notes": "Composition dependent (pseudo-binary phase diagram)."
+        "notes": {
+        "value": "~10⁻¹¹ - 10⁻¹³",
+        "unit": "W/√Hz",
+        "notes": "For high-performance cooled detectors."
+      }
+    },
+    "thermal_properties": {
+      "operating_temperature": "Composition dependent (pseudo-binary phase diagram)."
       }
     },
      "mechanical_properties": {
          "density": {
              "value": "~5.8 (x=1) to ~8.1 (x=0)",
-             "unit": "g/cm³",
+             "unit": "g/cm³ {
+        "value": "Typically 77 K (LN₂ cooled)",
+        "notes": "Required for optimal S/N ratio, especially for LWIR detection, by reducing thermally generated carriers (dark current)."
+      },
+      "thermal_conductivity": {
+        "value": "Low",
              "notes": "Increases significantly with higher Hg content."
          },
          "youngs_modulus": {
@@ -131,39 +247,119 @@
              "unit": "GPa"
          },
          "hardness_vickers": {
-             "value": "~70 - 100",
+             "value": "~ (~1 - 5)",
+        "unit": "W/(m·K)",
+        "notes": "Poor thermal conductor compared to Si or GaAs."
+      },
+      "specific_heat": {
+        "value": "~0.16 - 0.20",
+        "70 - 100",
              "unit": "HV",
              "notes": "Relatively soft and brittle semiconductor."
          },
          "poissons_ratio": "~0.3",
          "fracture_toughness": {
-             "value": "Low (< 0.5)",
+             "value": "Low (< unit": "J/(g·K)",
+        "notes": "At room temperature, varies with x."
+      },
+      "melting_point": {
+        "value": "~700 - 800",
+        "unit": "°C",
+        "notes": "0.5)",
              "unit": "MPa·m⁰·⁵",
              "notes": "Brittle, requires careful handling."
          }
      },
      "device_applications": {
-         "sensor_types": ["Photoconductor (PC)", "Photovoltaic (PV) / Photodiode (PD)", "Avalanche Photodiode (APD, less common)"],
-         "common_applications": ["Thermal Imaging / FLIR systems", "Military night vision", "Medical diagnostics (thermography)", "Environmental gas sensing", "Astronomy (IR telescopes)", "Process monitoring", "Missile guidance systems"]
+         "sensor_types": ["Photoconductor (PC)", "Photovoltaic (PVComposition dependent (pseudo-binary phase diagram)."
+      }
+    },
+    "mechanical_properties": {
+      "density": {
+        "value": "~5.8 (x=1) to ~8.1 (x=0)",
+        "unit": "g/cm³",) / Photodiode (PD)", "Avalanche Photodiode (APD, less common)"],
+         "common_applications": ["Thermal Imaging / FLIR systems", "Military night vision", "Medical diagnostics (thermography)", "Environmental gas sensing", "Astronomy (IR telescopes)", "Process monitoring", "Missile
+        "notes": "Increases significantly with higher Hg content."
+      },
+      "youngs_modulus": {
+        "value": "~40 - 50",
+        "unit": "GPa"
+      },
+      "hardness_vickers": {
+        "value": "~ guidance systems"]
      },
      "chemical_properties": {
          "oxidation": "Readily oxidizes in air, especially at elevated temperatures. Surface passivation is essential.",
-         "etchability": "Wet etches using Br-Methanol, Br-Ethylene Glycol, or various acid mixtures (e.g., lactic/nitric/hydrofluoric). Dry etching (ICP, RIE) also used.",
+         "etchability": "Wet etches using Br-Methanol, Br-Ethylene Glycol, or various acid mixtures70 - 100",
+        "unit": "HV",
+        "notes": "Relatively soft and brittle semiconductor."
+      },
+      "poissons_ratio": "~0.3",
+      "fracture_toughness": {
+        "value": "Low (<  (e.g., lactic/nitric/hydrofluoric). Dry etching (ICP, RIE) also used.",
          "stability": "Chemically unstable without passivation. Sensitive to acids and some organic solvents."
      },
      "magnetic_properties": {
          "type": "Diamagnetic"
-     },
+0.5)",
+        "unit": "MPa·m⁰·⁵",
+        "notes": "Brittle, requires careful handling."
+      }
+    },
+    "device_applications": {
+      "sensor_types": [
+        "Photoconductor (PC)",
+        "     },
      "vendor_info": {
          "notes": "List of potential vendors (placeholder).",
          "vendor_1": "Company A - www.example-vendor-a.com (dummy)",
-         "vendor_2": "Company B - www.example-vendor-b.com (dummy)",
+         "vendor_2": "Company B - www.example-vendor-b.Photovoltaic (PV) / Photodiode (PD)",
+        "Avalanche Photodiode (APD, less common)"
+      ],
+      "common_applications": [
+        "Thermal Imaging / FLIR systems",
+        "Military night vision",
+        "Medical diagnostics (thermography)",
+com (dummy)",
          "vendor_3": "Company C - www.example-vendor-c.com (dummy)"
      },
+     "processing_availability": {
+       "synthesis_methods": [
+         "Liquid Phase Epitaxy (LPE)",
+         "Molecular Beam Epitaxy        "Environmental gas sensing",
+        "Astronomy (IR telescopes)",
+        "Process monitoring",
+        "Missile guidance systems"
+      ]
+    },
+    "chemical_properties": {
+      "oxidation": "Readily oxidizes in air, especially at elevated temperatures. Surface passivation is essential.", (MBE)",
+         "Metalorganic Chemical Vapor Deposition (MOCVD)",
+         "Bulk Crystal Growth (Bridgman, THM)"
+       ], // <<< COMMA WAS MISSING HERE before "forms"
+       "forms": [
+         "Epitaxial layers on substrates (e.
+      "etchability": "Wet etches using Br-Methanol, Br-Ethylene Glycol, or various acid mixtures (e.g., lactic/nitric/hydrofluoric). Dry etching (ICP, RIE) also used.",
+      "stability": "Chemically unstable without passivation. Sensitiveg., CdTe, CdZnTe, Si, GaAs)",
+         "Bulk crystals (less common for detector arrays)"
+       ]
+     },
     "tags": [
-      "II-VI", "LPE", "MBE", "MOCVD", "aerospace", "cadmium", "chalcogenide", "cryogenic",
+      "II-VI", "LPE", "MBE", "MOCVD", "aerospace", "cadmium", to acids and some organic solvents."
+    },
+    "magnetic_properties": {
+      "type": "Diamagnetic"
+    },
+    "vendor_info": {
+      "notes": "List of potential vendors (placeholder).",
+      "vendor_1": "www.example-vendor "chalcogenide", "cryogenic",
       "epitaxial", "group 12", "group 16", "industry:aerospace", "industry:infrared",
-      "industry:photonics", "ir", "lwir", "mercury", "mwir", "nitrogen cooled",
+      "industry:photonics", "ir", "lwir", "mercury", "mwir", "nitrogen-a.com",
+      "vendor_2": "www.example-vendor-b.com",
+      "vendor_3": "www.example-vendor-c.com"
+    },
+    "tags": [
+      "II-VI", "LPE", "MBE", cooled",
       "photoconductive", "photoconductor", "photodiode", "photosensor", "semiconductor",
       "sensor", "single crystal", "tellurium", "toxic", "tunable bandgap"
     ]
