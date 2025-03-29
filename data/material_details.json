@@ -791,5 +791,112 @@
       "infrared", "photodiode", "photosensor", "semiconductor", "sensor",
       "swir", "tunable bandgap"
     ]
-  }
+  },
+  ,
+    "Yttria-Stabilized Zirconia (YSZ)": {
+        "name": "Yttria-Stabilized Zirconia (YSZ)",
+        "formula": "ZrO₂ + Y₂O₃",
+        "synonyms": [ "YSZ", "Yttria Stabilized Zirconia", "Zirconia Yttria" ],
+        "category": "Ceramic",
+        "description": "A ceramic material produced by doping Zirconium dioxide (Zirconia) with Yttrium oxide (Yttria). Adding Yttria stabilizes the cubic or tetragonal crystal structure of Zirconia over a wider temperature range than pure Zirconia. YSZ exhibits high hardness, wear resistance, thermal stability, and notably, high oxygen ion conductivity at elevated temperatures, making it crucial for solid oxide fuel cells (SOFCs), oxygen sensors, and thermal barrier coatings (TBCs).",
+        "wiki_link": "https://en.wikipedia.org/wiki/Yttria-stabilized_zirconia",
+        "safety": {
+          "toxicity": "Low in solid form. Dust generated during machining/grinding can be an inhalation hazard.",
+          "handling": "Standard ceramic handling. Wear respiratory protection if generating dust."
+        },
+        "identification": {
+          "cas_number": "64417-98-7 (generic YSZ)",
+          "class": "Stabilized Zirconia Ceramic",
+          "crystal_structure": "Cubic (Fluorite structure) or Tetragonal, depending on Y₂O₃ content and temperature. Typically cubic for >8 mol% Y₂O₃.",
+          "lattice_constant": {"value": "~5.12-5.14", "unit": "Å", "notes": "Cubic phase, depends on Y₂O₃ content."},
+          "phase_diagram_notes": "ZrO₂ exhibits phase transitions (Monoclinic -> Tetragonal -> Cubic). Y₂O₃ addition suppresses the monoclinic phase and stabilizes tetragonal/cubic phases at lower temperatures."
+        },
+        "advanced_fabrication_insights": {
+            "stoichiometry_control": "Precise Y₂O₃ content (typically 3-10 mol%) determines phase stability and ionic conductivity.",
+            "common_defects_impact": "Oxygen vacancies (created by Y³⁺ substituting Zr⁴⁺) are crucial for ionic conductivity. Grain boundaries can impede ion transport. Porosity affects mechanical strength and conductivity.",
+            "surface_preparation": "Surface properties important for coating adhesion (TBCs) and electrode interface contact (SOFCs).",
+            "method_specific_notes": "Powder synthesis (co-precipitation, sol-gel) followed by sintering (pressing, tape casting, plasma spraying) influences final microstructure (grain size, porosity)."
+        },
+        "growth_fabrication_properties": {
+            "common_growth_methods": "Powder processing & Sintering. Methods include: Pressing (uniaxial/isostatic), Tape Casting, Slip Casting, Plasma Spraying (for coatings), Physical/Chemical Vapor Deposition (thin films).",
+            "source_materials_purity": "High purity ZrO₂ and Y₂O₃ powders.",
+            "preferred_substrates_orientations": "Substrate (for coatings): Superalloys (TBCs), porous electrode supports (SOFCs). Bulk material: N/A.",
+            "typical_growth_parameters": "Sintering temperatures typically >1300°C, often 1400-1600°C, atmosphere control can be important.",
+            "passivation_methods": "Generally chemically stable; surface modification sometimes used for specific applications."
+        },
+        "post_growth_processing": {
+            "annealing": "Can be used for stress relief or further densification/grain growth control.",
+            "lapping_polishing": "Standard ceramic grinding and diamond polishing techniques.",
+            "etching": "Difficult to etch chemically. Plasma etching can be used for thin films.",
+            "grinding_milling": "Diamond tooling required for machining sintered parts."
+        },
+         "device_integration_characterization": {
+            "device_architectures": "Solid electrolyte in SOFCs, oxygen sensors (Lambda sensors), thermal barrier coatings (TBCs), dental implants/crowns, cutting tools, bearings.",
+            "readout_integration": "N/A for bulk material. Electrical contact critical for SOFC/sensor use.",
+            "ar_coatings": "N/A - typically opaque.",
+            "packaging_cooling": "Designed for high-temperature operation. Sealing is critical for SOFCs/sensors.",
+            "key_characterization_techniques": ["X-Ray Diffraction (XRD - phase identification/stability)", "Scanning Electron Microscopy (SEM - microstructure, porosity)", "Electrochemical Impedance Spectroscopy (EIS - ionic conductivity)", "Thermal Expansion Measurement (Dilatometry)", "Mechanical Testing (Hardness, Fracture Toughness, Flexural Strength)"]
+        },
+        "electrical_properties": {
+          "bandgap_type": "Insulator (Wide Bandgap)",
+          "band_gap": {"value": "~5-7", "unit": "eV", "notes": "Approximate electronic bandgap."},
+          "ionic_conductivity": {"value": "~0.1", "unit": "S/cm", "notes": "High oxygen ion conductivity at ~1000°C (for 8YSZ). Strongly temperature dependent (Arrhenius behavior)."},
+          "common_dopants": "Yttria (Y₂O₃) is the primary dopant. Other stabilizers (CaO, MgO, Sc₂O₃) used for specific properties.",
+          "dielectric_constant": {"value": "~25-35", "notes": "Relatively high."},
+          "resistivity": {"value": "Very high electronic resistivity (>10⁶ Ω·cm at operating temp).", "notes": "Primarily an ionic conductor at high temperature."}
+        },
+        "optical_properties": {
+          "spectral_range": "Generally opaque in visible/NIR.", "notes": "Can be translucent/opaque white depending on porosity/sintering. Single crystals can be transparent.",
+          "refractive_index": {"value": "~2.1-2.2", "notes": "In visible range for dense material."}
+        },
+        "thermal_properties": {
+          "operating_temperature": {"value": "Up to >1000", "unit": "°C", "notes": "Excellent high-temperature stability. Usable range depends on phase stability (~1200°C for TBCs, ~800-1000°C for SOFCs)."},
+          "thermal_conductivity": {"value": "Low (~2-3)", "unit": "W/(m·K)", "notes": "Excellent thermal insulator, key for TBC applications."},
+          "specific_heat": {"value": "~0.4-0.6", "unit": "J/(g·K)"},
+          "melting_point": {"value": "~2700", "unit": "°C"},
+          "thermal_expansion": {"value": "~10-11 x 10⁻⁶", "unit": "/°C", "notes": "Relatively high CTE for a ceramic, closer match to metals than Al₂O₃."}
+        },
+         "mechanical_properties": {
+             "density": {"value": "~5.6-6.1", "unit": "g/cm³", "notes": "Depends on Y₂O₃ content and porosity."},
+             "youngs_modulus": {"value": "~200-220", "unit": "GPa"},
+             "hardness_vickers": {"value": "~1200-1400", "unit": "HV", "notes": "Mohs hardness ~8-8.5."},
+             "poissons_ratio": "~0.3",
+             "fracture_toughness": {"value": "High for a ceramic (6-10+)", "unit": "MPa·m⁰·⁵", "notes": "Transformation toughening mechanism in partially stabilized zirconia (containing tetragonal phase)."}
+         },
+         "device_applications": {
+             "sensor_types": ["Oxygen Sensor (Lambda sensor)"],
+             "key_applications": ["Solid Oxide Fuel Cell (SOFC) Electrolyte/Support", "Thermal Barrier Coatings (TBCs) for Gas Turbines/Jet Engines", "Oxygen Sensors (Automotive, Industrial)", "Dental Crowns & Implants", "Cutting Tools & Wear Parts", "High-Temperature Heating Elements", "Jewelry (Cubic Zirconia - CZ, though often different stabilization)"]
+         },
+         "chemical_properties": {
+             "stability_oxidation": "Highly stable oxide ceramic.",
+             "solvent_resistance": "Excellent.",
+             "acid_resistance": "Good resistance to most acids.",
+             "base_resistance": "Good resistance to bases.",
+             "water_solubility": "Insoluble."
+         },
+         "comparison_alternatives": {
+             "notes": "Comparisons for specific applications:",
+             "vs_Alumina": "YSZ: Higher fracture toughness, better thermal insulation, higher CTE (better match for metals), ionic conductivity. Alumina: Higher hardness/stiffness, lower cost, better chemical stability in some environments.",
+             "vs_Silicon_Nitride": "YSZ: Higher operating temperature capability, ionic conductivity. Si₃N₄: Higher strength/toughness (esp. at moderate temps), better thermal shock resistance.",
+             "vs_Gadolinia_Doped_Ceria_GDC": "YSZ: Better mechanical properties, more stable in reducing atmospheres (SOFC anode side). GDC: Higher ionic conductivity at lower temperatures (<800°C), but susceptible to reduction."
+         },
+         "references_further_reading": {
+             "notes": "Key Texts/Reviews:",
+             "book_carter_norton": "Carter, C. B., & Norton, M. G. 'Ceramic Materials: Science and Engineering'.",
+             "review_piconi_maccauro": "Piconi, C., & Maccauro, G. 'Zirconia as a ceramic biomaterial.' (Biomaterials journal or similar)",
+             "review_steele_heinzel": "Steele, B. C. H., & Heinzel, A. 'Materials for fuel-cell technologies.' (Nature review)",
+             "wikipedia": "https://en.wikipedia.org/wiki/Yttria-stabilized_zirconia"
+         },
+         "vendor_info": {
+            "notes": "Example Vendors (Placeholder):",
+            "vendor_1": "Company A - www.example-vendor-a.com",
+            "vendor_2": "Company B - www.example-vendor-b.com",
+            "vendor_3": "Company C - www.example-vendor-c.com"
+         },
+        "tags": [
+          "ceramic", "thermal barrier", "electrolyte", "oxide", "ion conductor",
+          "wear resistant", "fuel cell", "high temperature", "industry:energy",
+          "industry:thermal", "industry:automotive", "industry:medical", "industry:aerospace"
+        ]
+      }
 }
