@@ -1,10 +1,8 @@
 /**
- * Loads material data for the detail page.
- * 1. Infers the data filename based on the material name's first letter.
- * 2. Validates this filename against the sources listed in materials-index.json.
- * 3. Fetches the specific data file (expected to be an array).
- * 4. Finds the material object within the array by name.
- * 5. Populates the detail page using data from the object, including NESTED properties.
+ * Loads DETAILED material data for the detail page.
+ * 1. Fetches a dedicated JSON file (data/material_details.json) containing detailed objects mapped by material name.
+ * 2. Looks up the material using the name from the URL parameter.
+ * 3. Populates the detail page using the nested data found.
  */
 document.addEventListener("DOMContentLoaded", async () => {
     // 1. Get Material Name from URL Parameter
@@ -12,7 +10,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const materialNameParam = urlParams.get("material");
     const materialName = materialNameParam ? decodeURIComponent(materialNameParam) : null;
 
-    console.log("[Detail Page] Attempting to load details for:", materialName);
+    console.log("[Detail Page] Attempting to load DETAILED view for:", materialName);
 
     const header = document.querySelector('.detail-header');
     const mainContainer = document.querySelector('main');
@@ -25,54 +23,47 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     try {
-        // --- Infer Filename and Validate Against Index ---
-        if (materialName.length === 0) { throw new Error("Material name is empty."); }
-        const firstLetter = materialName.charAt(0).toLowerCase();
-        const targetFilename = `materials-${firstLetter}.json`;
-        console.log(`[Detail Page] Inferred target data file: ${targetFilename}`);
-
-        console.log("[Detail Page] Fetching index: data/materials-index.json");
-        const indexRes = await fetch("data/materials-index.json");
-        if (!indexRes.ok) { throw new Error(`HTTP error! status: ${indexRes.status} - Could not fetch index.`); }
-        const indexData = await indexRes.json();
-
-        if (!indexData || typeof indexData !== 'object' || !Array.isArray(indexData.sources)) {
-             throw new Error(`Invalid index format in data/materials-index.json.`);
+        // --- Fetch the DEDICATED Detail Data File ---
+        const detailDataPath = "data/material_details.json";
+        console.log("[Detail Page] Fetching dedicated detail data file:", detailDataPath);
+        const detailRes = await fetch(detailDataPath);
+        if (!detailRes.ok) {
+            // Handle 404 specifically - means the detail file itself is missing
+            if (detailRes.status === 404) {
+                 throw new Error(`Detailed data file not found at ${detailDataPath}. Create this file to enable detail views.`);
+            } else {
+                 throw new Error(`HTTP error! status: ${detailRes.status} - Could not fetch ${detailDataPath}`);
+            }
         }
-        console.log("[Detail Page] Index loaded. Sources:", indexData.sources);
 
-        if (!indexData.sources.includes(targetFilename)) {
-            throw new Error(`Could not locate the data file (${targetFilename}) for "${materialName}" in the index.`);
-        }
-        console.log(`[Detail Page] Validated: "${targetFilename}" exists in index sources.`);
+        // Assume the file contains an OBJECT mapping names to detail objects
+        const allDetailData = await detailRes.json(); // Expecting { "Material Name": { details... }, ... }
+        console.log("[Detail Page] Detailed data loaded:", allDetailData);
 
-        // --- Fetch the Specific Material Data File ---
-        const materialFilePath = "data/" + targetFilename;
-        console.log("[Detail Page] Fetching material file:", materialFilePath);
-        const matRes = await fetch(materialFilePath);
-        if (!matRes.ok) { throw new Error(`HTTP error! status: ${matRes.status} - Could not fetch ${materialFilePath}`); }
-
-        const matDataArray = await matRes.json();
-         if (!Array.isArray(matDataArray)) {
-             throw new Error(`Data format error: ${materialFilePath} MUST be a JSON array.`);
+         if (typeof allDetailData !== 'object' || allDetailData === null) {
+             throw new Error(`Data format error: ${detailDataPath} MUST be a JSON object { "Material Name": {details...} }. Received type: ${typeof allDetailData}`);
          }
-        console.log("[Detail Page] Material data file loaded (as array):", matDataArray);
 
-        // Find the specific material object within the loaded array (case-insensitive)
-        const material = matDataArray.find(m => m.name && m.name.toLowerCase() === materialName.toLowerCase()); // Use name key as in materials-m.json
+        // --- Find the specific material data using the name as the key ---
+        const material = allDetailData[materialName]; // Direct lookup using the name
 
         if (!material) {
-            throw new Error(`Data for "${materialName}" not found in ${targetFilename}.`);
+            // Material exists in index/simple files, but not in the details file yet
+            console.warn(`[Detail Page] Detailed data for "${materialName}" not found in ${detailDataPath}. Displaying basic info or error.`);
+            // OPTION A: Show error that detail isn't available
+            // throw new Error(`Detailed information for "${materialName}" is not yet available.`);
+            // OPTION B: (Harder) Try to load the *simple* data file just to show *something* basic - adds complexity back.
+            // For now, let's throw the error to indicate detail is missing from the detail source.
+             throw new Error(`Detailed information for "${materialName}" is not yet available in ${detailDataPath}.`);
         }
-        console.log("[Detail Page] Specific material object found:", material);
+        console.log("[Detail Page] Specific detailed material object found:", material);
 
-
-        // --- Populate the Page with AVAILABLE data (now expecting nested structure) ---
-        populatePage(material);
+        // --- Populate the Page using the nested data ---
+        populatePage(material); // Use the same populatePage function that handles nesting
 
     } catch (e) {
-        console.error("[Detail Page] Failed to load material:", e);
-        if (nameElement) nameElement.textContent = "Error loading material.";
+        console.error("[Detail Page] Failed to load material details:", e);
+        if (nameElement) nameElement.textContent = "Error loading details.";
         if (mainContainer) mainContainer.innerHTML = `<p class="error-message">Error loading material details: ${e.message}. Check console.</p>`;
     }
 });
@@ -80,30 +71,24 @@ document.addEventListener("DOMContentLoaded", async () => {
 /**
  * Populates the HTML elements with data from the material object,
  * including accessing nested properties using dot notation paths.
- * @param {object} material - The material data object (expected to have nested structure now).
+ * (This function remains the same as the previous version that handled nested data)
+ * @param {object} material - The detailed material data object.
  */
 function populatePage(material) {
     // Helper function to safely get potentially nested data and provide fallback
     const getData = (obj, path, fallback = 'N/A') => {
-        // Navigate path e.g., 'electrical_properties.band_gap.value'
         const value = path.split('.').reduce((o, key) => (o && o[key] !== 'undefined' && o[key] !== null) ? o[key] : undefined, obj);
-
-        // Format values that are objects with value/unit/notes
         if (typeof value === 'object' && typeof value.value !== 'undefined') {
            let text = String(value.value);
            if (value.unit) text += ` ${value.unit}`;
            if (value.notes) text += ` (${value.notes})`;
            return text;
         }
-        // Format simple arrays
         if (Array.isArray(value)) {
             return value.length > 0 ? value.join(', ') : fallback;
         }
-        // Return strings/numbers directly, or fallback
         return (value !== null && typeof value !== 'undefined' && value !== '') ? String(value) : fallback;
     };
-
-     // Helper to update element text content
      const updateText = (id, value) => {
         const element = document.getElementById(id);
         if (element) {
@@ -113,54 +98,45 @@ function populatePage(material) {
         }
     };
 
-    console.log("[Detail Page] Populating page with potentially nested data:", material);
+    console.log("[Detail Page] Populating page with detailed nested data:", material);
 
-    // --- Populate Header ---
-    updateText('material-name', getData(material, 'name', 'Unknown Material')); // 'name' is top-level
-    updateText('material-formula', getData(material, 'formula', '')); // 'formula' is top-level
-
-    // --- Populate Overview ---
-    updateText('material-description', getData(material, 'description')); // 'description' is top-level
-
-    // --- Populate Safety (using nested path) ---
+    // Populate Header
+    updateText('material-name', getData(material, 'name', 'Unknown Material'));
+    updateText('material-formula', getData(material, 'formula', ''));
+    // Populate Overview
+    updateText('material-description', getData(material, 'description'));
+    // Populate Safety
     updateText('prop-toxicity', getData(material, 'safety.toxicity'));
     updateText('prop-handling', getData(material, 'safety.handling'));
-
-    // --- Populate Identification (using nested path) ---
+    // Populate Identification
     updateText('prop-cas', getData(material, 'identification.cas_number'));
-    updateText('prop-category', getData(material, 'category')); // 'category' is top-level
+    updateText('prop-category', getData(material, 'category')); // Use top-level category
     updateText('prop-class', getData(material, 'identification.class'));
-
-    // --- Populate Electrical Properties (using nested path) ---
+    // Populate Electrical Properties
     updateText('prop-bandgap-type', getData(material, 'electrical_properties.bandgap_type'));
-    updateText('prop-bandgap', getData(material, 'electrical_properties.band_gap')); // Helper handles {value, unit, notes}
-    updateText('prop-e-mobility', getData(material, 'electrical_properties.electron_mobility')); // Helper handles {value, unit, notes}
-    updateText('prop-h-mobility', getData(material, 'electrical_properties.hole_mobility')); // Helper handles {value, unit, notes}
-
-    // --- Populate Optical Properties (using nested path) ---
-    // Note: Adding the 'notes' field separately for spectral_range as it doesn't fit the {value,unit,notes} pattern well
+    updateText('prop-bandgap', getData(material, 'electrical_properties.band_gap'));
+    updateText('prop-e-mobility', getData(material, 'electrical_properties.electron_mobility'));
+    updateText('prop-h-mobility', getData(material, 'electrical_properties.hole_mobility'));
+    // Populate Optical Properties
     updateText('prop-spectral-range', getData(material, 'optical_properties.spectral_range'));
     const spectralNotes = getData(material, 'optical_properties.notes', '');
     const spectralRangeElement = document.getElementById('prop-spectral-range');
     if (spectralRangeElement && spectralNotes && spectralNotes !== 'N/A') {
         spectralRangeElement.textContent += ` (${spectralNotes})`;
     }
-    updateText('prop-cutoff-wl', getData(material, 'optical_properties.cutoff_wavelength')); // Helper handles {value, unit, notes}
-    updateText('prop-ref-index', getData(material, 'optical_properties.refractive_index')); // Helper handles {value, unit, notes}
-
-    // --- Populate Thermal Properties (using nested path) ---
-    updateText('prop-op-temp', getData(material, 'thermal_properties.operating_temperature')); // Helper handles {value, unit, notes}
-    updateText('prop-therm-cond', getData(material, 'thermal_properties.thermal_conductivity')); // Helper handles {value, unit, notes}
-    updateText('prop-melt-pt', getData(material, 'thermal_properties.melting_point')); // Helper handles {value, unit, notes}
-
-    // --- Populate Processing & Availability (using nested path) ---
-    updateText('prop-synth', getData(material, 'processing_availability.synthesis_methods')); // Helper joins array
-    updateText('prop-forms', getData(material, 'processing_availability.forms')); // Helper joins array
-
-    // --- Populate Tags (using top-level 'tags') ---
+    updateText('prop-cutoff-wl', getData(material, 'optical_properties.cutoff_wavelength'));
+    updateText('prop-ref-index', getData(material, 'optical_properties.refractive_index'));
+    // Populate Thermal Properties
+    updateText('prop-op-temp', getData(material, 'thermal_properties.operating_temperature'));
+    updateText('prop-therm-cond', getData(material, 'thermal_properties.thermal_conductivity'));
+    updateText('prop-melt-pt', getData(material, 'thermal_properties.melting_point'));
+    // Populate Processing & Availability
+    updateText('prop-synth', getData(material, 'processing_availability.synthesis_methods'));
+    updateText('prop-forms', getData(material, 'processing_availability.forms'));
+    // Populate Tags
     const tagsContainer = document.getElementById('material-tags');
     if (tagsContainer) {
-        tagsContainer.innerHTML = ''; // Clear loading text
+        tagsContainer.innerHTML = '';
         const tags = material.tags || [];
         if (Array.isArray(tags) && tags.length > 0) {
             tags.forEach(tag => {
@@ -173,6 +149,5 @@ function populatePage(material) {
             updateText('material-tags', 'N/A');
         }
     }
-
-    console.log("[Detail Page] Page population attempt complete.");
+    console.log("[Detail Page] Page population complete.");
 }
