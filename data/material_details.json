@@ -1112,5 +1112,110 @@
           "laser", "low loss", "magnetic", "microwave", "optical", "paramagnetic",
           "photonic", "substrate", "single crystal", "garnet"
         ]
+      },
+    "Beryllium-Copper Alloy": {
+        "name": "Beryllium-Copper Alloy",
+        "formula": "BeCu",
+        "synonyms": [ "Copper Beryllium", "BeCu", "Beryllium Bronze", "C17200", "C17300", "Alloy 25" ],
+        "category": "Alloy",
+        "description": "A copper alloy containing typically 0.5-3% beryllium. Known for its unique combination of high strength (comparable to alloy steels after heat treatment), high electrical and thermal conductivity, non-magnetic properties, and good corrosion resistance. It is widely used for springs, electrical contacts, connectors, non-sparking tools, and components in cryogenic applications.",
+        "wiki_link": "https://en.wikipedia.org/wiki/Beryllium_copper",
+        "safety": {
+          "toxicity": "High (Beryllium dust/fumes). Solid alloy form is generally safe to handle, but machining, grinding, welding, or melting generates highly toxic beryllium-containing dust or fumes which can cause Chronic Beryllium Disease (CBD), a serious lung condition.",
+          "handling": "Handle solid parts normally. Machining/processing requires stringent controls: wet machining, specialized ventilation, respiratory protection, and specific hygiene protocols are essential."
+        },
+        "identification": {
+          "cas_number": "N/A (Alloy)",
+          "class": "Copper Alloy (Precipitation-Hardening)",
+          "crystal_structure": "Primarily FCC (copper matrix) with Be-rich precipitates after heat treatment.",
+          "phase_diagram_notes": "Cu-Be phase diagram shows limited solid solubility of Be in Cu. Properties achieved through solution annealing followed by precipitation hardening (aging)."
+        },
+        "advanced_fabrication_insights": {
+            "stoichiometry_control": "Precise control of Be content (and sometimes minor additions like Co or Ni) determines final properties after heat treatment.",
+            "common_defects_impact": "Impurities can affect conductivity and formability. Improper heat treatment (solution annealing temp/time, aging temp/time) drastically affects strength and hardness.",
+            "surface_preparation": "Standard metal cleaning procedures. Surface oxides can form but are generally not problematic for bulk properties.",
+            "method_specific_notes": "Available in various tempers (solution annealed, cold worked, age hardened). Heat treatment is critical: Solution Anneal (~760-800°C, quench), Age Harden (~315-480°C for specific times)."
+        },
+        "growth_fabrication_properties": {
+            "common_growth_methods": "Casting (ingots/billets), followed by hot/cold working (rolling, drawing, extrusion) into various forms (strip, rod, wire, plate, tube).",
+            "source_materials_purity": "High purity Copper and Beryllium master alloy.",
+            "preferred_substrates_orientations": "N/A (Bulk alloy).",
+            "typical_growth_parameters": "Processing parameters involve rolling/drawing reductions and heat treatment cycles.",
+            "passivation_methods": "Generally good corrosion resistance, may form a protective oxide layer."
+        },
+        "post_growth_processing": {
+            "annealing": "Solution annealing and age hardening are key processing steps.",
+            "lapping_polishing": "Standard metallographic preparation or polishing for specific components.",
+            "etching": "Can be etched using standard copper etchants (e.g., ferric chloride solutions) for metallography.",
+            "grinding_milling": "Machinable, but requires safety precautions for Be dust/fumes. Free-machining grades (e.g., C17300 with lead addition) exist."
+        },
+         "device_integration_characterization": {
+            "device_architectures": "Springs, contacts, connectors, diaphragms, bellows, non-sparking tools, plastic injection mold components, bearings, cryogenic components.",
+            "readout_integration": "N/A",
+            "ar_coatings": "N/A",
+            "packaging_cooling": "Used across a wide temperature range, including cryogenic.",
+            "key_characterization_techniques": ["Tensile Testing (Strength, Elongation)", "Hardness Testing (Rockwell, Vickers)", "Electrical Conductivity Measurement (%IACS)", "Thermal Conductivity Measurement", "Fatigue Testing", "Stress Relaxation Testing", "Metallography (grain size, precipitate structure)"]
+        },
+        "electrical_properties": {
+          "bandgap_type": "N/A (Metal)",
+          "band_gap": {"value": "0", "unit": "eV"},
+          "resistivity": {"value": "~4.5-8", "unit": "µΩ·cm", "notes": "In aged condition (~22-38% IACS). Significantly higher in annealed state. Depends on alloy type and temper."},
+          "conductivity_electrical": {"value": "15-45 %IACS", "notes": "International Annealed Copper Standard. Depends on alloy and heat treatment. High conductivity grades exist (~45-60% IACS)."},
+          "magnetic_permeability": {"value": "~1.00", "notes": "Essentially non-magnetic."}
+        },
+        "optical_properties": {
+          "spectral_range": "Opaque", "notes": "Metallic appearance, reddish-gold color."
+        },
+        "thermal_properties": {
+          "operating_temperature": {"value": "Cryogenic up to ~200-300", "unit": "°C", "notes": "Loses strength significantly above ~300°C due to overaging."},
+          "thermal_conductivity": {"value": "~100-250", "unit": "W/(m·K)", "notes": "Good thermal conductivity, depends on grade and temper."},
+          "specific_heat": {"value": "~0.42", "unit": "J/(g·K)"},
+          "melting_point": {"value": "~866-982", "unit": "°C", "notes": "Solidus-Liquidus range depends on Be content."},
+          "thermal_expansion": {"value": "~16.7-17.8 x 10⁻⁶", "unit": "/°C"}
+        },
+         "mechanical_properties": {
+             "density": {"value": "~8.25-8.75", "unit": "g/cm³", "notes": "Depends on Be content."},
+             "youngs_modulus": {"value": "~125-140", "unit": "GPa"},
+             "tensile_strength": {"value": "High (up to ~1400 MPa / 200 ksi)", "notes": "In fully heat-treated condition. Varies greatly with temper."},
+             "yield_strength": {"value": "High (up to ~1200 MPa / 175 ksi)"},
+             "elongation_at_break": {"value": "~1-10%", "notes": "In fully hardened condition. Much higher (~30-60%) in annealed condition."},
+             "hardness_rockwell": {"value": "HRC 36-45", "notes": "Typical range for fully hardened material (e.g., C17200 TF00)."}
+         },
+         "device_applications": {
+             "sensor_types": ["Pressure sensor diaphragms", "Bimetallic strip components"],
+             "key_applications": ["High-performance springs, contacts, connectors (Electronics, Automotive, Aerospace)", "Non-sparking safety tools (Oil & Gas, Chemical)", "Plastic injection mold tooling (inserts, core pins)", "Bearings and bushings", "Cryogenic seals and components", "Resistance welding electrodes"]
+         },
+         "chemical_properties": {
+             "stability_oxidation": "Good resistance to atmospheric corrosion and tarnishing.",
+             "solvent_resistance": "Excellent.",
+             "acid_resistance": "Good resistance to many acids, but attacked by oxidizing acids.",
+             "base_resistance": "Good resistance.",
+             "stress_corrosion_cracking": {"notes": "Can be susceptible in certain environments (e.g., ammonia) if highly stressed."}
+         },
+         "comparison_alternatives": {
+             "notes": "Alternative Spring/Conductive Materials:",
+             "vs_Phosphor_Bronze": "BeCu: Much higher strength and hardness, better fatigue resistance, higher cost, toxicity concerns. Phos Bronze: Lower cost, good formability, adequate for many spring/contact apps.",
+             "vs_Steel_Springs": "BeCu: Higher conductivity (electrical/thermal), non-magnetic, better corrosion resistance. Steel: Higher modulus, higher operating temperature capability, lower cost.",
+             "vs_Titanium_Alloys": "BeCu: Much higher conductivity, lower cost (usually). Titanium: Lower density, excellent corrosion resistance, higher strength-to-weight ratio.",
+             "vs_High_Conductivity_Copper_Alloys": "BeCu: Much higher strength. HC Cu Alloys (e.g., CuCrZr): Higher conductivity, lower strength."
+         },
+         "references_further_reading": {
+             "notes": "Key Resources:",
+             "materion_data": "Materion Performance Alloys technical datasheets (major supplier).",
+             "asm_handbook": "ASM Handbook, Volume 2: Properties and Selection - Nonferrous Alloys and Special-Purpose Materials.",
+             "wikipedia": "https://en.wikipedia.org/wiki/Beryllium_copper"
+         },
+         "vendor_info": {
+            "notes": "Example Vendors (Placeholder):",
+            "vendor_1": "Company A - www.example-vendor-a.com",
+            "vendor_2": "Company B - www.example-vendor-b.com",
+            "vendor_3": "Company C - www.example-vendor-c.com"
+         },
+        "tags": [
+          "contact", "corrosion resistant", "cryogenic", "electrical connector",
+          "high strength", "industry:aerospace", "industry:cryogenics",
+          "industry:electronics", "spring", "thermal conductor", "vacuum compatible",
+          "alloy", "non-magnetic", "non-sparking"
+        ]
       } 
 }
