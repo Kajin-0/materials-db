@@ -2049,5 +2049,113 @@
           "lightweight", "nanocomposite", "sensor", "strong", "structural",
           "nanotube", "carbon", "polymer matrix composite"
         ]
+      },
+    "Ferrite-Polymer Composite": {
+        "name": "Ferrite-Polymer Composite",
+        "formula": "MnZn/NiZn Ferrite + Polymer",
+        "synonyms": [ "Soft Magnetic Composite (SMC)", "Polymer Bonded Ferrite", "Ferrite Filled Polymer", "Plastic Magnet (Ferrite type)" ],
+        "category": "Composite",
+        "description": "A composite material consisting of soft ferrite particles (commonly Manganese-Zinc (MnZn) or Nickel-Zinc (NiZn) ferrites) dispersed within a polymer matrix (e.g., epoxy, polyamide, PPS). These composites combine the desirable magnetic properties of ferrites (high permeability, high electrical resistivity reducing eddy currents) with the processing advantages, lower cost, mechanical flexibility, and lighter weight of polymers. They are often used in electromagnetic shielding, inductors, transformers, and antenna cores, especially where complex shapes or lower frequency operation is required.",
+        "wiki_link": "https://en.wikipedia.org/wiki/Soft_magnetic_composite",
+        "safety": {
+          "toxicity": "Low for the cured composite. Ferrite dusts (oxides of Mn, Zn, Ni, Fe) can be irritants; handle powders with respiratory protection. Polymer resins/hardeners may be sensitizers before curing.",
+          "handling": "Handle cured parts normally. Use PPE when mixing uncured polymer components and when machining/sanding the cured composite which generates dust."
+        },
+        "identification": {
+          "cas_number": "N/A (Composite - Ferrite composition varies, Polymer varies)",
+          "class": "Magnetic Ceramic Particle Reinforced Polymer Composite",
+          "crystal_structure": "Ferrite: Spinel (Cubic). Polymer: Amorphous or semi-crystalline.",
+          "phase_diagram_notes": "Properties depend on ferrite type (MnZn vs NiZn), particle size/shape, volume fraction (loading), polymer matrix type, processing method, and particle dispersion quality."
+        },
+        "advanced_fabrication_insights": {
+            "particle_dispersion": "Achieving high loading (~50-80 vol%) while maintaining good dispersion and processability is key. Uniform dispersion maximizes magnetic performance and consistency.",
+            "common_defects_impact": "Porosity, particle agglomeration, poor wetting/interface bonding. Degrade magnetic permeability, increase magnetic losses, reduce mechanical strength.",
+            "interface_engineering": "Surface treatment of ferrite particles (e.g., silane coupling agents) can improve adhesion to the polymer matrix, enhancing mechanical properties.",
+            "method_specific_notes": "Injection molding is common for complex shapes, requiring careful control of viscosity and mold filling. Compression molding also used. Binder selection crucial for processing and final properties."
+        },
+        "growth_fabrication_properties": {
+            "common_growth_methods": "Compounding (mixing ferrite powder with polymer resin/pellets), followed by Injection Molding, Compression Molding, Extrusion.",
+            "source_materials_purity": "Ferrite powders (MnZn or NiZn, specific grades for desired frequency range), Polymer resin/binder (thermoplastic like PPS, PA or thermoset like epoxy).",
+            "preferred_substrates_orientations": "N/A (Bulk molded component).",
+            "typical_growth_parameters": "Molding temperature, pressure, time dependent on polymer matrix. High ferrite loading increases viscosity.",
+            "passivation_methods": "Surface is generally stable polymer."
+        },
+        "post_growth_processing": {
+            "annealing": "Post-molding annealing may be used to relieve stress or optimize polymer properties.",
+            "lapping_polishing": "Can be machined if needed.",
+            "etching": "Matrix dependent.",
+            "grinding_milling": "Machinable, generates dust. Often molded to near-net shape."
+        },
+         "device_integration_characterization": {
+            "device_architectures": "Inductor cores, transformer cores, EMI shielding components, antenna cores, motor stators (SMC variant).",
+            "readout_integration": "N/A",
+            "ar_coatings": "N/A",
+            "packaging_cooling": "Operating temperature limited by polymer matrix. Thermal conductivity is low.",
+            "key_characterization_techniques": ["Magnetic Permeability Measurement (vs. Frequency)", "Magnetic Loss Measurement (Core Loss vs. Frequency, B-field)", "DC Bias Performance", "BH Loop Tracer", "Electrical Resistivity Measurement", "Density Measurement", "Mechanical Testing (Flexural Strength)", "Microscopy (SEM - particle dispersion)"]
+        },
+        "electrical_properties": {
+          "bandgap_type": "Ferrite: Semiconductor/Insulator. Polymer: Insulator.",
+          "resistivity": {"value": "Very High (>10⁶ Ω·cm typically)", "notes": "Significantly higher than metallic magnetic materials, dominated by insulating polymer matrix and high resistivity of ferrites. Reduces eddy current losses at higher frequencies."},
+          "dielectric_constant": {"value": "Relatively High (~10-30+)", "notes": "Higher than neat polymer due to high dielectric constant of ferrite particles."},
+          "dielectric_strength": {"notes": "Good, depends on polymer and porosity."}
+        },
+        "magnetic_properties": {
+          "type": "Soft Ferromagnetic",
+          "permeability_initial": {"value": "~10 - 100+", "notes": "Lower than bulk ferrites due to 'dilution' by non-magnetic polymer binder (effective air gaps). Tunable by ferrite type and loading."},
+          "saturation_magnetization_bs": {"value": "~0.2-0.4", "unit": "T", "notes": "Lower than bulk ferrites or metallic magnets."},
+          "coercivity_hc": {"value": "Low", "notes": "Characteristic of soft magnetic materials."},
+          "core_losses": {"notes": "Lower eddy current losses than metals due to high resistivity. Hysteresis losses depend on ferrite material. Total core loss depends strongly on frequency and flux density."},
+          "frequency_range": {"notes": "MnZn ferrite composites typically used up to ~1-2 MHz. NiZn ferrite composites usable to higher frequencies (~10-100+ MHz) due to even higher resistivity."}
+        },
+        "optical_properties": {
+          "spectral_range": "Opaque", "notes": "Typically dark gray or black."
+        },
+        "thermal_properties": {
+          "operating_temperature": {"value": "Limited by Polymer (~ -40 to 120-200)", "unit": "°C", "notes": "Depends on specific polymer matrix (e.g., PPS allows higher temps than standard PA). Curie temperature of ferrite is high (>100-500°C) but usually not the limiting factor."},
+          "thermal_conductivity": {"value": "Low (~0.5 - 3 W/(m·K))", "notes": "Higher than neat polymer but much lower than bulk ferrite or metals. Can be a limitation in high power applications."},
+          "specific_heat": {"value": "~0.8-1.2", "unit": "J/(g·K)"},
+          "melting_point": {"notes": "Polymer matrix melts or decomposes. Ferrite melting points are very high (>1000°C)."},
+          "thermal_expansion": {"value": "Relatively High (~20-80 x 10⁻⁶ /°C)", "notes": "Dominated by polymer matrix. CTE mismatch with ferrite can induce stress."}
+        },
+         "mechanical_properties": {
+             "density": {"value": "~2.5-5.0+", "unit": "g/cm³", "notes": "Increases significantly with ferrite loading (ferrite density ~4.5-5.3 g/cm³). Lighter than bulk ferrites."},
+             "flexural_strength": {"value": "~30-100+", "unit": "MPa", "notes": "Moderate strength, depends on polymer and loading."},
+             "hardness_shore_d": {"value": "~80-90+", "notes": "Relatively hard surface."},
+             "toughness": {"notes": "More robust and less brittle than monolithic ferrite ceramics due to polymer matrix."}
+         },
+         "device_applications": {
+             "key_applications": ["EMI Suppression Cores/Beads/Sheets", "Low-frequency Inductor and Transformer Cores", "RFID Antenna Cores", "Power electronics components", "Magnetic Shielding", "Injection Molded Magnets (lower energy than rare earth bonded magnets)"]
+         },
+         "chemical_properties": {
+             "stability_oxidation": "Good, limited by polymer matrix.",
+             "solvent_resistance": "Good, dependent on polymer matrix.",
+             "acid_resistance": "Good, dependent on polymer matrix.",
+             "base_resistance": "Good, dependent on polymer matrix."
+         },
+         "comparison_alternatives": {
+             "notes": "Alternative Soft Magnetic Materials:",
+             "vs_Monolithic_Ferrites": "Ferrite-Polymer: Lower permeability, lower saturation, more robust/less brittle, complex shapes via molding, lower cost potential for complex shapes, lower operating temp. Monolithic Ferrites: Higher magnetic performance (µ, Bs), higher operating temp, limited shapes, brittle.",
+             "vs_Iron_Powder_Cores_SMCs": "Ferrite-Polymer: Higher resistivity (better for higher freq >50-100kHz), lower core losses at high freq, lower saturation flux density. Iron Powder/SMC: Higher saturation flux density, suitable for high DC bias, better performance at lower frequencies (<100kHz), lower resistivity.",
+             "vs_Amorphous_Nanocrystalline_Cores": "Ferrite-Polymer: Lower cost, easier shaping. Amorphous/Nano: Much higher permeability, lower core losses across wider frequency range, higher saturation (than ferrites), typically tape-wound cores (limited shapes)."
+         },
+         "references_further_reading": {
+             "notes": "Key Literature:",
+             "book_magnetic_materials": "Chapters on soft ferrites and bonded magnets in books like 'Introduction to Magnetic Materials' by Cullity & Graham.",
+             "journal_ieee_magn": "Articles in IEEE Transactions on Magnetics.",
+             "conference_intermag_mmm": "Proceedings from conferences like Intermag or MMM.",
+             "wikipedia_smc": "https://en.wikipedia.org/wiki/Soft_magnetic_composite"
+         },
+         "vendor_info": {
+            "notes": "Example Vendors (Placeholder):",
+            "vendor_1": "Company A - www.example-vendor-a.com",
+            "vendor_2": "Company B - www.example-vendor-b.com",
+            "vendor_3": "Company C - www.example-vendor-c.com"
+         },
+        "tags": [
+          "electrically insulating", "emi shielding", "high permeability",
+          "industry:defense", "industry:electronics", "industry:microwave",
+          "lightweight", "low frequency", "low loss", "magnetic", "soft magnetic",
+          "composite", "polymer matrix composite"
+        ]
       } 
 }
