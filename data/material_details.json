@@ -215,17 +215,131 @@
          "wikipedia": "https://en.wikipedia.org/wiki/Gallium_arsenide"
      },
      "vendor_info": {
-        "notes": "Example Vendors (Placeholder):",
-        "vendor_1": "Company A - www.example-vendor-a.com",
-        "vendor_2": "Company B - www.example-vendor-b.com",
-        "vendor_3": "Company C - www.example-vendor-c.com"
-    },
+         "notes": "Example Vendors (Placeholder):",
+         "vendor_1": "Company A - www.example-vendor-a.com",
+         "vendor_2": "Company B - www.example-vendor-b.com",
+         "vendor_3": "Company C - www.example-vendor-c.com"
+     },
     "tags": [
       "III-V", "MBE", "MOCVD", "aerospace", "cmos compatible", "commercial",
       "cryogenic", "direct bandgap", "epitaxial", "group 13", "group 15",
       "high mobility", "industry:aerospace", "industry:lasers", "industry:photonics",
       "infrared", "laser diode", "photodiode", "photosensing", "photosensor",
       "semiconductor", "sensor", "single crystal", "swir", "vacuum compatible"
+    ]
+  },
+  "Niobium Titanium (NbTi) Wire": {
+    "name": "Niobium Titanium (NbTi) Wire",
+    "formula": "Nb-Ti/Cu",
+    "synonyms": [ "NbTi", "Superconducting Wire" ],
+    "category": "Superconductor",
+    "description": "Ductile, low-temperature superconducting alloy (typically ~47% Ti) fabricated as fine filaments embedded in a copper matrix. Widely used for superconducting magnets (MRI, particle accelerators) due to its workability and relatively low cost.",
+    "wiki_link": "https://en.wikipedia.org/wiki/Niobium%E2%80%93titanium",
+    "safety": {
+      "toxicity": "Low (Metals involved). Potential cryogenic hazards.",
+      "handling": "Standard wire handling. Cryogenic safety protocols (liquid He) essential during operation."
+    },
+    "identification": {
+      "cas_number": "12034-34-9 (NbTi alloy)",
+      "class": "Superconducting Composite Wire",
+      "crystal_structure": "NbTi: BCC (A2), Cu Matrix: FCC",
+      "lattice_constant": {"value": "N/A", "notes": "Not typically relevant for composite wire properties."},
+      "phase_diagram_notes": "Complex Nb-Ti phase diagram. Processing controls precipitation (alpha-Ti) for flux pinning."
+    },
+    "advanced_fabrication_insights": {
+        "stoichiometry_control": "Nb/Ti ratio (~47% Ti typical) critical for superconducting properties.",
+        "common_defects_impact": "Filament sausaging/breakage during drawing impacts Jc. Impurities affect RRR of matrix.",
+        "surface_preparation": "Surface condition important for insulation/epoxy impregnation.",
+        "method_specific_notes": "Requires extensive cold work (drawing) and intermediate heat treatments to refine grain size and precipitate flux pinning centers (alpha-Ti)."
+    },
+    "growth_fabrication_properties": {
+        "common_growth_methods": "Billet assembly (NbTi rods in Cu), extrusion, wire drawing, heat treatments.",
+        "source_materials_purity": "High purity Nb, Ti, OFHC Copper.",
+        "preferred_substrates_orientations": "N/A (It's a wire, not grown on a substrate).",
+        "typical_growth_parameters": "Parameters relate to drawing reduction ratios, annealing temps/times (~375-420°C).",
+        "passivation_methods": "Often coated with insulation (e.g., Formvar, Polyimide) after final drawing."
+    },
+    "post_growth_processing": {
+        "annealing": "Multiple intermediate heat treatments are part of the core fabrication process for flux pinning.",
+        "lapping_polishing": "N/A for wire form.",
+        "etching": "Used metallographically to reveal filament structure.",
+        "grinding_milling": "N/A for wire form."
+    },
+     "device_integration_characterization": {
+        "device_architectures": "Used in coils/windings for superconducting magnets.",
+        "readout_integration": "N/A",
+        "ar_coatings": "N/A",
+        "packaging_cooling": "Requires immersion in liquid Helium (~4.2 K) for operation.",
+        "key_characterization_techniques": ["Critical Current (Ic) vs Field/Temp", "Critical Temperature (Tc)", "RRR (Residual Resistance Ratio) of matrix", "Magnetization measurements", "Metallography (filament structure)"]
+    },
+    "electrical_properties": {
+      "bandgap_type": "N/A (Metal/Superconductor)",
+      "band_gap": {"value": "0", "unit": "eV", "notes": "Superconducting gap is meV scale."},
+      "bandgap_equation": {"notes": "BCS theory describes superconducting gap."},
+      "common_dopants": "N/A (Alloy properties determined by composition/processing).",
+      "carrier_concentration": {"value": "High (Metallic)", "unit": "cm^-3"},
+      "electron_mobility": {"notes": "Not primary figure of merit; focus is on resistivity/RRR."},
+      "hole_mobility": {"notes": "N/A"},
+      "dielectric_constant": {"notes": "N/A (Metallic)"},
+      "resistivity": {"value": "Matrix (Cu): ~1.7e-8 Ohm-m (RT), much lower at 4K. NbTi: Superconducting below Tc.", "notes": "RRR of Cu matrix is important (>100)."},
+      "breakdown_field": {"notes": "N/A (Superconductor quenching is relevant limit)."}
+    },
+    "optical_properties": {
+      "spectral_range": "N/A (Opaque)",
+      "cutoff_wavelength": {"notes": "N/A"},
+      "refractive_index": {"notes": "N/A"},
+      "absorption_coefficient": {"notes": "N/A (Opaque metal)"},
+      "quantum_efficiency": {"notes": "N/A"},
+      "responsivity": {"notes": "N/A"},
+      "noise_equivalent_power": {"notes": "N/A"}
+    },
+    "thermal_properties": {
+      "operating_temperature": {"value": "< ~9.2", "unit": "K", "notes": "Typically operated in LHe at 4.2 K."},
+      "thermal_conductivity": {"value": "Matrix (Cu) dominates. High at 4K.", "unit": "W/(m K)", "notes": "Important for stability."},
+      "specific_heat": {"value": "Low at 4K.", "unit": "J/(g K)", "notes": "Follows T^3 dependence at low T."},
+      "melting_point": {"value": "Cu: ~1084°C, NbTi: >2000°C", "notes": "Matrix melts first."}
+    },
+     "mechanical_properties": {
+         "density": {"value": "~6-8", "unit": "g/cm^3", "notes": "Depends on Cu/NbTi ratio."},
+         "youngs_modulus": {"value": "~80-120", "unit": "GPa", "notes": "Composite value."},
+         "hardness_vickers": {"notes": "Depends on work hardening."},
+         "poissons_ratio": "~0.3-0.35",
+         "fracture_toughness": {"notes": "Generally ductile."}
+     },
+     "device_applications": {
+         "sensor_types": ["Not typically used as a sensor itself."],
+         "key_applications": ["MRI magnets", "Particle accelerator magnets (LHC, Tevatron)", "Fusion research magnets (ITER)", "High-field laboratory magnets", "Superconducting Magnetic Energy Storage (SMES)"]
+     },
+     "chemical_properties": {
+         "stability_oxidation": "Cu matrix oxidizes. NbTi alloy stable but needs protection at high temp processing."
+     },
+     "magnetic_properties": {
+         "type": "Type-II Superconductor",
+         "critical_temperature_tc": {"value": "~9.2", "unit": "K"},
+         "upper_critical_field_bc2": {"value": "~15", "unit": "T", "notes": "At 0 K. Lower at 4.2 K (~10-12 T practical limit)."},
+         "critical_current_density_jc": {"value": "1000-3000+", "unit": "A/mm^2", "notes": "At 5 T, 4.2 K. Highly dependent on processing."}
+     },
+     "comparison_alternatives": {
+         "notes": "Superconducting Wire Competitors:",
+         "vs_Nb3Sn": "NbTi: More ductile, easier to handle/wind, lower cost. Nb3Sn: Higher Tc (~18K), higher Bc2 (~25-30T), brittle, requires react-and-wind or wind-and-react.",
+         "vs_HTS": "NbTi: Mature, lower cost, requires LHe cooling. HTS (e.g., REBCO, BSCCO): Higher Tc (LN2 possible), much higher Bc2 potential, higher cost, complex manufacturing."
+     },
+     "references_further_reading": {
+         "notes": "Key Resources (Examples):",
+         "book_wilson": "Wilson, M. N. 'Superconducting Magnets'",
+         "review_paper": "Review on NbTi processing and properties (e.g., Cryogenics journal, IEEE Trans. Appl. Supercond.)",
+         "wikipedia": "https://en.wikipedia.org/wiki/Niobium%E2%80%93titanium"
+     },
+     "vendor_info": {
+         "notes": "Example Vendors (Placeholder):",
+         "vendor_1": "Bruker EAS (formerly OST)",
+         "vendor_2": "Luvata",
+         "vendor_3": "Western Superconducting Technologies (WST)"
+     },
+    "tags": [
+      "composite", "cryogenic", "ductile", "fusion", "industry:cryogenics",
+      "industry:energy", "industry:quantum", "low temperature", "magnet",
+      "quantum computing", "superconductor", "vacuum compatible", "wire"
     ]
   }
 }
