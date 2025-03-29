@@ -1,7 +1,7 @@
 /**
  * Loads DETAILED material data for the detail page.
  * Fetches data/material_details.json, finds the material, populates page dynamically based on available data,
- * and enhances the periodic table with relevant information and highlighting.
+ * and enhances the periodic table with relevant information and highlighting using native browser tooltips.
  */
 document.addEventListener("DOMContentLoaded", async () => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -41,7 +41,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
     }
     if (!mainContainer) {
-        // Error logged within displayError now
         displayError("Essential element '#material-content-container' not found.");
         return;
     }
@@ -82,17 +81,20 @@ document.addEventListener("DOMContentLoaded", async () => {
             // Try case-insensitive match as a fallback
             const lowerCaseMaterialName = materialName.toLowerCase();
             const foundKey = Object.keys(allDetailData).find(key => key.toLowerCase() === lowerCaseMaterialName);
-            if (foundKey) {
+            const actualMaterial = foundKey ? allDetailData[foundKey] : null;
+
+            if (actualMaterial) {
                  console.warn(`[Detail Page] Case-insensitive match found for "${materialName}" as "${foundKey}". Using data for "${foundKey}".`);
-                 material = allDetailData[foundKey];
+                 mainContainer.innerHTML = ''; // Clear potential loading messages
+                 populatePage(actualMaterial, mainContainer); // Populate sections and trigger table enhancement
             } else {
                 throw new Error(`Data for "${materialName}" not found in ${detailDataPath}. Check material name and file content.`);
             }
+        } else {
+             console.log("[Detail Page] Specific material object found:", materialName);
+             mainContainer.innerHTML = ''; // Clear potential loading messages
+             populatePage(material, mainContainer); // Populate sections and trigger table enhancement
         }
-
-        console.log("[Detail Page] Specific material object found:", materialName);
-        mainContainer.innerHTML = ''; // Clear potential loading messages
-        populatePage(material, mainContainer); // Populate sections and trigger table enhancement
 
     } catch (e) {
         displayError(e.message || "An unknown error occurred during data loading.");
@@ -114,8 +116,6 @@ function parseFormulaForElements(formula) {
     }
 
     // Regex to find potential element symbols: An uppercase letter followed by zero or more lowercase letters.
-    // This is more forgiving than just A-Z[a-z]? and handles symbols like 'Uue' if needed, though less strict.
-    // We rely on the periodicTableData check below to validate.
     const elementRegex = /[A-Z][a-z]*/g;
     const potentialSymbols = formula.match(elementRegex);
 
@@ -124,12 +124,6 @@ function parseFormulaForElements(formula) {
             // Validate against known elements in periodicTableData
             if (window.periodicTableData && window.periodicTableData[symbol]) {
                 elements.add(symbol);
-            } else {
-                // Log symbols found by regex but not in our data - helps debug formulas/regex
-                // Avoid logging common formula parts like 'x' or single letters from descriptions
-                if (symbol.length <= 2 || symbol.toLowerCase() !== symbol) { // Basic filter
-                     // console.log(`[Formula Parse] Ignoring potential non-element match: ${symbol}`);
-                }
             }
         });
     }
@@ -144,28 +138,25 @@ function parseFormulaForElements(formula) {
             }
         });
     }
-
-
     return elements;
 }
 
 /**
- * Enhances the static periodic table in material_detail.html:
+ * Enhances the static periodic table in material_detail.html using NATIVE browser tooltips:
  * - Clears previous highlights and data.
- * - Adds detailed element information (name, number, category, mass) to the title attribute for hover tooltips.
+ * - Adds detailed element information (name, number, category, mass, etc.) to the title attribute.
  * - Adds formatted atomic mass to the designated span within each element box.
  * - Highlights elements present in the provided material formula using the 'highlighted-element' class.
  * @param {string | null} materialFormula The formula string of the current material, or null to clear the table state.
  */
 function enhancePeriodicTable(materialFormula) {
-    console.log("[Detail Page] Enhancing periodic table...");
+    console.log("[Detail Page] Enhancing periodic table using native titles...");
     const elementsToHighlight = parseFormulaForElements(materialFormula);
     console.log("[Detail Page] Elements parsed from formula:", materialFormula, "->", elementsToHighlight);
     const allPtElements = document.querySelectorAll('.periodic-table-container .pt-element');
 
     if (!window.periodicTableData) {
         console.warn("[Detail Page] Periodic table data (window.periodicTableData) is not available. Cannot enhance table.");
-        // Clear any existing highlights just in case
          allPtElements.forEach(element => element.classList.remove('highlighted-element'));
         return;
     }
@@ -179,13 +170,13 @@ function enhancePeriodicTable(materialFormula) {
         element.classList.remove('highlighted-element');
         element.title = ''; // Clear previous title attribute
         if (massSpan) {
-             massSpan.textContent = ''; // Clear previous mass text
-             massSpan.style.display = isPlaceholder ? 'none' : ''; // Ensure mass span is hidden for placeholders/labels
+             massSpan.textContent = '';
+             massSpan.style.display = isPlaceholder ? 'none' : '';
         }
 
-        // Skip further processing for placeholders/labels
+        // Skip further processing for placeholders/labels, but add basic title
         if (isPlaceholder) {
-            const placeholderText = element.textContent.match(/\d+-\d+/); // Get range like 57-71
+            const placeholderText = element.textContent.match(/\d+-\d+/);
             if (placeholderText) element.title = `Elements ${placeholderText[0]}`;
             else if(element.classList.contains('pt-series-label')) element.title = element.textContent;
             return;
@@ -198,40 +189,46 @@ function enhancePeriodicTable(materialFormula) {
             const number = elementData.number || '?';
             const category = elementData.category || 'unknown';
             const mass = elementData.mass;
-            const massDisplay = mass ? mass.toFixed(3) : 'N/A'; // Format mass or show N/A
+            const massDisplay = mass ? mass.toFixed(3) : 'N/A';
 
-            // Add hover title with comprehensive info
-            element.title = `${name} (${number})\nCategory: ${category}\nMass: ${massDisplay}`;
+            // *** Build TEXT content for the native title attribute ***
+            let tooltipText = `${name} (${number})\n`; // Use newline character \n
+            tooltipText += `Category: ${category}\n`;
+            tooltipText += `Mass: ${massDisplay}`;
             if(elementData.electron_configuration_semantic) {
-                 element.title += `\nConfig: ${elementData.electron_configuration_semantic}`;
+                 tooltipText += `\nConfig: ${elementData.electron_configuration_semantic}`;
             }
              if(elementData.e_neg_pauling) {
-                 element.title += `\nE. Neg.: ${elementData.e_neg_pauling}`;
+                 tooltipText += `\nE. Neg.: ${elementData.e_neg_pauling}`;
             }
-            // Add more properties to title if needed...
+            // Add more properties as needed using \n for new lines
 
-            // Add atomic mass to the designated span
+            // *** Set the native title attribute ***
+            element.title = tooltipText;
+
+
+            // Add atomic mass to the designated span (unchanged)
             if (massSpan && mass) {
                 massSpan.textContent = massDisplay;
             } else if (massSpan) {
-                massSpan.textContent = 'N/A'; // Explicitly show N/A if mass is missing in data
+                massSpan.textContent = 'N/A';
             }
 
-            // --- 3. Highlight if needed ---
+            // --- 3. Highlight if needed (unchanged) ---
             if (elementsToHighlight.has(symbol)) {
                 element.classList.add('highlighted-element');
-                console.log(`[Detail Page] Highlighting: ${symbol}`);
+                // console.log(`[Detail Page] Highlighting: ${symbol}`);
             }
         } else if (symbol) {
-             // Basic title even if data is missing in periodicTableData.js
+             // Basic title even if data is missing
             element.title = symbol;
              console.warn(`[Detail Page] Data missing in periodicTableData for symbol: ${symbol}`);
         } else {
-            // Should not happen if HTML is correct, but good to log
              console.warn("[Detail Page] Found .pt-element without data-symbol attribute.");
         }
     });
-     console.log("[Detail Page] Periodic table enhancement complete.");
+
+    console.log("[Detail Page] Periodic table enhancement complete (using native titles).");
 }
 
 
@@ -242,551 +239,250 @@ function enhancePeriodicTable(materialFormula) {
  * @param {HTMLElement} container - The main HTML element to append sections to.
  */
 function populatePage(material, container) {
-    const fallbackValue = '<span class="na-value">N/A</span>'; // Use HTML for N/A display
+    const fallbackValue = '<span class="na-value">N/A</span>';
 
     // --- Helper Function: getData --- (Handles nested access and formatting)
     const getData = (obj, path, fallback = fallbackValue) => {
-        // Handles dot notation paths, e.g., 'electrical_properties.band_gap'
         const value = path.split('.').reduce((o, key) => (o && typeof o === 'object' && o[key] !== undefined && o[key] !== null) ? o[key] : undefined, obj);
-
-        // Undefined or explicitly null -> return fallback
         if (value === undefined || value === null) return fallback;
 
-        // 1. Handle specific object structure: { value: ..., unit: ..., notes: ... }
         if (typeof value === 'object' && !Array.isArray(value) && value.value !== undefined) {
            const stringVal = String(value.value).trim();
-           // If value itself represents N/A, treat whole object as fallback
            if (stringVal === '' || stringVal.toUpperCase() === 'N/A') return fallback;
-
-           let text = stringVal; // Start with the core value
-           if (value.unit) text += ` <span class="unit">${value.unit}</span>`; // Append unit if present
-           if (value.notes) text += ` <span class="notes">(${value.notes})</span>`; // Append notes if present
-           return text; // Return combined HTML string
+           let text = stringVal;
+           if (value.unit) text += ` <span class="unit">${value.unit}</span>`;
+           if (value.notes) text += ` <span class="notes">(${value.notes})</span>`;
+           return text;
         }
-
-        // 2. Handle arrays: join with comma, or create bulleted list for specific paths
         if (Array.isArray(value)) {
-            // Specific data paths that should be rendered as <ul> lists
-            const listPathsForBullets = [
-                'device_applications.key_applications',
-                'device_integration_characterization.key_characterization_techniques'
-                // Add other paths here if they should be bulleted lists
-            ];
-            // Filter out null/undefined/empty items before joining/listing
+            const listPathsForBullets = ['device_applications.key_applications','device_integration_characterization.key_characterization_techniques'];
             const filteredValues = value.filter(item => item !== null && item !== undefined && String(item).trim() !== '');
-            if (filteredValues.length === 0) return fallback; // If array becomes empty after filtering
-
-            // Check if the current path needs a bulleted list
+            if (filteredValues.length === 0) return fallback;
+            const itemsContent = filteredValues.map(item => (typeof item === 'string' && (item.includes('{') || item.includes('.'))) ? getData(material, item) : item).join(', '); // Basic handling, may need refinement
             if (listPathsForBullets.includes(path)) {
-                return `<ul class="property-list-items">${filteredValues.map(item => `<li>${getData(material, item)}</li>`).join('')}</ul>`; // Recursively call getData for list items if they might be complex objects/paths themselves (unlikely here, but safer)
-                // Simplified if list items are always simple strings:
-                // return `<ul class="property-list-items">${filteredValues.map(item => `<li>${item}</li>`).join('')}</ul>`;
-            } else {
-                // Otherwise, join array elements with a comma and space
-                return filteredValues.map(item => getData(material, item)).join(', '); // Recursively call getData for items
-                // Simplified if list items are always simple strings:
-                // return filteredValues.join(', ');
+                return `<ul class="property-list-items">${filteredValues.map(item => `<li>${(typeof item === 'string' && (item.includes('{') || item.includes('.'))) ? getData(material, item) : item}</li>`).join('')}</ul>`;
             }
-        }
+            return itemsContent;
 
-        // 3. Handle simple objects with ONLY a 'notes' key: { notes: "..." }
-        if (typeof value === 'object' && !Array.isArray(value) && Object.keys(value).length === 1 && value.notes !== undefined) {
+        }
+         if (typeof value === 'object' && !Array.isArray(value) && Object.keys(value).length === 1 && value.notes !== undefined) {
             const noteString = String(value.notes).trim();
-            // Return notes directly if they exist and aren't 'N/A', otherwise fallback
-            return (noteString !== '' && noteString.toUpperCase() !== 'N/A')
-                   ? `<span class="notes-only">${noteString}</span>` // Wrap notes in a span for styling
-                   : fallback;
+            return (noteString !== '' && noteString.toUpperCase() !== 'N/A') ? `<span class="notes-only">${noteString}</span>` : fallback;
         }
-
-        // 4. Handle other unexpected object types -> return fallback and log warning
-         if (typeof value === 'object' && !Array.isArray(value)) {
+        if (typeof value === 'object' && !Array.isArray(value)) {
             console.warn(`[getData] Encountered unexpected object structure for path "${path}". Returning fallback. Object:`, value);
             return fallback;
         }
-
-        // 5. Handle simple values (string, number, boolean)
         const stringValue = String(value).trim();
-        // Treat empty strings or explicit "N/A" strings as fallback
         return (stringValue === '' || stringValue.toUpperCase() === 'N/A') ? fallback : stringValue;
     };
 
-
-    // --- Helper Function: createPropertyItem --- (Creates dt/dd structure for property lists)
+    // --- Helper Function: createPropertyItem ---
     const createPropertyItem = (keyText, valueHtml, isKey = false) => {
         const itemDiv = document.createElement('div');
         itemDiv.className = 'property-item';
-        if (isKey) {
-            itemDiv.classList.add('key-property'); // Add class for highlighting key properties
-        }
-
+        if (isKey) itemDiv.classList.add('key-property');
         const dt = document.createElement('dt');
         dt.className = 'property-key';
-        dt.textContent = keyText + ':'; // Add colon to key text
-
+        dt.textContent = keyText + ':';
         const dd = document.createElement('dd');
         dd.className = 'property-value';
-        dd.innerHTML = valueHtml; // Use innerHTML as value might contain spans (unit, notes, N/A)
-        // Add 'na-value' class if the content is exactly the fallback HTML
-        if (valueHtml === fallbackValue) {
-            dd.classList.add('na-value');
-        }
-
+        dd.innerHTML = valueHtml;
+        if (valueHtml === fallbackValue) dd.classList.add('na-value');
         itemDiv.appendChild(dt);
         itemDiv.appendChild(dd);
         return itemDiv;
     };
 
-    // --- Helper Function: createSection --- (Creates section element with title)
+    // --- Helper Function: createSection ---
     const createSection = (id, title, icon = null) => {
         const section = document.createElement('section');
-        section.className = 'material-section'; // Base class for styling
-        section.id = id; // Assign ID for potential linking or specific styling
-
+        section.className = 'material-section';
+        section.id = id;
         const h2 = document.createElement('h2');
         if (icon) {
-            // Add icon span if provided
             const iconSpan = document.createElement('span');
-            iconSpan.setAttribute('aria-hidden', 'true'); // Good practice for accessibility
+            iconSpan.setAttribute('aria-hidden', 'true');
             iconSpan.textContent = icon;
             h2.appendChild(iconSpan);
-            h2.appendChild(document.createTextNode(' ')); // Add space after icon
+            h2.appendChild(document.createTextNode(' '));
         }
-        h2.appendChild(document.createTextNode(title)); // Add title text
+        h2.appendChild(document.createTextNode(title));
         section.appendChild(h2);
-
-        // Add specific class for safety section styling
-        if (id === 'section-safety') {
-            section.classList.add('safety-info');
-        }
+        if (id === 'section-safety') section.classList.add('safety-info');
         return section;
     };
 
     // --- Configuration for Sections and Properties ---
-    // Defines the structure, titles, and data mapping for each section.
     const sectionConfig = [
-        // isSpecial indicates custom rendering logic needed (not just a simple property list)
         { id: 'section-overview', title: 'Overview', isSpecial: true },
-        // Standard sections map dataKey (top-level key in JSON) to properties (nested keys)
-        { id: 'section-safety', title: 'Safety Information', icon: '⚠️', dataKey: 'safety', properties: {
-            'toxicity': { label: 'Toxicity', isKey: true },
-            'handling': { label: 'Handling' }
-        }},
-        { id: 'section-identification', title: 'Identification & Structure', dataKey: 'identification', properties: {
-            // 'class' is handled specially below (added alongside category)
-            'cas_number': { label: 'CAS Number' },
-            'crystal_structure': { label: 'Crystal Structure', isKey: true },
-            'lattice_constant': { label: 'Lattice Constant', isKey: true, isHtml: true }, // isHtml flag (currently unused by getData) might denote value contains HTML
-            'phase_diagram_notes': { label: 'Phase Diagram Notes' }
-        }},
-        { id: 'section-fab-insights', title: 'Advanced Fabrication Insights', dataKey: 'advanced_fabrication_insights', properties: {
-            'stoichiometry_control': { label: 'Stoichiometry Control', isKey: true },
-            'common_defects_impact': { label: 'Common Defects' },
-            'surface_preparation': { label: 'Surface Preparation' },
-            'method_specific_notes': { label: 'Method Nuances' }
-        }},
-        { id: 'section-growth', title: 'Growth & Fabrication Properties', dataKey: 'growth_fabrication_properties', properties: {
-            'common_growth_methods': { label: 'Common Methods' },
-            'source_materials_purity': { label: 'Source Materials' },
-            'preferred_substrates_orientations': { label: 'Substrates/Orientations', isKey: true },
-            'typical_growth_parameters': { label: 'Growth Parameters' },
-            'passivation_methods': { label: 'Passivation', isKey: true }
-        }},
-        { id: 'section-processing', title: 'Post-Growth Processing', dataKey: 'post_growth_processing', properties: {
-            'annealing': { label: 'Annealing', isKey: true },
-            'lapping_polishing': { label: 'Lapping & Polishing' },
-            'etching': { label: 'Etching Methods' },
-            'grinding_milling': { label: 'Grinding/Milling Notes' }
-        }},
-        { id: 'section-device-char', title: 'Device Integration & Characterization', dataKey: 'device_integration_characterization', properties: {
-            'device_architectures': { label: 'Device Architectures' },
-            'readout_integration': { label: 'Readout Integration', isKey: true },
-            'ar_coatings': { label: 'AR Coatings' },
-            'packaging_cooling': { label: 'Packaging/Cooling', isKey: true },
-            'key_characterization_techniques': { label: 'Key Characterization', isHtml: true } // Needs array handling in getData
-        }},
-        { id: 'section-electrical', title: 'Electrical Properties', dataKey: 'electrical_properties', properties: {
-            'bandgap_type': { label: 'Bandgap Type' },
-            'band_gap': { label: 'Bandgap (Eg)', isKey: true, isHtml: true },
-            'bandgap_equation.hansen_eg': { label: 'Hansen Eg Eq' }, // Nested path example
-            'bandgap_equation.varshni_equation': { label: 'Varshni Eg Eq' },
-            'bandgap_equation.wavelength_relation': { label: 'Cutoff λ Eq' },
-            'common_dopants': { label: 'Common Dopants', isKey: true },
-            'carrier_concentration': { label: 'Carrier Conc', isHtml: true },
-            'electron_mobility': { label: 'Electron Mobility (μₑ)', isKey: true, isHtml: true },
-            'hole_mobility': { label: 'Hole Mobility (μ<0xE2><0x82><0x95>)', isHtml: true }, // Note: Unicode subscript used here
-            'dielectric_constant': { label: 'Dielectric Const (ε)', isHtml: true },
-            'resistivity': { label: 'Resistivity (ρ)', isHtml: true },
-            'breakdown_field': { label: 'Breakdown Field', isHtml: true }
-        }},
-        { id: 'section-optical', title: 'Optical Properties', dataKey: 'optical_properties', properties: {
-            'spectral_range': { label: 'Spectral Range', isKey: true, isHtml: true },
-            'cutoff_wavelength': { label: 'Cutoff Wavelength (λc)', isKey: true, isHtml: true },
-            'refractive_index': { label: 'Refractive Index (n)', isHtml: true },
-            'absorption_coefficient': { label: 'Absorption Coeff (α)', isHtml: true },
-            'quantum_efficiency': { label: 'Quantum Efficiency (η)', isKey: true, isHtml: true },
-            'responsivity': { label: 'Responsivity (R)', isKey: true, isHtml: true },
-            'noise_equivalent_power': { label: 'Noise Equiv. Power (NEP)', isHtml: true },
-             // Add other optical properties here if available in JSON
-             'nonlinear_refractive_index_n2': { label: 'Nonlinear Index (n₂)'},
-             'scattering_loss': { label: 'Scattering Loss'}
-        }},
-        { id: 'section-thermal', title: 'Thermal Properties', dataKey: 'thermal_properties', properties: {
-            'operating_temperature': { label: 'Operating Temperature', isKey: true, isHtml: true },
-            'thermal_conductivity': { label: 'Thermal Conductivity (k)', isHtml: true },
-            'specific_heat': { label: 'Specific Heat (Cp)', isHtml: true },
-            'melting_point': { label: 'Melting Point', isHtml: true },
-            'glass_transition_temp_tg': { label: 'Glass Transition (Tg)'}, // Example for glass
-            'thermal_expansion': { label: 'Thermal Expansion (CTE)'},
-             'decomposition_temperature': { label: 'Decomposition Temp'} // Example for polymers
-        }},
-        { id: 'section-mechanical', title: 'Mechanical Properties', dataKey: 'mechanical_properties', properties: {
-            'density': { label: 'Density', isHtml: true },
-            'youngs_modulus': { label: 'Young\'s Modulus (E)', isHtml: true },
-            'tensile_strength': { label: 'Tensile Strength' }, // Example for films/fibers
-            'elongation_at_break': { label: 'Elongation @ Break (%)' }, // Example for films/fibers
-            'hardness_vickers': { label: 'Hardness (Vickers)', isHtml: true },
-            'poissons_ratio': { label: 'Poisson\'s Ratio (ν)' },
-            'fracture_toughness': { label: 'Fracture Toughness (K<small>IC</small>)', isHtml: true } // Small tag example
-        }},
-        { id: 'section-applications', title: 'Key Applications & Sensor Types', dataKey: 'device_applications', properties: {
-            'sensor_types': { label: 'Common Sensor Types' },
-            'key_applications': { label: 'Key Applications', isKey: true, isHtml: true } // Needs array handling
-        }},
-        { id: 'section-chemical', title: 'Chemical Properties', dataKey: 'chemical_properties', properties: {
-            'stability_oxidation': { label: 'Stability & Oxidation' },
-             'solvent_resistance': { label: 'Solvent Resistance'}, // Example for polymers
-             'acid_resistance': { label: 'Acid Resistance'},
-             'base_resistance': { label: 'Base Resistance'},
-             'water_solubility': { label: 'Water Solubility'},
-             'radiation_resistance': { label: 'Radiation Resistance'},
-             'uv_resistance': { label: 'UV Resistance'}
-        }},
-        { id: 'section-magnetic', title: 'Magnetic Properties', dataKey: 'magnetic_properties', properties: {
-            'type': { label: 'Magnetic Type', isKey: true },
-            'critical_temperature_tc': { label: 'Critical Temp (Tc)', isHtml: true }, // For superconductors
-            'upper_critical_field_bc2': { label: 'Upper Critical Field (Bc2)', isHtml: true }, // For superconductors
-            'critical_current_density_jc': { label: 'Critical Current (Jc)', isHtml: true } // For superconductors
-        }},
-        // Special sections require custom rendering logic below
+        { id: 'section-safety', title: 'Safety Information', icon: '⚠️', dataKey: 'safety', properties: {'toxicity': { label: 'Toxicity', isKey: true }, 'handling': { label: 'Handling' }}},
+        { id: 'section-identification', title: 'Identification & Structure', dataKey: 'identification', properties: {'cas_number': { label: 'CAS Number' }, 'crystal_structure': { label: 'Crystal Structure', isKey: true }, 'lattice_constant': { label: 'Lattice Constant', isKey: true, isHtml: true },'phase_diagram_notes': { label: 'Phase Diagram Notes' }}},
+        { id: 'section-fab-insights', title: 'Advanced Fabrication Insights', dataKey: 'advanced_fabrication_insights', properties: {'stoichiometry_control': { label: 'Stoichiometry Control', isKey: true }, 'common_defects_impact': { label: 'Common Defects' }, 'surface_preparation': { label: 'Surface Preparation' }, 'method_specific_notes': { label: 'Method Nuances' }}},
+        { id: 'section-growth', title: 'Growth & Fabrication Properties', dataKey: 'growth_fabrication_properties', properties: {'common_growth_methods': { label: 'Common Methods' }, 'source_materials_purity': { label: 'Source Materials' }, 'preferred_substrates_orientations': { label: 'Substrates/Orientations', isKey: true }, 'typical_growth_parameters': { label: 'Growth Parameters' }, 'passivation_methods': { label: 'Passivation', isKey: true }}},
+        { id: 'section-processing', title: 'Post-Growth Processing', dataKey: 'post_growth_processing', properties: {'annealing': { label: 'Annealing', isKey: true }, 'lapping_polishing': { label: 'Lapping & Polishing' }, 'etching': { label: 'Etching Methods' }, 'grinding_milling': { label: 'Grinding/Milling Notes' }}},
+        { id: 'section-device-char', title: 'Device Integration & Characterization', dataKey: 'device_integration_characterization', properties: {'device_architectures': { label: 'Device Architectures' }, 'readout_integration': { label: 'Readout Integration', isKey: true }, 'ar_coatings': { label: 'AR Coatings' }, 'packaging_cooling': { label: 'Packaging/Cooling', isKey: true }, 'key_characterization_techniques': { label: 'Key Characterization', isHtml: true }}},
+        { id: 'section-electrical', title: 'Electrical Properties', dataKey: 'electrical_properties', properties: {'bandgap_type': { label: 'Bandgap Type' }, 'band_gap': { label: 'Bandgap (Eg)', isKey: true, isHtml: true }, 'bandgap_equation.hansen_eg': { label: 'Hansen Eg Eq' }, 'bandgap_equation.varshni_equation': { label: 'Varshni Eg Eq' }, 'bandgap_equation.wavelength_relation': { label: 'Cutoff λ Eq' }, 'common_dopants': { label: 'Common Dopants', isKey: true }, 'carrier_concentration': { label: 'Carrier Conc', isHtml: true }, 'electron_mobility': { label: 'Electron Mobility (μₑ)', isKey: true, isHtml: true }, 'hole_mobility': { label: 'Hole Mobility (μ<0xE2><0x82><0x95>)', isHtml: true }, 'dielectric_constant': { label: 'Dielectric Const (ε)', isHtml: true }, 'resistivity': { label: 'Resistivity (ρ)', isHtml: true }, 'breakdown_field': { label: 'Breakdown Field', isHtml: true }}},
+        { id: 'section-optical', title: 'Optical Properties', dataKey: 'optical_properties', properties: {'spectral_range': { label: 'Spectral Range', isKey: true, isHtml: true }, 'cutoff_wavelength': { label: 'Cutoff Wavelength (λc)', isKey: true, isHtml: true }, 'refractive_index': { label: 'Refractive Index (n)', isHtml: true }, 'absorption_coefficient': { label: 'Absorption Coeff (α)', isHtml: true }, 'quantum_efficiency': { label: 'Quantum Efficiency (η)', isKey: true, isHtml: true }, 'responsivity': { label: 'Responsivity (R)', isKey: true, isHtml: true }, 'noise_equivalent_power': { label: 'Noise Equiv. Power (NEP)', isHtml: true }, 'nonlinear_refractive_index_n2': { label: 'Nonlinear Index (n₂)'},'scattering_loss': { label: 'Scattering Loss'}}},
+        { id: 'section-thermal', title: 'Thermal Properties', dataKey: 'thermal_properties', properties: {'operating_temperature': { label: 'Operating Temperature', isKey: true, isHtml: true }, 'thermal_conductivity': { label: 'Thermal Conductivity (k)', isHtml: true }, 'specific_heat': { label: 'Specific Heat (Cp)', isHtml: true }, 'melting_point': { label: 'Melting Point', isHtml: true }, 'glass_transition_temp_tg': { label: 'Glass Transition (Tg)'}, 'thermal_expansion': { label: 'Thermal Expansion (CTE)'},'decomposition_temperature': { label: 'Decomposition Temp'}}},
+        { id: 'section-mechanical', title: 'Mechanical Properties', dataKey: 'mechanical_properties', properties: {'density': { label: 'Density', isHtml: true }, 'youngs_modulus': { label: 'Young\'s Modulus (E)', isHtml: true }, 'tensile_strength': { label: 'Tensile Strength' }, 'elongation_at_break': { label: 'Elongation @ Break (%)' }, 'hardness_vickers': { label: 'Hardness (Vickers)', isHtml: true }, 'poissons_ratio': { label: 'Poisson\'s Ratio (ν)' }, 'fracture_toughness': { label: 'Fracture Toughness (K<small>IC</small>)', isHtml: true }}},
+        { id: 'section-applications', title: 'Key Applications & Sensor Types', dataKey: 'device_applications', properties: {'sensor_types': { label: 'Common Sensor Types' }, 'key_applications': { label: 'Key Applications', isKey: true, isHtml: true }}},
+        { id: 'section-chemical', title: 'Chemical Properties', dataKey: 'chemical_properties', properties: {'stability_oxidation': { label: 'Stability & Oxidation' },'solvent_resistance': { label: 'Solvent Resistance'}, 'acid_resistance': { label: 'Acid Resistance'},'base_resistance': { label: 'Base Resistance'},'water_solubility': { label: 'Water Solubility'},'radiation_resistance': { label: 'Radiation Resistance'},'uv_resistance': { label: 'UV Resistance'}}},
+        { id: 'section-magnetic', title: 'Magnetic Properties', dataKey: 'magnetic_properties', properties: {'type': { label: 'Magnetic Type', isKey: true }, 'critical_temperature_tc': { label: 'Critical Temp (Tc)', isHtml: true }, 'upper_critical_field_bc2': { label: 'Upper Critical Field (Bc2)', isHtml: true }, 'critical_current_density_jc': { label: 'Critical Current (Jc)', isHtml: true }}},
         { id: 'section-comparison', title: 'Comparison with Alternatives', dataKey: 'comparison_alternatives', isSpecial: true },
         { id: 'section-references', title: 'References & Further Reading', dataKey: 'references_further_reading', isSpecial: true },
         { id: 'section-vendors', title: 'Commercial Vendors (Example)', dataKey: 'vendor_info', isSpecial: true }
     ];
 
     // --- Populate Header, Title, and Tags ---
-    // Get name and formula safely using getData
     const materialNameDisplay = getData(material, 'name', 'Unknown Material');
-    const materialFormulaDisplay = getData(material, 'formula', ''); // Use empty string if no formula
-
-    document.title = `${materialNameDisplay} Detail - MaterialsDB`; // Set dynamic page title
+    const materialFormulaDisplay = getData(material, 'formula', '');
+    document.title = `${materialNameDisplay} Detail - MaterialsDB`;
     document.getElementById('material-name').textContent = materialNameDisplay;
     const formulaElement = document.getElementById('material-formula');
-    if (formulaElement) {
-        formulaElement.innerHTML = materialFormulaDisplay; // Use innerHTML in case formula has sub/sup tags (though not currently supported by getData)
-    }
+    if (formulaElement) formulaElement.innerHTML = materialFormulaDisplay;
 
-    // Populate tags section
     const tagsContainer = document.getElementById('material-tags');
     if (tagsContainer) {
-        tagsContainer.innerHTML = ''; // Clear any previous content
-        const tags = material.tags || [];
-        let tagsAdded = false;
+        tagsContainer.innerHTML = '';
+        const tags = material.tags || []; let tagsAdded = false;
         if (Array.isArray(tags) && tags.length > 0) {
             tags.forEach(tag => {
                 if (typeof tag === 'string' && tag.trim() !== '') {
-                    const tagElement = document.createElement('span');
-                    tagElement.className = 'tag';
-                    // Basic removal of prefixes like 'industry:' for display
+                    const tagElement = document.createElement('span'); tagElement.className = 'tag';
                     tagElement.textContent = tag.replace(/^\w+:/, "");
-                    tagsContainer.appendChild(tagElement);
-                    tagsAdded = true;
+                    tagsContainer.appendChild(tagElement); tagsAdded = true;
                 }
             });
         }
-        // Display fallback message if no valid tags were found/added
-        if (!tagsAdded) {
-            tagsContainer.innerHTML = fallbackValue; // Shows 'N/A' span
-        }
-    } else {
-        console.warn("[Detail Page] Tags container '#material-tags' not found.");
-    }
+        if (!tagsAdded) tagsContainer.innerHTML = fallbackValue;
+    } else { console.warn("[Detail Page] Tags container '#material-tags' not found."); }
 
     // --- Dynamically Create and Populate Main Content Sections ---
-    console.log("[Detail Page] Dynamically building content sections based on available data...");
-    const fragment = document.createDocumentFragment(); // Use fragment for performance
+    console.log("[Detail Page] Dynamically building content sections...");
+    const fragment = document.createDocumentFragment();
 
     sectionConfig.forEach(config => {
         const { id, title, icon, dataKey, properties, isSpecial } = config;
-
-        // Determine if the section has *any* relevant data in the JSON object
         let sectionDataExists = false;
         if (isSpecial) {
-            // Special sections might depend on specific keys or the top-level dataKey existing
-            if (id === 'section-overview') {
-                // Overview exists if description or wiki_link is present
-                sectionDataExists = material['description'] || material['wiki_link'];
-            } else if (dataKey && material[dataKey]) {
-                 // Other special sections just need their main data key
-                sectionDataExists = true;
-            }
-        } else if (dataKey && material[dataKey]) {
-             // Standard sections need their main data key object to exist
-            sectionDataExists = typeof material[dataKey] === 'object' && material[dataKey] !== null;
+            if (id === 'section-overview') sectionDataExists = material['description'] || material['wiki_link'];
+            else if (dataKey && material[dataKey]) sectionDataExists = true;
+        } else if (dataKey && material[dataKey] && typeof material[dataKey] === 'object') {
+            sectionDataExists = true;
         }
+        if (!sectionDataExists) return;
 
-        // If no data exists for this section's primary key(s), skip creating it entirely
-        if (!sectionDataExists) {
-            // console.log(`[Detail Page] Skipping section "${title}" - no data found for key "${dataKey || id}".`);
-            return;
-        }
-
-        // Create the basic section element
         let section = createSection(id, title, icon);
-        let sectionHasRenderableContent = false; // Flag to track if anything was actually added
+        let sectionHasRenderableContent = false;
 
-        // --- Handle Special Sections with Custom Logic ---
         if (isSpecial) {
-            if (id === 'section-overview') {
-                // Add description paragraph if present
+            // --- Custom Logic for Special Sections ---
+             if (id === 'section-overview') {
                 const descVal = getData(material, 'description', fallbackValue);
-                if (descVal !== fallbackValue) {
-                    const p = document.createElement('p');
-                    p.className = 'description'; // Apply specific class for styling
-                    p.textContent = descVal; // Use textContent as description should be plain text
-                    section.appendChild(p);
-                    sectionHasRenderableContent = true;
-                }
-
-                // Add Wikipedia link paragraph if present
-                const wikiUrl = getData(material, 'wiki_link', '#'); // Default to '#' if missing
-                if (wikiUrl !== '#' && wikiUrl !== fallbackValue) {
-                    const p = document.createElement('p');
-                    const a = document.createElement('a');
-                    a.id = 'wiki-link';
-                    a.href = wikiUrl;
-                    a.target = '_blank'; // Open in new tab
-                    a.rel = 'noopener noreferrer'; // Security best practice
-                    a.textContent = 'Wikipedia Article';
-                    p.appendChild(document.createTextNode('See also: ')); // Add leading text
-                    p.appendChild(a);
-                    section.appendChild(p);
-                    sectionHasRenderableContent = true;
-                }
-
-                // Add a placeholder for an image/diagram (always shown for layout consistency)
-                const imgPlaceholder = document.createElement('div');
-                imgPlaceholder.className = 'image-placeholder';
-                imgPlaceholder.textContent = 'Image Placeholder / Diagram';
-                section.appendChild(imgPlaceholder);
-                sectionHasRenderableContent = true; // Always consider overview section as having content due to placeholder
-
-            } else if (id === 'section-comparison' && material.comparison_alternatives) {
-                // Create list for comparison points
-                const dl = document.createElement('dl');
-                dl.className = 'property-list'; // Reuse property list styling
-                dl.id = 'comparison-list';
-                let comparisonsAdded = false;
-
-                // Add general comparison notes first, if available
-                const notesValue = getData(material, 'comparison_alternatives.notes', fallbackValue);
-                if (notesValue !== fallbackValue) {
-                    // Use createPropertyItem but maybe with a different label or style?
-                    // For now, just add it as a special item or a paragraph before the list
-                     const notesP = document.createElement('p');
-                     notesP.innerHTML = `<em>${notesValue}</em>`; // Italicize notes
-                     section.insertBefore(notesP, section.firstChild.nextSibling); // Insert after h2
-                     // dl.appendChild(createPropertyItem('Comparison Notes', notesValue));
-                    sectionHasRenderableContent = true; // Mark content added
-                    comparisonsAdded = true; // Consider notes as content
-                }
-
-                // Iterate through keys starting with 'vs_'
-                Object.entries(material.comparison_alternatives).forEach(([key, value]) => {
+                if (descVal !== fallbackValue) { const p = document.createElement('p'); p.className='description'; p.textContent=descVal; section.appendChild(p); sectionHasRenderableContent = true; }
+                const wikiUrl = getData(material, 'wiki_link', '#');
+                if (wikiUrl !== '#' && wikiUrl !== fallbackValue) { const p = document.createElement('p'); const a = document.createElement('a'); a.id = 'wiki-link'; a.href=wikiUrl; a.target='_blank'; a.rel='noopener noreferrer'; a.textContent='Wikipedia Article'; p.appendChild(document.createTextNode('See also: ')); p.appendChild(a); section.appendChild(p); sectionHasRenderableContent = true;}
+                const imgPlaceholder = document.createElement('div'); imgPlaceholder.className = 'image-placeholder'; imgPlaceholder.textContent = 'Image Placeholder / Diagram'; section.appendChild(imgPlaceholder);
+                sectionHasRenderableContent = true; // Placeholder always shown
+            }
+            else if (id === 'section-comparison' && material.comparison_alternatives) {
+                 const dl = document.createElement('dl'); dl.className = 'property-list'; dl.id = 'comparison-list';
+                 let comparisonsAdded = false;
+                 const notesValue = getData(material, 'comparison_alternatives.notes', fallbackValue);
+                 if (notesValue !== fallbackValue) {
+                      const notesP = document.createElement('p'); notesP.innerHTML = `<em>${notesValue}</em>`;
+                      section.insertBefore(notesP, section.firstChild.nextSibling); // Insert notes after h2
+                      sectionHasRenderableContent = true; comparisonsAdded = true;
+                 }
+                 Object.entries(material.comparison_alternatives).forEach(([key, value]) => {
                     if (key.startsWith('vs_')) {
-                        const comparisonValueStr = getData(material, `comparison_alternatives.${key}`, fallbackValue);
-                        if (comparisonValueStr !== fallbackValue) {
-                            // Format label nicely (e.g., 'vs. InSb')
-                            const comparisonLabel = key.replace(/^vs_/, 'vs. ');
-                            dl.appendChild(createPropertyItem(comparisonLabel, comparisonValueStr));
-                            sectionHasRenderableContent = true;
-                            comparisonsAdded = true;
-                        }
+                         const comparisonValueStr = getData(material, `comparison_alternatives.${key}`, fallbackValue);
+                         if (comparisonValueStr !== fallbackValue) {
+                             dl.appendChild(createPropertyItem(key.replace(/^vs_/, 'vs. '), comparisonValueStr));
+                             sectionHasRenderableContent = true; comparisonsAdded = true;
+                         }
                     }
-                });
-
-                 // Only append the <dl> if comparisons were actually added (beyond just notes)
-                if (comparisonsAdded) {
-                     if (dl.hasChildNodes()) { // Check if list has items before appending
-                        section.appendChild(dl);
-                    } else if (notesValue === fallbackValue) { // If ONLY notes were missing and no comparisons, show N/A
-                         dl.innerHTML = `<div class="property-item comparison-na-message"><dd class="property-value">${fallbackValue}</dd></div>`;
-                         section.appendChild(dl);
-                         sectionHasRenderableContent = true;
-                    }
-                }
-
-            } else if (id === 'section-references' && material.references_further_reading) {
-                // Create unordered list for references
-                const ul = document.createElement('ul');
-                ul.id = 'reference-list';
-                let listHasContent = false;
-
-                // Add general notes first if available
-                const notesValue = getData(material, 'references_further_reading.notes', fallbackValue);
-                 if (notesValue !== fallbackValue) {
-                     const notesLi = document.createElement('li');
-                     notesLi.className = 'ref-notes'; // Special class for styling notes
-                     notesLi.innerHTML = `<em>${notesValue}</em>`;
-                     ul.appendChild(notesLi);
-                     listHasContent = true;
+                 });
+                 if (comparisonsAdded && dl.hasChildNodes()) {
+                     section.appendChild(dl);
+                 } else if (notesValue === fallbackValue) { // Only show N/A if notes were ALSO missing
+                      dl.innerHTML = `<div class="property-item comparison-na-message"><dd class="property-value">${fallbackValue}</dd></div>`;
+                      section.appendChild(dl); sectionHasRenderableContent = true;
                  }
-
-                 // Add individual references
-                 Object.entries(material.references_further_reading).forEach(([key, value]) => {
-                     // Skip the 'notes' key we already handled
-                     if (key !== 'notes') {
+            }
+             else if (id === 'section-references' && material.references_further_reading) {
+                 const ul = document.createElement('ul'); ul.id = 'reference-list'; let listHasContent = false;
+                 const notesValue = getData(material, 'references_further_reading.notes', fallbackValue);
+                 if (notesValue !== fallbackValue) { const notesLi = document.createElement('li'); notesLi.className = 'ref-notes'; notesLi.innerHTML = `<em>${notesValue}</em>`; ul.appendChild(notesLi); listHasContent = true; }
+                 Object.entries(material.references_further_reading).forEach(([key, value])=>{
+                     if(key !== 'notes'){
                          const refValue = getData(material, `references_further_reading.${key}`, fallbackValue);
-                         if (refValue !== fallbackValue) {
-                             const li = document.createElement('li');
-                             let itemHtml = refValue;
-                             // Make links clickable (simple check for http/www)
-                              if (key === 'wikipedia' && typeof refValue === 'string' && refValue.startsWith('http')) {
-                                  itemHtml = `Wikipedia: <a href="${refValue}" target="_blank" rel="noopener noreferrer">${refValue}</a>`;
-                              } else if (typeof refValue === 'string' && (refValue.startsWith('http') || refValue.startsWith('www'))) {
-                                  const url = refValue.startsWith('http') ? refValue : 'http://' + refValue;
-                                  itemHtml = `<a href="${url}" target="_blank" rel="noopener noreferrer">${refValue}</a>`;
-                              } // Add more specific link formatting if needed (e.g., for DOIs)
-                             li.innerHTML = itemHtml;
-                             ul.appendChild(li);
-                             listHasContent = true;
-                         }
+                          if (refValue !== fallbackValue) {
+                              const li = document.createElement('li'); let itemHtml = refValue;
+                              if (key === 'wikipedia' && typeof refValue === 'string' && refValue.startsWith('http')) { itemHtml = `Wikipedia: <a href="${refValue}" target="_blank" rel="noopener noreferrer">${refValue}</a>`; }
+                              else if (typeof refValue === 'string' && (refValue.startsWith('http') || refValue.startsWith('www'))) { const url = refValue.startsWith('http') ? refValue : 'http://' + refValue; itemHtml = `<a href="${url}" target="_blank" rel="noopener noreferrer">${refValue}</a>`; }
+                              li.innerHTML = itemHtml; ul.appendChild(li); listHasContent = true;
+                          }
                      }
                  });
-
-                 // If list is still empty after processing, add fallback message
-                if (!listHasContent) {
-                    ul.innerHTML = `<li>Reference information ${fallbackValue}</li>`;
-                }
-                section.appendChild(ul);
-                sectionHasRenderableContent = true; // Assume section has content if dataKey exists
-
-            } else if (id === 'section-vendors' && material.vendor_info) {
-                // Add introductory text
-                const introP = document.createElement('p');
-                introP.textContent = 'This space can list companies supplying materials or related services. (Example data)';
-                section.appendChild(introP);
-
-                const ul = document.createElement('ul');
-                ul.id = 'vendor-list';
-                let listHasContent = false;
-
-                 // Add general notes first if available
-                 const notesValue = getData(material, 'vendor_info.notes', fallbackValue);
-                 if (notesValue !== fallbackValue) {
-                     const notesLi = document.createElement('li');
-                     notesLi.className = 'vendor-notes'; // Special class for styling notes
-                     notesLi.innerHTML = `<em>${notesValue}</em>`;
-                     ul.appendChild(notesLi);
-                     listHasContent = true;
-                 }
-
-                 // Add individual vendors
-                 Object.entries(material.vendor_info).forEach(([key, value]) => {
-                     if (key !== 'notes') {
-                         const vendorValue = getData(material, `vendor_info.${key}`, fallbackValue);
-                         if (vendorValue !== fallbackValue) {
-                              const li = document.createElement('li');
-                             let itemHtml = vendorValue;
-                             // Attempt to auto-link URLs within the vendor string
-                             try {
-                                 const urlMatch = String(vendorValue).match(/(https?:\/\/[^\s"'>]+)|(www\.[^\s"'>]+)/);
-                                 if (urlMatch) {
-                                     const url = urlMatch[0].startsWith('http') ? urlMatch[0] : 'http://' + urlMatch[0];
-                                     itemHtml = String(vendorValue).replace(urlMatch[0], `<a href="${url}" target="_blank" rel="noopener noreferrer">${urlMatch[0]}</a>`);
-                                 }
-                             } catch (linkError) { /* ignore errors during regex matching */ }
-                             li.innerHTML = itemHtml;
-                             ul.appendChild(li);
-                             listHasContent = true;
-                         }
-                     }
-                 });
-
-                // Add fallback if list is empty
-                if (!listHasContent) {
-                    ul.innerHTML = `<li>Vendor information ${fallbackValue}</li>`;
-                }
-                section.appendChild(ul);
-
-                // Add disclaimer text
-                const disclaimerP = document.createElement('p');
-                const small = document.createElement('small');
-                small.textContent = 'Note: Listing does not imply endorsement. Contact vendors directly for current offerings.';
-                disclaimerP.appendChild(small);
-                section.appendChild(disclaimerP);
-                sectionHasRenderableContent = true; // Assume section has content if dataKey exists
+                 if (!listHasContent) { ul.innerHTML = `<li>Reference information ${fallbackValue}</li>`; }
+                 section.appendChild(ul); sectionHasRenderableContent = true;
             }
+             else if (id === 'section-vendors' && material.vendor_info) {
+                  const introP = document.createElement('p'); introP.textContent = 'This space can list companies supplying materials or related services. (Example data)'; section.appendChild(introP);
+                  const ul = document.createElement('ul'); ul.id = 'vendor-list'; let listHasContent = false;
+                  const notesValue = getData(material, 'vendor_info.notes', fallbackValue);
+                  if (notesValue !== fallbackValue) { const notesLi = document.createElement('li'); notesLi.className = 'vendor-notes'; notesLi.innerHTML = `<em>${notesValue}</em>`; ul.appendChild(notesLi); listHasContent = true; }
+                  Object.entries(material.vendor_info).forEach(([key, value])=>{
+                       if(key !== 'notes'){
+                           const vendorValue = getData(material, `vendor_info.${key}`, fallbackValue);
+                            if (vendorValue !== fallbackValue) {
+                                const li = document.createElement('li'); let itemHtml = vendorValue;
+                                try { const urlMatch = String(vendorValue).match(/(https?:\/\/[^\s"'>]+)|(www\.[^\s"'>]+)/); if (urlMatch) { const url = urlMatch[0].startsWith('http') ? urlMatch[0] : 'http://' + urlMatch[0]; itemHtml = String(vendorValue).replace(urlMatch[0], `<a href="${url}" target="_blank" rel="noopener noreferrer">${urlMatch[0]}</a>`); } } catch (linkError) {}
+                                li.innerHTML = itemHtml; ul.appendChild(li); listHasContent = true;
+                            }
+                       }
+                  });
+                  if (!listHasContent) { ul.innerHTML = `<li>Vendor information ${fallbackValue}</li>`; }
+                  section.appendChild(ul);
+                  const disclaimerP = document.createElement('p'); const small = document.createElement('small'); small.textContent = 'Note: Listing does not imply endorsement. Contact vendors directly for current offerings.'; disclaimerP.appendChild(small); section.appendChild(disclaimerP);
+                  sectionHasRenderableContent = true;
+             }
+            // --- Append Special Section ---
+            if (sectionHasRenderableContent) fragment.appendChild(section);
 
-            // Append the populated special section if it has content
-            if (sectionHasRenderableContent) {
-                fragment.appendChild(section);
-            } else {
-                 console.log(`[Detail Page] Skipping special section "${title}" - no renderable content found.`);
-            }
-
-        // --- Handle Standard Sections (Property Lists) ---
         } else if (dataKey && properties && material[dataKey]) {
-            const dl = document.createElement('dl');
-            dl.className = 'property-list';
-            let propertiesAddedToDl = false; // Track if we add anything to *this* dl
+             // --- Logic for Standard Sections ---
+            const dl = document.createElement('dl'); dl.className = 'property-list';
+            let propertiesAddedToDl = false;
 
-            // Special handling for Material Category/Class within Identification section
             if (id === 'section-identification') {
-                // Get category from top level of material object
                 let catVal = getData(material, 'category', fallbackValue);
-                if (catVal !== fallbackValue) {
-                    dl.appendChild(createPropertyItem('Material Category', catVal));
-                    sectionHasRenderableContent = true;
-                    propertiesAddedToDl = true;
-                }
-                // Get class from within the 'identification' object
+                if (catVal !== fallbackValue) { dl.appendChild(createPropertyItem('Material Category', catVal)); sectionHasRenderableContent = true; propertiesAddedToDl = true;}
                 let classVal = getData(material, 'identification.class', fallbackValue);
-                if (classVal !== fallbackValue) {
-                    dl.appendChild(createPropertyItem('Material Class', classVal));
-                    sectionHasRenderableContent = true;
-                    propertiesAddedToDl = true;
-                }
+                if (classVal !== fallbackValue) { dl.appendChild(createPropertyItem('Material Class', classVal)); sectionHasRenderableContent = true; propertiesAddedToDl = true;}
             }
 
-            // Iterate through the properties defined in the config for this section
             Object.entries(properties).forEach(([propKey, propConfig]) => {
-                const dataPath = `${dataKey}.${propKey}`; // Construct the full path (e.g., 'electrical_properties.band_gap')
-                const value = getData(material, dataPath, fallbackValue); // Get the data using the helper
-
-                // Only add the property if it has a value other than the fallback
-                if (value !== fallbackValue) {
-                    dl.appendChild(createPropertyItem(propConfig.label, value, propConfig.isKey || false));
-                    sectionHasRenderableContent = true; // Mark that this section has content
-                    propertiesAddedToDl = true; // Mark that we added something to this list
-                }
+                 const dataPath = `${dataKey}.${propKey}`;
+                 const value = getData(material, dataPath, fallbackValue);
+                 if (value !== fallbackValue) {
+                     dl.appendChild(createPropertyItem(propConfig.label, value, propConfig.isKey || false));
+                     sectionHasRenderableContent = true; propertiesAddedToDl = true;
+                 }
             });
-
-            // Only append the section if we actually added properties to its list
-            if (propertiesAddedToDl) {
-                section.appendChild(dl);
-                fragment.appendChild(section);
-            } else {
-                 // console.log(`[Detail Page] Skipping standard section "${title}" - no properties found for "${dataKey}".`);
+            // --- Append Standard Section ---
+            if (propertiesAddedToDl) { // Only append if dl has items
+                section.appendChild(dl); fragment.appendChild(section);
             }
         }
-    }); // End of sectionConfig loop
+    });
 
-    // Append the completed fragment containing all populated sections to the main container
     container.appendChild(fragment);
     console.log("[Detail Page] Dynamic page section population complete.");
 
-    // --- Enhance Periodic Table AFTER sections are added to DOM ---
-    // Pass the actual formula string for parsing and highlighting
-    enhancePeriodicTable(material ? material.formula : null);
+    // --- Enhance Periodic Table ---
+    enhancePeriodicTable(material ? material.formula : null); // Pass formula string
 
 } // End of populatePage function
