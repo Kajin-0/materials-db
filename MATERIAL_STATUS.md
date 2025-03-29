@@ -45,7 +45,7 @@ Unchecked items `[ ]` are missing a matching key in `material_details.json`.
 - [x] Yttria-Stabilized Zirconia (YSZ)
 - [x] ZBLAN Fluoride Glass
 - [ ] Zirconia Toughened Alumina (ZTA)
-- [ ] Zirconium Diboride (ZrB₂)
+- [x] Zirconium Diboride (ZrB₂)
 
 ---
 **Next Steps for Unchecked `[ ]` Items:**
