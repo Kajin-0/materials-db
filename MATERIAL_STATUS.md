@@ -4,7 +4,7 @@ List of all materials found in `materials-*.json` files.
 Checked items `[x]` have a corresponding **exact** key in `material_details.json` and should load correctly when clicked.
 Unchecked items `[ ]` are missing a matching key in `material_details.json`.
 
-- [ ] Amorphous Alloy (Vitreloy)
+- [x] Amorphous Alloy (Vitreloy)
 - [x] Beryllium-Copper Alloy
 - [ ] Boron Carbide Reinforced Epoxy
 - [ ] Boron Nitride Nanotube Composite
