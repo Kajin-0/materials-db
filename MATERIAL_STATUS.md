@@ -42,7 +42,7 @@ Unchecked items `[ ]` are missing a matching key in `material_details.json`.
 - [ ] Thulium-doped YAG (Tm:YAG)
 - [ ] Ultra-High Molecular Weight Polyethylene (UHMWPE)
 - [ ] Vacuum Multilayer Insulation (MLI)
-- [ ] Yttria-Stabilized Zirconia (YSZ)
+- [x] Yttria-Stabilized Zirconia (YSZ)
 - [x] ZBLAN Fluoride Glass
 - [ ] Zirconia Toughened Alumina (ZTA)
 - [ ] Zirconium Diboride (ZrB₂)
