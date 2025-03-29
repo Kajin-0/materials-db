@@ -2,7 +2,10 @@
   "Mercury Cadmium Telluride": {
     "name": "Mercury Cadmium Telluride",
     "formula": "Hg(1-x)Cd(x)Te",
-    "synonyms": [ "HgCdTe", "MCT" ],
+    "synonyms": [
+      "HgCdTe",
+      "MCT"
+    ],
     "category": "Semiconductor",
     "description": "Mercury Cadmium Telluride (HgCdTe or MCT) is a II-VI semiconductor alloy where the bandgap, and thus the optical/electrical properties, are precisely tuned by adjusting the Cadmium mole fraction (x). Values typically range from x=0 (HgTe, semimetal) to x=1 (CdTe, ~1.5eV bandgap). It is widely used in high-performance infrared sensors and thermal imaging systems, especially those requiring cryogenic cooling. The preferred substrate for highest quality epitaxial growth is often lattice-matched Cadmium Zinc Telluride (CdZnTe or CZT) with approximately 4% Zn concentration.",
     "safety": {
@@ -14,78 +17,169 @@
       "class": "II-VI Compound Semiconductor Alloy",
       "crystal_structure": "Zinc blende (FCC)",
       "lattice_constant": {
-         "value": "~6.461 Å (for x=0, HgTe) to ~6.481 Å (for x=1, CdTe)",
-         "notes": "Varies nearly linearly with x (Vegard's Law applies approximately)."
+        "value": "~6.461 Å (for x=0, HgTe) to ~6.481 Å (for x=1, CdTe)",
+        "notes": "Varies nearly linearly with x (Vegard's Law applies approximately)."
       },
       "phase_diagram_notes": "Pseudo-binary system. Solidus-liquidus gap is narrow, especially near x=0.2, influencing LPE melt stability and MBE/MOCVD stoichiometry control. Understanding Hg partial pressure is critical."
     },
     "growth_fabrication_properties": {
-        "common_growth_methods": "LPE (from Te-rich melts, lower temps ~450-500°C), MBE (precise control, lower temps ~180-210°C, elemental or compound sources), MOCVD (higher temps ~350-400°C, requires stable Hg precursor like DIPT or DMHg).",
-        "source_materials_purity": "High-purity elemental sources: Mercury (Hg, often 6N-7N+), Cadmium (Cd, 6N-7N+), Tellurium (Te, 6N-7N+). CdTe compound source also used. Purity (typically >6N) is critical for low defect density and long carrier lifetimes.",
-        "preferred_substrates_orientations": "Substrate: CdZnTe (~4% Zn) for best lattice matching. Si, GaAs, Ge, Sapphire also used with buffer layers (CdTe common). Orientations: (111)B [Te-face] for LPE; (211)B and (100) common for MBE/MOCVD for smoother morphology and reduced defects.",
-        "typical_growth_parameters": "Highly dependent on method and 'x'. MBE/MOCVD rates typically 1-5 µm/hr. Precise temperature control (±0.1°C) and Hg flux/pressure management are vital for composition and defect control.",
-        "passivation_methods": "Essential for stability and reducing surface recombination. Common materials: Deposited ZnS, CdTe (often in-situ), or SiO₂. Methods: Sputtering, e-beam evaporation, MBE, MOCVD, ALD. Choice depends on device architecture and operating conditions."
+      "common_growth_methods": "LPE (from Te-rich melts, lower temps ~450-500 C), MBE (precise control, lower temps ~180-210 C, elemental or compound sources), MOCVD (higher temps ~350-400 C, requires stable Hg precursor like DIPT or DMHg).",
+      "source_materials_purity": "High-purity elemental sources: Mercury (Hg, often 6N-7N+), Cadmium (Cd, 6N-7N+), Tellurium (Te, 6N-7N+). CdTe compound source also used. Purity (typically >6N) is critical for low defect density and long carrier lifetimes.",
+      "preferred_substrates_orientations": "Substrate: CdZnTe (~4% Zn) for best lattice matching. Si, GaAs, Ge, Sapphire also used with buffer layers (CdTe common). Orientations: (111)B [Te-face] for LPE; (211)B and (100) common for MBE/MOCVD for smoother morphology and reduced defects.",
+      "typical_growth_parameters": "Highly dependent on method and 'x'. MBE/MOCVD rates typically 1-5 um/hr. Precise temperature control (+/-0.1 C) and Hg flux/pressure management are vital for composition and defect control.",
+      "passivation_methods": "Essential for stability and reducing surface recombination. Common materials: Deposited ZnS, CdTe (often in-situ), or SiO2. Methods: Sputtering, e-beam evaporation, MBE, MOCVD, ALD. Choice depends on device architecture and operating conditions."
     },
     "post_growth_processing": {
-        "annealing": "CRITICAL step. Typically performed after growth or device processing. Purposes: Reduce Hg vacancies (often acceptor defects), activate p-type dopants (like As), improve crystallinity. Conditions: Temperatures range ~200-450°C depending on purpose and 'x'. **Strict control of Hg overpressure is mandatory** to prevent Hg loss and maintain stoichiometry. Annealing times vary (hours to days).",
-        "lapping_polishing": "Used for substrate preparation or thinning. Lapping: Alumina (Al₂O₃) or Silicon Carbide (SiC) slurries. Polishing: Fine diamond slurries (e.g., <1 µm) or chemo-mechanical polishing (CMP) with solutions like Br-Methanol on specialized pads (e.g., polyurethane). Material is brittle, requires low pressure.",
-        "etching": "Wet Etching: Br-Methanol (various concentrations, fast, isotropic), Br-Ethylene Glycol (slower, more controlled), Lactic/Nitric/HF mixes (polishing etches). Dry Etching: Reactive Ion Etching (RIE) or Inductively Coupled Plasma (ICP) using methane/hydrogen (CH₄/H₂), Ar, or halogen-based chemistries for device patterning.",
-        "grinding_milling": "Generally avoided due to brittleness and contamination risks for device wafers. May be used carefully for source material preparation (e.g., crushing bulk CdTe) but requires specialized equipment and cleaning."
+      "annealing": "CRITICAL step. Typically performed after growth or device processing. Purposes: Reduce Hg vacancies (often acceptor defects), activate p-type dopants (like As), improve crystallinity. Conditions: Temperatures range ~200-450 C depending on purpose and 'x'. Strict control of Hg overpressure is mandatory to prevent Hg loss and maintain stoichiometry. Annealing times vary (hours to days).",
+      "lapping_polishing": "Used for substrate preparation or thinning. Lapping: Alumina (Al2O3) or Silicon Carbide (SiC) slurries. Polishing: Fine diamond slurries (e.g., <1 um) or chemo-mechanical polishing (CMP) with solutions like Br-Methanol on specialized pads (e.g., polyurethane). Material is brittle, requires low pressure.",
+      "etching": "Wet Etching: Br-Methanol (various concentrations, fast, isotropic), Br-Ethylene Glycol (slower, more controlled), Lactic/Nitric/HF mixes (polishing etches). Dry Etching: Reactive Ion Etching (RIE) or Inductively Coupled Plasma (ICP) using methane/hydrogen (CH4/H2), Ar, or halogen-based chemistries for device patterning.",
+      "grinding_milling": "Generally avoided due to brittleness and contamination risks for device wafers. May be used carefully for source material preparation (e.g., crushing bulk CdTe) but requires specialized equipment and cleaning."
     },
     "electrical_properties": {
       "bandgap_type": "Direct, Tunable",
-      "band_gap": {"value": "Variable -0.3 (x≈0) to 1.5 (x=1)", "unit": "eV", "notes": "Tunable via Cadmium fraction (x). Commonly targeted: x≈0.2 for LWIR (~0.1 eV), x≈0.3 for MWIR (~0.25 eV)."},
+      "band_gap": {
+        "value": "Variable 0 - 1.5",
+        "unit": "eV",
+        "notes": "Tunable by adjusting Cadmium fraction (x). x approx 0 (HgTe) is semimetal, x=1 (CdTe) is approx 1.5eV."
+      },
       "bandgap_equation": {
-          "hansen_eg": "Eg(x, T) ≈ -0.302 + 1.93x + 5.35e-4 * T*(1-2x) - 0.810*x^2 + 0.832*x^3 (eV). Empirical.",
-          "wavelength_relation": "λ_cutoff (µm) ≈ 1.24 / Eg (eV)"
-      }, // <<< COMMA WAS MISSING HERE
-      "common_dopants": "n-type: Indium (In), typically 10¹⁴-10¹⁶ cm⁻³. p-type: Arsenic (As), Gold (Au), or Hg vacancies, typically 10¹⁵-10¹⁷ cm⁻³.",
-      "carrier_concentration": {"value": "Intrinsic (ni) ~10¹⁶ cm⁻³ at 300K (x=0.2), ~10¹³ cm⁻³ at 77K.", "notes": "Strongly temperature dependent. Extrinsic control via doping."},
-      "electron_mobility": {"value": "10,000 - 100,000+", "unit": "cm²/Vs", "notes": "Very high at 77 K for low x. Decreases with higher x and temperature."},
-      "hole_mobility": {"value": "100 - 600", "unit": "cm²/Vs", "notes": "Lower than electron mobility. Temp/composition dependent (77 K values)."},
-      "dielectric_constant": {"value": "~15 - 20", "notes": "Static value, varies slightly with x and frequency."},
-      "resistivity": {"value": "Highly variable (10⁻³ - 10³+)", "unit": "Ω·cm", "notes": "Depends strongly on composition, temp, doping."},
-      "breakdown_field": {"value": "Low (~10³ - 10⁴)", "unit": "V/cm", "notes": "Limits high-field operation."}
-    }, // Comma here before optical_properties is correct
+        "hansen_eg": "Eg(x, T) approx = -0.302 + 1.93x + 5.35e-4 T (1-2x) - 0.810 x^2 + 0.832 x^3 (eV). Empirical.",
+        "wavelength_relation": "lambda_cutoff (um) approx = 1.24 / Eg (eV)"
+      },
+      "common_dopants": "n-type: Indium (In), typically 10^14-10^16 cm^-3. p-type: Arsenic (As), Gold (Au), or Hg vacancies, typically 10^15-10^17 cm^-3.",
+      "carrier_concentration": {
+        "value": "Intrinsic (ni) approx 10^16 cm^-3 at 300K (x=0.2), approx 10^13 cm^-3 at 77K.",
+        "notes": "Strongly temperature dependent. Extrinsic control via doping."
+      },
+      "electron_mobility": {
+        "value": "10,000 - 100,000+",
+        "unit": "cm^2/Vs",
+        "notes": "Very high at 77 K for low x. Decreases with higher x and temperature."
+      },
+      "hole_mobility": {
+        "value": "100 - 600",
+        "unit": "cm^2/Vs",
+        "notes": "Lower than electron mobility. Temp/composition dependent (77 K values)."
+      },
+      "dielectric_constant": {
+        "value": "~15 - 20",
+        "notes": "Static value, varies slightly with x and frequency."
+      },
+      "resistivity": {
+        "value": "Highly variable (10^-3 - 10^3+)",
+        "unit": "Ohm-cm",
+        "notes": "Depends strongly on composition, temp, doping."
+      },
+      "breakdown_field": {
+        "value": "Low (~10^3 - 10^4)",
+        "unit": "V/cm",
+        "notes": "Limits high-field operation."
+      }
+    },
     "optical_properties": {
-      "spectral_range": "SWIR, MWIR, LWIR (0.8 µm to >30 µm)", "notes": "Range determined by Eg(x).",
-      "cutoff_wavelength": {"value": "Variable 0.8 (x=1) to >30 (x≈0)", "unit": "µm", "notes": "λ_c (µm) ≈ 1.24 / Eg (eV)."},
-      "refractive_index": {"value": "~3.4 - 4.0", "notes": "High index, varies with wavelength and x."},
-      "absorption_coefficient": {"value": ">10⁴", "unit": "cm⁻¹", "notes": "Very high near band edge."},
-      "quantum_efficiency": {"value": "High (>70-80%)", "notes": "Internal QE high with good material/AR coating."},
-      "responsivity": {"value": "~1 - 10", "unit": "A/W", "notes": "Typical values at 77 K, depends on λ, bias, device."},
-      "noise_equivalent_power": {"value": "~10⁻¹¹ - 10⁻¹³", "unit": "W/√Hz", "notes": "For high-performance cooled detectors."}
+      "spectral_range": "SWIR, MWIR, LWIR (0.8 um to >30 um)",
+      "notes": "Range determined by Eg(x).",
+      "cutoff_wavelength": {
+        "value": "Variable 0.8 (x=1) to >30 (x approx 0)",
+        "unit": "um",
+        "notes": "lambda_c (um) approx = 1.24 / Eg (eV)."
+      },
+      "refractive_index": {
+        "value": "~3.4 - 4.0",
+        "notes": "High index, varies with wavelength and x."
+      },
+      "absorption_coefficient": {
+        "value": ">10^4",
+        "unit": "cm^-1",
+        "notes": "Very high near band edge."
+      },
+      "quantum_efficiency": {
+        "value": "High (>70-80%)",
+        "notes": "Internal QE high with good material/AR coating."
+      },
+      "responsivity": {
+        "value": "~1 - 10",
+        "unit": "A/W",
+        "notes": "Typical values at 77 K, depends on lambda, bias, device."
+      },
+      "noise_equivalent_power": {
+        "value": "~10^-11 - 10^-13",
+        "unit": "W/Hz^0.5",
+        "notes": "For high-performance cooled detectors."
+      }
     },
     "thermal_properties": {
-      "operating_temperature": {"value": "Typically 77 K (LN₂ cooled)", "notes": "Required for optimal S/N, reduces dark current."},
-      "thermal_conductivity": {"value": "Low (~1 - 5)", "unit": "W/(m·K)", "notes": "Poor thermal conductor."},
-      "specific_heat": {"value": "~0.16 - 0.20", "unit": "J/(g·K)", "notes": "At room temperature, varies with x."},
-      "melting_point": {"value": "~700 - 800", "unit": "°C", "notes": "Composition dependent (pseudo-binary phase diagram)."}
+      "operating_temperature": {
+        "value": "Typically 77 K (LN2 cooled)",
+        "notes": "Required for optimal S/N, reduces dark current."
+      },
+      "thermal_conductivity": {
+        "value": "Low (~1 - 5)",
+        "unit": "W/(m K)",
+        "notes": "Poor thermal conductor."
+      },
+      "specific_heat": {
+        "value": "~0.16 - 0.20",
+        "unit": "J/(g K)",
+        "notes": "At room temperature, varies with x."
+      },
+      "melting_point": {
+        "value": "~700 - 800",
+        "unit": "C",
+        "notes": "Composition dependent (pseudo-binary phase diagram)."
+      }
     },
-     "mechanical_properties": {
-         "density": {"value": "~5.8 (x=1) to ~8.1 (x=0)", "unit": "g/cm³", "notes": "Increases significantly with higher Hg content."},
-         "youngs_modulus": {"value": "~40 - 50", "unit": "GPa"},
-         "hardness_vickers": {"value": "~70 - 100", "unit": "HV", "notes": "Relatively soft and brittle."},
-         "poissons_ratio": "~0.3",
-         "fracture_toughness": {"value": "Low (< 0.5)", "unit": "MPa·m⁰·⁵", "notes": "Brittle, requires careful handling."}
-     },
-     "device_applications": {
-         "sensor_types": ["Photoconductor (PC)", "Photovoltaic (PV) / Photodiode (PD)", "Avalanche Photodiode (APD, less common)"],
-         "common_applications": ["Thermal Imaging / FLIR systems", "Military night vision", "Medical diagnostics (thermography)", "Environmental gas sensing", "Astronomy (IR telescopes)", "Process monitoring", "Missile guidance systems"]
-     },
-     "chemical_properties": {
-         "stability_oxidation": "Chemically unstable surface without passivation. Readily oxidizes in air, especially at elevated temperatures.",
-         "etching": "Wet: Br-Methanol (various conc.), Br-Ethylene Glycol, Lactic/Nitric/HF mixes. Dry: RIE/ICP using CH₄/H₂, Ar, or halogen chemistries for device patterning."
-     },
-     "magnetic_properties": {
-         "type": "Diamagnetic"
-     },
-     "vendor_info": {
-         "notes": "List of potential vendors (placeholder).",
-         "vendor_1": "Company A - www.example-vendor-a.com (dummy)",
-         "vendor_2": "Company B - www.example-vendor-b.com (dummy)",
-         "vendor_3": "Company C - www.example-vendor-c.com (dummy)"
-     },
+    "mechanical_properties": {
+      "density": {
+        "value": "~5.8 (x=1) to ~8.1 (x=0)",
+        "unit": "g/cm^3",
+        "notes": "Increases significantly with higher Hg content."
+      },
+      "youngs_modulus": {
+        "value": "~40 - 50",
+        "unit": "GPa"
+      },
+      "hardness_vickers": {
+        "value": "~70 - 100",
+        "unit": "HV",
+        "notes": "Relatively soft and brittle."
+      },
+      "poissons_ratio": "~0.3",
+      "fracture_toughness": {
+        "value": "Low (< 0.5)",
+        "unit": "MPa m^0.5",
+        "notes": "Brittle, requires careful handling."
+      }
+    },
+    "device_applications": {
+      "sensor_types": [
+        "Photoconductor (PC)",
+        "Photovoltaic (PV) / Photodiode (PD)",
+        "Avalanche Photodiode (APD, less common)"
+      ],
+      "common_applications": [
+        "Thermal Imaging / FLIR systems",
+        "Military night vision",
+        "Medical diagnostics (thermography)",
+        "Environmental gas sensing",
+        "Astronomy (IR telescopes)",
+        "Process monitoring",
+        "Missile guidance systems"
+      ]
+    },
+    "chemical_properties": {
+      "stability_oxidation": "Chemically unstable surface without passivation. Readily oxidizes in air, especially at elevated temperatures.",
+      "etching": "Wet: Br-Methanol (various conc.), Br-Ethylene Glycol, Lactic/Nitric/HF mixes. Dry: RIE/ICP using CH4/H2, Ar, or halogen chemistries for device patterning."
+    },
+    "magnetic_properties": {
+      "type": "Diamagnetic"
+    },
+    "vendor_info": {
+      "notes": "List of potential vendors (placeholder).",
+      "vendor_1": "Company A - www.example-vendor-a.com (dummy)",
+      "vendor_2": "Company B - www.example-vendor-b.com (dummy)",
+      "vendor_3": "Company C - www.example-vendor-c.com (dummy)"
+    },
     "tags": [
       "II-VI", "LPE", "MBE", "MOCVD", "aerospace", "cadmium", "chalcogenide", "cryogenic",
       "epitaxial", "group 12", "group 16", "industry:aerospace", "industry:infrared",
