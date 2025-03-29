@@ -1,7 +1,8 @@
 # Material Detail Status
 
 List of all materials found in `materials-*.json` files.
-Checked items have a corresponding entry in `material_details.json`.
+Checked items `[x]` have a corresponding **exact** key in `material_details.json` and should load correctly when clicked.
+Unchecked items `[ ]` are missing a matching key in `material_details.json`.
 
 - [ ] Amorphous Alloy (Vitreloy)
 - [ ] Beryllium-Copper Alloy
@@ -9,19 +10,19 @@ Checked items have a corresponding entry in `material_details.json`.
 - [ ] Boron Nitride Nanotube Composite
 - [ ] Carbon Nanotube Composite
 - [ ] Ferrite-Polymer Composite
-- [x] G-10/FR-4 Epoxy Glass Laminate _(Note: Key in details might be different)_
+- [ ] G-10/FR-4 Epoxy Glass Laminate
 - [ ] Gadolinium Gallium Garnet (GGG)
 - [x] Gallium Arsenide
 - [ ] Graphene Oxide Paper
 - [ ] Graphene Polymer Composite
 - [ ] Hafnium Carbide Matrix Composite
-- [x] Indium Foil _(Note: Key in details might be different)_
+- [ ] Indium Foil
 - [x] Indium Gallium Arsenide
 - [x] Kapton Polyimide Film
 - [ ] LI-900 Silica Tile
-- [x] LYSO:Ce Scintillator _(Note: Key in details might be different)_
-- [x] Lead Tungstate _(Note: Key in details might be different)_
-- [x] Lithium Niobate _(Note: Key in details might be different)_
+- [ ] LYSO:Ce Scintillator
+- [ ] Lead Tungstate
+- [ ] Lithium Niobate
 - [ ] Maraging Steel
 - [x] Mercury Cadmium Telluride
 - [ ] Nextel 720 Fiber
@@ -29,25 +30,26 @@ Checked items have a corresponding entry in `material_details.json`.
 - [ ] Oxide-Oxide Ceramic Composite (Ox/Ox)
 - [ ] PEEK Carbon Fiber Composite
 - [ ] PTFE Glass Fiber Composite
-- [x] Polyethylene Neutron Shielding _(Note: Key in details might be different)_
+- [ ] Polyethylene Neutron Shielding
 - [ ] Reinforced Carbon–Carbon (RCC)
-- [x] Sapphire Substrate _(Note: Key in details might be different)_
-- [x] Silica Aerogel _(Note: Key in details might be different)_
+- [ ] Sapphire Substrate
+- [ ] Silica Aerogel
 - [x] Silicon
 - [ ] Silicon Carbide Fiber Reinforced Composite
 - [ ] Silicon Nitride Reinforced Silicon Carbide
 - [ ] TUFROC
-- [x] Tantalum Hafnium Carbide _(Note: Key in details might be different)_
+- [ ] Tantalum Hafnium Carbide
 - [ ] Thulium-doped YAG (Tm:YAG)
-- [x] Ultra-High Molecular Weight Polyethylene (UHMWPE) _(Note: Key in details might be different)_
-- [x] Vacuum Multilayer Insulation (MLI) _(Note: Key in details might be different)_
-- [x] Yttria-Stabilized Zirconia (YSZ)
+- [ ] Ultra-High Molecular Weight Polyethylene (UHMWPE)
+- [ ] Vacuum Multilayer Insulation (MLI)
+- [ ] Yttria-Stabilized Zirconia (YSZ)
 - [x] ZBLAN Fluoride Glass
 - [ ] Zirconia Toughened Alumina (ZTA)
-- [x] Zirconium Diboride (ZrB₂) _(Note: Key in details might be different)_
+- [ ] Zirconium Diboride (ZrB₂)
 
 ---
-**Notes:**
-- Items marked with `[x]` should have a working detail page.
-- Items marked with `[ ]` do not yet have an entry in `material_details.json` and clicking their card will likely lead to an error page.
-- `(Note: Key in details might be different)` indicates the name used in the simple `materials-*.json` might differ slightly from the key used in `material_details.json`. The check performed here used the keys *currently present* in the provided `material_details.json`. You may need to adjust keys or add aliases if clicks aren't working for these.
+**Next Steps for Unchecked `[ ]` Items:**
+
+To make an unchecked item work:
+1.  Find its `name` in the corresponding `materials-*.json` file.
+2.  Add a **new entry** to `material_details.json` where the top-level key is that **exact name**.
