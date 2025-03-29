@@ -31,7 +31,7 @@ Unchecked items `[ ]` are missing a matching key in `material_details.json`.
 - [ ] PEEK Carbon Fiber Composite
 - [ ] PTFE Glass Fiber Composite
 - [ ] Polyethylene Neutron Shielding
-- [ ] Reinforced Carbon–Carbon (RCC)
+- [x] Reinforced Carbon–Carbon (RCC)
 - [x] Sapphire Substrate
 - [ ] Silica Aerogel
 - [x] Silicon
