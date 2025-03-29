@@ -2,10 +2,6 @@
   {
     "name": "Mercury Cadmium Telluride",
     "formula": "Hg(1-x)Cd(x)Te",
-    "synonyms": [
-      "HgCdTe",
-      "MCT"
-    ],
     "category": "Semiconductor",
     "tags": [
       "II-VI", "LPE", "MBE", "aerospace", "cadmium", "chalcogenide", "cryogenic",
@@ -13,7 +9,6 @@
       "industry:photonics", "ir", "lwir", "mercury", "mwir", "nitrogen cooled",
       "photoconductive", "photoconductor", "photodiode", "photosensor", "semiconductor",
       "sensor", "single crystal", "tellurium", "toxic", "tunable bandgap"
-    ],
-    "description": "Mercury Cadmium Telluride (HgCdTe or MCT) is a II-VI semiconductor alloy known for its tunable bandgap, enabling detection across SWIR, MWIR, and LWIR bands. It is widely used in infrared sensors and thermal imaging systems, especially in cryogenically cooled applications."
+    ]
   }
 ]
