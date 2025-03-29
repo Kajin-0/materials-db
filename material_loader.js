@@ -52,7 +52,65 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 /**
- * Populates the HTML elements with data from the material object.
+ * Populates the HTML": "LPE, MBE, MOCVD, Bulk (less common).",
+        "source_materials_purity": "Elemental Hg, Cd, Te (>6N purity essential).",
+        "preferred_substrates_orientations": "Substrate: CdZnTe (~4% Zn); Si/GaAs/Ge usable (w/ buffers). Orientation: (111)B (LPE); (211)B, (100) (MBE/MOCVD).",
+        "typical_growth_parameters": "Rates: ~1-5 um/hr (MBE/MOCVD). Precise Temp/Pressure control vital.",
+        "passivation_methods": "Essential. Common: ZnS, CdTe, SiO2 via Sputtering, MBE, ALD."
+    },
+    "post_growth_processing": { // Concise points
+        "annealing": "CRITICAL: Reduces Hg vacancies, activates dopants. Temps ~200-450C. Requires Hg overpressure.",
+        "lapping_polishing": "Lapping: Al2O3/SiC slurries. Polishing: Diamond slurries (<1um) or CMP (Br-Methanol). Low pressure.",
+        "etching": "Wet: Br-Methanol/Ethylene Glycol. Dry: RIE/ICP (CH4/H2, Ar, Halogens) for patterning.",
+        "grinding_milling": "Avoid for wafers (brittle/contamination)."
+    },
+     "device_integration_characterization": { // Concise points
+        "device_architectures": "Photoconductors (PC), Photovoltaic Diodes (PV/PD). Mesa or planar.",
+        "readout_integration": "Flip-chip bonding to Si ROIC via Indium bumps (FPAs).",
+        "ar_coatings": "Required (high n). Common: ZnS, Ge, dielectric stacks.",
+        "packaging_cooling": "Requires vacuum package & cryogenic cooling (e.g., Stirling, LN2) for low noise.",
+        "characterization_techniques": ["Hall (mobility, conc.)", "FTIR (λc, thickness)", "PL (quality)", "XRD (crystal)", "SIMS (composition)", "Spectral Response", "I-V (diodes)"] // List format
+    },
+    "electrical_properties": { // Kept concise data
+      "bandgap_type": "Direct, Tunable",
+      "band_gap": {"value": "0 - 1.5", "unit": "eV", "notes": "Tunable via x. Target: x≈0.2 LWIR, x≈0.3 MWIR."},
+      "bandgap_equation": {"hansen_eg": "Eg(x,T) Empirical Eq.", "wavelength_relation": "λ_c (um) ≈ 1.24 / Eg (eV)"},
+      "common_dopants": "n-type: In; p-type: As, Au, Hg-vacancies (10^14-10^17 cm^-3 typical).",
+      "carrier_concentration": {"value": "ni ~10^16 (300K), ~10^13 (77K) @ x=0.2.", "notes": "Extrinsic via doping."},
+      "electron_mobility": {"value": ">10,000", "unit": "cm^2/Vs", "notes": "High @ 77K (low x)."},
+      "hole_mobility": {"value": "100 - 600", "unit": "cm^2/Vs", "notes": "Lower than μe (77K)."},
+      "dielectric_constant": {"value": "~15 - 20", "notes": "Static."},
+      "resistivity": {"value": "Variable (10^-3 - 10^3+)", "unit": "Ohm-cm", "notes": "Depends on x, T, doping."},
+      "breakdown_field": {"value": "Low (~10^3 - 10^4)", "unit": "V/cm", "notes": "Limits high-field use."}
+    },
+    "optical_properties": { // Kept concise data
+      "spectral_range": "SWIR, MWIR, LWIR (0.8 to >30 um)", "notes": "Determined by Eg(x).",
+      "cutoff_wavelength": {"value": "0.8 to >30", "unit": "um", "notes": "λ_c ≈ 1.24 / Eg."},
+      "refractive_index": {"value": "~3.4 - 4.0", "notes": "High index."},
+      "absorption_coefficient": {"value": ">10^4", "unit": "cm^-1", "notes": "High near band edge."},
+      "quantum_efficiency": {"value": ">70-80%", "notes": "With good material/AR coating."},
+      "responsivity": {"value": "~1 - 10", "unit": "A/W", "notes": "At 77K."},
+      "noise_equivalent_power": {"value": "~10^-11 - 10^-13", "unit": "W/Hz^0.5", "notes": "Cooled detectors."}
+    },
+    "thermal_properties": { // Kept concise data
+      "operating_temperature": {"value": "Typically 77 K (LN2)", "notes": "Reduces dark current."},
+      "thermal_conductivity": {"value": "Low (~1 - 5)", "unit": "W/(m K)", "notes": "Poor conductor."},
+      "specific_heat": {"value": "~0.16 - 0.20", "unit": "J/(g K)", "notes": "RT."},
+      "melting_point": {"value": "~700 - 800", "unit": "C", "notes": "Composition dependent."}
+    },
+     "mechanical_properties": { // Kept concise data
+         "density": {"value": "~5.8 to ~8.1", "unit": "g/cm^3", "notes": "Increases with Hg."},
+         "youngs_modulus": {"value": "~40 - 50", "unit": "GPa"},
+         "hardness_vickers": {"value": "~70 - 100", "unit": "HV", "notes": "Soft, brittle."},
+         "poissons_ratio": "~0.3",
+         "fracture_toughness": {"value": "< 0.5", "unit": "MPa m^0.5", "notes": "Brittle."}
+     },
+     "device_applications": { // Renamed key, kept lists
+         "sensor_types": ["Photoconductor (PC)", "Photovoltaic (PV / Photodiode)", "APD (less common)"],
+         "key_applications": ["Thermal Imaging/FLIR", "Night Vision", "Medical Thermography", "Gas Sensing", "IR Astronomy", "Missile Guidance"]
+     },
+     "chemical_properties": { // Simplified
+         "stability_oxidation": "Surface unstable; requires passivation. Readily oxidizes." elements with data from the material object.
  * @param {object} material - The detailed material data object.
  */
 function populatePage(material) {
@@ -66,13 +124,13 @@ function populatePage(material) {
            return text;
         }
         if (Array.isArray(value)) {
-            const listPaths = [ // Paths containing arrays that should be bulleted lists
-                'device_applications.key_applications', // Updated path
-                'processing_availability.synthesis_methods', // Still relevant? Maybe redundant
-                'processing_availability.forms', // Still relevant? Maybe redundant
-                'device_applications.sensor_types', // Updated path
-                'growth_fabrication_properties.common_growth_methods',
-                'device_integration_characterization.characterization_techniques' // New path
+            const listPaths = [
+                'device_applications.key_applications', // Note key change
+                //'processing_availability.synthesis_methods', // Removed from explicit list format here
+                //'processing_availability.forms', // Removed from explicit list format here
+                'device_applications.sensor_types',
+                //'growth_fabrication_properties.common_growth_methods', // Use comma join for this one
+                'device_integration_characterization.key_characterization_techniques' // Updated key
             ];
             if (listPaths.includes(path)) {
                  return value.length > 0 ? value.map(item => `• ${item}`).join('<br>') : fallback;
@@ -89,26 +147,27 @@ function populatePage(material) {
            if (element.textContent === 'Loading...') element.innerHTML = '';
            if (isHtml) { element.innerHTML = value; }
            else { element.textContent = value; }
-           if (value === 'N/A') { element.classList.add('na-value'); }
+           if (value === 'N/A') { element.classList.add('na-value'); } // Optional: Add class for styling N/A
            else { element.classList.remove('na-value'); }
-       } else { console.warn(`[Detail Page] Element with ID "${id}" not found.`); }
+       } else { console.warn(`[Detail Page] Element with ID "${id}" not found: ${id}`); }
    };
 
-    console.log("[Detail Page] Populating page with detailed nested data:", material);
+
+    console.log("[Detail Page] Populating page with concise detailed data:", material);
 
     // --- Populate Header, Overview, Wiki Link, Tags ---
     updateContent('material-name', getData(material, 'name', 'Unknown Material'));
     updateContent('material-formula', getData(material, 'formula', ''));
     updateContent('material-description', getData(material, 'description'));
     const wikiLink = document.getElementById('wiki-link');
-    if (wikiLink) wikiLink.href = getData(material, 'wiki_link', '#');
+    if (wikiLink) wikiLink.href = getData(material, 'wiki_link', '#'); // Set Wiki Link Href
 
     const tagsContainer = document.getElementById('material-tags');
-    if (tagsContainer) {
+    if (tagsContainer) { // Logic unchanged
         tagsContainer.innerHTML = '';
         const tags = material.tags || [];
         if (Array.isArray(tags) && tags.length > 0) {
-            tags.forEach(tag => { /* ... existing tag rendering ... */
+            tags.forEach(tag => {
                 const tagElement = document.createElement('span');
                 tagElement.className = 'tag';
                 tagElement.textContent = typeof tag === 'string' ? tag.replace(/^\w+:/, "") : tag;
@@ -136,10 +195,10 @@ function populatePage(material) {
     updateContent('prop-method-nuances', getData(material, 'advanced_fabrication_insights.method_specific_notes'));
 
     // --- Populate Growth & Fabrication Properties ---
-    updateContent('prop-common-growth-methods', getData(material, 'growth_fabrication_properties.common_growth_methods'));
+    updateContent('prop-common-growth-methods', getData(material, 'growth_fabrication_properties.common_growth_methods')); // Now comma joined
     updateContent('prop-source-materials', getData(material, 'growth_fabrication_properties.source_materials_purity'));
-    updateContent('prop-substrates-orientations', getData(material, 'growth_fabrication_properties.preferred_substrates_orientations')); // Combined ID
-    // updateContent('prop-crystal-orientations', getData(material, 'growth_fabrication_properties.preferred_substrates_orientations')); // Covered above
+    updateContent('prop-substrates-orientations', getData(material, 'growth_fabrication_properties.preferred_substrates_orientations')); // Use combined ID
+    // No need to update prop-crystal-orientations separately if using combined ID above
     updateContent('prop-growth-parameters', getData(material, 'growth_fabrication_properties.typical_growth_parameters'));
     updateContent('prop-passivation', getData(material, 'growth_fabrication_properties.passivation_methods'));
 
@@ -154,9 +213,9 @@ function populatePage(material) {
     updateContent('prop-readout-integration', getData(material, 'device_integration_characterization.readout_integration'));
     updateContent('prop-ar-coatings', getData(material, 'device_integration_characterization.ar_coatings'));
     updateContent('prop-packaging-cooling', getData(material, 'device_integration_characterization.packaging_cooling'));
-    updateContent('prop-char-techniques', getData(material, 'device_integration_characterization.characterization_techniques'), true); // Use HTML list
+    updateContent('prop-char-techniques', getData(material, 'device_integration_characterization.key_characterization_techniques'), true); // Use HTML list
 
-    // --- Populate Electrical Properties ---
+    // --- Populate Electrical Properties --- (Paths unchanged)
     updateContent('prop-bandgap-type', getData(material, 'electrical_properties.bandgap_type'));
     updateContent('prop-bandgap', getData(material, 'electrical_properties.band_gap'));
     updateContent('prop-hansen-eq', getData(material, 'electrical_properties.bandgap_equation.hansen_eg'));
@@ -169,7 +228,7 @@ function populatePage(material) {
     updateContent('prop-resistivity', getData(material, 'electrical_properties.resistivity'));
     updateContent('prop-breakdown-field', getData(material, 'electrical_properties.breakdown_field'));
 
-    // --- Populate Optical Properties ---
+    // --- Populate Optical Properties --- (Paths unchanged, notes handled)
     updateContent('prop-spectral-range', getData(material, 'optical_properties.spectral_range'));
      const spectralNotes = getData(material, 'optical_properties.notes', '');
      const spectralRangeElement = document.getElementById('prop-spectral-range');
@@ -183,25 +242,26 @@ function populatePage(material) {
     updateContent('prop-responsivity', getData(material, 'optical_properties.responsivity'));
     updateContent('prop-noise-equivalent-power', getData(material, 'optical_properties.noise_equivalent_power'));
 
-    // --- Populate Thermal Properties ---
+    // --- Populate Thermal Properties --- (Paths unchanged)
     updateContent('prop-op-temp', getData(material, 'thermal_properties.operating_temperature'));
     updateContent('prop-therm-cond', getData(material, 'thermal_properties.thermal_conductivity'));
     updateContent('prop-specific-heat', getData(material, 'thermal_properties.specific_heat'));
     updateContent('prop-melt-pt', getData(material, 'thermal_properties.melting_point'));
 
-    // --- Populate Mechanical Properties ---
+    // --- Populate Mechanical Properties --- (Paths unchanged)
     updateContent('prop-density', getData(material, 'mechanical_properties.density'));
     updateContent('prop-youngs-modulus', getData(material, 'mechanical_properties.youngs_modulus'));
     updateContent('prop-hardness-vickers', getData(material, 'mechanical_properties.hardness_vickers'));
     updateContent('prop-poissons-ratio', getData(material, 'mechanical_properties.poissons_ratio'));
     updateContent('prop-fracture-toughness', getData(material, 'mechanical_properties.fracture_toughness'));
 
-    // --- Populate Key Applications & Sensor Types --- (Using updated IDs)
-    updateContent('prop-sensor-types', getData(material, 'device_applications.sensor_types'), true);
-    updateContent('prop-key-applications', getData(material, 'device_applications.key_applications'), true);
+    // --- Populate Key Applications & Sensor Types --- (Using correct IDs)
+    updateContent('prop-sensor-types', getData(material, 'device_applications.sensor_types')); // Use comma join
+    updateContent('prop-key-applications', getData(material, 'device_applications.key_applications'), true); // Use HTML list
 
     // --- Populate Chemical Properties ---
     updateContent('prop-stability-oxidation', getData(material, 'chemical_properties.stability_oxidation'));
+    // Note: 'etching' data is now handled under 'post_growth_processing'
 
     // --- Populate Magnetic Properties ---
     updateContent('prop-magnetic-type', getData(material, 'magnetic_properties.type'));
@@ -212,71 +272,66 @@ function populatePage(material) {
     updateContent('prop-vs-qwips', getData(material, 'comparison_alternatives.vs_QWIPs'));
     updateContent('prop-vs-t2sls', getData(material, 'comparison_alternatives.vs_T2SLs'));
 
-    // --- Populate References ---
+    // --- Populate References --- (Using simplified logic)
     const refList = document.getElementById('reference-list');
     if (refList && material.references_further_reading) {
         refList.innerHTML = ''; // Clear loading
         const refs = material.references_further_reading;
-        if(refs.notes) { // Add notes first if they exist
-             const li = document.createElement('li');
-             li.innerHTML = `<small><em>${refs.notes}</em></small>`;
-             refList.appendChild(li);
-        }
+        if(refs.notes) { refList.innerHTML += `<li><small><em>${refs.notes}</em></small></li>`; } // Add notes
+
         Object.entries(refs).forEach(([key, value]) => {
-            if (key !== 'notes') { // Process actual references
-                const li = document.createElement('li');
+            if (key !== 'notes' && value) { // Add only if value exists
+                let itemHtml = '';
                 if (key === 'wikipedia' && typeof value === 'string' && value.startsWith('http')) {
-                    li.innerHTML = `Wikipedia: <a href="${value}" target="_blank" rel="noopener noreferrer">${value}</a>`;
+                    itemHtml = `Wikipedia: <a href="${value}" target="_blank" rel="noopener noreferrer">${value}</a>`;
                 } else if (typeof value === 'string') {
-                     // Simple display for book/review keys
-                     li.textContent = value; // Display the reference text directly
+                     itemHtml = value; // Display the reference text directly
                 }
-                 if (li.textContent || li.innerHTML) { // Add only if content exists
-                    refList.appendChild(li);
-                 }
+                 if (itemHtml) { refList.innerHTML += `<li>${itemHtml}</li>`; }
             }
         });
-        if (refList.children.length === 0 || (refList.children.length === 1 && refList.children[0].querySelector('small'))) {
-            refList.innerHTML = '<li>Reference information not available.</li>'; // Fallback
+        if (refList.children.length === 0 || (refList.children.length === 1 && refList.querySelector('small'))) {
+            refList.innerHTML = '<li>Reference information not available.</li>'; // Fallback if only notes or nothing
         }
-    } else if (refList) {
-        refList.innerHTML = '<li>Reference information not available.</li>';
-    }
+    } else if (refList) { refList.innerHTML = '<li>Reference information not available.</li>'; }
 
 
-    // --- Populate Vendor Info ---
+    // --- Populate Vendor Info --- (Logic unchanged)
     const vendorList = document.getElementById('vendor-list');
-    if (vendorList && material.vendor_info) { // Logic remains same as before
+    if (vendorList && material.vendor_info) {
         vendorList.innerHTML = '';
         let vendorsFound = false;
         if(material.vendor_info.notes) { /* ... add notes ... */
-            const li = document.createElement('li');
-            li.innerHTML = `<small><em>${material.vendor_info.notes}</em></small>`;
-            vendorList.appendChild(li);
-        }
-        Object.entries(material.vendor_info).forEach(([key, value]) => {
-            if (key.startsWith('vendor_')) { /* ... render vendor link/text ... */
-                 vendorsFound = true;
-                 const li = document.createElement('li');
-                 const vendorName = key.replace('vendor_', '').replace(/_/g, ' ');
-                 let isUrl = false; try { if (value && typeof value === 'string') { new URL(value); isUrl = true; } } catch (_) {}
-                 if(isUrl) {
-                     const a = document.createElement('a');
-                     let displayName = vendorName; try { displayName = new URL(value).hostname.replace('www.', ''); } catch (_) {}
-                     a.href = value; a.textContent = displayName; a.target = "_blank"; a.rel = "noopener noreferrer";
-                     li.appendChild(a);
-                 } else { li.textContent = `${vendorName}: ${value}`; }
-                 vendorList.appendChild(li);
-            }
-        });
-         if (!vendorsFound) { /* ... add placeholder if no vendors ... */
-            const li = document.createElement('li'); li.textContent = "Vendor information not available.";
-            if(!material.vendor_info.notes) vendorList.appendChild(li);
-        }
-    } else if (vendorList) {
-         vendorList.innerHTML = '<li>Vendor information not available.</li>';
-    }
 
-
-    console.log("[Detail Page] Page population attempt complete.");
+     },
+     "magnetic_properties": { // Kept as is
+         "type": "Diamagnetic"
+     },
+     "comparison_alternatives": { // Concise points
+         "notes": "Key IR Competitors:",
+         "vs_InSb": "MCT: Wider tuning (LWIR+), higher T_op (MWIR). InSb: Cheaper, mature (MWIR).",
+         "vs_QWIPs": "MCT: Higher QE, T_op. QWIPs (GaAs): Better uniformity, lower cost potential.",
+         "vs_T2SLs": "T2SLs (e.g., InAs/GaSb): Potential for higher T_op, lower dark current, better uniformity; complex growth."
+     },
+     "references_further_reading": { // Key references only
+         "notes": "Key Resources:",
+         "book_rogalski": "Rogalski, A. 'Infrared Detectors' (SPIE Press)",
+         "review_hansen": "Hansen, G. L. et al. J. Appl. Phys. 53, 7099 (1982) - Eg(x,T)",
+         "review_norton": "Norton, P. R. Opto-Electron. Rev., 10(3), 159 (2002) - Detector Overview",
+         "wikipedia": "https://en.wikipedia.org/wiki/Mercury_cadmium_telluride"
+     },
+     "vendor_info": { // Kept as is
+         "notes": "Example Vendors (Placeholder):",
+         "vendor_1": "Company A - www.example-vendor-a.com",
+         "vendor_2": "Company B - www.example-vendor-b.com",
+         "vendor_3": "Company C - www.example-vendor-c.com"
+     },
+    "tags": [ // Kept as is
+      "II-VI", "LPE", "MBE", "MOCVD", "aerospace", "cadmium", "chalcogenide", "cryogenic",
+      "epitaxial", "group 12", "group 16", "industry:aerospace", "industry:infrared",
+      "industry:photonics", "ir", "lwir", "mercury", "mwir", "nitrogen cooled",
+      "photoconductive", "photoconductor", "photodiode", "photosensor", "semiconductor",
+      "sensor", "single crystal", "tellurium", "toxic", "tunable bandgap"
+    ]
+  }
 }
