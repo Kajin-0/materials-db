@@ -1842,5 +1842,112 @@
           "vacuum compatible", "refractory", "ceramic", "industry:aerospace",
           "industry:thermal", "industry:cryogenics", "industry:space", "nanomaterial"
         ]
+      },
+    "Silica Aerogel": {
+        "name": "Silica Aerogel",
+        "formula": "SiO₂ network",
+        "synonyms": [ "Aerogel", "Silica Gel (dried supercritically)", "Frozen Smoke", "Solid Smoke" ],
+        "category": "Composite",
+        "description": "A synthetic porous ultralight material derived from a gel, in which the liquid component of the gel has been replaced with gas without significant collapse of the gel structure. Silica aerogels are typically >95% porous (air) and exhibit extremely low density, exceptionally low thermal conductivity (superinsulation), low dielectric constant, and often a translucent 'smoky' appearance. Used primarily for thermal insulation, Cherenkov detectors, and potentially as catalyst supports or absorption media.",
+        "wiki_link": "https://en.wikipedia.org/wiki/Aerogel#Silica_aerogel",
+        "safety": {
+          "toxicity": "Low (Amorphous silica). The fine dust is a mechanical irritant to eyes, skin, and respiratory tract, similar to other amorphous silica dusts. Not associated with silicosis.",
+          "handling": "Very fragile and brittle (monolithic form). Handle gently. Wear gloves to avoid absorbing skin oils (can reduce hydrophobicity if treated) and respiratory protection (N95 mask) when handling powder or creating dust."
+        },
+        "identification": {
+          "cas_number": "7631-86-9 (Silicon Dioxide, generic)",
+          "class": "Aerogel, Porous Ceramic Material",
+          "crystal_structure": "Amorphous SiO₂ backbone structure.",
+          "microstructure": {"notes": "Characterized by a highly porous (typically >95%), open-cell structure with characteristic particle/pore sizes in the nanometer range (e.g., pores 5-100 nm)."}
+        },
+        "advanced_fabrication_insights": {
+            "process_control": "Typically starts with a silica sol-gel process (e.g., using TMOS or TEOS precursors). Gelation followed by aging. Critical step is supercritical drying (using e.g., supercritical CO₂ or sometimes alcohols) to remove the pore liquid without causing capillary stress that would collapse the fragile network structure. Ambient pressure drying methods also exist but often yield denser materials.",
+            "common_defects_impact": "Cracks, density variations, residual solvents/impurities. Affect mechanical integrity, thermal performance, and optical clarity.",
+            "hydrophobicity": "Native silica aerogel is hydrophilic and sensitive to moisture (can cause structural collapse). Surface treatment (e.g., with silanes) during or after drying makes it hydrophobic and much more durable.",
+            "method_specific_notes": "Choice of precursor, catalyst, solvent exchange steps, and drying method significantly influences final properties (density, pore size, transparency, hydrophobicity)."
+        },
+        "growth_fabrication_properties": {
+            "common_growth_methods": "Sol-Gel synthesis followed by Supercritical Drying or Ambient Pressure Drying.",
+            "source_materials_purity": "Silicon alkoxides (TMOS, TEOS), water, catalyst (acid/base), solvents (ethanol, methanol, acetone, hexane), supercritical fluid (CO₂).",
+            "preferred_substrates_orientations": "N/A (Bulk material, powder, or blanket/composite form).",
+            "typical_growth_parameters": "Gelation time/temp, aging conditions, solvent exchange process, supercritical drying parameters (Temperature, Pressure - e.g., ~40°C, >74 bar for CO₂).",
+            "passivation_methods": "Surface functionalization for hydrophobicity."
+        },
+        "post_growth_processing": {
+            "annealing": "Heat treatment can sometimes be used to modify structure or remove residual organics, but high temperatures can cause densification/sintering.",
+            "lapping_polishing": "Generally not applicable due to extreme fragility (monolithic form).",
+            "etching": "Can be etched by HF.",
+            "grinding_milling": "Easily crushed into powder. Machining monolithic pieces is very difficult."
+        },
+         "device_integration_characterization": {
+            "device_architectures": "Thermal insulation panels/blankets (often composite form), granules/powders for insulation fill, monolithic blocks/tiles (optics, science experiments), coatings.",
+            "readout_integration": "N/A",
+            "ar_coatings": "Can be applied to monolithic pieces for optical uses.",
+            "packaging_cooling": "Used *as* insulation, including cryogenic applications. Requires protection from mechanical stress and moisture (if hydrophilic).",
+            "key_characterization_techniques": ["Density Measurement (Bulk)", "BET Surface Area Analysis (Porosity)", "Thermal Conductivity Measurement", "Optical Transmission/Scattering", "Scanning/Transmission Electron Microscopy (SEM/TEM - microstructure)", "Contact Angle Measurement (Hydrophobicity)"]
+        },
+        "electrical_properties": {
+          "bandgap_type": "Insulator (SiO₂)",
+          "band_gap": {"value": "~9", "unit": "eV"},
+          "resistivity": {"value": "Very High (> 10¹² Ω·cm)", "notes": "Excellent electrical insulator."},
+          "dielectric_constant": {"value": "Very Low (1.01 - 1.5)", "notes": "Approaches that of air (1.0) due to high porosity. Lowest known for a solid material."},
+          "dielectric_strength": {"notes": "Good, but can be limited by surface breakdown/pores."}
+        },
+        "optical_properties": {
+          "spectral_range": "Can be highly transparent in visible/NIR, strong absorption in UV and IR.", "notes": "Transparency depends heavily on pore size and structure relative to wavelength. Exhibits strong Rayleigh scattering, giving it a bluish cast against dark backgrounds and yellowish against light backgrounds.",
+          "refractive_index": {"value": "Very Low (~1.005 - 1.1)", "notes": "Slightly higher than air, depends on density."},
+          "scattering": {"notes": "Strong Rayleigh scattering at short wavelengths."}
+        },
+        "thermal_properties": {
+          "operating_temperature": {"value": "Cryogenic up to ~500-700", "unit": "°C", "notes": "Upper limit depends on sintering onset. Can withstand brief excursions higher."},
+          "thermal_conductivity": {"value": "Extremely Low (0.004 - 0.03)", "unit": "W/(m·K)", "notes": "At room temp/ambient pressure. Lower than air (~0.026 W/mK). Combination of solid conduction, gas conduction within pores, and radiation suppression."},
+          "specific_heat": {"value": "~0.8-1.0", "unit": "J/(g·K)", "notes": "Similar to bulk silica on a per-mass basis."},
+          "melting_point": {"notes": "Does not melt; SiO₂ backbone melts >1600°C, but structure sinters/collapses much earlier."},
+          "thermal_expansion": {"value": "~2-4 x 10⁻⁶", "unit": "/°C", "notes": "Similar to bulk fused silica."}
+        },
+         "mechanical_properties": {
+             "density": {"value": "Very Low (0.003 - 0.5 g/cm³)", "notes": "Can be only ~3x density of air. Typically 0.02 - 0.1 g/cm³."},
+             "youngs_modulus": {"value": "Very Low (~10³ - 10⁷ Pa)", "notes": "Extremely low stiffness. Scales strongly with density (often ~ρ² or ρ³)."},
+             "compressive_strength": {"value": "Low, but surprisingly high for density.", "notes": "Highly dependent on density."},
+             "hardness": {"notes": "Very fragile, easily crushed or indented."},
+             "fracture_toughness": {"value": "Extremely Low", "notes": "Very brittle."}
+         },
+         "device_applications": {
+             "sensor_types": ["Cherenkov detector medium"],
+             "key_applications": ["High-Performance Thermal Insulation (Aerospace, pipelines, cryogenic equipment, buildings, apparel)", "Cherenkov Radiation Detectors (Particle physics)", "Acoustic Insulation / Impedance Matching", "Catalyst Supports (High surface area)", "Sample collection (e.g., NASA Stardust mission)", "Dielectric material (Low-k applications)"]
+         },
+         "chemical_properties": {
+             "stability_oxidation": "SiO₂ backbone is fully oxidized.",
+             "hydrophobicity": {"notes": "Native aerogel is hydrophilic and readily absorbs moisture, causing damage. Surface treatment makes it hydrophobic."},
+             "solvent_resistance": "Good, once dried.",
+             "acid_resistance": "Good (except HF).",
+             "base_resistance": "Attacked by strong bases.",
+             "water_solubility": "Insoluble (hydrophobic version)."
+         },
+         "comparison_alternatives": {
+             "notes": "Alternative Insulation Materials:",
+             "vs_Fiberglass_Mineral_Wool": "Aerogel: Much lower thermal conductivity (2-8x better), lower density, moisture sensitive (if hydrophilic), fragile (monolithic), higher cost. Fiberglass/Wool: Cheap, robust, easy to install, higher conductivity.",
+             "vs_Polyurethane_Foam_PIR_XPS": "Aerogel: Lower conductivity, better fire resistance (non-combustible), higher temperature limit, fragile, higher cost. Foams: Good insulators, structural capability, lower cost, lower temp limits, potential fire concerns.",
+             "vs_Vacuum_Insulation_Panels_VIPs": "Aerogel: Less susceptible to loss of performance from puncture/leaks, complex shapes possible. VIPs: Potentially even lower conductivity (if vacuum maintained), susceptible to vacuum loss, limited form factors."
+         },
+         "references_further_reading": {
+             "notes": "Key Resources:",
+             "web_aerogel_org": "Aerogel.org (Extensive information and resources).",
+             "book_hubner_philipp": "Hübner, G., & Phalippou, J. 'Aerogels'.",
+             "review_acs_chemrev": "Review articles in journals like Chemical Reviews, Journal of Sol-Gel Science and Technology.",
+             "wikipedia": "https://en.wikipedia.org/wiki/Aerogel"
+         },
+         "vendor_info": {
+            "notes": "Example Vendors (Placeholder):",
+            "vendor_1": "Company A - www.example-vendor-a.com",
+            "vendor_2": "Company B - www.example-vendor-b.com",
+            "vendor_3": "Company C - www.example-vendor-c.com"
+         },
+        "tags": [
+          "insulator", "lightweight", "porous", "thermal insulation", "cryogenic",
+          "space qualified", "fragile", "low density", "transparent", "infrared",
+          "industry:space", "industry:cryogenics", "industry:thermal", "industry:insulation",
+          "ceramic", "composite", "low-k"
+        ]
       } 
 }
