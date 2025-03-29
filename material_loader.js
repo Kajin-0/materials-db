@@ -2,6 +2,7 @@
  * Loads DETAILED material data for the detail page.
  * Fetches data/material_details.json, finds the material, populates page dynamically based on available data,
  * and enhances the periodic table with relevant information and highlighting using native browser tooltips.
+ * Hides the periodic table if an error occurs during loading.
  */
 document.addEventListener("DOMContentLoaded", async () => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -9,17 +10,28 @@ document.addEventListener("DOMContentLoaded", async () => {
     let materialName = null;
     const mainContainer = document.getElementById('material-content-container');
     const headerNameElement = document.getElementById("material-name");
+    const periodicTableSection = document.getElementById('section-periodic-table'); // Get table section early
 
     // --- Error Display Function ---
     const displayError = (message) => {
         console.error("[Detail Page] Error:", message);
         if (headerNameElement) headerNameElement.textContent = "Error";
-        // Ensure periodic table doesn't show stale highlights/data on error
-        enhancePeriodicTable(null); // Call with null formula to clear table state
+
+        // *** HIDE the periodic table section on error ***
+        if (periodicTableSection) {
+            periodicTableSection.style.display = 'none';
+            console.log("[Detail Page] Hiding periodic table due to error.");
+        } else {
+            console.warn("[Detail Page] Could not find periodic table section to hide.");
+        }
+        // Note: enhancePeriodicTable(null) is no longer strictly needed here
+        // as the section is hidden, but doesn't hurt to leave it if you prefer.
+        // enhancePeriodicTable(null); // Optional: clear table state anyway
+
+        // Display error message in main content area
         if (mainContainer) {
              mainContainer.innerHTML = `<p class="error-message" style="color: red; padding: 1rem;">Error loading material details: ${message}. Please check the console for more information.</p>`;
         } else {
-            // If even main container is missing, log to console as backup
              console.error("Critical Error: Main content container '#material-content-container' not found.");
         }
         document.title = "Error - MaterialsDB";
@@ -40,13 +52,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         displayError("No material specified in the URL.");
         return;
     }
-    if (!mainContainer) {
-        displayError("Essential element '#material-content-container' not found.");
+    if (!mainContainer || !periodicTableSection) { // Check for table section here too
+        displayError("Essential page element(s) missing (#material-content-container or #section-periodic-table).");
         return;
     }
     if (typeof window.periodicTableData === 'undefined') {
          console.warn("[Detail Page] periodic_table_data.js might not be loaded yet or is missing.");
-        // Allow proceeding but log warning, table enhancement will fail gracefully later
     }
 
     // --- Fetch and Process Data ---
@@ -77,24 +88,28 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         const material = allDetailData[materialName];
-        if (!material) {
-            // Try case-insensitive match as a fallback
+         let actualMaterial = null;
+
+        if (material) {
+             actualMaterial = material;
+             console.log("[Detail Page] Specific material object found:", materialName);
+        } else {
+            // Try case-insensitive match as a fallback only if direct match fails
             const lowerCaseMaterialName = materialName.toLowerCase();
             const foundKey = Object.keys(allDetailData).find(key => key.toLowerCase() === lowerCaseMaterialName);
-            const actualMaterial = foundKey ? allDetailData[foundKey] : null;
-
-            if (actualMaterial) {
+            if (foundKey) {
+                 actualMaterial = allDetailData[foundKey];
                  console.warn(`[Detail Page] Case-insensitive match found for "${materialName}" as "${foundKey}". Using data for "${foundKey}".`);
-                 mainContainer.innerHTML = ''; // Clear potential loading messages
-                 populatePage(actualMaterial, mainContainer); // Populate sections and trigger table enhancement
             } else {
                 throw new Error(`Data for "${materialName}" not found in ${detailDataPath}. Check material name and file content.`);
             }
-        } else {
-             console.log("[Detail Page] Specific material object found:", materialName);
-             mainContainer.innerHTML = ''; // Clear potential loading messages
-             populatePage(material, mainContainer); // Populate sections and trigger table enhancement
         }
+
+        // Ensure periodic table is visible (it might have been hidden by a previous error)
+        periodicTableSection.style.display = ''; // Reset display style
+
+        mainContainer.innerHTML = ''; // Clear potential loading messages
+        populatePage(actualMaterial, mainContainer); // Populate sections and trigger table enhancement
 
     } catch (e) {
         displayError(e.message || "An unknown error occurred during data loading.");
@@ -191,7 +206,7 @@ function enhancePeriodicTable(materialFormula) {
             const mass = elementData.mass;
             const massDisplay = mass ? mass.toFixed(3) : 'N/A';
 
-            // *** Build TEXT content for the native title attribute ***
+            // Build TEXT content for the native title attribute
             let tooltipText = `${name} (${number})\n`; // Use newline character \n
             tooltipText += `Category: ${category}\n`;
             tooltipText += `Mass: ${massDisplay}`;
@@ -201,26 +216,24 @@ function enhancePeriodicTable(materialFormula) {
              if(elementData.e_neg_pauling) {
                  tooltipText += `\nE. Neg.: ${elementData.e_neg_pauling}`;
             }
-            // Add more properties as needed using \n for new lines
+            // Add more properties to title if needed...
 
-            // *** Set the native title attribute ***
+            // Set the native title attribute
             element.title = tooltipText;
 
-
-            // Add atomic mass to the designated span (unchanged)
+            // Add atomic mass to the designated span
             if (massSpan && mass) {
                 massSpan.textContent = massDisplay;
             } else if (massSpan) {
                 massSpan.textContent = 'N/A';
             }
 
-            // --- 3. Highlight if needed (unchanged) ---
+            // --- 3. Highlight if needed ---
             if (elementsToHighlight.has(symbol)) {
                 element.classList.add('highlighted-element');
-                // console.log(`[Detail Page] Highlighting: ${symbol}`);
             }
         } else if (symbol) {
-             // Basic title even if data is missing
+            // Basic title even if data is missing
             element.title = symbol;
              console.warn(`[Detail Page] Data missing in periodicTableData for symbol: ${symbol}`);
         } else {
@@ -258,12 +271,14 @@ function populatePage(material, container) {
             const listPathsForBullets = ['device_applications.key_applications','device_integration_characterization.key_characterization_techniques'];
             const filteredValues = value.filter(item => item !== null && item !== undefined && String(item).trim() !== '');
             if (filteredValues.length === 0) return fallback;
-            const itemsContent = filteredValues.map(item => (typeof item === 'string' && (item.includes('{') || item.includes('.'))) ? getData(material, item) : item).join(', '); // Basic handling, may need refinement
-            if (listPathsForBullets.includes(path)) {
-                return `<ul class="property-list-items">${filteredValues.map(item => `<li>${(typeof item === 'string' && (item.includes('{') || item.includes('.'))) ? getData(material, item) : item}</li>`).join('')}</ul>`;
-            }
-            return itemsContent;
+            // Process items using getData before joining/listing
+            const processedItems = filteredValues.map(item => (typeof item === 'string' && (item.includes('{') || item.includes('.'))) ? getData(material, item) : item);
 
+            if (listPathsForBullets.includes(path)) {
+                return `<ul class="property-list-items">${processedItems.map(item => `<li>${item}</li>`).join('')}</ul>`;
+            } else {
+                 return processedItems.join(', ');
+            }
         }
          if (typeof value === 'object' && !Array.isArray(value) && Object.keys(value).length === 1 && value.notes !== undefined) {
             const noteString = String(value.notes).trim();
@@ -392,7 +407,7 @@ function populatePage(material, container) {
                  const notesValue = getData(material, 'comparison_alternatives.notes', fallbackValue);
                  if (notesValue !== fallbackValue) {
                       const notesP = document.createElement('p'); notesP.innerHTML = `<em>${notesValue}</em>`;
-                      section.insertBefore(notesP, section.firstChild.nextSibling); // Insert notes after h2
+                      section.insertBefore(notesP, section.firstChild.nextSibling);
                       sectionHasRenderableContent = true; comparisonsAdded = true;
                  }
                  Object.entries(material.comparison_alternatives).forEach(([key, value]) => {
@@ -406,7 +421,7 @@ function populatePage(material, container) {
                  });
                  if (comparisonsAdded && dl.hasChildNodes()) {
                      section.appendChild(dl);
-                 } else if (notesValue === fallbackValue) { // Only show N/A if notes were ALSO missing
+                 } else if (notesValue === fallbackValue && !dl.hasChildNodes()) { // Show N/A only if NO notes AND NO comparisons
                       dl.innerHTML = `<div class="property-item comparison-na-message"><dd class="property-value">${fallbackValue}</dd></div>`;
                       section.appendChild(dl); sectionHasRenderableContent = true;
                  }
