@@ -14,7 +14,7 @@
       <div id="material-formula" class="formula">Loading...</div>
     </header>
 
-    <!-- Tags Section (Moved Up) -->
+    <!-- Tags Section -->
     <section class="material-section" id="section-tags">
       <h2>Tags & Categories</h2> <!-- Hidden by CSS -->
       <div class="tags-list" id="material-tags">Loading...</div>
@@ -25,7 +25,6 @@
       <section class="material-section" id="section-overview">
         <h2>Overview</h2>
         <p class="description" id="material-description">Loading...</p>
-        <!-- Optional Image Placeholder -->
         <div class="image-placeholder">Image Placeholder / Diagram</div>
       </section>
 
@@ -53,7 +52,7 @@
             <dd class="property-value" id="prop-cas">Loading...</dd>
           </div>
            <div class="property-item">
-            <dt class="property-key">Material Category:</dt> <!-- From top level -->
+            <dt class="property-key">Material Category:</dt>
             <dd class="property-value" id="prop-category">Loading...</dd>
           </div>
           <div class="property-item">
@@ -68,32 +67,66 @@
             <dt class="property-key">Lattice Constant:</dt>
             <dd class="property-value" id="prop-lattice-constant">Loading...</dd>
           </div>
+           <div class="property-item">
+            <dt class="property-key">Phase Diagram Notes:</dt>
+            <dd class="property-value" id="prop-phase-diagram">Loading...</dd>
+          </div>
         </dl>
       </section>
 
-      <!-- Growth & Fabrication -->
+      <!-- Growth & Fabrication Properties -->
       <section class="material-section" id="section-growth">
-        <h2>Growth & Fabrication</h2>
+        <h2>Growth & Fabrication Properties</h2>
         <dl class="property-list">
+           <div class="property-item">
+            <dt class="property-key">Common Methods:</dt>
+            <dd class="property-value" id="prop-common-growth-methods">Loading...</dd>
+          </div>
+           <div class="property-item">
+            <dt class="property-key">Source Materials:</dt>
+            <dd class="property-value" id="prop-source-materials">Loading...</dd>
+           </div>
            <div class="property-item key-property">
-            <dt class="property-key">Preferred Substrate:</dt>
-            <dd class="property-value" id="prop-preferred-substrate">Loading...</dd>
+            <dt class="property-key">Preferred Substrates:</dt>
+            <dd class="property-value" id="prop-preferred-substrates">Loading...</dd>
           </div>
           <div class="property-item">
             <dt class="property-key">Typical Orientations:</dt>
             <dd class="property-value" id="prop-crystal-orientations">Loading...</dd>
           </div>
-           <div class="property-item">
-            <dt class="property-key">Source Compounds:</dt>
-            <dd class="property-value" id="prop-fabrication-compounds">Loading...</dd>
+          <div class="property-item">
+            <dt class="property-key">Growth Parameters:</dt>
+            <dd class="property-value" id="prop-growth-parameters">Loading...</dd>
           </div>
-           <div class="property-item">
-            <dt class="property-key">Purity Requirements:</dt>
-            <dd class="property-value" id="prop-purity-requirements">Loading...</dd>
+          <div class="property-item key-property">
+            <dt class="property-key">Passivation:</dt>
+            <dd class="property-value" id="prop-passivation">Loading...</dd>
           </div>
-           <!-- Common Synthesis Methods already under Processing -->
         </dl>
       </section>
+
+       <!-- Post-Growth Processing (New Section) -->
+       <section class="material-section" id="section-processing">
+         <h2>Post-Growth Processing</h2>
+         <dl class="property-list">
+            <div class="property-item key-property">
+              <dt class="property-key">Annealing:</dt>
+              <dd class="property-value" id="prop-annealing">Loading...</dd>
+            </div>
+            <div class="property-item">
+              <dt class="property-key">Lapping & Polishing:</dt>
+              <dd class="property-value" id="prop-lapping-polishing">Loading...</dd>
+            </div>
+             <div class="property-item">
+              <dt class="property-key">Etching Methods:</dt>
+              <dd class="property-value" id="prop-etching">Loading...</dd>
+            </div>
+             <div class="property-item">
+              <dt class="property-key">Grinding/Milling Notes:</dt>
+              <dd class="property-value" id="prop-grinding-milling">Loading...</dd>
+            </div>
+         </dl>
+       </section>
 
       <!-- Electrical Properties -->
       <section class="material-section" id="section-electrical">
@@ -204,7 +237,7 @@
         </dl>
       </section>
 
-       <!-- Mechanical Properties (New Section) -->
+       <!-- Mechanical Properties -->
        <section class="material-section" id="section-mechanical">
          <h2>Mechanical Properties</h2>
          <dl class="property-list">
@@ -231,7 +264,7 @@
          </dl>
        </section>
 
-       <!-- Device Applications (New Section) -->
+       <!-- Device Applications -->
        <section class="material-section" id="section-applications">
          <h2>Device & Applications</h2>
          <dl class="property-list">
@@ -246,26 +279,19 @@
          </dl>
        </section>
 
-       <!-- Chemical Properties (New Section) -->
+       <!-- Chemical Properties -->
        <section class="material-section" id="section-chemical">
          <h2>Chemical Properties</h2>
          <dl class="property-list">
            <div class="property-item">
-             <dt class="property-key">Oxidation:</dt>
-             <dd class="property-value" id="prop-oxidation">Loading...</dd>
+             <dt class="property-key">Stability & Oxidation:</dt>
+             <dd class="property-value" id="prop-stability-oxidation">Loading...</dd> <!-- Renamed ID -->
            </div>
-           <div class="property-item">
-             <dt class="property-key">Etchability:</dt>
-             <dd class="property-value" id="prop-etchability">Loading...</dd>
-           </div>
-            <div class="property-item">
-             <dt class="property-key">Stability:</dt>
-             <dd class="property-value" id="prop-stability">Loading...</dd>
-           </div>
+            <!-- Etching moved to Post-Growth Processing -->
          </dl>
        </section>
 
-      <!-- Magnetic Properties (New Section) -->
+      <!-- Magnetic Properties -->
        <section class="material-section" id="section-magnetic">
          <h2>Magnetic Properties</h2>
          <dl class="property-list">
@@ -276,27 +302,11 @@
          </dl>
        </section>
 
-      <!-- Processing & Availability (Existing - maybe rename from section-processing?) -->
-      <section class="material-section" id="section-processing">
-        <h2>Processing & Availability</h2>
-        <dl class="property-list">
-          <div class="property-item">
-            <dt class="property-key">Common Synthesis:</dt>
-            <dd class="property-value" id="prop-synth">Loading...</dd> <!-- Already exists -->
-          </div>
-          <div class="property-item">
-            <dt class="property-key">Typical Forms:</dt>
-            <dd class="property-value" id="prop-forms">Loading...</dd> <!-- Already exists -->
-          </div>
-        </dl>
-      </section>
-
-      <!-- Vendor Placeholder (New Section) -->
+      <!-- Vendor Placeholder -->
        <section class="material-section" id="section-vendors">
          <h2>Commercial Vendors (Example)</h2>
          <p>This space can list companies supplying HgCdTe materials or related services.</p>
          <ul id="vendor-list">
-           <!-- JS will populate this -->
            <li>Loading vendor info...</li>
          </ul>
          <p><small>Note: Listing does not imply endorsement. Contact vendors directly for current offerings.</small></p>
