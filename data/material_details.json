@@ -55,7 +55,7 @@
       "resistivity": {"value": "Variable (10^-3 - 10^3+)", "unit": "Ohm-cm", "notes": "Depends on x, T, doping."},
       "breakdown_field": {"value": "Low (~10^3 - 10^4)", "unit": "V/cm", "notes": "Limits high-field use."}
     },
-    "optical_properties": {
+    "optical_properties": { // HgCdTe has optical properties
       "spectral_range": "SWIR, MWIR, LWIR (0.8 to >30 um)", "notes": "Determined by Eg(x).",
       "cutoff_wavelength": {"value": "0.8 to >30", "unit": "um", "notes": "λ_c ≈ 1.24 / Eg."},
       "refractive_index": {"value": "~3.4 - 4.0", "notes": "High index."},
@@ -114,7 +114,7 @@
       "sensor", "single crystal", "tellurium", "toxic", "tunable bandgap"
     ]
   },
-  "Gallium Arsenide": {
+  "Gallium Arsenide": { // GaAs also has optical properties
     "name": "Gallium Arsenide",
     "formula": "GaAs",
     "synonyms": [ "GaAs", "Gallium Arsenide" ],
@@ -283,15 +283,6 @@
       "dielectric_constant": {"notes": "N/A (Metallic)"},
       "resistivity": {"value": "Matrix (Cu): ~1.7e-8 Ohm-m (RT), much lower at 4K. NbTi: Superconducting below Tc.", "notes": "RRR of Cu matrix is important (>100)."},
       "breakdown_field": {"notes": "N/A (Superconductor quenching is relevant limit)."}
-    },
-    "optical_properties": {
-      "spectral_range": "N/A (Opaque)",
-      "cutoff_wavelength": {"notes": "N/A"},
-      "refractive_index": {"notes": "N/A"},
-      "absorption_coefficient": {"notes": "N/A (Opaque metal)"},
-      "quantum_efficiency": {"notes": "N/A"},
-      "responsivity": {"notes": "N/A"},
-      "noise_equivalent_power": {"notes": "N/A"}
     },
     "thermal_properties": {
       "operating_temperature": {"value": "< ~9.2", "unit": "K", "notes": "Typically operated in LHe at 4.2 K."},
