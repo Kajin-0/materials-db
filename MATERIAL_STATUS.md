@@ -33,7 +33,7 @@ Unchecked items `[ ]` are missing a matching key in `material_details.json`.
 - [ ] Polyethylene Neutron Shielding
 - [x] Reinforced Carbon–Carbon (RCC)
 - [x] Sapphire Substrate
-- [ ] Silica Aerogel
+- [x] Silica Aerogel
 - [x] Silicon
 - [ ] Silicon Carbide Fiber Reinforced Composite
 - [ ] Silicon Nitride Reinforced Silicon Carbide
