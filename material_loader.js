@@ -17,15 +17,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.error("[Detail Page] Error:", message);
         if (headerNameElement) headerNameElement.textContent = "Error";
 
-        // *** HIDE the periodic table section on error ***
+        // HIDE the periodic table section on error
         if (periodicTableSection) {
             periodicTableSection.style.display = 'none';
             console.log("[Detail Page] Hiding periodic table due to error.");
         } else {
             console.warn("[Detail Page] Could not find periodic table section to hide.");
         }
-        // Note: enhancePeriodicTable(null) is no longer strictly needed here
-        // as the section is hidden, but doesn't hurt to leave it if you prefer.
         // enhancePeriodicTable(null); // Optional: clear table state anyway
 
         // Display error message in main content area
@@ -87,13 +85,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             throw new Error(`Data format error: ${detailDataPath} expected top-level object { "Material Name": {...} }.`);
         }
 
-        const material = allDetailData[materialName];
-         let actualMaterial = null;
+        let actualMaterial = allDetailData[materialName]; // Try direct match first
 
-        if (material) {
-             actualMaterial = material;
-             console.log("[Detail Page] Specific material object found:", materialName);
-        } else {
+        if (!actualMaterial) {
             // Try case-insensitive match as a fallback only if direct match fails
             const lowerCaseMaterialName = materialName.toLowerCase();
             const foundKey = Object.keys(allDetailData).find(key => key.toLowerCase() === lowerCaseMaterialName);
@@ -161,13 +155,38 @@ function parseFormulaForElements(formula) {
  * - Clears previous highlights and data.
  * - Adds detailed element information (name, number, category, mass, etc.) to the title attribute.
  * - Adds formatted atomic mass to the designated span within each element box.
- * - Highlights elements present in the provided material formula using the 'highlighted-element' class.
- * @param {string | null} materialFormula The formula string of the current material, or null to clear the table state.
+ * - Highlights elements present in the material's `constituent_elements` array (if defined)
+ *   OR by parsing the `material.formula` string.
+ * @param {object | null} material The full material object from details JSON, or null to clear.
  */
-function enhancePeriodicTable(materialFormula) {
+function enhancePeriodicTable(material) { // Takes the full material object
     console.log("[Detail Page] Enhancing periodic table using native titles...");
-    const elementsToHighlight = parseFormulaForElements(materialFormula);
-    console.log("[Detail Page] Elements parsed from formula:", materialFormula, "->", elementsToHighlight);
+    let elementsToHighlight = new Set(); // Initialize empty set
+
+    // Determine which elements to highlight
+    if (material) {
+        // *** PRIORITIZE constituent_elements array if it exists and is an array ***
+        if (Array.isArray(material.constituent_elements)) {
+            console.log("[Detail Page] Using constituent_elements array:", material.constituent_elements);
+            material.constituent_elements.forEach(el => {
+                if (typeof el === 'string' && window.periodicTableData && window.periodicTableData[el]) {
+                    elementsToHighlight.add(el); // Add valid elements from the array
+                } else if(typeof el === 'string') {
+                    console.warn(`[Constituent Element] Invalid or unknown element symbol in array: ${el}`);
+                }
+            });
+        } else if (material.formula) {
+            // Fallback to parsing the formula string if the array is missing or not an array
+            console.log("[Detail Page] constituent_elements not found or invalid, parsing formula:", material.formula);
+            elementsToHighlight = parseFormulaForElements(material.formula);
+        } else {
+             console.log("[Detail Page] No constituent_elements array or formula found for material:", material.name);
+        }
+    } else {
+         console.log("[Detail Page] No material data provided, clearing table highlights.");
+    }
+
+    console.log("[Detail Page] Elements determined for highlighting:", elementsToHighlight);
     const allPtElements = document.querySelectorAll('.periodic-table-container .pt-element');
 
     if (!window.periodicTableData) {
@@ -176,6 +195,7 @@ function enhancePeriodicTable(materialFormula) {
         return;
     }
 
+    // Process each element tile in the table
     allPtElements.forEach(element => {
         const symbol = element.getAttribute('data-symbol');
         const massSpan = element.querySelector('.pt-mass');
@@ -186,15 +206,18 @@ function enhancePeriodicTable(materialFormula) {
         element.title = ''; // Clear previous title attribute
         if (massSpan) {
              massSpan.textContent = '';
-             massSpan.style.display = isPlaceholder ? 'none' : '';
+             massSpan.style.display = isPlaceholder ? 'none' : ''; // Hide mass span for placeholders/labels
         }
 
         // Skip further processing for placeholders/labels, but add basic title
         if (isPlaceholder) {
-            const placeholderText = element.textContent.match(/\d+-\d+/);
-            if (placeholderText) element.title = `Elements ${placeholderText[0]}`;
-            else if(element.classList.contains('pt-series-label')) element.title = element.textContent;
-            return;
+            const placeholderText = element.textContent.match(/\d+-\d+/); // Extract range like "57-71"
+            if (placeholderText) {
+                element.title = `Elements ${placeholderText[0]}`;
+            } else if (element.classList.contains('pt-series-label')) {
+                element.title = element.textContent; // Use label text like "Lanthanides"
+            }
+            return; // Stop processing for this element
         }
 
         // --- 2. Populate with new data ---
@@ -206,8 +229,8 @@ function enhancePeriodicTable(materialFormula) {
             const mass = elementData.mass;
             const massDisplay = mass ? mass.toFixed(3) : 'N/A';
 
-            // Build TEXT content for the native title attribute
-            let tooltipText = `${name} (${number})\n`; // Use newline character \n
+            // Build TEXT content for the native title attribute (\n for newlines)
+            let tooltipText = `${name} (${number})\n`;
             tooltipText += `Category: ${category}\n`;
             tooltipText += `Mass: ${massDisplay}`;
             if(elementData.electron_configuration_semantic) {
@@ -215,17 +238,15 @@ function enhancePeriodicTable(materialFormula) {
             }
              if(elementData.e_neg_pauling) {
                  tooltipText += `\nE. Neg.: ${elementData.e_neg_pauling}`;
-            }
-            // Add more properties to title if needed...
+             }
+             // Add other useful data from periodicTableData here if desired...
 
             // Set the native title attribute
             element.title = tooltipText;
 
             // Add atomic mass to the designated span
-            if (massSpan && mass) {
+            if (massSpan) {
                 massSpan.textContent = massDisplay;
-            } else if (massSpan) {
-                massSpan.textContent = 'N/A';
             }
 
             // --- 3. Highlight if needed ---
@@ -233,10 +254,12 @@ function enhancePeriodicTable(materialFormula) {
                 element.classList.add('highlighted-element');
             }
         } else if (symbol) {
-            // Basic title even if data is missing
-            element.title = symbol;
+             // Element exists in HTML but not in our JS data
+            element.title = symbol; // Basic title
+            if(massSpan) massSpan.textContent = 'N/A';
              console.warn(`[Detail Page] Data missing in periodicTableData for symbol: ${symbol}`);
         } else {
+             // Should not happen if HTML has data-symbol on all elements
              console.warn("[Detail Page] Found .pt-element without data-symbol attribute.");
         }
     });
@@ -332,18 +355,19 @@ function populatePage(material, container) {
     const sectionConfig = [
         { id: 'section-overview', title: 'Overview', isSpecial: true },
         { id: 'section-safety', title: 'Safety Information', icon: '⚠️', dataKey: 'safety', properties: {'toxicity': { label: 'Toxicity', isKey: true }, 'handling': { label: 'Handling' }}},
-        { id: 'section-identification', title: 'Identification & Structure', dataKey: 'identification', properties: {'cas_number': { label: 'CAS Number' }, 'crystal_structure': { label: 'Crystal Structure', isKey: true }, 'lattice_constant': { label: 'Lattice Constant', isKey: true, isHtml: true },'phase_diagram_notes': { label: 'Phase Diagram Notes' }}},
-        { id: 'section-fab-insights', title: 'Advanced Fabrication Insights', dataKey: 'advanced_fabrication_insights', properties: {'stoichiometry_control': { label: 'Stoichiometry Control', isKey: true }, 'common_defects_impact': { label: 'Common Defects' }, 'surface_preparation': { label: 'Surface Preparation' }, 'method_specific_notes': { label: 'Method Nuances' }}},
+        { id: 'section-identification', title: 'Identification & Structure', dataKey: 'identification', properties: {'cas_number': { label: 'CAS Number' }, 'crystal_structure': { label: 'Crystal Structure', isKey: true }, 'lattice_constant': { label: 'Lattice Constant', isKey: true, isHtml: true },'phase_diagram_notes': { label: 'Phase Diagram Notes' }, 'material_standard': {label: 'Material Standard'}, 'appearance': {label: 'Appearance'}, 'xrd_pattern': {label: 'XRD Pattern'} }}, // Added identification fields
+        { id: 'section-fab-insights', title: 'Advanced Fabrication Insights', dataKey: 'advanced_fabrication_insights', properties: {'stoichiometry_control': { label: 'Stoichiometry Control', isKey: true }, 'common_defects_impact': { label: 'Common Defects' }, 'surface_preparation': { label: 'Surface Preparation' }, 'method_specific_notes': { label: 'Method Nuances' }, 'process_control': {label: 'Process Control'}, 'interface_engineering': {label: 'Interface Engineering'}, 'alignment_techniques': {label: 'Alignment Techniques'}, 'cooling_rate_control': {label: 'Cooling Rate Control'}, 'particle_dispersion': {label: 'Particle Dispersion'} }}, // Added fabrication fields
         { id: 'section-growth', title: 'Growth & Fabrication Properties', dataKey: 'growth_fabrication_properties', properties: {'common_growth_methods': { label: 'Common Methods' }, 'source_materials_purity': { label: 'Source Materials' }, 'preferred_substrates_orientations': { label: 'Substrates/Orientations', isKey: true }, 'typical_growth_parameters': { label: 'Growth Parameters' }, 'passivation_methods': { label: 'Passivation', isKey: true }}},
         { id: 'section-processing', title: 'Post-Growth Processing', dataKey: 'post_growth_processing', properties: {'annealing': { label: 'Annealing', isKey: true }, 'lapping_polishing': { label: 'Lapping & Polishing' }, 'etching': { label: 'Etching Methods' }, 'grinding_milling': { label: 'Grinding/Milling Notes' }}},
         { id: 'section-device-char', title: 'Device Integration & Characterization', dataKey: 'device_integration_characterization', properties: {'device_architectures': { label: 'Device Architectures' }, 'readout_integration': { label: 'Readout Integration', isKey: true }, 'ar_coatings': { label: 'AR Coatings' }, 'packaging_cooling': { label: 'Packaging/Cooling', isKey: true }, 'key_characterization_techniques': { label: 'Key Characterization', isHtml: true }}},
-        { id: 'section-electrical', title: 'Electrical Properties', dataKey: 'electrical_properties', properties: {'bandgap_type': { label: 'Bandgap Type' }, 'band_gap': { label: 'Bandgap (Eg)', isKey: true, isHtml: true }, 'bandgap_equation.hansen_eg': { label: 'Hansen Eg Eq' }, 'bandgap_equation.varshni_equation': { label: 'Varshni Eg Eq' }, 'bandgap_equation.wavelength_relation': { label: 'Cutoff λ Eq' }, 'common_dopants': { label: 'Common Dopants', isKey: true }, 'carrier_concentration': { label: 'Carrier Conc', isHtml: true }, 'electron_mobility': { label: 'Electron Mobility (μₑ)', isKey: true, isHtml: true }, 'hole_mobility': { label: 'Hole Mobility (μ<0xE2><0x82><0x95>)', isHtml: true }, 'dielectric_constant': { label: 'Dielectric Const (ε)', isHtml: true }, 'resistivity': { label: 'Resistivity (ρ)', isHtml: true }, 'breakdown_field': { label: 'Breakdown Field', isHtml: true }}},
-        { id: 'section-optical', title: 'Optical Properties', dataKey: 'optical_properties', properties: {'spectral_range': { label: 'Spectral Range', isKey: true, isHtml: true }, 'cutoff_wavelength': { label: 'Cutoff Wavelength (λc)', isKey: true, isHtml: true }, 'refractive_index': { label: 'Refractive Index (n)', isHtml: true }, 'absorption_coefficient': { label: 'Absorption Coeff (α)', isHtml: true }, 'quantum_efficiency': { label: 'Quantum Efficiency (η)', isKey: true, isHtml: true }, 'responsivity': { label: 'Responsivity (R)', isKey: true, isHtml: true }, 'noise_equivalent_power': { label: 'Noise Equiv. Power (NEP)', isHtml: true }, 'nonlinear_refractive_index_n2': { label: 'Nonlinear Index (n₂)'},'scattering_loss': { label: 'Scattering Loss'}}},
-        { id: 'section-thermal', title: 'Thermal Properties', dataKey: 'thermal_properties', properties: {'operating_temperature': { label: 'Operating Temperature', isKey: true, isHtml: true }, 'thermal_conductivity': { label: 'Thermal Conductivity (k)', isHtml: true }, 'specific_heat': { label: 'Specific Heat (Cp)', isHtml: true }, 'melting_point': { label: 'Melting Point', isHtml: true }, 'glass_transition_temp_tg': { label: 'Glass Transition (Tg)'}, 'thermal_expansion': { label: 'Thermal Expansion (CTE)'},'decomposition_temperature': { label: 'Decomposition Temp'}}},
-        { id: 'section-mechanical', title: 'Mechanical Properties', dataKey: 'mechanical_properties', properties: {'density': { label: 'Density', isHtml: true }, 'youngs_modulus': { label: 'Young\'s Modulus (E)', isHtml: true }, 'tensile_strength': { label: 'Tensile Strength' }, 'elongation_at_break': { label: 'Elongation @ Break (%)' }, 'hardness_vickers': { label: 'Hardness (Vickers)', isHtml: true }, 'poissons_ratio': { label: 'Poisson\'s Ratio (ν)' }, 'fracture_toughness': { label: 'Fracture Toughness (K<small>IC</small>)', isHtml: true }}},
+        { id: 'section-electrical', title: 'Electrical Properties', dataKey: 'electrical_properties', properties: {'bandgap_type': { label: 'Bandgap Type' }, 'band_gap': { label: 'Bandgap (Eg)', isKey: true, isHtml: true }, 'bandgap_equation.hansen_eg': { label: 'Hansen Eg Eq' }, 'bandgap_equation.varshni_equation': { label: 'Varshni Eg Eq' }, 'bandgap_equation.wavelength_relation': { label: 'Cutoff λ Eq' }, 'common_dopants': { label: 'Common Dopants', isKey: true }, 'carrier_concentration': { label: 'Carrier Conc', isHtml: true }, 'electron_mobility': { label: 'Electron Mobility (μₑ)', isKey: true, isHtml: true }, 'hole_mobility': { label: 'Hole Mobility (μ<0xE2><0x82><0x95>)', isHtml: true }, 'dielectric_constant': { label: 'Dielectric Const (ε)', isHtml: true }, 'resistivity': { label: 'Resistivity (ρ)', isHtml: true }, 'breakdown_field': { label: 'Breakdown Field', isHtml: true }, 'ionic_conductivity': {label: 'Ionic Conductivity'}, 'piezoelectric_coefficients': {label: 'Piezo Coefficients'}, 'pyroelectric_coefficient': {label: 'Pyroelectric Coeff'}, 'curie_temperature': {label: 'Curie Temperature'}, 'conductivity_electrical': {label: 'Electrical Conductivity'}, 'magnetic_permeability': {label: 'Magnetic Permeability'}, 'emi_shielding_effectiveness': {label: 'EMI Shielding'}, 'dielectric_strength': {label: 'Dielectric Strength'}, 'dissipation_factor': {label: 'Dissipation Factor (Df)'} }}, // Added electrical fields
+        { id: 'section-optical', title: 'Optical Properties', dataKey: 'optical_properties', properties: {'spectral_range': { label: 'Spectral Range', isKey: true, isHtml: true }, 'cutoff_wavelength': { label: 'Cutoff Wavelength (λc)', isKey: true, isHtml: true }, 'refractive_index': { label: 'Refractive Index (n)', isHtml: true }, 'absorption_coefficient': { label: 'Absorption Coeff (α)', isHtml: true }, 'quantum_efficiency': { label: 'Quantum Efficiency (η)', isKey: true, isHtml: true }, 'responsivity': { label: 'Responsivity (R)', isKey: true, isHtml: true }, 'noise_equivalent_power': { label: 'Noise Equiv. Power (NEP)', isHtml: true }, 'nonlinear_refractive_index_n2': { label: 'Nonlinear Index (n₂)'},'scattering_loss': { label: 'Scattering Loss'}, 'dn_dt': {label: 'dn/dT'}, 'electro_optic_coefficients': {label: 'Electro-Optic Coeffs'}, 'nonlinear_coefficients': {label: 'Nonlinear Coeffs'}, 'photorefractive_effect': {label: 'Photorefractive Effect'}, 'haze': {label: 'Haze'}, 'scattering': {label: 'Scattering'} }}, // Added optical fields
+        { id: 'section-thermal', title: 'Thermal Properties', dataKey: 'thermal_properties', properties: {'operating_temperature': { label: 'Operating Temperature', isKey: true, isHtml: true }, 'thermal_conductivity': { label: 'Thermal Conductivity (k)', isHtml: true }, 'specific_heat': { label: 'Specific Heat (Cp)', isHtml: true }, 'melting_point': { label: 'Melting Point', isHtml: true }, 'glass_transition_temp_tg': { label: 'Glass Transition (Tg)'}, 'thermal_expansion': { label: 'Thermal Expansion (CTE)'},'decomposition_temperature': { label: 'Decomposition Temp'}, 'crystallization_temp_tx': {label: 'Crystallization Temp (Tx)'} }}, // Added thermal fields
+        { id: 'section-mechanical', title: 'Mechanical Properties', dataKey: 'mechanical_properties', properties: {'density': { label: 'Density', isHtml: true }, 'youngs_modulus': { label: 'Young\'s Modulus (E)', isHtml: true }, 'tensile_strength': { label: 'Tensile Strength' }, 'yield_strength': {label: 'Yield Strength'}, 'elongation_at_break': { label: 'Elongation @ Break (%)' }, 'hardness_vickers': { label: 'Hardness (Vickers)', isHtml: true }, 'hardness_rockwell': {label: 'Hardness (Rockwell)'}, 'hardness_mohs': {label: 'Hardness (Mohs)'}, 'hardness_shore_d': {label: 'Hardness (Shore D)'}, 'poissons_ratio': { label: 'Poisson\'s Ratio (ν)' }, 'fracture_toughness': { label: 'Fracture Toughness (K<small>IC</small>)', isHtml: true }, 'elastic_limit': {label: 'Elastic Limit (%)'}, 'tear_strength': {label: 'Tear Strength'}, 'dimensional_stability': {label: 'Dimensional Stability'}, 'water_absorption': {label: 'Water Absorption (%)'} }}, // Added mechanical fields
         { id: 'section-applications', title: 'Key Applications & Sensor Types', dataKey: 'device_applications', properties: {'sensor_types': { label: 'Common Sensor Types' }, 'key_applications': { label: 'Key Applications', isKey: true, isHtml: true }}},
-        { id: 'section-chemical', title: 'Chemical Properties', dataKey: 'chemical_properties', properties: {'stability_oxidation': { label: 'Stability & Oxidation' },'solvent_resistance': { label: 'Solvent Resistance'}, 'acid_resistance': { label: 'Acid Resistance'},'base_resistance': { label: 'Base Resistance'},'water_solubility': { label: 'Water Solubility'},'radiation_resistance': { label: 'Radiation Resistance'},'uv_resistance': { label: 'UV Resistance'}}},
-        { id: 'section-magnetic', title: 'Magnetic Properties', dataKey: 'magnetic_properties', properties: {'type': { label: 'Magnetic Type', isKey: true }, 'critical_temperature_tc': { label: 'Critical Temp (Tc)', isHtml: true }, 'upper_critical_field_bc2': { label: 'Upper Critical Field (Bc2)', isHtml: true }, 'critical_current_density_jc': { label: 'Critical Current (Jc)', isHtml: true }}},
+        { id: 'section-chemical', title: 'Chemical Properties', dataKey: 'chemical_properties', properties: {'stability_oxidation': { label: 'Stability & Oxidation' },'solvent_resistance': { label: 'Solvent Resistance'}, 'acid_resistance': { label: 'Acid Resistance'},'base_resistance': { label: 'Base Resistance'},'water_solubility': { label: 'Water Solubility'},'radiation_resistance': { label: 'Radiation Resistance'},'uv_resistance': { label: 'UV Resistance'}, 'stress_corrosion_cracking': {label: 'Stress Corrosion Cracking'}, 'inertness': {label: 'Inertness'}, 'molten_metal_resistance': {label: 'Molten Metal Resistance'}, 'flammability': {label: 'Flammability'}, 'hydrophobicity': {label: 'Hydrophobicity'} }}, // Added chemical fields
+        { id: 'section-magnetic', title: 'Magnetic Properties', dataKey: 'magnetic_properties', properties: {'type': { label: 'Magnetic Type', isKey: true }, 'critical_temperature_tc': { label: 'Critical Temp (Tc)', isHtml: true }, 'upper_critical_field_bc2': { label: 'Upper Critical Field (Bc2)', isHtml: true }, 'critical_current_density_jc': { label: 'Critical Current (Jc)', isHtml: true }, 'permeability_initial': {label: 'Initial Permeability'}, 'saturation_magnetization_bs': {label: 'Saturation (Bs)'}, 'coercivity_hc': {label: 'Coercivity (Hc)'}, 'core_losses': {label: 'Core Losses'}, 'frequency_range': {label: 'Frequency Range'} }}, // Added magnetic fields
+        { id: 'section-neutron-shielding', title: 'Neutron Shielding Properties', dataKey: 'neutron_shielding', properties: {'effectiveness': {label: 'Effectiveness'} }}, // Added neutron section
         { id: 'section-comparison', title: 'Comparison with Alternatives', dataKey: 'comparison_alternatives', isSpecial: true },
         { id: 'section-references', title: 'References & Further Reading', dataKey: 'references_further_reading', isSpecial: true },
         { id: 'section-vendors', title: 'Commercial Vendors (Example)', dataKey: 'vendor_info', isSpecial: true }
@@ -384,9 +408,25 @@ function populatePage(material, container) {
             if (id === 'section-overview') sectionDataExists = material['description'] || material['wiki_link'];
             else if (dataKey && material[dataKey]) sectionDataExists = true;
         } else if (dataKey && material[dataKey] && typeof material[dataKey] === 'object') {
-            sectionDataExists = true;
+            // Check if the object for the section actually contains any of the specified properties
+             if (properties && Object.keys(properties).some(propKey => {
+                 const dataPath = `${dataKey}.${propKey}`;
+                 // Check if data exists at the path using a simplified check (doesn't need full getData yet)
+                 return dataPath.split('.').reduce((o, key) => (o && typeof o === 'object' && o[key] !== undefined && o[key] !== null) ? o[key] : undefined, material) !== undefined;
+             })) {
+                sectionDataExists = true;
+             }
+             // Special case for Identification: Also check for top-level category
+             if (id === 'section-identification' && material['category']) {
+                 sectionDataExists = true;
+             }
         }
-        if (!sectionDataExists) return;
+
+        if (!sectionDataExists) {
+             // console.log(`[Detail Page] Skipping section "${title}" - no relevant data found.`);
+            return; // Skip creating the section if no relevant data exists
+        }
+
 
         let section = createSection(id, title, icon);
         let sectionHasRenderableContent = false;
@@ -407,7 +447,7 @@ function populatePage(material, container) {
                  const notesValue = getData(material, 'comparison_alternatives.notes', fallbackValue);
                  if (notesValue !== fallbackValue) {
                       const notesP = document.createElement('p'); notesP.innerHTML = `<em>${notesValue}</em>`;
-                      section.insertBefore(notesP, section.firstChild.nextSibling);
+                      section.insertBefore(notesP, section.firstChild.nextSibling); // Insert notes after h2
                       sectionHasRenderableContent = true; comparisonsAdded = true;
                  }
                  Object.entries(material.comparison_alternatives).forEach(([key, value]) => {
@@ -498,6 +538,6 @@ function populatePage(material, container) {
     console.log("[Detail Page] Dynamic page section population complete.");
 
     // --- Enhance Periodic Table ---
-    enhancePeriodicTable(material ? material.formula : null); // Pass formula string
+    enhancePeriodicTable(material); // Pass full material object
 
 } // End of populatePage function
