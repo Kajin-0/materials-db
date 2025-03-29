@@ -323,14 +323,128 @@
      },
      "vendor_info": {
          "notes": "Example Vendors (Placeholder):",
-         "vendor_1": "Company A - www.example-vendor-a.com",
-         "vendor_2": "Company B - www.example-vendor-b.com",
-         "vendor_3": "Company C - www.example-vendor-c.com"
+         "vendor_1": "Bruker EAS (formerly OST)",
+         "vendor_2": "Luvata",
+         "vendor_3": "Western Superconducting Technologies (WST)"
      },
     "tags": [
       "composite", "cryogenic", "ductile", "fusion", "industry:cryogenics",
       "industry:energy", "industry:quantum", "low temperature", "magnet",
       "quantum computing", "superconductor", "vacuum compatible", "wire"
+    ]
+  },
+  "ZBLAN Fluoride Glass": {
+    "name": "ZBLAN Fluoride Glass",
+    "formula": "ZrF₄-BaF₂-LaF₃-AlF₃-NaF",
+    "synonyms": [ "ZBLAN", "Fluoride Glass", "Heavy Metal Fluoride Glass (HMFG)" ],
+    "category": "Optical Material",
+    "description": "A heavy-metal fluoride glass known for its exceptionally wide optical transparency window, extending from the UV (~0.3 μm) well into the mid-infrared (~7-8 μm). Used primarily for specialty optical fibers, particularly for mid-IR transmission, fiber lasers, and sensors.",
+    "wiki_link": "https://en.wikipedia.org/wiki/ZBLAN",
+    "safety": {
+      "toxicity": "Moderate (Fluoride components). Handle dust/fumes with care. Potential HF generation if heated improperly.",
+      "handling": "Handle with gloves. Avoid generating dust. Be cautious during heating/melting due to fluoride volatility."
+    },
+    "identification": {
+      "cas_number": "N/A (Mixture)",
+      "class": "Heavy-Metal Fluoride Glass (HMFG)",
+      "crystal_structure": "Amorphous (Glass)",
+      "lattice_constant": {"value": "N/A", "notes": "Amorphous material"},
+      "phase_diagram_notes": "Multicomponent system. Composition affects stability against crystallization (devitrification) during cooling/fiber drawing."
+    },
+    "advanced_fabrication_insights": {
+        "stoichiometry_control": "Precise control of component ratios (Zr, Ba, La, Al, Na fluorides) is critical for optical properties and stability.",
+        "common_defects_impact": "Crystallites (devitrification), impurities (esp. oxides, hydroxides), bubbles impact scattering loss and IR transmission.",
+        "surface_preparation": "Surface quality critical for fiber strength and minimizing surface scattering/contamination.",
+        "method_specific_notes": "Requires high-purity precursors, controlled melting/casting/drawing environment (often inert atmosphere) to minimize OH contamination."
+    },
+    "growth_fabrication_properties": {
+        "common_growth_methods": "Melt-casting (bulk), Preform fabrication followed by Fiber Drawing.",
+        "source_materials_purity": "Ultra-high purity metal fluorides required (>4N or 5N).",
+        "preferred_substrates_orientations": "N/A",
+        "typical_growth_parameters": "Melting temps ~800°C. Fiber drawing temps ~300°C. Controlled cooling rates vital.",
+        "passivation_methods": "Fiber often coated with polymer (e.g., acrylate) for mechanical protection immediately after drawing."
+    },
+    "post_growth_processing": {
+        "annealing": "Careful annealing below glass transition temp (Tg ~260-300°C) relieves stress.",
+        "lapping_polishing": "Standard optical polishing techniques for bulk optics. Fiber end-face polishing/cleaving.",
+        "etching": "Can be etched, but less common than for semiconductors.",
+        "grinding_milling": "Used for shaping bulk preforms."
+    },
+     "device_integration_characterization": {
+        "device_architectures": "Optical fibers (single/multi-mode), bulk optical components (windows, lenses - less common).",
+        "readout_integration": "N/A",
+        "ar_coatings": "Sometimes applied to bulk optics, not typically to fiber core.",
+        "packaging_cooling": "Generally used at room temperature, but operates cryogenically.",
+        "key_characterization_techniques": ["Transmission Spectrum (UV-MIR)", "Scattering Loss measurement", "Refractive Index Profile (fiber)", "Differential Scanning Calorimetry (DSC for Tg, Tx)", "FTIR (for OH content)", "Mechanical strength testing (fiber)"]
+    },
+    "electrical_properties": {
+      "bandgap_type": "N/A (Insulator/Wide Bandgap Glass)",
+      "band_gap": {"value": "> 5", "unit": "eV", "notes": "Very wide, depends on specific UV absorption edge."},
+      "bandgap_equation": {"notes": "N/A"},
+      "common_dopants": "Rare-earth ions (Er, Tm, Ho, Pr) for fiber lasers/amplifiers.",
+      "carrier_concentration": {"notes": "N/A (Insulator)"},
+      "electron_mobility": {"notes": "N/A (Insulator)"},
+      "hole_mobility": {"notes": "N/A (Insulator)"},
+      "dielectric_constant": {"value": "~6-7", "notes": "Low frequency."},
+      "resistivity": {"value": "> 10^10", "unit": "Ohm-cm", "notes": "Excellent insulator."},
+      "breakdown_field": {"value": "High", "unit": "MV/cm"}
+    },
+    "optical_properties": {
+      "spectral_range": "UV (~0.3µm) to Mid-IR (~7-8µm)", "notes": "Very broad transparency.",
+      "cutoff_wavelength": {"notes": "Transmission drops in UV (<0.3µm) and IR (>8µm due to multiphonon absorption)."},
+      "refractive_index": {"value": "~1.48-1.52", "notes": "Near-IR/Visible, depends on composition."},
+      "absorption_coefficient": {"value": "Very low (<0.1 dB/km theoretically)", "unit": "dB/km or cm⁻¹", "notes": "Extrinsic loss (impurities, scattering) usually dominates. OH peak near 2.9µm."},
+      "nonlinear_refractive_index_n2": {"value": "Low", "unit": "m²/W"},
+      "scattering_loss": {"value": "Low (Rayleigh scattering limit ~ λ⁻⁴)", "notes": "Minimized by reducing defects/crystallites."}
+    },
+    "thermal_properties": {
+      "operating_temperature": {"value": "-200 to ~200", "unit": "°C", "notes": "Limited by Tg (~260-300°C) and mechanical stress."},
+      "thermal_conductivity": {"value": "Low (~0.6-1.0)", "unit": "W/(m K)"},
+      "specific_heat": {"value": "~0.5-0.6", "unit": "J/(g K)"},
+      "glass_transition_temp_tg": {"value": "~260-300", "unit": "°C", "notes": "Composition dependent."},
+      "thermal_expansion": {"value": "~15-20 x 10⁻⁶", "unit": "/°C", "notes": "Relatively high for glass."}
+    },
+     "mechanical_properties": {
+         "density": {"value": "~4.3-4.9", "unit": "g/cm^3"},
+         "youngs_modulus": {"value": "~55-60", "unit": "GPa"},
+         "hardness_vickers": {"value": "~250-300", "unit": "HV"},
+         "poissons_ratio": "~0.28-0.31",
+         "fracture_toughness": {"value": "Low (~0.3-0.5)", "unit": "MPa m^0.5", "notes": "Brittle, sensitive to surface flaws (esp. fiber)."}
+     },
+     "device_applications": {
+         "sensor_types": ["Fiber optic sensors (chemical, temperature - via IR spec)"],
+         "key_applications": ["Mid-Infrared Optical Fiber", "Fiber Lasers & Amplifiers (rare-earth doped)", "IR Spectroscopy", "Thermal Imaging (fiber bundles)", "Medical Lasers (e.g., Er:ZBLAN at ~2.7µm)"]
+     },
+     "chemical_properties": {
+         "stability_oxidation": "Stable in dry air. Hygroscopic - surface can degrade in humid environments, affecting IR transmission.",
+         "water_solubility": "Very low, but surface reacts with water/humidity.",
+         "acid_resistance": "Poor compared to silica glass."
+     },
+     "magnetic_properties": {
+         "type": "Diamagnetic"
+     },
+     "comparison_alternatives": {
+         "notes": "Alternative IR Fiber Materials:",
+         "vs_Silica_Fiber": "ZBLAN: Wider IR transmission (out to 7µm+ vs ~2.2µm), lower theoretical loss in mid-IR. Silica: More mature, cheaper, much stronger, more chemically durable.",
+         "vs_Chalcogenide_Glass_Fiber": "ZBLAN: Better UV/Visible transmission, generally lower toxicity. Chalcogenide: Extends further into LWIR (>10µm), higher refractive index, often more fragile/toxic.",
+         "vs_Sapphire_Fiber": "ZBLAN: Can be drawn into long, flexible fibers. Sapphire: Much higher operating temp, stronger, higher thermal conductivity, difficult/expensive to make long fibers."
+     },
+     "references_further_reading": {
+         "notes": "Key Resources (Examples):",
+         "review_poulain": "Poulain, M. 'Fluoride Glass Fibers' (Review article/book chapter)",
+         "journal_jnoncrystsol": "Journal of Non-Crystalline Solids (relevant papers)",
+         "wikipedia": "https://en.wikipedia.org/wiki/ZBLAN"
+     },
+     "vendor_info": {
+         "notes": "Example Vendors (Fiber/Preform - Placeholder):",
+         "vendor_1": "Thorlabs (Fiber)",
+         "vendor_2": "Le Verre Fluoré (Fiber/Components)",
+         "vendor_3": "IRflex Corporation (Fiber)"
+     },
+    "tags": [
+      "cryogenic", "fiber", "industry:lasers", "industry:photonics", "industry:space",
+      "infrared", "ir transmission", "laser", "low loss", "optical", "photonic",
+      "space", "swir", "transparent"
     ]
   }
 }
