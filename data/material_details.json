@@ -1429,5 +1429,113 @@
           "corrosion resistant", "soft magnetic", "industry:magnetics", "industry:precision",
           "industry:mechanical", "alloy", "casting"
         ]
+      },
+    "Sapphire Substrate": {
+        "name": "Sapphire Substrate",
+        "formula": "Al₂O₃",
+        "synonyms": [ "Sapphire", "Alpha-Alumina", "Corundum", "Al2O3 substrate", "C-plane Sapphire", "R-plane Sapphire", "M-plane Sapphire" ],
+        "category": "Substrate",
+        "description": "Synthetic single crystal Aluminum Oxide (α-Al₂O₃), known commonly as Sapphire. Valued for its combination of high hardness, high melting point, excellent thermal conductivity (for an insulator), chemical inertness, broad optical transparency (UV to mid-IR), and good dielectric properties. Widely used as a substrate for epitaxial growth of III-nitride semiconductors (GaN, AlN for LEDs/Lasers), silicon-on-sapphire (SOS) electronics, and various optical window applications.",
+        "wiki_link": "https://en.wikipedia.org/wiki/Sapphire#Substrates_for_epitaxy",
+        "safety": {
+          "toxicity": "Low (Inert oxide ceramic).",
+          "handling": "Handle carefully as optical components or wafers; brittle and can chip or break. Sharp edges possible after dicing."
+        },
+        "identification": {
+          "cas_number": "1344-28-1",
+          "class": "Oxide Ceramic Crystal",
+          "crystal_structure": "Trigonal (Corundum structure, R-3c space group)",
+          "lattice_constant": {"value": "a=4.758, c=12.991", "unit": "Å", "notes": "Hexagonal setting, room temperature."},
+          "phase_diagram_notes": "Grown from congruent melt."
+        },
+        "advanced_fabrication_insights": {
+            "stoichiometry_control": "Generally stable Al₂O₃.",
+            "common_defects_impact": "Dislocations, sub-grain boundaries, twins, inclusions, surface scratches/subsurface damage. Impact epitaxial layer quality (threading dislocations in GaN), optical scattering, mechanical strength.",
+            "surface_preparation": "Requires extremely high-quality surface finish (epi-ready polish, often via CMP) with low roughness (<0.2 nm RMS) and minimal subsurface damage for epitaxy.",
+            "method_specific_notes": "Various growth methods (Kyropoulos, EFG, CZ, Verneuil, HDSM) yield different quality/cost tradeoffs. Orientation (C-plane, R-plane, A-plane, M-plane) selection is critical for specific epitaxial growth (e.g., C-plane for GaN LEDs)."
+        },
+        "growth_fabrication_properties": {
+            "common_growth_methods": "Bulk Crystal Growth: Kyropoulos (KY), Edge-defined Film-fed Growth (EFG), Czochralski (CZ), Heat Exchanger Method (HEM), Verneuil method.",
+            "source_materials_purity": "High purity Alumina (Al₂O₃) powder (>4N or 5N).",
+            "preferred_substrates_orientations": "N/A (Bulk growth). Wafers cut to specific orientations: C-plane (0001), R-plane (1-102), A-plane (11-20), M-plane (10-10).",
+            "typical_growth_parameters": "Requires very high temperatures (Melting Point ~2040°C). Growth atmosphere (vacuum or inert gas) and precise thermal gradient control are critical.",
+            "passivation_methods": "Surface is very stable."
+        },
+        "post_growth_processing": {
+            "annealing": "High-temperature annealing (>1400°C) used to remove subsurface damage and improve surface quality.",
+            "lapping_polishing": "Multi-step process using diamond slurries for grinding/lapping, followed by Chemical Mechanical Polishing (CMP) with colloidal silica in alkaline or acidic conditions.",
+            "etching": "Very chemically resistant. Can be etched with hot phosphoric acid mixtures or plasma etching (e.g., BCl₃/Cl₂ based).",
+            "grinding_milling": "Diamond tooling required for slicing, dicing, drilling, and shaping."
+        },
+         "device_integration_characterization": {
+            "device_architectures": "Substrate for GaN-based LEDs/Lasers/HEMTs, Silicon-on-Sapphire (SOS) ICs, optical windows (UV/Vis/IR), protective covers, watch crystals, specialized bearings.",
+            "readout_integration": "N/A (Typically a passive substrate).",
+            "ar_coatings": "Commonly applied for optical window applications.",
+            "packaging_cooling": "Used across a very wide temperature range, including cryogenic and high temperature.",
+            "key_characterization_techniques": ["XRD (orientation, crystal quality - rocking curve)", "AFM (surface roughness)", "Optical Microscopy (defects, surface quality)", "Transmission Spectroscopy (UV-IR)", "Interferometry (flatness, TTV)"]
+        },
+        "electrical_properties": {
+          "bandgap_type": "Insulator",
+          "band_gap": {"value": "~9.9", "unit": "eV", "notes": "Very wide bandgap."},
+          "dielectric_constant": {"value": "ε_parallel≈11.5, ε_perpendicular≈9.3", "notes": "Anisotropic. Values at low freq/RT."},
+          "resistivity": {"value": "> 10¹⁴", "unit": "Ω·cm", "notes": "Excellent electrical insulator, even at moderate temperatures."},
+          "dielectric_strength": {"value": "~40-50", "unit": "MV/m"}
+        },
+        "optical_properties": {
+          "spectral_range": "Transparent from ~170 nm (UV) to ~5.5 µm (Mid-IR).",
+          "refractive_index": {"value": "nₒ≈1.77, nₑ≈1.76", "notes": "Birefringent (uniaxial negative). Values at ~589 nm. Dispersion exists."},
+          "absorption_coefficient": {"value": "Very low in transmission window."},
+          "dn_dt": {"value": "~13 x 10⁻⁶", "unit": "/K", "notes": "Thermo-optic coefficient at room temp."}
+        },
+        "thermal_properties": {
+          "operating_temperature": {"value": "Cryogenic up to ~1800", "unit": "°C", "notes": "Very high temperature capability, limited by melting point."},
+          "thermal_conductivity": {"value": "~35-45", "unit": "W/(m·K)", "notes": "At 300K. Good for an electrical insulator. Decreases with temperature."},
+          "specific_heat": {"value": "~0.75-0.78", "unit": "J/(g·K)", "notes": "At 300K."},
+          "melting_point": {"value": "~2040-2050", "unit": "°C"},
+          "thermal_expansion": {"value": "α_parallel≈5.8, α_perpendicular≈5.0 x 10⁻⁶", "unit": "/°C", "notes": "Anisotropic. Average ~5.3 x 10⁻⁶ /°C near RT."}
+        },
+         "mechanical_properties": {
+             "density": {"value": "3.98", "unit": "g/cm³"},
+             "youngs_modulus": {"value": "~345-435", "unit": "GPa", "notes": "Very high stiffness, anisotropic."},
+             "hardness_mohs": {"value": "9", "notes": "Very hard, second only to diamond."},
+             "hardness_knoop": {"value": "~1800-2200", "unit": "kg/mm²"},
+             "poissons_ratio": "~0.25-0.30",
+             "fracture_toughness": {"value": "~2.0-4.5", "unit": "MPa·m⁰·⁵", "notes": "Brittle, toughness depends on orientation and quality."}
+         },
+         "device_applications": {
+             "sensor_types": ["Substrate for high-temp sensors"],
+             "key_applications": ["Substrate for GaN LEDs & Lasers", "Substrate for Silicon-on-Sapphire (SOS) RFICs", "Optical Windows (UV, Vis, IR)", "Scratch-resistant watch crystals/scanner windows", "High-temperature viewports", "Insulating components in high-temp/vacuum systems", "Endoscope lenses", "Bearings"]
+         },
+         "chemical_properties": {
+             "stability_oxidation": "Extremely stable oxide.",
+             "solvent_resistance": "Excellent.",
+             "acid_resistance": "Highly resistant to nearly all acids, even at elevated temperatures (except hot phosphoric/sulfuric).",
+             "base_resistance": "Highly resistant to bases.",
+             "water_solubility": "Insoluble."
+         },
+         "comparison_alternatives": {
+             "notes": "Alternative Substrates/Window Materials:",
+             "vs_Silicon_Carbide_SiC": "Sapphire: Cheaper (generally), wider availability in large sizes, better UV transparency. SiC: Better lattice match to GaN (reduces defects), much higher thermal conductivity, semiconductor.",
+             "vs_Gallium_Nitride_GaN": "Sapphire: Standard, lower cost substrate. GaN Substrate: Ideal lattice match (homoepitaxy), significantly lower defect density in epi-layers, much higher cost and limited size.",
+             "vs_Fused_Silica": "Sapphire: Much harder, higher thermal conductivity, wider IR transparency, higher refractive index, birefringent. Fused Silica: Cheaper, isotropic, better deep UV transparency, lower thermal expansion.",
+             "vs_Spinel_MgAl2O4": "Sapphire: Harder, higher thermal conductivity. Spinel: Isotropic optical properties, can have better transmission in certain IR regions, lower hardness."
+         },
+         "references_further_reading": {
+             "notes": "Key Resources:",
+             "book_nassau": "Nassau, K. 'Gems Made by Man'. (Includes crystal growth details)",
+             "web_crystran": "Crystran Ltd optical materials data sheets (or similar suppliers).",
+             "wikipedia": "https://en.wikipedia.org/wiki/Sapphire"
+         },
+         "vendor_info": {
+            "notes": "Example Vendors (Placeholder):",
+            "vendor_1": "Company A - www.example-vendor-a.com",
+            "vendor_2": "Company B - www.example-vendor-b.com",
+            "vendor_3": "Company C - www.example-vendor-c.com"
+         },
+        "tags": [
+          "cryogenic", "dielectric", "industry:lasers", "industry:photonics", "industry:quantum", "industry:electronics",
+          "laser optics", "low loss", "microwave", "photonic", "quantum computing", "single crystal",
+          "substrate", "oxide", "hard", "high temperature", "optical window", "uv transparent", "ir transparent"
+        ]
       } 
 }
