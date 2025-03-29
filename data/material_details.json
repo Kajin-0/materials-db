@@ -1003,5 +1003,114 @@
           "oxidation resistant", "hypersonic", "rocket nozzle", "industry:space",
           "industry:aerospace", "industry:defense", "ceramic", "hard"
         ]
+      },
+    "Gadolinium Gallium Garnet (GGG)": {
+        "name": "Gadolinium Gallium Garnet (GGG)",
+        "formula": "Gd₃Ga₅O₁₂",
+        "synonyms": [ "GGG", "GGG Crystal" ],
+        "category": "Optical Crystal",
+        "description": "Synthetic crystalline material with the garnet structure. Known for its excellent optical transparency in the visible and near-infrared regions, good mechanical and thermal properties, and paramagnetic behavior. Primarily used as a substrate for the epitaxial growth of magneto-optical films (like YIG - Yttrium Iron Garnet) and certain superconducting films. Also used directly in some optical components and laser research.",
+        "wiki_link": "https://en.wikipedia.org/wiki/Gadolinium_gallium_garnet",
+        "safety": {
+          "toxicity": "Low in solid crystalline form.",
+          "handling": "Standard optical component handling. Can be brittle."
+        },
+        "identification": {
+          "cas_number": "12024-36-1",
+          "class": "Synthetic Garnet Crystal",
+          "crystal_structure": "Cubic (Garnet structure, Ia3d space group)",
+          "lattice_constant": {"value": "~12.376 - 12.383", "unit": "Å", "notes": "Slight variations reported depending on stoichiometry/growth."},
+          "phase_diagram_notes": "Congruently melting compound in the Gd₂O₃-Ga₂O₃ system."
+        },
+        "advanced_fabrication_insights": {
+            "stoichiometry_control": "Precise control of Gd:Ga ratio during growth is needed to minimize defects and ensure correct lattice parameter for epitaxy.",
+            "common_defects_impact": "Inclusions, dislocations, core strains, growth striations. Can affect substrate quality for epitaxy and optical homogeneity.",
+            "surface_preparation": "Requires high-quality polishing (typically CMP) to achieve atomically smooth surfaces suitable for epitaxial growth.",
+            "method_specific_notes": "Almost exclusively grown by the Czochralski (CZ) method from an iridium crucible due to the high melting point."
+        },
+        "growth_fabrication_properties": {
+            "common_growth_methods": "Czochralski (CZ) method.",
+            "source_materials_purity": "High purity Gd₂O₃ and Ga₂O₃ powders (>4N or 5N).",
+            "preferred_substrates_orientations": "N/A (Bulk crystal growth). Substrates cut from boule typically (111), (100), or (110) orientations.",
+            "typical_growth_parameters": "Melting point ~1750°C. Requires careful control of temperature gradients, pull rate, and rotation rate during CZ growth.",
+            "passivation_methods": "Generally stable surface."
+        },
+        "post_growth_processing": {
+            "annealing": "Often annealed after growth to relieve stress and improve homogeneity.",
+            "lapping_polishing": "Standard optical grinding, lapping, and Chemical Mechanical Polishing (CMP) with colloidal silica or alumina slurries.",
+            "etching": "Can be etched with hot phosphoric acid (H₃PO₄) for defect analysis.",
+            "grinding_milling": "Diamond tooling used for slicing boules into wafers and shaping."
+        },
+         "device_integration_characterization": {
+            "device_architectures": "Substrates for LPE/sputtering of YIG, other garnets, superconductors. Optical windows, laser components (less common now).",
+            "readout_integration": "N/A",
+            "ar_coatings": "Can be applied if used as an optical component.",
+            "packaging_cooling": "Stable at room temperature. Used in cryogenic environments for certain physics experiments (e.g., microwave resonators).",
+            "key_characterization_techniques": ["XRD (lattice parameter, orientation, crystal quality)", "Optical Microscopy (defects, inclusions)", "Interferometry (surface flatness)", "Transmission Spectroscopy (Vis-NIR)", "Rocking Curve Analysis (crystal perfection)"]
+        },
+        "electrical_properties": {
+          "bandgap_type": "Insulator",
+          "band_gap": {"value": "~3.8-4.4", "unit": "eV", "notes": "Wide bandgap."},
+          "dielectric_constant": {"value": "~10-12", "notes": "At low frequencies."},
+          "resistivity": {"value": "> 10¹²", "unit": "Ω·cm", "notes": "Excellent electrical insulator."}
+        },
+        "optical_properties": {
+          "spectral_range": "Transparent from ~400 nm to >5 µm.", "notes": "Good transmission in Visible and NIR.",
+          "refractive_index": {"value": "~1.94-1.97", "notes": "At visible wavelengths (e.g., ~1.965 @ 633 nm)."},
+          "absorption_coefficient": {"value": "Very low in transmission window.", "notes": "Some weak absorptions due to Gd³⁺ ions in NIR."},
+          "dn_dt": {"value": "~10-15 x 10⁻⁶", "unit": "/K", "notes": "Thermo-optic coefficient."}
+        },
+        "thermal_properties": {
+          "operating_temperature": {"value": "Cryogenic up to >1000", "unit": "°C", "notes": "Limited by potential phase stability issues or reactions at very high temps, but generally very stable."},
+          "thermal_conductivity": {"value": "~7-9", "unit": "W/(m·K)", "notes": "Moderate thermal conductivity for an oxide crystal."},
+          "specific_heat": {"value": "~0.4-0.5", "unit": "J/(g·K)"},
+          "melting_point": {"value": "~1750", "unit": "°C"},
+          "thermal_expansion": {"value": "~9.2 x 10⁻⁶", "unit": "/°C"}
+        },
+         "mechanical_properties": {
+             "density": {"value": "7.08", "unit": "g/cm³"},
+             "youngs_modulus": {"value": "~200-210", "unit": "GPa"},
+             "hardness_vickers": {"value": "~1400-1600", "unit": "HV", "notes": "Mohs hardness ~6.5-7.5."},
+             "poissons_ratio": "~0.28-0.30",
+             "fracture_toughness": {"value": "~1.3-1.5", "unit": "MPa·m⁰·⁵", "notes": "Brittle, typical for oxide crystals."}
+         },
+         "device_applications": {
+             "sensor_types": ["Substrate for magnetic field sensors (using YIG film)"],
+             "key_applications": ["Substrate for YIG/magneto-optical films (isolators, circulators, microwave devices)", "Substrate for high-Tc superconductors", "Optical components (historically, less common now)", "Scintillator research (when doped)", "Cryogenic microwave resonators"]
+         },
+         "chemical_properties": {
+             "stability_oxidation": "Highly stable oxide.",
+             "solvent_resistance": "Excellent.",
+             "acid_resistance": "Resistant to most acids at room temp. Etched by hot phosphoric acid.",
+             "base_resistance": "Excellent.",
+             "water_solubility": "Insoluble."
+         },
+         "magnetic_properties": {
+            "type": "Paramagnetic", "notes": "Due to Gd³⁺ ions. Exhibits large magnetocaloric effect near its ordering temperature (~2 K)."
+         },
+         "comparison_alternatives": {
+             "notes": "Alternative Substrates/Materials:",
+             "vs_Sapphire": "GGG: Better lattice match for YIG, paramagnetic. Sapphire: Higher thermal conductivity, higher hardness, more readily available, diamagnetic.",
+             "vs_MgO": "GGG: Better lattice match for YIG. MgO: Higher melting point, simpler crystal structure, often used for other oxides/superconductors.",
+             "vs_YSZ": "GGG: Lower CTE, different crystal structure. YSZ: Used as TBC/electrolyte, higher toughness.",
+             "vs_NdGaO3_NGO": "GGG: Cubic, isotropic optical properties. NGO: Orthorhombic, lower dielectric constant, better lattice match for some perovskite superconductors."
+         },
+         "references_further_reading": {
+             "notes": "Key Literature:",
+             "book_kaminskii": "Kaminskii, A. A. 'Laser Crystals: Their Physics and Properties'.",
+             "review_jcg": "Articles on Czochralski growth of garnets in Journal of Crystal Growth.",
+             "wikipedia": "https://en.wikipedia.org/wiki/Gadolinium_gallium_garnet"
+         },
+         "vendor_info": {
+            "notes": "Example Vendors (Placeholder):",
+            "vendor_1": "Company A - www.example-vendor-a.com",
+            "vendor_2": "Company B - www.example-vendor-b.com",
+            "vendor_3": "Company C - www.example-vendor-c.com"
+         },
+        "tags": [
+          "cryogenic", "dielectric", "industry:lasers", "industry:photonics", "industry:quantum",
+          "laser", "low loss", "magnetic", "microwave", "optical", "paramagnetic",
+          "photonic", "substrate", "single crystal", "garnet"
+        ]
       } 
 }
