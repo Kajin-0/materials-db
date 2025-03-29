@@ -1,0 +1,77 @@
+{
+  "Mercury Cadmium Telluride": {
+    "name": "Mercury Cadmium Telluride",
+    "formula": "Hg₁₋ₓCdₓTe",
+    "synonyms": [ "HgCdTe", "MCT" ],
+    "category": "Semiconductor",
+    "description": "Mercury Cadmium Telluride (HgCdTe or MCT) is a II-VI semiconductor alloy known for its tunable bandgap, enabling detection across SWIR, MWIR, and LWIR bands. It is widely used in infrared sensors and thermal imaging systems, especially in cryogenically cooled applications.",
+    "safety": {
+      "toxicity": "High. Contains Mercury (toxic heavy metal) and Cadmium (carcinogen). Elemental Tellurium is also toxic.",
+      "handling": "Requires specialized handling: Use appropriate PPE (gloves, respirator if generating dust/fumes), work in well-ventilated areas or fume hoods. Follow strict waste disposal protocols."
+    },
+    "identification": {
+       "cas_number": "30784-21-9 (generic, specific composition varies)",
+       "class": "II-VI Compound Semiconductor Alloy"
+    },
+    "electrical_properties": {
+       "bandgap_type": "Direct, Tunable",
+       "band_gap": {
+          "value": "Variable 0 - 1.5",
+          "unit": "eV",
+          "notes": "Tunable by adjusting Cadmium fraction (x). x=0 (HgTe) is semimetal, x=1 (CdTe) is ~1.5eV."
+       },
+       "electron_mobility": {
+           "value": "Typically 10,000 - 20,000",
+           "unit": "cm²/Vs",
+           "notes": "High, but varies significantly with composition (x) and temperature (e.g., at 77 K)."
+       },
+       "hole_mobility": {
+          "value": "Typically 100 - 400",
+          "unit": "cm²/Vs",
+          "notes": "Lower than electron mobility, varies with x and temperature (e.g., at 77 K)."
+       }
+    },
+    "optical_properties": {
+       "spectral_range": "SWIR, MWIR, LWIR",
+       "notes": "Range is determined by bandgap (composition x).",
+       "cutoff_wavelength": {
+          "value": "Variable ~2 - 16+",
+          "unit": "µm",
+          "notes": "Directly related to bandgap. Longer wavelengths require lower x (more Hg)."
+       },
+       "refractive_index": {
+           "value": "~3.4 - 4.0",
+           "notes": "High refractive index, varies with wavelength and composition (x)."
+       }
+    },
+    "thermal_properties": {
+       "operating_temperature": {
+          "value": "Typically 77 K (LN₂ cooled)",
+          "notes": "Required for optimal performance, especially for LWIR detection, to reduce thermal noise."
+       },
+       "thermal_conductivity": {
+          "value": "Low (~0.02 - 0.05)",
+          "unit": "W/(cm·K)",
+          "notes": "Poor thermal conductor, can lead to localized heating."
+       },
+       "melting_point": {
+          "value": "~700 - 900",
+          "unit": "°C",
+          "notes": "Composition dependent (varies significantly with x)."
+       }
+    },
+    "processing_availability": {
+       "synthesis_methods": [ "Liquid Phase Epitaxy (LPE)", "Molecular Beam Epitaxy (MBE)", "Metalorganic Chemical Vapor Deposition (MOCVD)", "Bulk Crystal Growth (Bridgman, THM)" ],
+       "forms": [ "Epitaxial layers on substrates (e.g., CdTe, CdZnTe, Si, GaAs)", "Bulk crystals (less common for detector arrays)" ]
+    },
+    "tags": [
+        "II-VI", "LPE", "MBE", "aerospace", "cadmium", "chalcogenide", "cryogenic",
+        "epitaxial", "group 12", "group 16", "industry:aerospace", "industry:infrared",
+        "industry:photonics", "ir", "lwir", "mercury", "mwir", "nitrogen cooled",
+        "photoconductive", "photoconductor", "photodiode", "photosensor", "semiconductor",
+        "sensor", "single crystal", "tellurium", "toxic", "tunable bandgap"
+    ]
+  }
+  // Add other materials here later in the format:
+  // ,"Material Name From URL": { ... detailed nested object ... }
+}
