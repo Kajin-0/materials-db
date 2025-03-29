@@ -1537,5 +1537,102 @@
           "laser optics", "low loss", "microwave", "photonic", "quantum computing", "single crystal",
           "substrate", "oxide", "hard", "high temperature", "optical window", "uv transparent", "ir transparent"
         ]
+      },
+    "Reinforced Carbon–Carbon (RCC)": {
+        "name": "Reinforced Carbon–Carbon (RCC)",
+        "formula": "C-C + SiC coating",
+        "synonyms": [ "RCC", "Carbon-Carbon", "C/C", "Carbon Fiber Reinforced Carbon", "Coated Carbon-Carbon" ],
+        "category": "Composite",
+        "description": "A composite material consisting of carbon fiber reinforcement in a matrix of graphitic carbon, typically coated with Silicon Carbide (SiC) for oxidation resistance. RCC is known for its ability to withstand extremely high temperatures (over 1650 °C / 3000 °F) while maintaining structural integrity, making it ideal for applications like spacecraft nose cones and wing leading edges (e.g., Space Shuttle), heat shields, and high-performance braking systems.",
+        "wiki_link": "https://en.wikipedia.org/wiki/Reinforced_carbon%E2%80%93carbon",
+        "safety": {
+          "toxicity": "Low in final composite form. Processing involves potentially hazardous precursors and high temperatures. Machining dust (carbon fiber/SiC) requires respiratory protection.",
+          "handling": "Can be brittle and susceptible to impact damage. Handle large panels carefully."
+        },
+        "identification": {
+          "cas_number": "N/A (Composite)",
+          "class": "Ceramic Matrix Composite (CMC - specifically Carbon-Carbon)",
+          "crystal_structure": "Reinforcement: Graphitic Carbon Fibers. Matrix: Graphitic Carbon. Coating: SiC (typically alpha or beta phase).",
+          "phase_diagram_notes": "Complex multi-step fabrication process involving pyrolysis and graphitization."
+        },
+        "advanced_fabrication_insights": {
+            "process_control": "Multi-step, time-consuming process. Key steps: Layup of carbon fiber preform (often rayon-based), impregnation with phenolic resin, pyrolysis (multiple cycles to build density), graphitization (>2500°C), SiC coating deposition (pack cementation or CVD).",
+            "common_defects_impact": "Porosity in matrix reduces strength/conductivity. Cracks in SiC coating compromise oxidation protection. Delamination between fibers/matrix. Control of fiber architecture is crucial.",
+            "surface_preparation": "Surface of C-C must be suitable for SiC coating adherence.",
+            "method_specific_notes": "The conversion process for the SiC coating (pack cementation) is critical for achieving uniform thickness and preventing coating defects."
+        },
+        "growth_fabrication_properties": {
+            "common_growth_methods": "Fabrication via Layup, Resin Impregnation, Pyrolysis, Graphitization, Coating Deposition.",
+            "source_materials_purity": "Carbon fibers (PAN or Pitch based, sometimes Rayon precursor), Phenolic resin, Silicon Carbide powder (for pack cementation) or precursors (for CVD).",
+            "preferred_substrates_orientations": "N/A (Bulk composite).",
+            "typical_growth_parameters": "Pyrolysis ~800-1000°C. Graphitization >2500°C. SiC Pack Cementation ~1600-1700°C.",
+            "passivation_methods": "The SiC coating *is* the primary oxidation protection/passivation layer."
+        },
+        "post_growth_processing": {
+            "annealing": "High-temperature graphitization is an intrinsic part of the process.",
+            "lapping_polishing": "Not typically polished; surface finish determined by coating process.",
+            "etching": "Difficult due to chemical inertness.",
+            "grinding_milling": "Machinable with diamond tooling, but generates hazardous dust. Often fabricated to near-net shape."
+        },
+         "device_integration_characterization": {
+            "device_architectures": "Thermal Protection System (TPS) components (nose caps, leading edges), brake discs/pads (aircraft, racing), furnace elements, rocket nozzles.",
+            "readout_integration": "N/A",
+            "ar_coatings": "N/A",
+            "packaging_cooling": "Designed for extreme high-temperature operation in oxidizing environments (within limits of SiC coating).",
+            "key_characterization_techniques": ["Density/Porosity Measurement", "Thermal Conductivity/Diffusivity Testing (often at high temp)", "Mechanical Testing (Flexural Strength, ILSS - often at high temp)", "Oxidation Testing (TGA, furnace exposure)", "Microstructural Analysis (SEM - fiber/matrix interface, coating thickness/integrity)", "Non-Destructive Evaluation (NDE - e.g., ultrasonic, thermography for defect detection)"]
+        },
+        "electrical_properties": {
+          "bandgap_type": "N/A (Semi-metal/Conductor)",
+          "resistivity": {"value": "Relatively low (~10⁻³ - 10⁻⁴ Ω·cm)", "notes": "Electrically conductive, varies with fiber type, matrix density, and orientation."},
+          "conductivity_electrical": {"notes": "Good electrical conductor."}
+        },
+        "optical_properties": {
+          "spectral_range": "Opaque", "notes": "Typically dark gray / black appearance."
+        },
+        "thermal_properties": {
+          "operating_temperature": {"value": "Up to ~1650", "unit": "°C", "notes": "In oxidizing atmospheres (limited by SiC coating). Can withstand much higher temps (>2000°C) in inert/vacuum environments."},
+          "thermal_conductivity": {"value": "Moderate to High (~20-150+ W/(m·K))", "notes": "Highly anisotropic. High along fiber direction, lower through thickness. Decreases with temperature."},
+          "specific_heat": {"value": "~0.7-2.0", "unit": "J/(g·K)", "notes": "Increases significantly with temperature."},
+          "melting_point": {"notes": "Does not melt; Carbon sublimes at >3600°C. SiC coating decomposes/melts >2700°C."},
+          "thermal_expansion": {"value": "Very Low (~0-2 x 10⁻⁶ /°C)", "notes": "Excellent dimensional stability at high temperatures. Slightly anisotropic."}
+        },
+         "mechanical_properties": {
+             "density": {"value": "~1.6-1.9", "unit": "g/cm³", "notes": "Relatively lightweight for a high-temp material."},
+             "youngs_modulus": {"value": "~20-100+", "unit": "GPa", "notes": "Highly anisotropic, depends strongly on fiber type and architecture."},
+             "tensile_strength": {"value": "~50-200+", "unit": "MPa", "notes": "Anisotropic. Strength maintained well at high temperatures in inert atmosphere."},
+             "fracture_toughness": {"value": "Moderate (~5-15 MPa·m⁰·⁵)", "notes": "Significantly tougher than monolithic ceramics due to fiber reinforcement (graceful failure)."}
+         },
+         "device_applications": {
+             "key_applications": ["Space Shuttle Orbiter (Nose cap, Wing leading edges)", "Hypersonic vehicle components", "Reusable Launch Vehicle (RLV) TPS", "Aircraft brake discs", "Formula 1 / High-performance brake systems", "Rocket nozzles", "High-temperature furnace components"]
+         },
+         "chemical_properties": {
+             "stability_oxidation": "Base C-C material readily oxidizes above ~500°C. SiC coating provides protection up to ~1650-1700°C by forming a passive SiO₂ layer. Coating integrity is critical.",
+             "inertness": "Very inert in non-oxidizing environments, even at very high temperatures."
+         },
+         "comparison_alternatives": {
+             "notes": "Alternative High-Temperature Materials:",
+             "vs_UHTCs_ZrB2_HfB2": "RCC: Lower density, higher toughness (composite failure mode), lower maximum operating temperature in oxidizing conditions (SiC limit). UHTCs: Higher operating temp potential (>2000°C), higher density, brittle fracture.",
+             "vs_SiC_SiC_Composites": "RCC: Higher temperature capability in inert atmospheres (>2500°C vs ~1600°C for SiC), lower density. SiC/SiC: Better inherent oxidation resistance (no carbon matrix), potentially higher strength at intermediate temps.",
+             "vs_Refractory_Metals_Coated": "RCC: Lower density, retains strength better at very high temps, no melting issue. Refractory Metals (e.g., Nb, Ta coated): Higher toughness, susceptible to coating failure/oxidation.",
+             "vs_Ablative_Materials": "RCC: Reusable (within limits), maintains shape. Ablatives: Single-use, cool by sacrificial mass loss, different mechanism."
+         },
+         "references_further_reading": {
+             "notes": "Key Literature:",
+             "book_cmc": "Chapters on C-C composites in 'Handbook of Ceramic Composites' or similar.",
+             "nasa_reports": "NASA technical reports related to Space Shuttle TPS materials.",
+             "journal_composites": "Articles in 'Composites Part A/B', 'Carbon', 'Journal of the European Ceramic Society'.",
+             "wikipedia": "https://en.wikipedia.org/wiki/Reinforced_carbon%E2%80%93carbon"
+         },
+         "vendor_info": {
+            "notes": "Example Vendors (Placeholder):",
+            "vendor_1": "Company A - www.example-vendor-a.com",
+            "vendor_2": "Company B - www.example-vendor-b.com",
+            "vendor_3": "Company C - www.example-vendor-c.com"
+         },
+        "tags": [
+          "aerospace", "carbon-carbon", "composite", "heat shield", "high temperature",
+          "industry:aerospace", "industry:defense", "industry:space", "oxidation resistant",
+          "refractory", "space shuttle", "structural", "thermal protection", "lightweight"
+        ]
       } 
 }
