@@ -897,5 +897,111 @@
           "wear resistant", "fuel cell", "high temperature", "industry:energy",
           "industry:thermal", "industry:automotive", "industry:medical", "industry:aerospace"
         ]
-      }
+      },
+    "Zirconium Diboride (ZrB₂)": {
+        "name": "Zirconium Diboride (ZrB₂)",
+        "formula": "ZrB₂",
+        "synonyms": [ "ZrB2", "Zirconium Boride" ],
+        "category": "Ceramic",
+        "description": "An ultra-high temperature ceramic (UHTC) belonging to the transition metal boride family. It possesses an extremely high melting point, good thermal and electrical conductivity for a ceramic, high hardness, and relatively good oxidation resistance, particularly when combined with Silicon Carbide (SiC). Used in high-temperature applications like hypersonic vehicle leading edges, rocket nozzles, and cutting tools.",
+        "wiki_link": "https://en.wikipedia.org/wiki/Zirconium_diboride",
+        "safety": {
+          "toxicity": "Low in solid form. Dust can be an irritant.",
+          "handling": "Standard ceramic handling. Wear respiratory protection if generating dust during machining."
+        },
+        "identification": {
+          "cas_number": "12045-64-6",
+          "class": "Ultra-High Temperature Ceramic (UHTC), Transition Metal Diboride",
+          "crystal_structure": "Hexagonal (AlB₂ structure type)",
+          "lattice_constant": {"value": "a=3.169, c=3.530", "unit": "Å", "notes": "Room temperature."},
+          "phase_diagram_notes": "Part of the complex Zr-B system. Typically synthesized from ZrO₂ + B₄C or elemental Zr + B."
+        },
+        "advanced_fabrication_insights": {
+            "stoichiometry_control": "Maintaining correct Zr:B ratio is important. Oxygen and Carbon impurities from processing can affect properties.",
+            "common_defects_impact": "Porosity significantly degrades mechanical strength and oxidation resistance. Grain size control is crucial for maximizing properties. Impurities can lower melting point and performance.",
+            "surface_preparation": "Surface condition influences oxidation behavior and bonding to other materials.",
+            "method_specific_notes": "Difficult to sinter to full density due to strong covalent bonding and low self-diffusion coefficients. Hot pressing, spark plasma sintering (SPS), or adding sintering aids (e.g., SiC, Carbon, other borides) are often required."
+        },
+        "growth_fabrication_properties": {
+            "common_growth_methods": "Powder metallurgy routes: Hot Pressing (HP), Pressureless Sintering (often requires aids), Spark Plasma Sintering (SPS), Reaction Bonding. Chemical Vapor Deposition (CVD) for coatings.",
+            "source_materials_purity": "High purity Zr, B, ZrO₂, B₄C powders.",
+            "preferred_substrates_orientations": "N/A for bulk. Substrates for coatings include Carbon-composites, refractory metals.",
+            "typical_growth_parameters": "Sintering/Hot Pressing typically >1900°C, often >2000°C, under vacuum or inert atmosphere. High pressures used in HP/SPS.",
+            "passivation_methods": "Often used in conjunction with SiC particles/matrix which forms a protective SiO₂ scale during oxidation."
+        },
+        "post_growth_processing": {
+            "annealing": "May be used for stress relief after sintering.",
+            "lapping_polishing": "Requires diamond abrasives due to high hardness.",
+            "etching": "Very chemically inert, difficult to etch.",
+            "grinding_milling": "Requires diamond tooling for machining."
+        },
+         "device_integration_characterization": {
+            "device_architectures": "Structural components (leading edges, nose tips), crucibles for molten metals, electrodes, cutting tool inserts (often as composites).",
+            "readout_integration": "N/A",
+            "ar_coatings": "N/A",
+            "packaging_cooling": "Designed for extreme temperature environments.",
+            "key_characterization_techniques": ["XRD (phase purity, structure)", "SEM (microstructure, porosity)", "Density measurement (Archimedes, pycnometry)", "Thermal conductivity/diffusivity measurement", "Mechanical testing (hardness, strength, toughness - often at high temp)", "Oxidation testing (TGA, furnace tests)"]
+        },
+        "electrical_properties": {
+          "bandgap_type": "N/A (Metallic Conductor)",
+          "band_gap": {"value": "0", "unit": "eV"},
+          "resistivity": {"value": "~7-15", "unit": "µΩ·cm", "notes": "Low resistivity for a ceramic, metallic-like conductivity. Increases with temperature."},
+          "carrier_concentration": {"value": "High (Metallic)"},
+          "electron_mobility": {"notes": "Metallic conduction."},
+          "hole_mobility": {"notes": "Metallic conduction."},
+          "dielectric_constant": {"notes": "N/A (Conductor)"}
+        },
+        "optical_properties": {
+          "spectral_range": "Opaque", "notes": "Metallic luster."
+        },
+        "thermal_properties": {
+          "operating_temperature": {"value": "Up to >2000", "unit": "°C", "notes": "Excellent high-temperature capability, limited by oxidation above ~1500°C without protective measures (like SiC addition)."},
+          "thermal_conductivity": {"value": "~60-120", "unit": "W/(m·K)", "notes": "Relatively high for a ceramic. Decreases with temperature."},
+          "specific_heat": {"value": "~0.4-0.5", "unit": "J/(g·K)"},
+          "melting_point": {"value": "~3245", "unit": "°C"},
+          "thermal_expansion": {"value": "~5.9-7.8 x 10⁻⁶", "unit": "/°C", "notes": "Moderate CTE. Anisotropic (higher along c-axis)."}
+        },
+         "mechanical_properties": {
+             "density": {"value": "6.085", "unit": "g/cm³", "notes": "Theoretical density."},
+             "youngs_modulus": {"value": "~480-550", "unit": "GPa", "notes": "Very high stiffness."},
+             "hardness_vickers": {"value": "~22-27", "unit": "GPa", "notes": "Very hard."},
+             "poissons_ratio": "~0.13-0.17",
+             "fracture_toughness": {"value": "~3-5", "unit": "MPa·m⁰·⁵", "notes": "Relatively low toughness (brittle), improved in composites (e.g., ZrB₂-SiC)."}
+         },
+         "device_applications": {
+             "sensor_types": ["Thermocouple sheaths (high temp)"],
+             "key_applications": ["Hypersonic vehicle components (leading edges, nose cones)", "Rocket nozzles", "High-temperature electrodes", "Crucibles for molten metals", "Cutting tools (often as composite with SiC)", "Armor plating components"]
+         },
+         "chemical_properties": {
+             "stability_oxidation": "Good oxidation resistance up to ~1400-1500°C, forming ZrO₂ and volatile B₂O₃. Addition of SiC (~20-30 vol%) significantly improves oxidation resistance by forming a more stable ZrO₂-SiO₂ scale.",
+             "acid_resistance": "Excellent resistance to non-oxidizing acids.",
+             "base_resistance": "Good resistance to bases.",
+             "molten_metal_resistance": "Good resistance to corrosion by many molten metals."
+         },
+         "comparison_alternatives": {
+             "notes": "Other UHTCs:",
+             "vs_Hafnium_Diboride_HfB2": "ZrB₂: Lower density, lower cost. HfB₂: Slightly higher melting point, potentially better oxidation resistance (forms HfO₂).",
+             "vs_Zirconium_Carbide_ZrC": "ZrB₂: Generally better oxidation resistance (esp. with SiC), higher thermal conductivity. ZrC: Higher hardness at very high temperatures.",
+             "vs_Silicon_Carbide_SiC": "ZrB₂: Much higher melting point, better performance >2000°C. SiC: Excellent oxidation resistance up to ~1600-1700°C, lower density, lower cost, widely used as matrix/additive for ZrB₂.",
+             "vs_Refractory_Metals": "ZrB₂: Much higher melting point than W/Ta/Mo, better oxidation resistance (as ceramic), lower toughness (brittle). Refractory Metals: Ductile, high toughness, require protective coatings against oxidation at high temp."
+         },
+         "references_further_reading": {
+             "notes": "Key Reviews/Books:",
+             "review_monteverde": "Monteverde, F., & Bellosi, A. 'Oxidation of ZrB₂-Based Ceramics in Dry Air.' (Journal of the Electrochemical Society or similar)",
+             "review_fahy": "Fahy, J. et al. 'Review of Processing, Properties, and Oxidation of Zirconium Diboride...' (Journal of Materials Science)",
+             "book_wiley_uhtc": "Book chapter on UHTCs in 'Handbook of Advanced Ceramics' (Wiley) or similar.",
+             "wikipedia": "https://en.wikipedia.org/wiki/Zirconium_diboride"
+         },
+         "vendor_info": {
+            "notes": "Example Vendors (Placeholder):",
+            "vendor_1": "Company A - www.example-vendor-a.com",
+            "vendor_2": "Company B - www.example-vendor-b.com",
+            "vendor_3": "Company C - www.example-vendor-c.com"
+         },
+        "tags": [
+          "refractory", "high temperature", "thermal conductivity", "structural ceramic",
+          "oxidation resistant", "hypersonic", "rocket nozzle", "industry:space",
+          "industry:aerospace", "industry:defense", "ceramic", "hard"
+        ]
+      } 
 }
