@@ -1,29 +1,86 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Material Detail</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Material Detail - HgCdTe</title>
+    <script src="material_loader.js" defer></script>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
+<div class="container">
+
     <header class="detail-header">
-      <h1 id="material-name">Loading...</h1>
-      <div id="material-formula" class="formula">Formula</div>
+        <h1 id="material-name">Loading...</h1>
+        <div id="material-formula" class="formula">Loading...</div>
     </header>
+
     <main>
-      <section class="material-section" id="section-overview">
-        <h2>Overview</h2>
-        <p class="description" id="material-description">Loading description...</p>
-      </section>
-      <section class="material-section" id="section-tags">
-        <h2>Tags</h2>
-        <div class="tags-list" id="material-tags">Loading tags...</div>
-      </section>
+        <section class="material-section" id="section-overview">
+            <h2>Overview</h2>
+            <p class="description" id="material-description">Loading...</p>
+            <div class="image-placeholder">Image Placeholder</div>
+        </section>
+
+        <section class="material-section safety-info" id="section-safety">
+            <h2><span aria-hidden="true">⚠️</span> Safety Information</h2>
+            <dl class="property-list">
+                <div class="property-item"><dt class="property-key">Toxicity:</dt><dd class="property-value" id="prop-toxicity">Loading...</dd></div>
+                <div class="property-item"><dt class="property-key">Handling:</dt><dd class="property-value" id="prop-handling">Loading...</dd></div>
+            </dl>
+        </section>
+
+        <section class="material-section" id="section-identification">
+            <h2>Identification & Classification</h2>
+            <dl class="property-list">
+                <div class="property-item"><dt class="property-key">CAS Number:</dt><dd class="property-value" id="prop-cas">Loading...</dd></div>
+                <div class="property-item"><dt class="property-key">Material Category:</dt><dd class="property-value" id="prop-category">Loading...</dd></div>
+                <div class="property-item"><dt class="property-key">Material Class:</dt><dd class="property-value" id="prop-class">Loading...</dd></div>
+            </dl>
+        </section>
+
+        <section class="material-section" id="section-electrical">
+            <h2>Electrical Properties</h2>
+            <dl class="property-list">
+                <div class="property-item"><dt class="property-key">Bandgap Type:</dt><dd class="property-value" id="prop-bandgap-type">Loading...</dd></div>
+                <div class="property-item"><dt class="property-key">Bandgap:</dt><dd class="property-value" id="prop-bandgap">Loading...</dd></div>
+                <div class="property-item"><dt class="property-key">Electron Mobility:</dt><dd class="property-value" id="prop-e-mobility">Loading...</dd></div>
+                <div class="property-item"><dt class="property-key">Hole Mobility:</dt><dd class="property-value" id="prop-h-mobility">Loading...</dd></div>
+            </dl>
+        </section>
+
+        <section class="material-section" id="section-optical">
+            <h2>Optical Properties</h2>
+            <dl class="property-list">
+                <div class="property-item"><dt class="property-key">Spectral Range:</dt><dd class="property-value" id="prop-spectral-range">Loading...</dd></div>
+                <div class="property-item"><dt class="property-key">Cutoff Wavelength:</dt><dd class="property-value" id="prop-cutoff-wl">Loading...</dd></div>
+                <div class="property-item"><dt class="property-key">Refractive Index:</dt><dd class="property-value" id="prop-ref-index">Loading...</dd></div>
+            </dl>
+        </section>
+
+        <section class="material-section" id="section-thermal">
+            <h2>Thermal Properties</h2>
+            <dl class="property-list">
+                <div class="property-item"><dt class="property-key">Operating Temperature:</dt><dd class="property-value" id="prop-op-temp">Loading...</dd></div>
+                <div class="property-item"><dt class="property-key">Thermal Conductivity:</dt><dd class="property-value" id="prop-therm-cond">Loading...</dd></div>
+                <div class="property-item"><dt class="property-key">Melting Point:</dt><dd class="property-value" id="prop-melt-pt">Loading...</dd></div>
+            </dl>
+        </section>
+
+        <section class="material-section" id="section-processing">
+            <h2>Processing & Availability</h2>
+            <dl class="property-list">
+                <div class="property-item"><dt class="property-key">Common Synthesis:</dt><dd class="property-value" id="prop-synth">Loading...</dd></div>
+                <div class="property-item"><dt class="property-key">Typical Forms:</dt><dd class="property-value" id="prop-forms">Loading...</dd></div>
+            </dl>
+        </section>
+
+        <section class="material-section" id="section-tags">
+            <h2>Tags & Categories</h2>
+            <div class="tags-list" id="material-tags">Loading...</div>
+        </section>
     </main>
-  </div>
-  <script src="material_loader.js"></script>
+
+</div>
 </body>
 </html>
