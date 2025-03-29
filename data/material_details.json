@@ -792,7 +792,6 @@
       "swir", "tunable bandgap"
     ]
   },
-  ,
     "Yttria-Stabilized Zirconia (YSZ)": {
         "name": "Yttria-Stabilized Zirconia (YSZ)",
         "formula": "ZrO₂ + Y₂O₃",
