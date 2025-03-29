@@ -9,7 +9,7 @@ Unchecked items `[ ]` are missing a matching key in `material_details.json`.
 - [x] Boron Carbide Reinforced Epoxy
 - [x] Boron Nitride Nanotube Composite
 - [x] Carbon Nanotube Composite
-- [ ] Ferrite-Polymer Composite
+- [x] Ferrite-Polymer Composite
 - [ ] G-10/FR-4 Epoxy Glass Laminate
 - [x] Gadolinium Gallium Garnet (GGG)
 - [x] Gallium Arsenide
