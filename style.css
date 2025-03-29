@@ -1,215 +1,479 @@
-/* General Styles */
+/* ======================================== */
+/* General Styles & Base Elements         */
+/* ======================================== */
 body {
-font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-background: #f4f6f8; /* Lighter background */
-color: #333;
-margin: 0;
-padding: 0;
-line-height: 1.6;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f4f6f8; /* Lighter overall background */
+  color: #333;
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
 }
 
-/* Header */
-header {
-background: #2c3e50; /* Darker header */
-color: white;
-padding: 1.5rem 2rem;
-text-align: left; /* Align title to the left */
-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+.container { /* Used by detail page */
+  max-width: 1200px; /* Allow slightly wider container */
+  margin: 0 auto; /* Center container */
+  padding: 0 1rem 2rem 1rem; /* Add padding */
 }
 
-header h1 {
-margin: 0;
-font-size: 1.8rem;
-cursor: pointer;
+/* ======================================== */
+/* Header (Shared & Detail Specific)      */
+/* ======================================== */
+header { /* Used by index.html */
+  background: #2c3e50; /* Darker header */
+  color: white;
+  padding: 1.5rem 2rem;
+  text-align: left; /* Align title to the left */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-/* Search Container */
+header h1 { /* Used by index.html */
+  margin: 0;
+  font-size: 1.8rem;
+  cursor: pointer;
+}
+
+/* Detail Page Header Specific */
+.detail-header {
+  background: #f8f9fa; /* Lighter header background for detail */
+  color: #343a40; /* Darker text */
+  padding: 2rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid #dee2e6;
+  text-align: center; /* Center header content */
+}
+
+.detail-header h1 { /* Overrides index header h1 within detail-header */
+  margin-bottom: 0.5rem;
+  font-size: 2.2rem;
+  font-weight: 600;
+  color: #2c3e50; /* Match main header color */
+  cursor: default; /* Not clickable */
+}
+
+.detail-header .formula {
+  font-family: 'Consolas', 'Monaco', monospace; /* Monospace for formula */
+  font-size: 1.1rem;
+  color: #495057;
+  margin-top: 0.5rem;
+}
+
+
+/* ======================================== */
+/* Search Container & Suggestions (Index) */
+/* ======================================== */
 #search-container {
-padding: 2rem;
-display: flex;
-justify-content: center;
-flex-direction: column;
-align-items: center;
-background: #fff; /* White background for search area */
-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-position: relative; /* Needed for suggestions positioning */
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  background: #fff; /* White background for search area */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  position: relative; /* Needed for suggestions positioning */
 }
 
 #search-container input {
-padding: 0.8rem 1rem;
-font-size: 1.1rem;
-width: 100%;
-max-width: 700px; /* Slightly wider search bar */
-color: #333;
-background: #f9f9f9;
-border: 1px solid #ddd;
-border-radius: 6px;
-box-sizing: border-box;
-transition: border-color 0.3s ease;
+  padding: 0.8rem 1rem;
+  font-size: 1.1rem;
+  width: 100%;
+  max-width: 700px; /* Slightly wider search bar */
+  color: #333;
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
 }
 
 #search-container input:focus {
-outline: none;
-border-color: #007bff; /* Highlight on focus */
+  outline: none;
+  border-color: #007bff; /* Highlight on focus */
 }
 
 #search-container input::placeholder {
-color: #999;
+  color: #999;
 }
 
-/* Suggestions */
 #suggestions {
-list-style: none;
-margin: 5px 0 0 0; /* Add slight top margin */
-padding: 0;
-max-height: 200px; /* Increased max height */
-overflow-y: auto;
-background: white;
-border: 1px solid #ddd;
-border-radius: 6px;
-width: 100%;
-max-width: 700px;
-z-index: 10;
-position: absolute; /* Position suggestions below input */
-top: 100%; /* Start right below the search container's content */
-left: 50%; /* Center horizontally */
-transform: translateX(-50%); /* Adjust centering */
-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-box-sizing: border-box; /* Include padding/border in width */
+  list-style: none;
+  margin: 5px 0 0 0; /* Add slight top margin */
+  padding: 0;
+  max-height: 200px; /* Increased max height */
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  width: 100%;
+  max-width: 700px;
+  z-index: 10;
+  position: absolute; /* Position suggestions below input */
+  top: 100%; /* Start right below the search container's content */
+  left: 50%; /* Center horizontally */
+  transform: translateX(-50%); /* Adjust centering */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box; /* Include padding/border in width */
 }
 
 #suggestions li {
-padding: 0.7rem 1rem;
-border-bottom: 1px solid #eee;
-cursor: pointer;
-color: #333;
-transition: background-color 0.2s ease;
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  color: #333;
+  transition: background-color 0.2s ease;
 }
 
 #suggestions li:last-child {
-border-bottom: none;
+  border-bottom: none;
 }
 
 #suggestions li:hover,
 #suggestions li.active {
-background: #e9f5ff; /* Lighter hover color */
+  background: #e9f5ff; /* Lighter hover color */
 }
 
 #suggestions li.disabled { /* Style for 'Loading...' or 'No results' */
-color: #999;
-cursor: default;
+  color: #999;
+  cursor: default;
 }
 
 
-/* Toolbar / Filters */
+/* ======================================== */
+/* Toolbar / Filters (Index)              */
+/* ======================================== */
 .toolbar {
-display: none; /* Initially hidden */
-gap: 1.5rem;
-flex-wrap: wrap;
-justify-content: center;
-padding: 1.5rem 2rem;
-background: #fff;
-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-margin-bottom: 1rem;
+  display: none; /* Initially hidden */
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 1.5rem 2rem;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  margin-bottom: 1rem;
 }
 
 .toolbar.active {
-display: flex;
+  display: flex;
 }
 
 .filter-group {
-display: flex;
-align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 .filter-group label {
-margin-right: 0.6rem;
-font-weight: bold;
-color: #555;
+  margin-right: 0.6rem;
+  font-weight: bold;
+  color: #555;
 }
 
 .filter-group select {
-padding: 0.6rem 0.8rem;
-font-size: 1rem;
-border: 1px solid #ccc;
-border-radius: 4px;
-background-color: #fff;
-color: #333;
-cursor: pointer;
-transition: border-color 0.3s ease;
-min-width: 150px; /* Give dropdowns a minimum width */
+  padding: 0.6rem 0.8rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  color: #333;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+  min-width: 150px; /* Give dropdowns a minimum width */
 }
 
 .filter-group select:focus {
-outline: none;
-border-color: #007bff;
+  outline: none;
+  border-color: #007bff;
 }
 
-/* Main Content */
+
+/* ======================================== */
+/* Main Content Area (Shared)             */
+/* ======================================== */
 main {
-max-width: 1100px; /* Slightly wider main area */
-margin: 2rem auto; /* More top margin */
-padding: 0 2rem;
+  max-width: 1100px; /* Max width for both index results and detail content */
+  margin: 2rem auto; /* Top/bottom margin, centered */
+  padding: 0 1rem; /* Padding for smaller screens */
 }
 
-/* Material Card */
+@media (min-width: 768px) {
+  main {
+    padding: 0 2rem; /* More padding on larger screens */
+  }
+}
+
+
+/* ======================================== */
+/* Material Card (Index Results)          */
+/* ======================================== */
 .material-card {
-background: white;
-border: 1px solid #ddd;
-border-radius: 8px;
-padding: 1.5rem;
-margin-bottom: 1.5rem;
-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
-transition: box-shadow 0.3s ease;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.3s ease;
 }
 
 .material-card:hover {
-box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .material-card h2 {
-margin-top: 0;
-margin-bottom: 0.5rem;
-font-size: 1.5rem;
-color: #2c3e50;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  font-size: 1.5rem;
+  color: #2c3e50;
 }
 
 .material-card p {
-margin-bottom: 0.5rem;
-color: #555;
+  margin-bottom: 0.5rem;
+  color: #555;
 }
 
 .material-card strong {
-font-weight: 600;
-color: #333;
+  font-weight: 600;
+  color: #333;
 }
 
 .material-card .tags {
-margin-top: 1rem;
+  margin-top: 1rem;
 }
 
 .material-card .tag {
-display: inline-block;
-margin: 0.3rem 0.4rem 0 0;
-padding: 0.3rem 0.7rem;
-background: #007bff; /* More vibrant tag color */
-color: white;
-border-radius: 4px;
-font-size: 0.9rem;
-cursor: pointer;
-transition: background-color 0.2s ease;
+  display: inline-block;
+  margin: 0.3rem 0.4rem 0 0;
+  padding: 0.3rem 0.7rem;
+  background: #007bff; /* More vibrant tag color */
+  color: white;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
 .material-card .tag:hover {
-background: #0056b3;
+  background: #0056b3;
 }
 
-/* No Results Message Styling */
+/* No Results Message Styling (Index) */
 main#results:empty::after {
-content: "No materials found matching your criteria.";
-display: block;
-padding: 2rem;
-text-align: center;
-color: #777;
-font-style: italic;
+  content: "No materials found matching your criteria.";
+  display: block;
+  padding: 2rem;
+  text-align: center;
+  color: #777;
+  font-style: italic;
+}
+
+
+/* ======================================== */
+/* Material Detail Page Sections & Styling */
+/* ======================================== */
+
+/* --- Detail Tags Section (Moved Up) --- */
+#section-tags { /* Positioned outside <main> in HTML, inside .container */
+   background: none;
+   border: none;
+   box-shadow: none;
+   padding: 0 1rem 1.5rem 1rem; /* Use container padding */
+   margin: 0 auto 1.5rem auto; /* Center within container width */
+   max-width: 1100px; /* Match main content width */
+   border-bottom: 1px solid #eee; /* Separate from overview */
+   box-sizing: border-box;
+}
+#section-tags h2 {
+    display: none; /* Hide the "Tags & Categories" header */
+}
+.tags-list {
+  text-align: left; /* Align tags left */
+}
+.tags-list .tag { /* Style tags on detail page */
+  display: inline-block;
+  margin: 0.3rem 0.4rem 0.3rem 0;
+  padding: 0.4rem 0.8rem;
+  background: #6c757d; /* Slightly muted background */
+  color: white;
+  border-radius: 15px; /* Pill shape */
+  font-size: 0.9rem;
+  cursor: default; /* Not clickable */
+}
+
+/* --- General Detail Section Styling --- */
+.material-section { /* Applies to all sections within <main> on detail page */
+  background: #ffffff; /* White background for sections */
+  padding: 1.5rem 2rem;
+  margin-bottom: 2rem;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.material-section h2 { /* Section titles */
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #0056b3; /* Use theme blue for section headers */
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e9ecef;
+  display: flex; /* For icon alignment */
+  align-items: center;
+}
+
+.material-section h2 span[aria-hidden="true"] { /* Style safety icon */
+    margin-right: 0.75rem;
+    font-size: 1.8rem; /* Make icon slightly larger */
+    color: #dc3545; /* Red for warning */
+}
+
+/* --- Overview Section --- */
+#section-overview .description {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: #495057;
+  margin-bottom: 1.5rem;
+}
+
+.image-placeholder { /* Placeholder for image if used */
+  background-color: #e9ecef;
+  color: #6c757d;
+  text-align: center;
+  padding: 4rem 1rem;
+  border-radius: 6px;
+  font-style: italic;
+  margin-top: 1rem;
+}
+
+/* --- Property List Styling (Used in multiple sections) --- */
+.property-list {
+  display: grid;
+  /* Create two columns; auto-fit prevents overflow, minmax sets min/max width */
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem 2.5rem; /* Row and column gap */
+  padding: 0;
+  margin: 0;
+}
+
+.property-item {
+  display: grid;
+  grid-template-columns: 150px 1fr; /* Fixed Key width | Flexible Value width */
+  align-items: start; /* Align items to the top */
+  gap: 0.5rem; /* Gap between key and value */
+  padding: 0.6rem 0;
+  border-bottom: 1px dashed #eee; /* Subtle separator */
+}
+/* Remove border from last items implicitly handled by grid structure */
+/* No specific :last-child needed unless layout changes */
+
+.property-key {
+  font-weight: 600;
+  color: #343a40;
+  text-align: right;
+  padding-right: 0.5rem;
+  font-size: 0.95rem;
+  line-height: 1.4; /* Match value line-height */
+}
+
+.property-value {
+  color: #495057;
+  font-size: 0.95rem;
+  word-break: break-word; /* Prevent long values overflowing */
+  line-height: 1.4;
+}
+
+/* --- Highlighting Specific/Key Properties --- */
+.property-item.key-property .property-key {
+  /* Optional: Highlight key color */
+  /* color: #0056b3; */
+}
+.property-item.key-property .property-value {
+  font-weight: 500; /* Make value slightly bolder */
+  color: #212529;
+}
+
+/* --- Specific Section Adjustments --- */
+#section-safety .property-list {
+  grid-template-columns: 1fr; /* Safety section uses single column */
+}
+#section-safety .property-item {
+    grid-template-columns: 100px 1fr; /* Adjust key width for safety */
+    background-color: #fff3cd; /* Light yellow background for safety items */
+    border-radius: 4px;
+    padding: 0.75rem;
+    border-bottom: none;
+    margin-bottom: 0.75rem; /* Space between safety items */
+}
+#section-safety .property-key {
+    color: #856404; /* Darker yellow text */
+}
+#section-safety .property-value {
+    color: #856404;
+}
+
+
+/* ======================================== */
+/* Responsive Adjustments                 */
+/* ======================================== */
+@media (max-width: 768px) {
+  /* Detail Page adjustments */
+  .property-list {
+    grid-template-columns: 1fr; /* Stack properties in a single column */
+    gap: 0.75rem;
+  }
+  .property-item {
+    grid-template-columns: 120px 1fr; /* Adjust key width */
+    padding: 0.5rem 0;
+  }
+  .detail-header h1 {
+      font-size: 1.8rem;
+  }
+  .material-section h2 {
+      font-size: 1.4rem;
+  }
+  .material-section {
+      padding: 1rem 1.5rem;
+  }
+  /* Index page adjustments */
+  header, .toolbar, main, #search-container {
+      padding-left: 1rem;
+      padding-right: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+    /* Detail Page adjustments */
+    .property-item {
+      grid-template-columns: 100px 1fr; /* Further adjust key width */
+       /* Optional: Stack key above value on very small screens */
+      /* grid-template-columns: 1fr;
+      text-align: left; */
+    }
+    .property-key {
+       /* text-align: left; */
+       /* padding-right: 0; */
+       /* margin-bottom: 0.2rem; */
+    }
+    .container { /* Reduce padding on smallest screens */
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+    .detail-header {
+        padding: 1.5rem 1rem;
+    }
+     #section-tags {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+     }
+
+    /* Index page adjustments */
+     header, .toolbar, main, #search-container {
+      padding-left: 0.5rem;
+      padding-right: 0.5rem;
+     }
+     header h1 { font-size: 1.6rem;}
+     #search-container input { font-size: 1rem;}
+     .filter-group { flex-direction: column; align-items: stretch; }
+     .filter-group label { margin-bottom: 0.3rem; margin-right: 0;}
+     .filter-group select { width: 100%; }
+
 }
