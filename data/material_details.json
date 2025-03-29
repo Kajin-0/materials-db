@@ -189,7 +189,7 @@
          "density": {"value": "~5.32", "unit": "g/cm^3"},
          "youngs_modulus": {"value": "~85", "unit": "GPa", "notes": "[100] direction."},
          "hardness_vickers": {"value": "~750", "unit": "HV"},
-         "poissons_ratio": "~0.31", // Note: Corrected typo from previous skeleton
+         "poissons_ratio": "~0.31",
          "fracture_toughness": {"value": "~0.3-0.4", "unit": "MPa m^0.5", "notes": "Brittle."}
      },
      "device_applications": {
