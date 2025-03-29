@@ -2,9 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Material Detail - HgCdTe</title>
+  <!-- Make title dynamic later if needed -->
+  <title>Material Detail</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css" />
+  <!-- Optional: Placeholder favicon -->
+  <link rel="icon" href="data:;base64,iVBORw0KGgo=">
 </head>
 <body>
   <div class="container">
@@ -16,7 +19,7 @@
 
     <!-- Tags Section -->
     <section class="material-section" id="section-tags">
-      <h2>Tags & Categories</h2>
+      <h2>Tags & Categories</h2> <!-- Title is hidden by CSS, but good for structure -->
       <div class="tags-list" id="material-tags">Loading...</div>
     </section>
 
@@ -25,8 +28,8 @@
       <section class="material-section" id="section-overview">
         <h2>Overview</h2>
         <p class="description" id="material-description">Loading...</p>
-        <p>See also: <a id="wiki-link" href="#" target="_blank" rel="noopener noreferrer">Wikipedia Article</a></p> <!-- Wiki Link -->
-        <div class="image-placeholder">Image Placeholder / Diagram</div>
+        <p>See also: <a id="wiki-link" href="#" target="_blank" rel="noopener noreferrer" style="display: none;">Wikipedia Article</a></p> <!-- Hide link initially -->
+        <div class="image-placeholder">Image Placeholder / Diagram</div> <!-- Placeholder -->
       </section>
 
       <!-- Safety Information -->
@@ -57,7 +60,7 @@
         </dl>
       </section>
 
-      <!-- Advanced Fabrication Insights (New Section) -->
+      <!-- Advanced Fabrication Insights -->
       <section class="material-section" id="section-fab-insights">
           <h2>Advanced Fabrication Insights</h2>
           <dl class="property-list">
@@ -91,7 +94,7 @@
          </dl>
        </section>
 
-       <!-- Device Integration & Characterization (New Section) -->
+       <!-- Device Integration & Characterization -->
        <section class="material-section" id="section-device-char">
          <h2>Device Integration & Characterization</h2>
          <dl class="property-list">
@@ -160,15 +163,15 @@
 
        <!-- Key Applications & Sensor Types -->
        <section class="material-section" id="section-applications">
-         <h2>Key Applications & Sensor Types</h2> <!-- Renamed title -->
+         <h2>Key Applications & Sensor Types</h2>
          <dl class="property-list">
            <div class="property-item">
              <dt class="property-key">Common Sensor Types:</dt>
-             <dd class="property-value" id="prop-sensor-types">Loading...</dd> <!-- Renamed ID -->
+             <dd class="property-value" id="prop-sensor-types">Loading...</dd>
            </div>
            <div class="property-item key-property">
              <dt class="property-key">Key Applications:</dt>
-             <dd class="property-value" id="prop-key-applications">Loading...</dd> <!-- Renamed ID -->
+             <dd class="property-value" id="prop-key-applications">Loading...</dd>
            </div>
          </dl>
        </section>
@@ -181,7 +184,6 @@
              <dt class="property-key">Stability & Oxidation:</dt>
              <dd class="property-value" id="prop-stability-oxidation">Loading...</dd>
            </div>
-           <!-- Etching moved to Post-Growth Processing -->
          </dl>
        </section>
 
@@ -196,18 +198,25 @@
          </dl>
        </section>
 
-       <!-- Comparison with Alternatives (New Section) -->
+       <!-- Comparison with Alternatives (MODIFIED FOR DYNAMIC CONTENT) -->
        <section class="material-section" id="section-comparison">
          <h2>Comparison with Alternatives</h2>
           <dl class="property-list">
-           <div class="property-item"> <dt class="property-key">Notes:</dt> <dd class="property-value" id="prop-comparison-notes">Loading...</dd> </div>
-           <div class="property-item"> <dt class="property-key">vs. InSb:</dt> <dd class="property-value" id="prop-vs-insb">Loading...</dd> </div>
-           <div class="property-item"> <dt class="property-key">vs. QWIPs:</dt> <dd class="property-value" id="prop-vs-qwips">Loading...</dd> </div>
-           <div class="property-item"> <dt class="property-key">vs. T2SLs:</dt> <dd class="property-value" id="prop-vs-t2sls">Loading...</dd> </div>
+           <div class="property-item">
+                <dt class="property-key">Notes:</dt>
+                <dd class="property-value" id="prop-comparison-notes">Loading...</dd>
+            </div>
+           <!-- Dynamic comparison items will be inserted here by JS -->
+           <div id="comparison-items-placeholder">
+               <!-- Placeholder structure (optional, will be replaced) -->
+               <div class="property-item">
+                   <dd class="property-value"><span class="na-value">Loading comparisons...</span></dd>
+               </div>
+           </div>
           </dl>
        </section>
 
-       <!-- References & Further Reading (New Section) -->
+       <!-- References & Further Reading -->
        <section class="material-section" id="section-references">
          <h2>References & Further Reading</h2>
          <ul id="reference-list">
@@ -218,7 +227,7 @@
       <!-- Vendor Placeholder -->
        <section class="material-section" id="section-vendors">
          <h2>Commercial Vendors (Example)</h2>
-         <p>This space can list companies supplying HgCdTe materials or related services.</p>
+         <p>This space can list companies supplying materials or related services.</p>
          <ul id="vendor-list">
            <li>Loading vendor info...</li>
          </ul>
