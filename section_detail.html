@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Title will be set dynamically -->
+    <title>Section Detail</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Optional: Placeholder favicon -->
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    <style>
+        /* Add some specific styles for this page if needed */
+        .section-detail-container {
+            max-width: 960px;
+            margin: 1rem auto;
+            padding: 1.5rem;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .section-title-bar {
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+        .section-title-bar h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            color: #0056b3;
+        }
+        .section-title-bar .material-context {
+            font-size: 1rem;
+            color: #6c757d;
+            margin-top: 0.25rem;
+        }
+        .section-introduction {
+            font-size: 1.05rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background-color: #f8f9fa;
+            border-left: 4px solid #007bff;
+            border-radius: 4px;
+        }
+        .property-detail-block {
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #eee;
+        }
+         .property-detail-block:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+         }
+        .property-detail-block h3 {
+            font-size: 1.4rem;
+            color: #343a40;
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+        }
+        .property-detail-block .summary {
+             font-style: italic;
+             color: #495057;
+             margin-bottom: 1.2rem;
+             font-size: 1rem;
+        }
+        .detail-subsection {
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+        }
+        .detail-subsection h4 {
+            font-size: 1.1rem;
+            color: #4a5568;
+            margin-bottom: 0.5rem;
+            border-bottom: 1px dotted #ccc;
+            padding-bottom: 0.2rem;
+        }
+        .detail-subsection ul {
+            list-style: disc;
+            padding-left: 1.5rem;
+            margin-top: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .detail-subsection li, .detail-subsection p {
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
+        }
+        .equation-block {
+            background-color: #f0f2f5;
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            border: 1px solid #dfe1e5;
+        }
+        .equation-block .eq-name {
+             font-weight: 600;
+             display: block;
+             margin-bottom: 0.5rem;
+        }
+        .equation-block .eq-formula-plain,
+        .equation-block .eq-formula-latex { /* Placeholder */
+            font-family: 'Consolas', monospace;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            word-wrap: break-word;
+        }
+        .equation-block .eq-desc {
+             font-size: 0.9rem;
+             color: #555;
+             margin-bottom: 0.7rem;
+        }
+        .equation-block .eq-vars ul { padding-left: 1rem; }
+        .equation-block .eq-vars li { font-size: 0.9rem; }
+        .equation-block .eq-ref { font-size: 0.85rem; margin-top: 0.5rem; }
+        .ref-link { text-decoration: none; color: #007bff; }
+        .ref-link:hover { text-decoration: underline; }
+
+        .error-message { color: red; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="section-detail-container">
+        <!-- Back Link (Optional but Recommended) -->
+        <!-- Consider adding a dynamic back link later -->
+        <a href="index.html" class="back-link" style="margin-bottom: 1.5rem; display: block;">← Back to Materials List</a>
+
+        <div class="section-title-bar">
+            <h1 id="section-display-name">Loading Section...</h1>
+            <div class="material-context" id="material-context">for Loading Material...</div>
+        </div>
+
+        <div class="section-content" id="section-content">
+            <!-- Introduction will be loaded here -->
+            <p id="section-introduction" class="section-introduction" style="display: none;">Loading introduction...</p>
+
+            <!-- Property details will be loaded here -->
+            <div id="properties-container">
+                <!-- Example structure (will be generated dynamically) -->
+                <!--
+                <div class="property-detail-block" id="prop_electrical_properties.band_gap">
+                    <h3>Bandgap (Eg)</h3>
+                    <div class="summary">Direct, Tunable (0 - 1.5 eV)</div>
+                    <div class="detail-subsection notes">
+                        <h4>Notes</h4>
+                        <ul><li>Note 1</li><li>Note 2</li></ul>
+                    </div>
+                    <div class="detail-subsection equations">
+                        <h4>Equations</h4>
+                        <div class="equation-block">
+                             <span class="eq-name">Eq Name</span>
+                             <div class="eq-desc">Desc...</div>
+                             <div class="eq-formula-plain">Eg = ...</div>
+                             <div class="eq-vars"><ul><li>Eg: Bandgap</li></ul></div>
+                             <div class="eq-ref">Ref: ...</div>
+                        </div>
+                    </div>
+                    <div class="detail-subsection measurement">
+                        <h4>Measurement Techniques</h4>
+                        <ul><li>Technique 1</li></ul>
+                        <p>Notes about measurement...</p>
+                    </div>
+                     <div class="detail-subsection significance">
+                        <h4>Significance</h4>
+                        <ul><li>Point 1</li></ul>
+                    </div>
+                </div>
+                 -->
+            </div>
+        </div>
+
+        <!-- References section -->
+        <div id="references-section" style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #eee;">
+            <h4>References Cited</h4>
+            <ul id="references-list" style="list-style: none; padding-left: 0; font-size: 0.9rem;">
+                <!-- References will be loaded here -->
+            </ul>
+        </div>
+
+    </div>
+
+    <!-- Load the new JS file -->
+    <script src="section_loader.js"></script>
+</body>
+</html>
