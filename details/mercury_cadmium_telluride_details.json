@@ -15,6 +15,99 @@
     "Schroder_Semicon": {
       "text": "Schroder, D. K. (2006). Semiconductor Material and Device Characterization (3rd ed.). Wiley-IEEE Press.",
       "doi": "10.1002/0471749095"
+    },
+    "Capper_HgCdTe": {
+        "text": "Capper, P. (Ed.). (1994). Properties of Narrow Gap Cadmium-based Compounds. EMIS Datareviews Series No. 10, INSPEC.",
+        "isbn": "978-0852968808"
+    }
+  },
+  "identification": {
+    "displayName": "Identification & Structure",
+    "introduction": "Basic identification parameters and crystallographic information for HgCdTe.",
+    "properties": {
+        "cas_number": {
+            "displayName": "CAS Number",
+            "summary": "30784-21-9 (Generic)",
+            "details": {
+                "notes": ["This CAS number represents the generic HgCdTe alloy. Specific compositions might have different identifiers or no specific CAS number."]
+            }
+        },
+        "class": {
+            "displayName": "Material Class",
+            "summary": "II-VI Compound Semiconductor Alloy",
+             "details": {
+                "notes": ["Alloy formed between Mercury Telluride (HgTe, a semimetal) and Cadmium Telluride (CdTe, a semiconductor).", "Belongs to the II-VI group based on periodic table columns of constituents (Group 12: Hg, Cd; Group 16: Te)."]
+             }
+        },
+        "crystal_structure": {
+            "displayName": "Crystal Structure",
+            "summary": "Zinc Blende (FCC)",
+             "details": {
+                "notes": ["Adopts the Zinc Blende structure, typical for many III-V and II-VI semiconductors.", "Characterized by two interpenetrating Face-Centered Cubic (FCC) sublattices, one for cations (Hg/Cd mix) and one for anions (Te).", "Lack of inversion symmetry."]
+             }
+        },
+        "space_group": {
+            "displayName": "Space Group",
+            "summary": "F-43m (No. 216)",
+            "details": {
+                "key_characteristics": ["Non-centrosymmetric cubic space group associated with the Zinc Blende structure type."],
+                "measurement_characterization": {
+                    "techniques": ["X-Ray Diffraction (XRD) - Single crystal or powder diffraction."]
+                 }
+            }
+        },
+        "lattice_constant": {
+            "displayName": "Lattice Constant (a)",
+            "summary": "Approx. 6.461 - 6.481 Å (at RT, near linear with x)",
+             "details": {
+                 "key_characteristics": [
+                    "Varies nearly linearly with Cadmium mole fraction (x) according to Vegard's law.",
+                    "Lattice constant of HgTe: ~6.461 Å",
+                    "Lattice constant of CdTe: ~6.481 Å",
+                    "Small difference enables growth on lattice-matched substrates like CdZnTe."
+                  ],
+                 "equations": [
+                    {
+                      "name": "Vegard's Law Approximation",
+                      "description": "Linear interpolation for lattice constant (a) based on composition (x).",
+                      "formula_html": "a(x) ≈ a<sub>HgTe</sub>(1-x) + a<sub>CdTe</sub>x",
+                      "formula_plain": "a(x) approx a_HgTe*(1-x) + a_CdTe*x",
+                      "units": "Å",
+                      "variables": [
+                         {"symbol": "a(x)", "description": "Lattice constant of Hg<sub>1-x</sub>Cd<sub>x</sub>Te"},
+                         {"symbol": "a<sub>HgTe</sub>", "description": "Lattice constant of HgTe (~6.461 Å)"},
+                         {"symbol": "a<sub>CdTe</sub>", "description": "Lattice constant of CdTe (~6.481 Å)"},
+                         {"symbol": "x", "description": "Cd mole fraction"}
+                      ],
+                      "ref": null
+                    }
+                  ],
+                  "measurement_characterization": {
+                    "techniques": ["High-Resolution X-Ray Diffraction (HRXRD)"],
+                    "considerations": ["Precise measurement allows determination of alloy composition (x)."]
+                  },
+                  "device_relevance": ["Crucial for selecting lattice-matched substrates (e.g., CdZnTe) to minimize misfit dislocations during epitaxial growth.", "Strain engineering in lattice-mismatched growth influences band structure."]
+             }
+        },
+        "phase_diagram_notes": {
+            "displayName": "Phase Diagram Notes",
+            "summary": "Pseudo-binary; Narrow liquidus-solidus gap; Requires Hg overpressure",
+             "details": {
+                "key_characteristics": [
+                    "The HgTe-CdTe system forms a pseudo-binary phase diagram with complete solid solubility.",
+                    "Features a narrow separation between the liquidus and solidus lines, complicating uniform bulk crystal growth (susceptible to segregation).",
+                    "High vapor pressure of Hg necessitates growth and high-temperature annealing under controlled Hg partial pressure to prevent decomposition and control V<sub>Hg</sub> concentration."
+                 ],
+                 "significance": ["Influences choice of crystal growth techniques (Epitaxy generally preferred over bulk for uniformity).", "Dictates critical process control requirements (temperature, pressure)."]
+             }
+        },
+        "appearance": {
+            "displayName": "Appearance",
+            "summary": "Dark gray / black solid with metallic luster",
+            "details": {
+                "notes": ["Appearance can vary slightly depending on surface preparation (polished vs as-grown) and composition.", "Thin films on transparent substrates can show interference colors."]
+            }
+        }
     }
   },
   "electrical_properties": {
@@ -80,7 +173,7 @@
             },
             {
               "name": "Cutoff Wavelength from E_g(x,T)",
-              "description": "Calculates cutoff wavelength (μm) by substituting the Hansen E_g(x,T) relation into λ<sub>c</sub> ≈ 1.24 / E_g. Accurate determination of x and T is crucial.",
+              "description": "Calculates cutoff wavelength (μm) directly from the Hansen relation. Accurate determination of x and T is crucial.",
               "formula_html": "λ<sub>c</sub>(x, T) ≈ 1.2398 / E<sub>g</sub>(x, T) <br>= 1.2398 / [-0.302 + 1.93x + 5.35 × 10<sup>-4</sup> T (1 - 2x) - 0.810x<sup>2</sup> + 0.832x<sup>3</sup>]",
               "formula_plain": "λc(x,T) (μm) ≈ 1.24 / (-0.302 + 1.93*x + 5.35e-4*T*(1-2*x) - 0.810*x^2 + 0.832*x^3)",
               "units": "μm",
@@ -126,7 +219,7 @@
              {
               "name": "Intrinsic Carrier Conc. (n_i) Empirical Relation",
               "description": "Approximate fit for n<sub>i</sub> (cm⁻³) vs. composition (x) and temperature (T [K]).",
-              "formula_html": "n<sub>i</sub>(x,T) ≈ (5.585 - 3.82x + 1.753 × 10<sup>-3</sup>T - 1.364 × 10<sup>-3</sup>xT) × 10<sup>14</sup> × E<sub>g</sub><sup>0.75</sup> T<sup>1.5</sup> exp(-E<sub>g</sub> / 2kT)",
+              "formula_html": "n<sub>i</sub>(x,T) ≈ (5.585 - 3.82x + 1.753 × 10<sup>-3</sup>T - 1.364 × 10<sup>-3</sup>xT) × 10<sup>14</sup> × E<sub>g</sub><sup>0.75</sup> T^{1.5} exp(-E<sub>g</sub> / 2kT)",
               "formula_plain": "ni(x,T) ≈ (5.585 - 3.82*x + 1.753e-3*T - 1.364e-3*x*T) * 1e14 * Eg^0.75 * T^1.5 * exp(-Eg / (2*k*T))",
               "units": "cm⁻³",
               "variables": [
