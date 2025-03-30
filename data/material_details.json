@@ -2672,6 +2672,105 @@
       "industry:vacuum", "industry:electronics", "metal", "ductile", "low melting point",
       "gasket", "tim", "solder", "post-transition metal"
     ]
-    }
+    },
+  "LI-900 Silica Tile": {
+    "name": "LI-900 Silica Tile",
+    "formula": "SiO₂ Fiber Network",
+    "synonyms": [ "Space Shuttle Tile", "LI-900", "HRSI", "High-Temperature Reusable Surface Insulation" ],
+    "category": "Ceramic",
+    "constituent_elements": ["Si", "O"],
+    "description": "An ultralight, low-density, high-purity silica fiber insulation tile used extensively on the Space Shuttle orbiter for thermal protection during atmospheric reentry. Composed of >99.7% pure silica fibers sintered into a rigid structure, resulting in approximately 94% air volume by volume. Typically coated with a black Reaction Cured Glass (RCG) coating for durability, handling, and thermal emissivity.",
+    "wiki_link": "https://en.wikipedia.org/wiki/Space_Shuttle_thermal_protection_system#High-temperature_reusable_surface_insulation_(HRSI)",
+    "safety": {
+      "toxicity": "Low (Amorphous silica fibers). Dust generated during machining is a mechanical irritant and requires respiratory protection.",
+      "handling": "Extremely fragile and brittle in uncoated form. Coated tiles are more robust but still require careful handling to avoid impact damage or chipping."
+    },
+    "identification": {
+      "class": "Porous Silica Ceramic Tile / Fibrous Insulation",
+      "crystal_structure": "Amorphous SiO₂ fibers forming a rigid, porous network.",
+      "appearance": {"notes": "White (uncoated), Black (with standard RCG coating). Very lightweight."}
+    },
+    "advanced_fabrication_insights": {
+        "process_control": "Fabricated by mixing high-purity silica fibers with water and a binder, casting the slurry, pressing, drying, and sintering at high temperatures (~1300°C) to fuse fiber intersections.",
+        "common_defects_impact": "Density variations, cracks, inclusions. Affect thermal performance and mechanical strength. Coating defects (cracks, pinholes) compromise performance and handling.",
+        "microstructure": {"notes": "Open-cell structure consisting of fine silica fibers (1-4 µm diameter) sintered at contact points."},
+        "coating_process": "RCG coating (borosilicate glass + silicon tetraboride particle slurry) applied and cured (~1200°C) to provide a hard, high-emissivity surface."
+    },
+    "growth_fabrication_properties": {
+        "common_growth_methods": "Slurry Casting & Sintering of Silica Fibers.",
+        "source_materials_purity": "High purity silica fibers (typically derived from leached glass fibers), deionized water, ammonium hydroxide binder.",
+        "preferred_substrates_orientations": "N/A (Bulk tile).",
+        "typical_growth_parameters": "Sintering temperature and time control final density and strength.",
+        "passivation_methods": "RCG coating serves as handling and emissivity layer."
+    },
+    "post_growth_processing": {
+        "annealing": "Sintering is the primary heat treatment.",
+        "lapping_polishing": "Not applicable.",
+        "etching": "Resistant except to HF.",
+        "grinding_milling": "Machined to precise dimensions using specialized tooling (often CNC) before coating. Generates fine dust."
+    },
+     "device_integration_characterization": {
+        "device_architectures": "Thermal Protection System (TPS) tiles, high-temperature furnace insulation.",
+        "readout_integration": "N/A",
+        "ar_coatings": "N/A (Coated for emissivity).",
+        "packaging_cooling": "Used *as* high-temperature insulation. Requires bonding via Strain Isolation Pad (SIP) to accommodate structural movement and CTE mismatch.",
+        "key_characterization_techniques": ["Bulk Density Measurement", "Thermal Conductivity Testing (at various temps/pressures)", "Mechanical Testing (Compressive/Tensile Strength - specialized fixtures)", "Microstructural Analysis (SEM)", "Emissivity Measurement (coated surface)"]
+    },
+    "electrical_properties": {
+      "bandgap_type": "Insulator (SiO₂)",
+      "band_gap": {"value": "~9", "unit": "eV"},
+      "resistivity": {"value": "Very High (> 10¹² Ω·cm)", "notes": "Excellent electrical insulator."},
+      "dielectric_constant": {"value": "Very Low (~1.1 - 1.2)", "notes": "Due to high porosity, slightly higher than air."}
+    },
+    "optical_properties": {
+      "spectral_range": "Opaque black with RCG coating.", "notes": "Uncoated tile is white and scatters visible light strongly."},
+      "emissivity": {"value": "High (~0.85)", "notes": "RCG coating designed for high thermal emissivity in the infrared to radiate heat away during reentry."}
+    },
+    "thermal_properties": {
+      "operating_temperature": {"value": "Up to ~1260", "unit": "°C", "notes": "Maximum reusable surface temperature limit for standard HRSI tiles."},
+      "thermal_conductivity": {"value": "Extremely Low (~0.04 - 0.08 W/(m·K))", "notes": "In air at atmospheric pressure. Varies significantly with temperature and atmospheric pressure (lower conductivity in vacuum)."},
+      "specific_heat": {"value": "~0.6 - 1.1", "unit": "J/(g·K)", "notes": "Increases with temperature. Similar to bulk silica per mass."},
+      "melting_point": {"notes": "SiO₂ backbone melts >1600°C, but sintering/densification occurs earlier."},
+      "thermal_expansion": {"value": "Very Low (~0.54 x 10⁻⁶ /°C)", "notes": "Excellent thermal stability."}
+    },
+     "mechanical_properties": {
+         "density": {"value": "~0.144", "unit": "g/cm³", "notes": "(9 lb/ft³). Other densities like LI-2200 (22 lb/ft³) also exist."},
+         "youngs_modulus": {"value": "Very Low", "unit": "MPa", "notes": "Low stiffness."},
+         "tensile_strength": {"value": "Very Low", "unit": "MPa", "notes": "Weak in tension."},
+         "compressive_strength": {"value": "Low", "unit": "MPa"},
+         "hardness_mohs": {"notes": "Very fragile, easily damaged."},
+         "fracture_toughness": {"value": "Extremely Low", "notes": "Very brittle."}
+     },
+     "device_applications": {
+         "key_applications": ["Space Shuttle Orbiter Thermal Protection System (underside, sides)", "High-temperature furnace insulation", "Reusable spacecraft heat shields"]
+     },
+     "chemical_properties": {
+         "stability_oxidation": "SiO₂ backbone is fully oxidized and stable.",
+         "chemical_inertness": "Highly inert silica base.",
+         "water_solubility": "Insoluble. Uncoated tiles can absorb water; RCG coating provides some water resistance.",
+         "hydrophobicity": {"notes": "Tiles were waterproofed via injection of DMES after coating installation."}
+     },
+     "comparison_alternatives": {
+         "notes": "Alternative Reusable TPS Materials:",
+         "vs_Silica_Aerogel": "LI-900: More robust (comparatively), higher density, easier to handle/shape into tiles. Aerogel: Even lower thermal conductivity, more fragile, difficult to make large monolithic pieces.",
+         "vs_Reinforced_CarbonCarbon_RCC": "LI-900: Lower operating temperature limit (~1260°C vs >1650°C), much better thermal insulator (lower k), lower density. RCC: Structural capability, used for highest heating areas (nose cap, leading edges).",
+         "vs_Fibrous_Refractory_Composite_Insulation_FRCI": "LI-900: Lower density, slightly lower strength/toughness. FRCI (Silica + Alumina fibers): Higher strength/durability than LI-900 at similar thermal performance.",
+         "vs_Advanced_Flexible_Reusable_Surface_Insulation_AFRSI": "LI-900: Rigid tile form. AFRSI: Flexible blanket (silica batting quilted between silica/glass fabrics), used on upper surfaces with lower heating."
+     },
+     "references_further_reading": {
+         "notes": "Key Resources:",
+         "nasa_tps_docs": "NASA technical publications and reports on the Space Shuttle Thermal Protection System.",
+         "book_space_shuttle_legacy": "Books detailing Space Shuttle design and systems (e.g., Jenkins).",
+         "wikipedia_tps": "https://en.wikipedia.org/wiki/Space_Shuttle_thermal_protection_system"
+     },
+     "vendor_info": {
+        "notes": "Production largely tied to Space Shuttle program needs. Limited current commercial availability.",
+        "vendor_1": "Legacy NASA contractors (e.g., Lockheed Martin)"
+     },
+    "tags": [
+      "aerospace", "ceramic", "heat shield", "high temperature", "insulator",
+      "lightweight", "low density", "porous", "space shuttle", "thermal insulation",
+      "industry:space", "industry:aerospace", "industry:thermal", "fragile"
+    ]
+  }
 }
-
