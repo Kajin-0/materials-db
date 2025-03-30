@@ -290,7 +290,6 @@
           "displayName": "Noise Equivalent Power (NEP)",
           "summary": "Low (~10⁻¹¹ - 10⁻¹³ W/√Hz cooled)"
       }
-      // Detailed subsections for optical properties would go here
     }
   },
   "thermal_properties": {
@@ -309,7 +308,6 @@
          "displayName": "Thermal Expansion (CTE)",
          "summary": "Moderate (~4.5-5.5 ppm/°C)"
        }
-       // Detailed subsections for thermal properties would go here
     }
   },
   "mechanical_properties": {
@@ -320,7 +318,6 @@
        "hardness": { "displayName": "Hardness", "summary": "Very Low (Mohs ~2-3)" },
        "fracture_toughness": { "displayName": "Fracture Toughness (K<sub>IC</sub>)", "summary": "Very Low (<0.5 MPa√m)" },
        "youngs_modulus": { "displayName": "Young's Modulus (E)", "summary": "Low (~40-50 GPa)" }
-       // Detailed subsections for mechanical properties would go here
     }
   }
 }
