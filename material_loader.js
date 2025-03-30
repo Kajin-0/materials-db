@@ -282,6 +282,7 @@ function populatePage(material, container) {
         const value = path.split('.').reduce((o, key) => (o && typeof o === 'object' && o[key] !== undefined && o[key] !== null) ? o[key] : undefined, obj);
         if (value === undefined || value === null) return fallback;
 
+        // Handle complex value/unit/notes objects
         if (typeof value === 'object' && !Array.isArray(value) && value.value !== undefined) {
            const stringVal = String(value.value).trim();
            if (stringVal === '' || stringVal.toUpperCase() === 'N/A') return fallback;
@@ -290,12 +291,36 @@ function populatePage(material, container) {
            if (value.notes) text += ` <span class="notes">(${value.notes})</span>`;
            return text;
         }
+
+        // Handle arrays: Create bullet points for specific paths, otherwise join with comma
         if (Array.isArray(value)) {
-            const listPathsForBullets = ['device_applications.key_applications','device_integration_characterization.key_characterization_techniques'];
+            const listPathsForBullets = [
+                'device_applications.key_applications',
+                'device_integration_characterization.key_characterization_techniques'
+                // Add other paths here if needed
+            ];
             const filteredValues = value.filter(item => item !== null && item !== undefined && String(item).trim() !== '');
             if (filteredValues.length === 0) return fallback;
-            // Process items using getData before joining/listing
-            const processedItems = filteredValues.map(item => (typeof item === 'string' && (item.includes('{') || item.includes('.'))) ? getData(material, item) : item);
+
+            // Process items recursively using getData in case they are complex objects or paths
+            const processedItems = filteredValues.map(item => {
+                if (typeof item === 'string' && (item.includes('.') || item.includes('{'))) {
+                     // Treat as path if it contains '.' and isn't clearly JSON
+                    if (item.includes('.') && !item.trim().startsWith('{')) {
+                        return getData(material, item, item); // Try getting data, fallback to original string if not found
+                    }
+                    // Basic check for JSON-like string (could be improved)
+                    if (item.trim().startsWith('{') && item.trim().endsWith('}')) {
+                        try {
+                           const parsed = JSON.parse(item); // Attempt to parse if looks like JSON
+                           if (parsed.value !== undefined) return getData(null, null, item); // Re-process if it fits value/unit/notes structure
+                        } catch(e) { /* ignore parse error, treat as plain string */ }
+                    }
+                 }
+                // Handle plain strings or non-path-like items directly
+                return (typeof item === 'object') ? JSON.stringify(item) : item; // Stringify objects not handled above
+            });
+
 
             if (listPathsForBullets.includes(path)) {
                 return `<ul class="property-list-items">${processedItems.map(item => `<li>${item}</li>`).join('')}</ul>`;
@@ -303,17 +328,24 @@ function populatePage(material, container) {
                  return processedItems.join(', ');
             }
         }
+
+        // Handle simple objects containing only 'notes'
          if (typeof value === 'object' && !Array.isArray(value) && Object.keys(value).length === 1 && value.notes !== undefined) {
             const noteString = String(value.notes).trim();
             return (noteString !== '' && noteString.toUpperCase() !== 'N/A') ? `<span class="notes-only">${noteString}</span>` : fallback;
         }
+
+        // Handle other unexpected objects
         if (typeof value === 'object' && !Array.isArray(value)) {
             console.warn(`[getData] Encountered unexpected object structure for path "${path}". Returning fallback. Object:`, value);
             return fallback;
         }
+
+        // Handle primitive values (strings, numbers, booleans)
         const stringValue = String(value).trim();
         return (stringValue === '' || stringValue.toUpperCase() === 'N/A') ? fallback : stringValue;
     };
+
 
     // --- Helper Function: createPropertyItem ---
     const createPropertyItem = (keyText, valueHtml, isKey = false) => {
@@ -352,23 +384,23 @@ function populatePage(material, container) {
     };
 
     // --- Configuration for Sections and Properties ---
-    // UPDATED TO INCLUDE ZTA PROPERTIES FROM PREVIOUS STEP
+    // UPDATED: Added/Modified entries for properties from HgCdTe and ZTA examples
     const sectionConfig = [
         { id: 'section-overview', title: 'Overview', isSpecial: true },
         { id: 'section-safety', title: 'Safety Information', icon: '⚠️', dataKey: 'safety', properties: {'toxicity': { label: 'Toxicity', isKey: true }, 'handling': { label: 'Handling' }}},
-        { id: 'section-identification', title: 'Identification & Structure', dataKey: 'identification', properties: {'cas_number': { label: 'CAS Number' }, 'crystal_structure': { label: 'Crystal Structure', isKey: true }, 'lattice_constant': { label: 'Lattice Constant', isKey: true, isHtml: true },'phase_diagram_notes': { label: 'Phase Diagram Notes' }, 'material_standard': {label: 'Material Standard'}, 'appearance': {label: 'Appearance'}, 'xrd_pattern': {label: 'XRD Pattern'}, 'grain_size_um': { label: 'Grain Size', isHtml: true } }}, // Added grain_size_um
-        { id: 'section-fab-insights', title: 'Advanced Fabrication Insights', dataKey: 'advanced_fabrication_insights', properties: {'stoichiometry_control': { label: 'Stoichiometry Control', isKey: true }, 'common_defects_impact': { label: 'Common Defects' }, 'surface_preparation': { label: 'Surface Preparation' }, 'method_specific_notes': { label: 'Method Nuances' }, 'process_control': {label: 'Process Control'}, 'interface_engineering': {label: 'Interface Engineering'}, 'alignment_techniques': {label: 'Alignment Techniques'}, 'cooling_rate_control': {label: 'Cooling Rate Control'}, 'particle_dispersion': {label: 'Particle Dispersion'} }},
-        { id: 'section-growth', title: 'Growth & Fabrication Properties', dataKey: 'growth_fabrication_properties', properties: {'common_growth_methods': { label: 'Common Methods' }, 'source_materials_purity': { label: 'Source Materials' }, 'preferred_substrates_orientations': { label: 'Substrates/Orientations', isKey: true }, 'typical_growth_parameters': { label: 'Growth Parameters' }, 'passivation_methods': { label: 'Passivation', isKey: true }}},
+        { id: 'section-identification', title: 'Identification & Structure', dataKey: 'identification', properties: {'cas_number': { label: 'CAS Number' }, 'class': {label: 'Material Class'}, 'crystal_structure': { label: 'Crystal Structure', isKey: true }, 'space_group': { label: 'Space Group', isHtml: true}, 'lattice_constant': { label: 'Lattice Constant', isKey: true, isHtml: true }, 'phase_diagram_notes': { label: 'Phase Diagram Notes' }, 'material_standard': {label: 'Material Standard'}, 'appearance': {label: 'Appearance', isHtml: true}, 'xrd_pattern': {label: 'XRD Pattern'}, 'grain_size_um': { label: 'Grain Size', isHtml: true }, 'molecular_weight': {label: 'Molecular Weight', isHtml: true}, 'zirconia_content': {label: 'Zirconia Content', isHtml: true}, 'fiber_volume_fraction': {label: 'Fiber Vol. Fraction', isHtml: true}, 'filament_diameter': {label: 'Filament Diameter', isHtml: true}, 'layer_density': {label: 'Layer Density', isHtml: true} }},
+        { id: 'section-fab-insights', title: 'Advanced Fabrication Insights', dataKey: 'advanced_fabrication_insights', properties: {'stoichiometry_control': { label: 'Stoichiometry Control', isKey: true }, 'common_defects_impact': { label: 'Common Defects' }, 'surface_preparation': { label: 'Surface Preparation' }, 'method_specific_notes': { label: 'Method Nuances' }, 'process_control': {label: 'Process Control'}, 'interface_engineering': {label: 'Interface Engineering'}, 'alignment_techniques': {label: 'Alignment Techniques'}, 'cooling_rate_control': {label: 'Cooling Rate Control'}, 'particle_dispersion': {label: 'Particle Dispersion'}, 'transformation_toughening': { label: 'Transformation Toughening' }, 'coating_process': { label: 'Coating Process' }, 'machining': { label: 'Machining Notes' }, 'weave_style': { label: 'Weave Style' }, 'crystallinity_control': { label: 'Crystallinity Control' }, 'wear_mechanism': { label: 'Wear Mechanism' }, 'cold_welding': { label: 'Cold Welding' }, 'outgassing': { label: 'Outgassing' }, 'spacer_material': { label: 'Spacer Material' }, 'hydrophobicity': { label: 'Hydrophobicity (Fab.)' } }},
+        { id: 'section-growth', title: 'Growth & Fabrication Properties', dataKey: 'growth_fabrication_properties', properties: {'common_growth_methods': { label: 'Common Methods' }, 'source_materials_purity': { label: 'Source Materials' }, 'preferred_substrates_orientations': { label: 'Substrates/Orientations', isKey: true }, 'typical_growth_parameters': { label: 'Growth Parameters' }, 'passivation_methods': { label: 'Passivation/Surface Treat.' }}}, // Combined surface treatment here
         { id: 'section-processing', title: 'Post-Growth Processing', dataKey: 'post_growth_processing', properties: {'annealing': { label: 'Annealing', isKey: true }, 'lapping_polishing': { label: 'Lapping & Polishing' }, 'etching': { label: 'Etching Methods' }, 'grinding_milling': { label: 'Grinding/Milling Notes' }}},
         { id: 'section-device-char', title: 'Device Integration & Characterization', dataKey: 'device_integration_characterization', properties: {'device_architectures': { label: 'Device Architectures' }, 'readout_integration': { label: 'Readout Integration', isKey: true }, 'ar_coatings': { label: 'AR Coatings' }, 'packaging_cooling': { label: 'Packaging/Cooling', isKey: true }, 'key_characterization_techniques': { label: 'Key Characterization', isHtml: true }}},
-        { id: 'section-electrical', title: 'Electrical Properties', dataKey: 'electrical_properties', properties: {'bandgap_type': { label: 'Bandgap Type' }, 'band_gap': { label: 'Bandgap (Eg)', isKey: true, isHtml: true }, 'bandgap_equation.hansen_eg': { label: 'Hansen Eg Eq' }, 'bandgap_equation.varshni_equation': { label: 'Varshni Eg Eq' }, 'bandgap_equation.wavelength_relation': { label: 'Cutoff λ Eq' }, 'common_dopants': { label: 'Common Dopants', isKey: true }, 'carrier_concentration': { label: 'Carrier Conc', isHtml: true }, 'electron_mobility': { label: 'Electron Mobility (μₑ)', isKey: true, isHtml: true }, 'hole_mobility': { label: 'Hole Mobility (μ<0xE2><0x82><0x95>)', isHtml: true }, 'dielectric_constant': { label: 'Dielectric Const (ε)', isHtml: true }, 'resistivity': { label: 'Resistivity (ρ)', isHtml: true }, 'breakdown_field': { label: 'Breakdown Field', isHtml: true }, 'ionic_conductivity': {label: 'Ionic Conductivity'}, 'piezoelectric_coefficients': {label: 'Piezo Coefficients'}, 'pyroelectric_coefficient': {label: 'Pyroelectric Coeff'}, 'curie_temperature': {label: 'Curie Temperature'}, 'conductivity_electrical': {label: 'Electrical Conductivity'}, 'magnetic_permeability': {label: 'Magnetic Permeability'}, 'emi_shielding_effectiveness': {label: 'EMI Shielding'}, 'dielectric_strength': {label: 'Dielectric Strength'}, 'dissipation_factor': {label: 'Dissipation Factor (Df)'}, 'dielectric_breakdown_mv_cm': { label: 'Dielectric Breakdown', isHtml: true } }}, // Added dielectric_breakdown
-        { id: 'section-optical', title: 'Optical Properties', dataKey: 'optical_properties', properties: {'spectral_range': { label: 'Spectral Range', isKey: true, isHtml: true }, 'cutoff_wavelength': { label: 'Cutoff Wavelength (λc)', isKey: true, isHtml: true }, 'refractive_index': { label: 'Refractive Index (n)', isHtml: true }, 'absorption_coefficient': { label: 'Absorption Coeff (α)', isHtml: true }, 'quantum_efficiency': { label: 'Quantum Efficiency (η)', isKey: true, isHtml: true }, 'responsivity': { label: 'Responsivity (R)', isKey: true, isHtml: true }, 'noise_equivalent_power': { label: 'Noise Equiv. Power (NEP)', isHtml: true }, 'nonlinear_refractive_index_n2': { label: 'Nonlinear Index (n₂)'},'scattering_loss': { label: 'Scattering Loss'}, 'dn_dt': {label: 'dn/dT'}, 'electro_optic_coefficients': {label: 'Electro-Optic Coeffs'}, 'nonlinear_coefficients': {label: 'Nonlinear Coeffs'}, 'photorefractive_effect': {label: 'Photorefractive Effect'}, 'haze': {label: 'Haze'}, 'scattering': {label: 'Scattering'} }},
-        { id: 'section-thermal', title: 'Thermal Properties', dataKey: 'thermal_properties', properties: {'operating_temperature': { label: 'Operating Temperature', isKey: true, isHtml: true }, 'thermal_conductivity': { label: 'Thermal Conductivity (k)', isHtml: true }, 'specific_heat_capacity_j_gk': { label: 'Specific Heat (Cp)', isHtml: true }, 'melting_point_c': { label: 'Melting Point', isHtml: true }, 'glass_transition_temp_tg': { label: 'Glass Transition (Tg)'}, 'thermal_expansion_ppm_k': { label: 'Thermal Expansion (CTE)', isHtml: true},'decomposition_temperature': { label: 'Decomposition Temp'}, 'crystallization_temp_tx': {label: 'Crystallization Temp (Tx)'}, 'thermal_shock_resistance': { label: 'Thermal Shock Resistance' } }}, // Updated specific_heat, thermal_expansion keys, added thermal_shock_resistance
-        { id: 'section-mechanical', title: 'Mechanical Properties', dataKey: 'mechanical_properties', properties: {'density_g_cm3': { label: 'Density', isHtml: true }, 'youngs_modulus_gpa': { label: 'Young\'s Modulus (E)', isHtml: true }, 'tensile_strength': { label: 'Tensile Strength' }, 'compressive_strength_mpa': { label: 'Compressive Strength', isHtml: true }, 'yield_strength': {label: 'Yield Strength'}, 'elongation_at_break': { label: 'Elongation @ Break (%)' }, 'hardness_vickers_gpa': { label: 'Hardness (Vickers)', isHtml: true }, 'hardness_rockwell': {label: 'Hardness (Rockwell)'}, 'hardness_mohs': {label: 'Hardness (Mohs)'}, 'hardness_shore_d': {label: 'Hardness (Shore D)'}, 'poissons_ratio': { label: 'Poisson\'s Ratio (ν)' }, 'fracture_toughness_mpa_m_sqrt': { label: 'Fracture Toughness (K<small>IC</small>)', isHtml: true }, 'elastic_limit': {label: 'Elastic Limit (%)'}, 'tear_strength': {label: 'Tear Strength'}, 'dimensional_stability': {label: 'Dimensional Stability'}, 'water_absorption': {label: 'Water Absorption (%)'}, 'wear_resistance': { label: 'Wear Resistance' }, 'impact_resistance': { label: 'Impact Resistance' } }}, // Updated density, youngs_modulus keys, added compressive_strength, poissons_ratio, wear_resistance, impact_resistance
-        { id: 'section-applications', title: 'Key Applications & Sensor Types', dataKey: 'device_applications', properties: {'sensor_types': { label: 'Common Sensor Types' }, 'key_applications': { label: 'Key Applications', isKey: true, isHtml: true }, 'industries': { label: 'Industries', isKey: false }}}, // Added industries
-        { id: 'section-chemical', title: 'Chemical Properties', dataKey: 'chemical_properties', properties: {'stability_oxidation': { label: 'Stability & Oxidation' },'solvent_resistance': { label: 'Solvent Resistance'}, 'acid_resistance': { label: 'Acid Resistance'},'base_resistance': { label: 'Base Resistance'},'water_solubility': { label: 'Water Solubility'},'radiation_resistance': { label: 'Radiation Resistance'},'uv_resistance': { label: 'UV Resistance'}, 'stress_corrosion_cracking': {label: 'Stress Corrosion Cracking'}, 'inertness': {label: 'Inertness'}, 'molten_metal_resistance': {label: 'Molten Metal Resistance'}, 'flammability': {label: 'Flammability'}, 'hydrophobicity': {label: 'Hydrophobicity'}, 'biocompatibility': { label: 'Biocompatibility' } }}, // Added biocompatibility
-        { id: 'section-magnetic', title: 'Magnetic Properties', dataKey: 'magnetic_properties', properties: {'type': { label: 'Magnetic Type', isKey: true }, 'critical_temperature_tc': { label: 'Critical Temp (Tc)', isHtml: true }, 'upper_critical_field_bc2': { label: 'Upper Critical Field (Bc2)', isHtml: true }, 'critical_current_density_jc': { label: 'Critical Current (Jc)', isHtml: true }, 'permeability_initial': {label: 'Initial Permeability'}, 'saturation_magnetization_bs': {label: 'Saturation (Bs)'}, 'coercivity_hc': {label: 'Coercivity (Hc)'}, 'core_losses': {label: 'Core Losses'}, 'frequency_range': {label: 'Frequency Range'} }},
-        { id: 'section-neutron-shielding', title: 'Neutron Shielding Properties', dataKey: 'neutron_shielding', properties: {'effectiveness': {label: 'Effectiveness'} }},
+        { id: 'section-electrical', title: 'Electrical Properties', dataKey: 'electrical_properties', properties: {'bandgap_type': { label: 'Bandgap Type' }, 'band_gap': { label: 'Bandgap (Eg)', isKey: true, isHtml: true }, 'bandgap_equation.hansen_eg': { label: 'Hansen Eg Eq' }, 'bandgap_equation.varshni_equation': { label: 'Varshni Eg Eq' }, 'bandgap_equation.wavelength_relation': { label: 'Cutoff λ Eq' }, 'common_dopants': { label: 'Common Dopants', isKey: true }, 'carrier_concentration': { label: 'Carrier Conc', isHtml: true }, 'electron_mobility': { label: 'Electron Mobility (μₑ)', isKey: true, isHtml: true }, 'hole_mobility': { label: 'Hole Mobility (μ<0xE2><0x82><0x95>)', isHtml: true }, 'dielectric_constant': { label: 'Dielectric Const (ε)', isHtml: true }, 'resistivity': { label: 'Resistivity (ρ)', isHtml: true }, 'breakdown_field': { label: 'Breakdown Field', isHtml: true }, 'ionic_conductivity': {label: 'Ionic Conductivity', isHtml: true}, 'piezoelectric_coefficients': {label: 'Piezo Coefficients'}, 'pyroelectric_coefficient': {label: 'Pyroelectric Coeff'}, 'curie_temperature': {label: 'Curie Temperature'}, 'conductivity_electrical': {label: 'Electrical Conductivity (%IACS)', isHtml: true}, 'magnetic_permeability': {label: 'Magnetic Permeability', isHtml: true}, 'emi_shielding_effectiveness': {label: 'EMI Shielding', isHtml: true}, 'dielectric_strength': {label: 'Dielectric Strength', isHtml: true}, 'dissipation_factor': {label: 'Dissipation Factor (Df)', isHtml: true}, 'dielectric_breakdown_mv_cm': { label: 'Dielectric Breakdown', isHtml: true }, 'superconductivity': { label: 'Superconductivity', isHtml: true }, 'static_discharge': { label: 'Static Discharge Notes' } }},
+        { id: 'section-optical', title: 'Optical Properties', dataKey: 'optical_properties', properties: {'spectral_range': { label: 'Spectral Range', isKey: true, isHtml: true }, 'cutoff_wavelength': { label: 'Cutoff Wavelength (λc)', isKey: true, isHtml: true }, 'refractive_index': { label: 'Refractive Index (n)', isHtml: true }, 'absorption_coefficient': { label: 'Absorption Coeff (α)', isHtml: true }, 'quantum_efficiency': { label: 'Quantum Efficiency (η)', isKey: true, isHtml: true }, 'responsivity': { label: 'Responsivity (R)', isKey: true, isHtml: true }, 'noise_equivalent_power': { label: 'Noise Equiv. Power (NEP)', isHtml: true }, 'nonlinear_refractive_index_n2': { label: 'Nonlinear Index (n₂)', isHtml: true},'scattering_loss': { label: 'Scattering Loss', isHtml: true}, 'dn_dt': {label: 'dn/dT', isHtml: true}, 'electro_optic_coefficients': {label: 'Electro-Optic Coeffs'}, 'nonlinear_coefficients': {label: 'Nonlinear Coeffs'}, 'photorefractive_effect': {label: 'Photorefractive Effect'}, 'haze': {label: 'Haze', isHtml: true}, 'scattering': {label: 'Scattering', isHtml: true}, 'photoluminescence_peak_nm': { label: 'Photoluminescence Peak', isHtml: true }, 'optical_loss': { label: 'Optical Loss Notes' }, 'emission_peak': { label: 'Emission Peak', isHtml: true }, 'decay_time': { label: 'Decay Time', isHtml: true }, 'light_yield': { label: 'Light Yield', isHtml: true }, 'afterglow': { label: 'Afterglow' }, 'reflectivity': { label: 'Reflectivity' }, 'emissivity': { label: 'Emissivity', isHtml: true } }},
+        { id: 'section-thermal', title: 'Thermal Properties', dataKey: 'thermal_properties', properties: {'operating_temperature': { label: 'Operating Temperature', isKey: true, isHtml: true }, 'thermal_conductivity': { label: 'Thermal Conductivity (k)', isHtml: true }, 'specific_heat_capacity_j_gk': { label: 'Specific Heat (Cp)', isHtml: true }, 'melting_point_c': { label: 'Melting Point', isHtml: true }, 'boiling_point': { label: 'Boiling Point', isHtml: true }, 'glass_transition_temp_tg': { label: 'Glass Transition (Tg)', isHtml: true}, 'thermal_expansion_ppm_k': { label: 'Thermal Expansion (CTE)', isHtml: true},'decomposition_temperature': { label: 'Decomposition Temp', isHtml: true}, 'crystallization_temp_tx': {label: 'Crystallization Temp (Tx)', isHtml: true}, 'thermal_shock_resistance': { label: 'Thermal Shock Resistance' } }},
+        { id: 'section-mechanical', title: 'Mechanical Properties', dataKey: 'mechanical_properties', properties: {'density_g_cm3': { label: 'Density', isHtml: true }, 'youngs_modulus_gpa': { label: 'Young\'s Modulus (E)', isHtml: true }, 'tensile_strength': { label: 'Tensile Strength', isHtml: true }, 'compressive_strength_mpa': { label: 'Compressive Strength', isHtml: true }, 'yield_strength': {label: 'Yield Strength', isHtml: true}, 'elongation_at_break': { label: 'Elongation @ Break (%)', isHtml: true }, 'hardness_vickers_gpa': { label: 'Hardness (Vickers)', isHtml: true }, 'hardness_rockwell': {label: 'Hardness (Rockwell)', isHtml: true}, 'hardness_mohs': {label: 'Hardness (Mohs)', isHtml: true}, 'hardness_shore_d': {label: 'Hardness (Shore D)', isHtml: true}, 'poissons_ratio': { label: 'Poisson\'s Ratio (ν)', isHtml: true }, 'fracture_toughness_mpa_m_sqrt': { label: 'Fracture Toughness (K<small>IC</small>)', isHtml: true }, 'elastic_limit': {label: 'Elastic Limit (%)', isHtml: true}, 'tear_strength': {label: 'Tear Strength', isHtml: true}, 'dimensional_stability': {label: 'Dimensional Stability'}, 'water_absorption': {label: 'Water Absorption (%)', isHtml: true}, 'wear_resistance': { label: 'Wear Resistance' }, 'impact_resistance': { label: 'Impact Resistance' }, 'creep_resistance': { label: 'Creep Resistance' }, 'coefficient_of_friction': { label: 'Coefficient of Friction', isHtml: true }, 'ductility': { label: 'Ductility' }, 'fragility': { label: 'Fragility' } }},
+        { id: 'section-applications', title: 'Key Applications & Sensor Types', dataKey: 'device_applications', properties: {'sensor_types': { label: 'Common Sensor Types' }, 'key_applications': { label: 'Key Applications', isKey: true, isHtml: true }, 'industries': { label: 'Industries', isKey: false }}},
+        { id: 'section-chemical', title: 'Chemical Properties', dataKey: 'chemical_properties', properties: {'stability_oxidation': { label: 'Stability & Oxidation' }, 'chemical_resistance': { label: 'Chemical Resistance' }, 'solvent_resistance': { label: 'Solvent Resistance'}, 'acid_resistance': { label: 'Acid Resistance'},'base_resistance': { label: 'Base Resistance'},'water_solubility': { label: 'Water Solubility'},'radiation_resistance': { label: 'Radiation Resistance'}, 'radiation_hardness': { label: 'Radiation Hardness' }, 'uv_resistance': { label: 'UV Resistance'}, 'stress_corrosion_cracking': {label: 'Stress Corrosion Cracking'}, 'inertness': {label: 'Inertness'}, 'molten_metal_resistance': {label: 'Molten Metal Resistance'}, 'flammability': {label: 'Flammability'}, 'hydrophobicity': {label: 'Hydrophobicity', isHtml: true}, 'biocompatibility': { label: 'Biocompatibility' }, 'wetting': { label: 'Wetting Behavior' }, 'hygroscopic': { label: 'Hygroscopic Nature' } }},
+        { id: 'section-magnetic', title: 'Magnetic Properties', dataKey: 'magnetic_properties', properties: {'type': { label: 'Magnetic Type', isKey: true }, 'critical_temperature_tc': { label: 'Critical Temp (Tc)', isHtml: true }, 'upper_critical_field_bc2': { label: 'Upper Critical Field (Bc2)', isHtml: true }, 'critical_current_density_jc': { label: 'Critical Current (Jc)', isHtml: true }, 'permeability_initial': {label: 'Initial Permeability', isHtml: true}, 'saturation_magnetization_bs': {label: 'Saturation (Bs)', isHtml: true}, 'coercivity_hc': {label: 'Coercivity (Hc)', isHtml: true}, 'core_losses': {label: 'Core Losses', isHtml: true}, 'frequency_range': {label: 'Frequency Range', isHtml: true} }},
+        { id: 'section-neutron-shielding', title: 'Neutron Shielding Properties', dataKey: 'neutron_shielding', properties: {'effectiveness': {label: 'Effectiveness'}, 'moderation': { label: 'Moderation' }, 'absorption': { label: 'Absorption' } }}, // Added moderation/absorption
         { id: 'section-comparison', title: 'Comparison with Alternatives', dataKey: 'comparison_alternatives', isSpecial: true },
         { id: 'section-references', title: 'References & Further Reading', dataKey: 'references_further_reading', isSpecial: true },
         { id: 'section-vendors', title: 'Commercial Vendors (Example)', dataKey: 'vendor_info', isSpecial: true }
@@ -390,7 +422,8 @@ function populatePage(material, container) {
             tags.forEach(tag => {
                 if (typeof tag === 'string' && tag.trim() !== '') {
                     const tagElement = document.createElement('span'); tagElement.className = 'tag';
-                    tagElement.textContent = tag.replace(/^\w+:/, "");
+                    // Strip prefixes like prop:, proc:, class:, env:, app: for display
+                    tagElement.textContent = tag.replace(/^(prop|proc|class|env|app|industry):/i, "");
                     tagsContainer.appendChild(tagElement); tagsAdded = true;
                 }
             });
@@ -405,14 +438,16 @@ function populatePage(material, container) {
     sectionConfig.forEach(config => {
         const { id, title, icon, dataKey, properties, isSpecial } = config;
         let sectionDataExists = false;
+
+        // Determine if data exists for this section
         if (isSpecial) {
             if (id === 'section-overview') sectionDataExists = material['description'] || material['wiki_link'];
             else if (dataKey && material[dataKey]) sectionDataExists = true;
         } else if (dataKey && material[dataKey] && typeof material[dataKey] === 'object') {
-            // Check if the object for the section actually contains any of the specified properties
+             // Check if the object for the section actually contains any of the specified properties
              if (properties && Object.keys(properties).some(propKey => {
                  const dataPath = `${dataKey}.${propKey}`;
-                 // Check if data exists at the path using a simplified check (doesn't need full getData yet)
+                 // Check if data exists at the path using a simplified check
                  return dataPath.split('.').reduce((o, key) => (o && typeof o === 'object' && o[key] !== undefined && o[key] !== null) ? o[key] : undefined, material) !== undefined;
              })) {
                 sectionDataExists = true;
@@ -421,11 +456,15 @@ function populatePage(material, container) {
              if (id === 'section-identification' && material['category']) {
                  sectionDataExists = true;
              }
+        } else if (dataKey && material[dataKey] !== undefined && material[dataKey] !== null) {
+             // Handle cases where dataKey points directly to a primitive value (less common for sections)
+             sectionDataExists = true;
         }
 
+        // Skip creating the section if no relevant data exists
         if (!sectionDataExists) {
-             // console.log(`[Detail Page] Skipping section "${title}" - no relevant data found.`);
-            return; // Skip creating the section if no relevant data exists
+            // console.log(`[Detail Page] Skipping section "${title}" - no relevant data found.`);
+            return;
         }
 
 
@@ -436,7 +475,7 @@ function populatePage(material, container) {
             // --- Custom Logic for Special Sections ---
              if (id === 'section-overview') {
                 const descVal = getData(material, 'description', fallbackValue);
-                if (descVal !== fallbackValue) { const p = document.createElement('p'); p.className='description'; p.textContent=descVal; section.appendChild(p); sectionHasRenderableContent = true; }
+                if (descVal !== fallbackValue) { const p = document.createElement('p'); p.className='description'; p.innerHTML=descVal; section.appendChild(p); sectionHasRenderableContent = true; } // Use innerHTML for potential formatting
                 const wikiUrl = getData(material, 'wiki_link', '#');
                 if (wikiUrl !== '#' && wikiUrl !== fallbackValue) { const p = document.createElement('p'); const a = document.createElement('a'); a.id = 'wiki-link'; a.href=wikiUrl; a.target='_blank'; a.rel='noopener noreferrer'; a.textContent='Wikipedia Article'; p.appendChild(document.createTextNode('See also: ')); p.appendChild(a); section.appendChild(p); sectionHasRenderableContent = true;}
                 const imgPlaceholder = document.createElement('div'); imgPlaceholder.className = 'image-placeholder'; imgPlaceholder.textContent = 'Image Placeholder / Diagram'; section.appendChild(imgPlaceholder);
@@ -476,8 +515,14 @@ function populatePage(material, container) {
                          const refValue = getData(material, `references_further_reading.${key}`, fallbackValue);
                           if (refValue !== fallbackValue) {
                               const li = document.createElement('li'); let itemHtml = refValue;
-                              if (key === 'wikipedia' && typeof refValue === 'string' && refValue.startsWith('http')) { itemHtml = `Wikipedia: <a href="${refValue}" target="_blank" rel="noopener noreferrer">${refValue}</a>`; }
-                              else if (typeof refValue === 'string' && (refValue.startsWith('http') || refValue.startsWith('www'))) { const url = refValue.startsWith('http') ? refValue : 'http://' + refValue; itemHtml = `<a href="${url}" target="_blank" rel="noopener noreferrer">${refValue}</a>`; }
+                              // Smart link detection
+                              if (typeof refValue === 'string' && (refValue.startsWith('http') || refValue.startsWith('www'))) {
+                                  const url = refValue.startsWith('http') ? refValue : 'http://' + refValue;
+                                  const label = key === 'wikipedia' ? `Wikipedia: ${url}` : url; // Special label for wikipedia
+                                  itemHtml = `<a href="${url}" target="_blank" rel="noopener noreferrer">${label}</a>`;
+                              } else if (key === 'wikipedia') { // Handle non-URL wikipedia entry
+                                   itemHtml = `Wikipedia: ${refValue}`;
+                              }
                               li.innerHTML = itemHtml; ul.appendChild(li); listHasContent = true;
                           }
                      }
@@ -495,6 +540,7 @@ function populatePage(material, container) {
                            const vendorValue = getData(material, `vendor_info.${key}`, fallbackValue);
                             if (vendorValue !== fallbackValue) {
                                 const li = document.createElement('li'); let itemHtml = vendorValue;
+                                // Auto-link URLs within vendor strings
                                 try { const urlMatch = String(vendorValue).match(/(https?:\/\/[^\s"'>]+)|(www\.[^\s"'>]+)/); if (urlMatch) { const url = urlMatch[0].startsWith('http') ? urlMatch[0] : 'http://' + urlMatch[0]; itemHtml = String(vendorValue).replace(urlMatch[0], `<a href="${url}" target="_blank" rel="noopener noreferrer">${urlMatch[0]}</a>`); } } catch (linkError) {}
                                 li.innerHTML = itemHtml; ul.appendChild(li); listHasContent = true;
                             }
@@ -513,23 +559,32 @@ function populatePage(material, container) {
             const dl = document.createElement('dl'); dl.className = 'property-list';
             let propertiesAddedToDl = false;
 
+            // Add top-level 'category' if it exists and section is 'Identification'
             if (id === 'section-identification') {
                 let catVal = getData(material, 'category', fallbackValue);
                 if (catVal !== fallbackValue) { dl.appendChild(createPropertyItem('Material Category', catVal)); sectionHasRenderableContent = true; propertiesAddedToDl = true;}
+                // Also add 'identification.class' if it exists
                 let classVal = getData(material, 'identification.class', fallbackValue);
                 if (classVal !== fallbackValue) { dl.appendChild(createPropertyItem('Material Class', classVal)); sectionHasRenderableContent = true; propertiesAddedToDl = true;}
             }
 
+            // Iterate through configured properties for the section
             Object.entries(properties).forEach(([propKey, propConfig]) => {
                  const dataPath = `${dataKey}.${propKey}`;
                  const value = getData(material, dataPath, fallbackValue);
+                 // Only add the property if a non-fallback value was found
                  if (value !== fallbackValue) {
-                     dl.appendChild(createPropertyItem(propConfig.label, value, propConfig.isKey || false));
+                     // Use label from config, allow HTML if specified (like for K_IC)
+                     const label = propConfig.label;
+                     dl.appendChild(createPropertyItem(label, value, propConfig.isKey || false));
                      sectionHasRenderableContent = true; propertiesAddedToDl = true;
                  }
             });
             // --- Append Standard Section ---
-            if (propertiesAddedToDl) { // Only append if dl has items
+            if (propertiesAddedToDl) { // Only append section if it has actual content
+                section.appendChild(dl); fragment.appendChild(section);
+            } else if (sectionHasRenderableContent) {
+                // If category/class was added but no other properties, still append
                 section.appendChild(dl); fragment.appendChild(section);
             }
         }
