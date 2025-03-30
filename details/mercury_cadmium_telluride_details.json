@@ -226,71 +226,114 @@
       }
     }
   },
-  // ... Rest of the sections (optical_properties, etc.) would need similar updates ...
   "optical_properties": {
-      "displayName": "Optical Properties",
-      "introduction": "Optical characteristics define how HgCdTe interacts with light, enabling its use as an infrared detector. Key properties include spectral range, absorption, and refractive index.",
-      "properties": {
-        "spectral_range": {
-          "displayName": "Spectral Range",
-          "summary": "SWIR, MWIR, LWIR (0.8 to >30 μm)"
-        },
-        "cutoff_wavelength": {
-            "displayName": "Cutoff Wavelength (λ<sub>c</sub>)",
-            "summary": "Tunable (0.8 to >30 μm)"
-        },
-        "refractive_index": {
-            "displayName": "Refractive Index (n)",
-            "summary": "High (~3.4-4.0)"
-        },
-        "absorption_coefficient": {
-            "displayName": "Absorption Coefficient (α)",
-            "summary": "High (>10⁴ cm⁻¹ near band edge)"
-        },
-        "quantum_efficiency": {
-            "displayName": "Quantum Efficiency (QE or η)",
-            "summary": "High (>70-80% achievable)"
-        },
-        "responsivity": {
-            "displayName": "Responsivity (R)",
-            "summary": "High (~1-10 A/W @ 77K)"
-        },
-        "noise_equivalent_power": {
-            "displayName": "Noise Equivalent Power (NEP)",
-            "summary": "Low (~10⁻¹¹ - 10⁻¹³ W/√Hz cooled)"
-        }
-        // NOTE: Need to add detailed subsections (notes, equations, measurement, significance)
-        // for these optical properties similar to how electrical properties were detailed.
-      }
-    },
-    "thermal_properties": {
-      "displayName": "Thermal Properties",
-      "introduction": "Thermal characteristics influence operating temperature requirements, cooling needs, and thermal stability.",
-      "properties": {
-         "operating_temperature": {
-           "displayName": "Operating Temperature",
-           "summary": "Typically 77K (LN2), higher possible for MWIR/SWIR"
-         },
-         "thermal_conductivity": {
-           "displayName": "Thermal Conductivity (k)",
-           "summary": "Low (~1-5 W/mK)"
-         },
-         "thermal_expansion": {
-           "displayName": "Thermal Expansion (CTE)",
-           "summary": "Moderate (~4.5-5.5 ppm/°C)"
+    "displayName": "Optical Properties",
+    "introduction": "Optical characteristics define how HgCdTe interacts with light, enabling its use as an infrared detector. Key properties include spectral range, absorption, and refractive index.",
+    "properties": {
+      "spectral_range": {
+        "displayName": "Spectral Range",
+        "summary": "SWIR, MWIR, LWIR (0.8 to >30 μm)",
+         "details": {
+           "notes": ["Defined by the tunable bandgap E_g(x).", "SWIR: x ~ 0.5-0.7", "MWIR: x ~ 0.25-0.4", "LWIR: x ~ 0.18-0.22", "VLWIR: x < 0.18"],
+           "significance": ["Determines the application space (thermal imaging, gas sensing, astronomy)."]
          }
-        // NOTE: Need to add detailed subsections
-      }
-    },
-    "mechanical_properties": {
-      "displayName": "Mechanical Properties",
-      "introduction": "HgCdTe is a relatively soft and brittle semiconductor, requiring careful handling during processing and integration.",
-      "properties": {
-         "density": { "displayName": "Density (ρ)", "summary": "High (~5.8-8.1 g/cm³)" },
-         "hardness": { "displayName": "Hardness", "summary": "Very Low (Mohs ~2-3)" },
-         "fracture_toughness": { "displayName": "Fracture Toughness (K<sub>IC</sub>)", "summary": "Very Low (<0.5 MPa√m)" },
-         "youngs_modulus": { "displayName": "Young's Modulus (E)", "summary": "Low (~40-50 GPa)" }
-        // NOTE: Need to add detailed subsections
+      },
+      "cutoff_wavelength": {
+          "displayName": "Cutoff Wavelength (λ<sub>c</sub>)",
+          "summary": "Tunable (0.8 to >30 μm)",
+           "details": {
+             "notes": ["Wavelength at which absorption drops sharply, defined by λ<sub>c</sub> ≈ 1.24 / E_g(eV).", "Primary specification for detector material."],
+             "measurement": ["FTIR transmission spectrum (typically defined at 50% transmission point)."],
+             "significance": ["Sets the long-wavelength limit of the detector's sensitivity."]
+           }
+      },
+      "refractive_index": {
+          "displayName": "Refractive Index (n)",
+          "summary": "High (~3.4-4.0)",
+           "details": {
+             "notes": ["High index requires anti-reflection (AR) coatings for efficient light coupling (~30% reflection loss per surface without AR).", "Dispersion exists (index varies with wavelength)."],
+             "measurement": ["Ellipsometry", "FTIR reflectance/transmission analysis."],
+             "significance": ["Needed for designing AR coatings.", "Affects optical cavity effects within the detector structure."]
+           }
+      },
+      "absorption_coefficient": {
+          "displayName": "Absorption Coefficient (α)",
+          "summary": "High (>10⁴ cm⁻¹ near band edge)",
+           "details": {
+             "notes": ["Strong absorption due to direct bandgap allows efficient photon capture in relatively thin layers (few μm).", "α depends strongly on photon energy relative to E_g."],
+             "measurement": ["Calculated from transmission/reflectance spectra."],
+             "significance": ["Determines required detector thickness for high quantum efficiency.", "Affects optimal device design."]
+           }
+      },
+      "quantum_efficiency": {
+          "displayName": "Quantum Efficiency (QE or η)",
+          "summary": "High (>70-80% achievable)",
+           "details": {
+             "notes": ["Ratio of collected charge carriers to incident photons.", "Internal QE can be very high (>90%).", "External QE limited by reflection losses (needs AR coating) and collection efficiency (diffusion length, surface recombination)."],
+             "measurement": ["Measured using calibrated light sources and reference detectors, determining spectral response R(λ), then QE = R(λ) * hc / (qλ)."],
+             "significance": ["Fundamental measure of detector sensitivity."]
+           }
+      },
+      "responsivity": {
+          "displayName": "Responsivity (R)",
+          "summary": "High (~1-10 A/W @ 77K)",
+           "details": {
+             "notes": ["Ratio of output photocurrent to incident optical power (R = I<sub>ph</sub> / P<sub>inc</sub>).", "R = QE * qλ / hc.", "Higher at longer wavelengths for a given QE."],
+             "measurement": ["Measured using calibrated blackbody source or monochromatic source and calibrated power meter."],
+             "significance": ["Direct measure of signal output for a given input power."]
+           }
+      },
+      "noise_equivalent_power": {
+          "displayName": "Noise Equivalent Power (NEP)",
+          "summary": "Low (~10⁻¹¹ - 10⁻¹³ W/√Hz cooled)",
+           "details": {
+             "notes": ["Incident optical power required to produce a signal-to-noise ratio of 1 in a 1 Hz bandwidth.", "NEP = I<sub>noise</sub> / R, where I<sub>noise</sub> is the total noise current spectral density.", "Lower NEP indicates better sensitivity."],
+             "measurement": ["Calculated from measured noise current spectral density and responsivity."],
+             "significance": ["Defines the minimum detectable optical power."]
+           }
       }
     }
+  },
+  "thermal_properties": {
+    "displayName": "Thermal Properties",
+    "introduction": "Thermal characteristics influence operating temperature requirements, cooling needs, and thermal stability.",
+    "properties": {
+       "operating_temperature": {
+         "displayName": "Operating Temperature",
+         "summary": "Typically 77K (LN2), higher possible for MWIR/SWIR",
+          "details": {
+            "notes": ["Cryogenic cooling drastically reduces thermally generated dark current (n<sub>i</sub> reduction).", "LWIR detectors almost always require 77K or lower.", "MWIR/SWIR can operate at higher temps (e.g., 150-200K or even near RT for SWIR) with acceptable performance, enabling smaller/cheaper TEC cooling."],
+            "significance": ["Dictates cooling system requirements (LN2 dewar, Stirling cooler, TEC), impacting system size, weight, power (SWaP), and cost."]
+          }
+       },
+       "thermal_conductivity": {
+         "displayName": "Thermal Conductivity (k)",
+         "summary": "Low (~1-5 W/mK)",
+          "details": {
+            "notes": ["Poor thermal conductor compared to Si or metals.", "Can lead to localized heating in high power devices (lasers) or challenges in heat sinking focal plane arrays."],
+            "measurement": ["Laser flash method or other standard techniques."],
+            "significance": ["Impacts heat dissipation from focal plane arrays.", "Affects thermal stability and potential for thermal gradients."]
+          }
+       },
+       "thermal_expansion": {
+         "displayName": "Thermal Expansion (CTE)",
+         "summary": "Moderate (~4.5-5.5 ppm/°C)",
+          "details": {
+            "notes": ["Coefficient of Thermal Expansion (CTE).", "Mismatch between HgCdTe CTE and Silicon ROIC CTE (~2.6 ppm/°C) is a major challenge for large format focal plane arrays.", "Indium bump interconnects accommodate some stress, but CTE mismatch limits array size and reliability through thermal cycling."],
+            "measurement": ["Dilatometry."],
+            "significance": ["Critical for mechanical design and reliability of hybrid focal plane arrays (detector bonded to readout circuit)."]
+          }
+       }
+    }
+  },
+  "mechanical_properties": {
+    "displayName": "Mechanical Properties",
+    "introduction": "HgCdTe is a relatively soft and brittle semiconductor, requiring careful handling during processing and integration.",
+    "properties": {
+       "density": { "displayName": "Density (ρ)", "summary": "High (~5.8-8.1 g/cm³)" },
+       "hardness": { "displayName": "Hardness", "summary": "Very Low (Mohs ~2-3)" },
+       "fracture_toughness": { "displayName": "Fracture Toughness (K<sub>IC</sub>)", "summary": "Very Low (<0.5 MPa√m)" },
+       "youngs_modulus": { "displayName": "Young's Modulus (E)", "summary": "Low (~40-50 GPa)" }
+    }
+  }
 }
