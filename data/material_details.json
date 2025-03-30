@@ -3726,5 +3726,106 @@
       "tough", "semiconductor", "industry:aerospace", "industry:energy", "industry:nuclear",
       "ceramic", "ebc"
     ]
+  },
+  "Silicon Nitride Reinforced Silicon Carbide": {
+    "name": "Silicon Nitride Reinforced Silicon Carbide",
+    "formula": "SiC-Si₃N₄",
+    "synonyms": [ "SiC/Si3N4 Composite", "Silicon Carbide Silicon Nitride Composite", "NC-203" ],
+    "category": "Composite",
+    "constituent_elements": ["Si", "C", "N"],
+    "description": "A ceramic composite material combining Silicon Carbide (SiC) and Silicon Nitride (Si₃N₄) phases, typically with Si₃N₄ acting as reinforcement (particles, whiskers, or in-situ grown grains) within a SiC matrix, or vice-versa. This composite aims to leverage the high hardness, wear resistance, and thermal stability of SiC with the higher fracture toughness and good thermal shock resistance of Si₃N₄, resulting in a material often superior to either monolithic component for demanding wear, thermal, and structural applications.",
+    "wiki_link": "N/A",
+    "safety": {
+      "toxicity": "Low for the finished composite. Machining generates fine ceramic dust (SiC, Si₃N₄), requiring respiratory protection and ventilation.",
+      "handling": "Handle components carefully as they are hard and brittle, though tougher than monolithic versions."
+    },
+    "identification": {
+      "class": "Ceramic-Ceramic Composite / Particle Reinforced Ceramic",
+      "crystal_structure": "Mixture of SiC (Hexagonal α-SiC, Cubic β-SiC) and Si₃N₄ (Hexagonal α-Si₃N₄, β-Si₃N₄) phases.",
+      "appearance": {"notes": "Typically dark gray to black solid material."}
+    },
+    "advanced_fabrication_insights": {
+        "process_control": "Primarily fabricated via powder metallurgy routes. Mixing SiC and Si₃N₄ powders (often with sintering aids like Y₂O₃, Al₂O₃) followed by densification using Hot Pressing (HP), Hot Isostatic Pressing (HIP), or Spark Plasma Sintering (SPS). Achieving full density and controlling grain growth are key.",
+        "common_defects_impact": "Porosity, large grains, inhomogeneous phase distribution, impurities from sintering aids. Degrade mechanical strength, toughness, and potentially thermal/electrical properties.",
+        "interface_engineering": "The nature of the grain boundaries between SiC and Si₃N₄ phases, influenced by sintering aids and processing conditions, plays a significant role in fracture behavior and high-temperature properties.",
+        "phase_transformations": "During sintering, α-Si₃N₄ can transform to the elongated β-Si₃N₄ phase, which can contribute to toughness via crack bridging/deflection."
+    },
+    "growth_fabrication_properties": {
+        "common_growth_methods": "Powder Mixing followed by Hot Pressing (HP), Hot Isostatic Pressing (HIP), Spark Plasma Sintering (SPS), Pressureless Sintering (requires liquid phase sintering aids).",
+        "source_materials_purity": "High purity SiC and Si₃N₄ powders, sintering aid powders (e.g., Y₂O₃, Al₂O₃).",
+        "preferred_substrates_orientations": "N/A (Bulk composite).",
+        "typical_growth_parameters": "High temperatures (1700-2000°C+) and high pressures (for HP/HIP/SPS). Atmosphere control (Nitrogen or inert gas) is important.",
+        "passivation_methods": "Relies on inherent oxidation resistance (forms SiO₂/Silicon Oxynitride)."
+    },
+    "post_growth_processing": {
+        "annealing": "Post-sintering heat treatments may be used for phase control or stress relief.",
+        "lapping_polishing": "Requires diamond abrasives due to extreme hardness.",
+        "etching": "Highly resistant to chemical etching.",
+        "grinding_milling": "Machinable only with diamond tooling, very slow, generates hazardous dust."
+    },
+     "device_integration_characterization": {
+        "device_architectures": "Wear-resistant components (seals, bearings, nozzles), cutting tool inserts, armor components, high-temperature structural parts (furnace fixtures, engine components - limited use).",
+        "readout_integration": "N/A",
+        "ar_coatings": "N/A",
+        "packaging_cooling": "Suitable for high-temperature and abrasive/wear environments.",
+        "key_characterization_techniques": ["Microscopy (SEM - microstructure, phase distribution, grain size)", "XRD (phase identification)", "Density/Porosity Measurement", "Mechanical Testing (Hardness, Flexural Strength, Fracture Toughness - at RT and high temp)", "Wear Testing (pin-on-disk, abrasion)", "Thermal Property Measurement (Conductivity, Expansion)"]
+    },
+    "electrical_properties": {
+      "bandgap_type": "SiC: Semiconductor, Si₃N₄: Insulator.",
+      "resistivity": {"value": "High to Very High (10² - 10¹⁴+ Ω·cm)", "notes": "Generally insulating or semi-insulating, depending on the specific SiC polytype, purity, and microstructure. Si₃N₄ significantly increases overall resistivity compared to conductive SiC grades."},
+      "dielectric_constant": {"value": "~8-12", "notes": "Intermediate between SiC (~10) and Si₃N₄ (~7-9)."}
+    },
+    "optical_properties": {
+      "spectral_range": "Opaque (dark gray/black)."
+    },
+    "thermal_properties": {
+      "operating_temperature": {"value": "Up to ~1400-1600", "unit": "°C", "notes": "Good strength retention at high temperatures, limited by oxidation kinetics or sintering aid stability."},
+      "thermal_conductivity": {"value": "Moderate (~20-80 W/(m·K))", "notes": "Lower than high-purity SiC, higher than Si₃N₄. Depends on phase ratio and microstructure."},
+      "specific_heat": {"value": "~0.7-1.0", "unit": "J/(g·K)"},
+      "melting_point": {"notes": "Components sublime/decompose at very high temperatures (>2000°C)."},
+      "thermal_expansion": {"value": "Low (~3-4 x 10⁻⁶ /°C)", "notes": "Similar to SiC and Si₃N₄, providing good thermal shock resistance."},
+      "thermal_shock_resistance": {"notes": "Generally very good due to low CTE, moderate thermal conductivity, and enhanced toughness."}
+    },
+     "mechanical_properties": {
+         "density": {"value": "~3.1-3.2", "unit": "g/cm³", "notes": "Similar to SiC and Si₃N₄."},
+         "youngs_modulus": {"value": "High (~350-420 GPa)", "notes": "Very stiff."},
+         "flexural_strength": {"value": "High (600-1000+ MPa)", "notes": "Excellent strength."},
+         "hardness_vickers": {"value": "Very High (~18-25 GPa)"},
+         "fracture_toughness": {"value": "Improved (~5-8 MPa·m⁰·⁵)", "notes": "Significantly tougher than monolithic SiC (~3-4) or typical monolithic Si₃N₄ (~5-6), due to crack deflection/bridging mechanisms at phase boundaries and potentially elongated Si₃N₄ grains."}
+     },
+     "device_applications": {
+         "key_applications": ["Mechanical Seals for Pumps", "Bearings for demanding environments", "Cutting Tool Inserts (for cast iron, non-ferrous metals)", "Wear-Resistant Linings and Nozzles", "Armor Tiles", "High-Temperature Fixturing"]
+     },
+     "chemical_properties": {
+         "stability_oxidation": "Good oxidation resistance up to high temperatures (~1400-1600°C), forming a protective silica or silicon oxynitride layer.",
+         "chemical_inertness": "Excellent resistance to many corrosive chemicals.",
+         "acid_resistance": "Good resistance to most acids.",
+         "base_resistance": "Resistant to many bases, though strong molten alkalis can attack."
+     },
+     "comparison_alternatives": {
+         "notes": "Alternative Hard/Wear/High-Temp Ceramics:",
+         "vs_Monolithic_SiC": "SiC-Si₃N₄: Significantly higher fracture toughness, potentially better thermal shock resistance depending on grade. Monolithic SiC: Can have higher hardness and thermal conductivity (depending on purity/polytype).",
+         "vs_Monolithic_Si3N4": "SiC-Si₃N₄: Higher hardness, higher stiffness, often better wear resistance, potentially higher temperature capability depending on specific grades. Monolithic Si₃N₄: Can achieve high toughness (esp. with controlled β-phase growth), lower thermal conductivity (insulating grades).",
+         "vs_Zirconia_Toughened_Alumina_ZTA": "SiC-Si₃N₄: Higher hardness, higher stiffness, much higher operating temperature capability, better thermal shock resistance. ZTA: Higher toughness (esp. at lower temps via transformation toughening), lower cost, lower hardness/temperature limits.",
+         "vs_Tungsten_Carbide_WC-Co": "SiC-Si₃N₄: Lower density, higher operating temperature, better oxidation/corrosion resistance, lower toughness. WC-Co: Very high hardness and toughness (due to metal binder), higher density, limited operating temperature due to binder oxidation."
+     },
+     "references_further_reading": {
+         "notes": "Key Literature Resources:",
+         "journal_jacers": "Journal of the American Ceramic Society.",
+         "journal_wear": "Wear journal (for tribological properties).",
+         "ceramics_handbooks": "Engineering ceramics handbooks covering SiC and Si₃N₄ composites.",
+         "patent_literature": "Patents related to specific compositions and processing (e.g., search for SiC-Si3N4 composites)."
+     },
+     "vendor_info": {
+        "notes": "Example Vendors (Placeholder):",
+        "vendor_1": "Company A - www.example-vendor-a.com",
+        "vendor_2": "Company B - www.example-vendor-b.com",
+        "vendor_3": "Company C - www.example-vendor-c.com"
+     },
+    "tags": [
+      "ceramic", "composite", "silicon carbide", "silicon nitride", "high temperature",
+      "wear resistant", "hard", "tough", "structural ceramic", "cutting tool",
+      "bearing", "seal", "industry:mechanical", "industry:tooling", "industry:aerospace"
+    ]
   }
 }
