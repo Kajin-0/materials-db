@@ -1,12 +1,205 @@
 // --- START OF FILE full_detail_loader.js ---
+console.log("[Full Detail Loader] Script started."); // Log script start
 
 document.addEventListener("DOMContentLoaded", async () => {
-    // ... (Keep existing code from top down to initialize3DViewer call) ...
+    console.log("[Full Detail Loader] DOMContentLoaded event fired."); // Log DOM ready
+
+    // --- Get parameters from URL ---
+    const urlParams = new URLSearchParams(window.location.search);
+    const materialNameParam = urlParams.get("material");
+    console.log("[Full Detail Loader] URL Parameter 'material':", materialNameParam); // Log parameter
+
+    // --- Get DOM elements ---
+    const materialNameEl = document.getElementById("material-name");
+    const tocListEl = document.getElementById("toc-list");
+    const mainContentEl = document.getElementById("main-content");
+    const referencesSectionEl = document.getElementById("references-section");
+    const referencesListEl = document.getElementById("references-list");
+    console.log("[Full Detail Loader] DOM elements obtained.");
+
+    // --- Display Error Function ---
+    const displayError = (message) => {
+        console.error("[Full Detail] Error:", message); // Log error message passed here
+        if (materialNameEl) materialNameEl.textContent = "Error Loading Material";
+        if (tocListEl) tocListEl.innerHTML = '<li>Error loading contents</li>';
+        if (mainContentEl) mainContentEl.innerHTML = `<p class="error-message">Could not load material details: ${message}</p>`;
+        if (referencesSectionEl) referencesSectionEl.style.display = 'none';
+        document.title = "Error - Material Detail";
+    };
+
+    // --- Validate parameters ---
+    if (!materialNameParam) {
+        console.error("[Full Detail Loader] Material name missing from URL."); // Specific log
+        displayError("Material name missing from URL parameters.");
+        return; // Stop execution
+    }
+    const materialName = decodeURIComponent(materialNameParam);
+    console.log("[Full Detail Loader] Decoded Material Name:", materialName);
+
+    // --- Update Title Bar ---
+    if (materialNameEl) {
+         materialNameEl.textContent = materialName;
+         console.log("[Full Detail Loader] Material name element updated.");
+    } else {
+         console.warn("[Full Detail Loader] Material name element not found.");
+    }
+    document.title = `${materialName} - Full Details`;
+    console.log("[Full Detail Loader] Document title updated.");
+
+    // --- Construct file path ---
+    const safeMaterialName = materialName.replace(/ /g, '_').toLowerCase();
+    const detailFilePath = `./details/${safeMaterialName}_details.json`;
+    console.log(`[Full Detail Loader] Constructed file path: '${detailFilePath}'`);
+
+    // --- Fetch and Process Data ---
+    console.log("[Full Detail Loader] Starting fetch operation...");
+    try {
+        const response = await fetch(detailFilePath);
+        console.log(`[Full Detail Loader] Fetch response status: ${response.status} ${response.statusText}`); // Log fetch status
+
+        if (!response.ok) {
+             const errorText = await response.text(); // Attempt to read error response body
+             console.error(`[Full Detail Loader] Fetch failed: ${response.status}. Response body:`, errorText);
+            if (response.status === 404) { throw new Error(`Details file not found: ${detailFilePath}.`); }
+            else { throw new Error(`HTTP error ${response.status} fetching ${detailFilePath}`); }
+        }
+
+        console.log("[Full Detail Loader] Fetch successful. Parsing JSON...");
+        const materialDetails = await response.json(); // Attempt to parse JSON
+        console.log("[Full Detail Loader] JSON parsed successfully.");
+        const sectionDataMap = new Map();
+
+        // --- Process References ---
+        console.log("[Full Detail Loader] Processing references...");
+        const collectedRefs = new Set();
+        const processRefs = (data) => {
+             // ... (keep existing processRefs logic) ...
+             if (typeof data === 'object' && data !== null) {
+                 if (data.ref && materialDetails.references && materialDetails.references[data.ref]) { collectedRefs.add(data.ref); }
+                 Object.values(data).forEach(value => {
+                     if (typeof value === 'object' || Array.isArray(value)) {
+                         processRefs(value);
+                     }
+                 });
+             } else if (Array.isArray(data)) {
+                 data.forEach(processRefs);
+             }
+        };
+        processRefs(materialDetails);
+        console.log(`[Full Detail Loader] References processed. Found ${collectedRefs.size} unique refs.`);
+
+        // --- Build Table of Contents & Store Section Data ---
+        console.log("[Full Detail Loader] Building Table of Contents...");
+        if (tocListEl && mainContentEl) {
+            tocListEl.innerHTML = ''; // Clear "Loading..."
+            let sectionCount = 0;
+            for (const sectionKey in materialDetails) {
+                if (sectionKey === 'materialName' || sectionKey === 'references') continue;
+                const sectionData = materialDetails[sectionKey];
+                 // Relax the check slightly - just needs to be an object
+                if (typeof sectionData !== 'object' || sectionData === null) continue;
+
+                sectionDataMap.set(sectionKey, sectionData);
+                sectionCount++;
+
+                const sectionDisplayName = sectionData.displayName || sectionKey.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                const sectionId = `section-${sectionKey}`;
+
+                const tocLi = document.createElement('li');
+                const tocLink = document.createElement('a');
+                tocLink.href = `#${sectionId}`;
+                tocLink.textContent = sectionDisplayName;
+                tocLi.appendChild(tocLink);
+                tocListEl.appendChild(tocLi);
+            }
+             console.log(`[Full Detail Loader] TOC built with ${sectionCount} sections.`);
+             if (sectionCount === 0) {
+                 console.warn("[Full Detail Loader] No valid sections found in the JSON data for TOC.");
+             }
+        } else {
+             console.warn("[Full Detail Loader] TOC or Main Content element not found.");
+        }
+
+        // --- Populate Sections from Stored Data ---
+        console.log("[Full Detail Loader] Populating sections...");
+        let populatedSectionCount = 0;
+        for (const [sectionKey, sectionData] of sectionDataMap.entries()) {
+             // ... (keep existing section population logic) ...
+             const sectionId = `section-${sectionKey}`;
+             const sectionElement = document.getElementById(sectionId);
+             if (!sectionElement) { console.warn(`HTML section placeholder '${sectionId}' not found.`); continue; }
+
+             const sectionTitleEl = document.getElementById(`${sectionId}-title`);
+             const sectionIntroEl = document.getElementById(`${sectionId}-intro`);
+             const propertiesContainerEl = document.getElementById(`${sectionId}-properties`);
+
+             if(sectionTitleEl) sectionTitleEl.textContent = sectionData.displayName || sectionKey.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+
+             if (sectionIntroEl) {
+                 if (sectionData.introduction) {
+                    sectionIntroEl.innerHTML = sectionData.introduction;
+                    sectionIntroEl.style.display = 'block';
+                 } else {
+                     sectionIntroEl.style.display = 'none';
+                     sectionIntroEl.innerHTML = '';
+                 }
+             }
+
+             if (propertiesContainerEl && sectionData.properties && typeof sectionData.properties === 'object') {
+                 propertiesContainerEl.innerHTML = '';
+                 Object.entries(sectionData.properties).forEach(([propKey, propData]) => {
+                     const propertyBlockElement = renderPropertyBlock(propKey, propData, materialDetails, propertiesContainerEl);
+                     if (propertyBlockElement) { propertiesContainerEl.appendChild(propertyBlockElement); }
+                 });
+                 propertiesContainerEl.style.display = 'block';
+             } else if (propertiesContainerEl) {
+                 propertiesContainerEl.style.display = 'none';
+             }
+             sectionElement.style.display = 'block';
+             populatedSectionCount++;
+        }
+         console.log(`[Full Detail Loader] Populated ${populatedSectionCount} sections.`);
+
+        // --- Populate References ---
+        console.log("[Full Detail Loader] Populating references section...");
+        // ... (keep existing reference population logic) ...
+        if (collectedRefs.size > 0 && referencesListEl && materialDetails.references) {
+             referencesListEl.innerHTML = ''; // Clear placeholder
+             const sortedRefs = Array.from(collectedRefs).sort();
+             sortedRefs.forEach(refKey => {
+                 const refData = materialDetails.references[refKey];
+                 if(refData){
+                     const li = document.createElement('li'); li.id = `ref-${refKey}`;
+                     let linkHtml = refData.text;
+                     if(refData.doi){ linkHtml += ` <a href="https://doi.org/${refData.doi}" target="_blank" rel="noopener noreferrer" title="View via DOI">[DOI]</a>`; }
+                     li.innerHTML = `<strong>[${refKey}]</strong> ${linkHtml}`;
+                     referencesListEl.appendChild(li);
+                 } else { console.warn(`Reference key '${refKey}' found but not defined.`); }
+             });
+             referencesSectionEl.style.display = 'block';
+             mainContentEl.addEventListener('click', handleRefLinkClick);
+              console.log("[Full Detail Loader] References populated.");
+        } else if(referencesSectionEl){
+             referencesSectionEl.style.display = 'none';
+              console.log("[Full Detail Loader] No references to populate or elements missing.");
+        }
+        console.log("[Full Detail Loader] Data processing complete.");
+
+
+    } catch (error) {
+         console.error("[Full Detail Loader] CRITICAL ERROR in fetch/process:", error); // Log the caught error
+        if (error instanceof SyntaxError && error.message.includes("JSON")) {
+             displayError(`Failed to parse details file. Check JSON format (e.g., comments, commas). Error: ${error.message}`);
+        } else {
+             displayError(error.message || "An unknown error occurred loading material details.");
+        }
+    }
 
     // --- Helper Function to Render a Single Property Block ---
     function renderPropertyBlock(propKey, propData, allDetails, parentContainer) {
-        // ... (Keep the existing renderPropertyBlock code - no changes needed here) ...
-         const propBlock = document.createElement('div');
+        // ... (No changes needed inside renderPropertyBlock itself for this specific bug) ...
+        // ... (Keep the version from the previous response) ...
+        const propBlock = document.createElement('div');
         propBlock.className = 'property-detail-block';
         propBlock.id = `prop-${propKey}`;
 
@@ -139,10 +332,11 @@ document.addEventListener("DOMContentLoaded", async () => {
              }
         }
         return propBlock;
+
     } // --- End renderPropertyBlock ---
 
     // Function to handle reference link clicks
-    function handleRefLinkClick(event) { /* ... same as previous version ... */
+    function handleRefLinkClick(event) { /* ... same ... */
         const link = event.target.closest('a.ref-link[data-ref-key]');
         if (link) {
             event.preventDefault();
@@ -151,9 +345,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (targetElement) {
                  const elementRect = targetElement.getBoundingClientRect();
                  const absoluteElementTop = elementRect.top + window.pageYOffset;
-                 const headerOffset = 60;
-                 const viewportHeight = window.innerHeight;
-                 const desiredScrollPos = absoluteElementTop - (viewportHeight * 0.3) - headerOffset;
+                 const headerOffset = 60; const viewportHeight = window.innerHeight; const desiredScrollPos = absoluteElementTop - (viewportHeight * 0.3) - headerOffset;
                  window.scrollTo({ top: Math.max(0, desiredScrollPos), behavior: 'smooth' });
                  document.querySelectorAll('#references-list li.highlight-ref').forEach(el => el.classList.remove('highlight-ref'));
                  targetElement.classList.add('highlight-ref');
@@ -163,20 +355,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     } // --- End handleRefLinkClick ---
 
 
-    // --- Initialize 3D Viewer Function (REVISED) ---
+    // --- Initialize 3D Viewer Function (keep the version from the previous response with fixes) ---
     function initialize3DViewer(viewerElementId, controlsElementId, vizData, allMaterialDetails) {
         console.log("--- Initializing 3D Viewer ---");
-        console.log("Viewer Element ID:", viewerElementId);
+        // ... (Keep the entire, corrected initialize3DViewer function from the previous response) ...
+         console.log("Viewer Element ID:", viewerElementId);
         console.log("Controls Element ID:", controlsElementId);
 
         const viewerElement = document.getElementById(viewerElementId);
         const controlsElement = document.getElementById(controlsElementId);
 
         if (!viewerElement || !controlsElement) { console.error("Viewer or controls element not found"); return; }
-        viewerElement.innerHTML = ''; // Clear loading message
-        controlsElement.innerHTML = ''; // Clear loading message
+        viewerElement.innerHTML = '';
+        controlsElement.innerHTML = '';
 
-        // --- Populate Controls HTML (Keep the same structure) ---
+        // --- Populate Controls HTML ---
         controlsElement.innerHTML = `
             <h4>Controls</h4>
             <div class="control-group" id="${controlsElementId}-composition-group">
@@ -219,7 +412,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <button id="${controlsElementId}-btn-stop">Stop</button>
                 <button id="${controlsElementId}-btn-screenshot">Screenshot (PNG)</button>
             </div>
-        `; // Added data attributes for easier handling
+        `;
 
         if (vizData.composition.min_x === vizData.composition.max_x) {
             const compGroup = document.getElementById(`${controlsElementId}-composition-group`);
@@ -231,63 +424,46 @@ document.addEventListener("DOMContentLoaded", async () => {
         // --- 3Dmol.js Initialization ---
         let viewer;
         try {
-            viewer = $3Dmol.createViewer(viewerElement, { /* ऑप्शन्स */
-                backgroundColor: "white",
-                antialias: true,
-                hoverable: true
+            viewer = $3Dmol.createViewer(viewerElement, {
+                backgroundColor: "white", antialias: true, hoverable: true
             });
             console.log("3Dmol viewer created.");
-        } catch (e) { /* एरर हैंडलिंग */
+        } catch (e) {
             console.error("Error creating 3Dmol viewer:", e);
-            displayViewerError("Failed to create 3D viewer instance.");
-            return;
+            displayViewerError("Failed to create 3D viewer instance."); return;
         }
 
         // --- State and Constants ---
-        let cellShown = false;
-        let currentViewStyle = "ballAndStick";
-        let currentSupercell = 1;
-        let currentComposition = vizData.composition.initial_x;
-        const atomInfo = vizData.atom_info;
-        const atomColors = {}; // Use uppercase keys {HG: color, CD: color, TE: color}
-        const atomRadii = {};  // {HG: radius, CD: radius, TE: radius}
+        let cellShown = false; let currentViewStyle = "ballAndStick"; let currentSupercell = 1;
+        let currentComposition = vizData.composition.initial_x; const atomInfo = vizData.atom_info;
+        const atomColors = {}; const atomRadii = {};
 
         // --- Info Panel & Legend Elements ---
         const latticeInfoEl = document.getElementById(`${controlsElementId}-lattice-info`);
         const compositionInfoEl = document.getElementById(`${controlsElementId}-composition-info`);
         const legendEl = document.getElementById(`${controlsElementId}-legend`);
         const compValueEl = document.getElementById(`${controlsElementId}-composition-value`);
-
-        // ** REVISED Legend Population - Ensure all atoms are processed **
-        legendEl.innerHTML = ''; // Clear first
-        console.log("Populating legend with atomInfo:", atomInfo);
+        legendEl.innerHTML = '';
         if (atomInfo && typeof atomInfo === 'object') {
             Object.entries(atomInfo).forEach(([symbol, info]) => {
-                console.log(`Processing legend for symbol: ${symbol}`); // Debug log
                 const upperSymbol = symbol.toUpperCase();
-                atomColors[upperSymbol] = info.color || '#CCCCCC';
-                atomRadii[upperSymbol] = info.radius || 1.0;
-                const legendItem = document.createElement('div');
-                legendItem.className = 'legend';
-                // Ensure background color is applied correctly
+                atomColors[upperSymbol] = info.color || '#CCCCCC'; atomRadii[upperSymbol] = info.radius || 1.0;
+                const legendItem = document.createElement('div'); legendItem.className = 'legend';
                 legendItem.innerHTML = `<div class="legend-color" style="background-color:${atomColors[upperSymbol]};"></div><div>${symbol}</div>`;
                 legendEl.appendChild(legendItem);
             });
-        } else {
-             console.error("vizData.atom_info is missing or not an object!");
-        }
+        } else { console.error("vizData.atom_info is missing or not an object!"); }
         console.log("Atom Colors Map:", atomColors);
 
-        // --- Structure Generation (No changes here) ---
-        function getLatticeConstant(compositionRatio) { /* ... */
+        // --- Structure Generation ---
+        function getLatticeConstant(compositionRatio) {
              if (vizData.structure_type === 'zincblende_alloy' && vizData.lattice_constants.HgTe && vizData.lattice_constants.CdTe) {
                  return vizData.lattice_constants.HgTe * (1 - compositionRatio) + vizData.lattice_constants.CdTe * compositionRatio;
              } else if (vizData.lattice_constants.a) { return vizData.lattice_constants.a; }
              console.warn("Cannot determine lattice constant."); return 6.0;
         }
-        function generateAtomArray(compositionRatio, cellSize) { /* ... */
-            const latticeConstant = getLatticeConstant(compositionRatio);
-            let atoms = [];
+        function generateAtomArray(compositionRatio, cellSize) {
+            const latticeConstant = getLatticeConstant(compositionRatio); let atoms = [];
             const anion = Object.keys(atomInfo).find(key => atomInfo[key].role === 'anion');
             const cation_host = Object.keys(atomInfo).find(key => atomInfo[key].role === 'cation_host');
             const cation_subst = Object.keys(atomInfo).find(key => atomInfo[key].role === 'cation_subst');
@@ -314,196 +490,93 @@ document.addEventListener("DOMContentLoaded", async () => {
             return atoms;
         }
 
-        // --- PDB Conversion (Use robust version) ---
-         function atomsToPDB(atoms) { /* ... same robust version ... */
+        // --- PDB Conversion ---
+         function atomsToPDB(atoms) {
             let pdb = "";
             atoms.forEach((atom, index) => {
-                const serial = (index + 1).toString().padStart(5);
-                let elementSymbol = atom.elem.substring(0, 2).toUpperCase();
-                let atomName = elementSymbol.padEnd(4);
+                const serial = (index + 1).toString().padStart(5); let elementSymbol = atom.elem.substring(0, 2).toUpperCase(); let atomName = elementSymbol.padEnd(4);
                 const resName = "MOL"; const chainID = "A"; const resSeq = "1".padStart(4); const iCode = " ";
                 const x = atom.x.toFixed(3).padStart(8); const y = atom.y.toFixed(3).padStart(8); const z = atom.z.toFixed(3).padStart(8);
-                const occupancy = "1.00".padStart(6); const tempFactor = "0.00".padStart(6);
-                const elementPDB = elementSymbol.padStart(2);
+                const occupancy = "1.00".padStart(6); const tempFactor = "0.00".padStart(6); const elementPDB = elementSymbol.padStart(2);
                 pdb += `ATOM  ${serial} ${atomName} ${resName} ${chainID}${resSeq}${iCode}   ${x}${y}${z}${occupancy}${tempFactor}          ${elementPDB}  \n`;
             });
-             pdb += generatePDBConnectivity(atoms);
-             pdb += "END\n";
-            return pdb;
+             pdb += generatePDBConnectivity(atoms); pdb += "END\n"; return pdb;
         }
-        function generatePDBConnectivity(atoms) { /* ... same robust version ... */
-            let conectRecords = "";
-            const bondCutoffSq = (vizData.bond_cutoff || 3.0) ** 2; const maxConnect = 4;
+        function generatePDBConnectivity(atoms) {
+            let conectRecords = ""; const bondCutoffSq = (vizData.bond_cutoff || 3.0) ** 2; const maxConnect = 4;
             for (let i = 0; i < atoms.length; i++) {
                 let bonds = [];
                 for (let j = 0; j < atoms.length; j++) {
-                    if (i === j) continue;
-                    const dx = atoms[i].x - atoms[j].x; const dy = atoms[i].y - atoms[j].y; const dz = atoms[i].z - atoms[j].z;
-                    const distSq = dx*dx + dy*dy + dz*dz;
-                    if (distSq > 0.01 && distSq < bondCutoffSq) { bonds.push(j + 1); }
+                    if (i === j) continue; const dx = atoms[i].x - atoms[j].x; const dy = atoms[i].y - atoms[j].y; const dz = atoms[i].z - atoms[j].z;
+                    const distSq = dx*dx + dy*dy + dz*dz; if (distSq > 0.01 && distSq < bondCutoffSq) { bonds.push(j + 1); }
                 }
                 if (bonds.length > 0) {
                     for (let k = 0; k < bonds.length; k += maxConnect) {
                         conectRecords += `CONECT${(i + 1).toString().padStart(5)}`;
-                        const slice = bonds.slice(k, k + maxConnect);
-                        slice.forEach(bondSerial => { conectRecords += bondSerial.toString().padStart(5); });
-                        conectRecords += "\n";
+                        const slice = bonds.slice(k, k + maxConnect); slice.forEach(bondSerial => { conectRecords += bondSerial.toString().padStart(5); }); conectRecords += "\n";
                     }
                 }
             } return conectRecords;
         }
 
         // --- Viewer Display Functions ---
-         function displayViewerError(message) { /* ... same ... */
-            viewerElement.innerHTML = `<p class="error-message" style="padding: 20px; text-align: center;">${message}</p>`;
-         }
-         function drawUnitCellShape(cellSize) { /* ... same ... */
+         function displayViewerError(message) { viewerElement.innerHTML = `<p class="error-message" style="padding: 20px; text-align: center;">${message}</p>`; }
+         function drawUnitCellShape(cellSize) {
             try {
-                // Note: removeAllShapes is called in renderStructure, no need to remove here
-                const currentLatConst = getLatticeConstant(currentComposition);
-                const cellLength = currentLatConst * cellSize;
-                console.log(`Drawing unit cell shape: size=${cellSize}, length=${cellLength}`); // Debug log
-                viewer.addUnitCell({
-                    box: {a: cellLength, b: cellLength, c: cellLength, alpha: 90, beta: 90, gamma: 90},
-                    origin: {x:0, y:0, z:0}, color: "#555555", lineWidth: 1.5
-                }); // Let 3Dmol handle adding the shape, ID is implicitly managed?
+                const currentLatConst = getLatticeConstant(currentComposition); const cellLength = currentLatConst * cellSize;
+                console.log(`Drawing unit cell shape: size=${cellSize}, length=${cellLength}`);
+                viewer.addUnitCell({ box: {a: cellLength, b: cellLength, c: cellLength, alpha: 90, beta: 90, gamma: 90},
+                    origin: {x:0, y:0, z:0}, color: "#555555", lineWidth: 1.5 });
             } catch(e) { console.error("Error drawing unit cell:", e); }
          }
 
-        // --- Main Render Function (Using removeAllShapes) ---
+        // --- Main Render Function ---
         function renderStructure() {
             console.log(`--- Rendering Structure: Style=${currentViewStyle}, Supercell=${currentSupercell}, Comp=${currentComposition.toFixed(2)} ---`);
             try {
-                viewer.removeAllModels();
-                viewer.removeAllShapes(); // Clear previous cell/shapes
+                viewer.removeAllModels(); viewer.removeAllShapes(); // Clear previous state
 
                 const atoms = generateAtomArray(currentComposition, currentSupercell);
-                if (!atoms) { console.error("Atom generation failed."); return; }
-                if (atoms.length === 0) { console.warn("Generated 0 atoms."); displayViewerError("No atoms generated for current parameters."); return; }
+                if (!atoms || atoms.length === 0) { console.error("Atom generation failed or resulted in 0 atoms."); displayViewerError("Failed to generate atoms."); return; }
 
                 const pdbData = atomsToPDB(atoms);
-                 if (!pdbData || pdbData.trim() === "END" || pdbData.trim() === "") {
-                     console.error("PDB data generation failed or empty."); displayViewerError("Failed to generate structure data (PDB)."); return;
-                 }
+                 if (!pdbData || pdbData.trim() === "END" || pdbData.trim() === "") { console.error("PDB data empty."); displayViewerError("Failed structure data (PDB)."); return; }
 
-                 viewer.addModel(pdbData, "pdb");
-                 console.log("Model added from PDB data.");
+                 viewer.addModel(pdbData, "pdb"); console.log("Model added.");
 
-                 // Apply styles - Ensure atomColors keys are uppercase
-                 const styleColors = {};
-                 Object.keys(atomColors).forEach(key => styleColors[key] = atomColors[key]); // Use the uppercase map
-
-                 if (currentViewStyle === "stick") {
-                     viewer.setStyle({}, { stick: { radius: 0.12, colorscheme: { prop: 'elem', map: styleColors } } });
-                 } else if (currentViewStyle === "ballAndStick") {
-                      viewer.setStyle({}, {
-                          sphere: { scale: 0.35, colorscheme: { prop: 'elem', map: styleColors } },
-                          stick: { radius: 0.1, colorscheme: { prop: 'elem', map: styleColors } }
-                      });
-                 } else if (currentViewStyle === "spacefill") {
-                      viewer.setStyle({}, { sphere: { colorscheme: { prop: 'elem', map: styleColors } } });
-                 }
+                 // Apply styles using uppercase keys from atomColors map
+                 const styleColors = {}; Object.keys(atomColors).forEach(key => styleColors[key] = atomColors[key]);
+                 if (currentViewStyle === "stick") { viewer.setStyle({}, { stick: { radius: 0.12, colorscheme: { prop: 'elem', map: styleColors } } }); }
+                 else if (currentViewStyle === "ballAndStick") { viewer.setStyle({}, { sphere: { scale: 0.35, colorscheme: { prop: 'elem', map: styleColors } }, stick: { radius: 0.1, colorscheme: { prop: 'elem', map: styleColors } } }); }
+                 else if (currentViewStyle === "spacefill") { viewer.setStyle({}, { sphere: { colorscheme: { prop: 'elem', map: styleColors } } }); }
                  console.log(`Style applied: ${currentViewStyle}`);
 
                 // Re-draw cell if enabled
-                if (cellShown) {
-                    console.log("Cell is shown, calling drawUnitCellShape."); // Debug log
-                    drawUnitCellShape(currentSupercell);
-                } else {
-                     console.log("Cell is hidden."); // Debug log
-                }
+                if (cellShown) { console.log("Cell is shown, drawing."); drawUnitCellShape(currentSupercell); }
+                else { console.log("Cell is hidden."); }
 
                 // Set clickable
-                 viewer.setClickable({}, true, (atom, vwr) => { /* ... same click handler ... */
-                     console.log("Clicked atom data:", atom);
-                     vwr.removeAllLabels(); // Clear previous click labels
-                     vwr.addLabel(`Atom ${atom.serial}: ${atom.elem}`, { position: { x: atom.x, y: atom.y, z: atom.z }, backgroundColor: 'lightyellow', backgroundOpacity: 0.8, borderColor: 'black', borderWidth: 0.2, fontSize: 10 });
-                     setTimeout(() => vwr.removeAllLabels(), 2000); // Auto-remove after 2s
-                 });
+                 viewer.setClickable({}, true, (atom, vwr) => { console.log("Clicked atom data:", atom); vwr.removeAllLabels(); vwr.addLabel(`Atom ${atom.serial}: ${atom.elem}`, { position: { x: atom.x, y: atom.y, z: atom.z }, backgroundColor: 'lightyellow', backgroundOpacity: 0.8, borderColor: 'black', borderWidth: 0.2, fontSize: 10 }); setTimeout(() => vwr.removeAllLabels(), 2000); });
 
-                viewer.zoomTo();
-                viewer.render();
-                console.log("Structure rendered and zoomed.");
-
-            } catch (e) {
-                console.error("!!! Error during renderStructure:", e);
-                displayViewerError("An error occurred while rendering the structure.");
-            }
+                viewer.zoomTo(); viewer.render(); console.log("Structure rendered.");
+            } catch (e) { console.error("!!! Error during renderStructure:", e); displayViewerError("Error rendering structure."); }
         } // --- END RENDER STRUCTURE ---
 
-
-        // --- Event Listeners Setup (REVISED Button Handling) ---
-        function setupButtonListener(idSuffix, callback) {
-             const button = document.getElementById(`${controlsElementId}-${idSuffix}`);
-             if(button) { button.addEventListener("click", callback); } else { console.warn(`Button ${controlsElementId}-${idSuffix} not found.`); }
-        }
-
-        // ** REVISED Button Active State Handler **
-        function updateActiveButtons(clickedButton, buttonGroupSelector) {
-            // Find the group containing the clicked button
-             const buttonGroup = clickedButton.closest(buttonGroupSelector);
-             if (!buttonGroup) {
-                 console.warn("Could not find button group for selector:", buttonGroupSelector);
-                 return;
-             }
-             // Remove active class from all buttons within that specific group
-             buttonGroup.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
-             // Add active class to the actually clicked button
-             clickedButton.classList.add('active');
-         }
-
+        // --- Event Listeners Setup ---
+        function setupButtonListener(idSuffix, callback) { const button = document.getElementById(`${controlsElementId}-${idSuffix}`); if(button) button.addEventListener("click", callback); else console.warn(`Button ${controlsElementId}-${idSuffix} not found.`); }
+        function updateActiveButtons(clickedButton, buttonGroupSelector) { const buttonGroup = clickedButton.closest(buttonGroupSelector); if (!buttonGroup) { console.warn("Could not find button group:", buttonGroupSelector); return; } buttonGroup.querySelectorAll('button').forEach(btn => btn.classList.remove('active')); clickedButton.classList.add('active'); }
         // Comp Slider
-        const compSlider = document.getElementById(`${controlsElementId}-composition`);
-        if (compSlider) { compSlider.addEventListener("input", function() { currentComposition = parseFloat(this.value); if(compValueEl) compValueEl.textContent = `x = ${currentComposition.toFixed(2)}`; renderStructure(); }); }
-
-        // Style Buttons - Use direct event listeners and updateActiveButtons
-        controlsElement.querySelectorAll('.viz-controls button').forEach(button => {
-            button.addEventListener('click', function() {
-                currentViewStyle = this.dataset.style; // Get style from data attribute
-                updateActiveButtons(this, '.viz-controls'); // Update within this group
-                renderStructure();
-            });
-        });
-
+        const compSlider = document.getElementById(`${controlsElementId}-composition`); if (compSlider) { compSlider.addEventListener("input", function() { currentComposition = parseFloat(this.value); if(compValueEl) compValueEl.textContent = `x = ${currentComposition.toFixed(2)}`; renderStructure(); }); }
+        // Style Buttons
+        controlsElement.querySelectorAll('.viz-controls button').forEach(button => { button.addEventListener('click', function() { currentViewStyle = this.dataset.style; updateActiveButtons(this, '.viz-controls'); renderStructure(); }); });
         // Cell Buttons
-        setupButtonListener("btn-show-cell", () => {
-            console.log("Show Cell clicked. Current state:", cellShown); // Debug log
-            if (!cellShown) {
-                cellShown = true;
-                console.log("Setting cellShown = true, drawing cell.");
-                drawUnitCellShape(currentSupercell); // Draw the cell
-                viewer.render(); // Render the change
-            } else {
-                console.log("Cell already shown.");
-            }
-        });
-        setupButtonListener("btn-hide-cell", () => {
-            console.log("Hide Cell clicked. Current state:", cellShown); // Debug log
-            if (cellShown) {
-                cellShown = false;
-                console.log("Setting cellShown = false, removing shapes.");
-                viewer.removeAllShapes(); // Remove the cell shape
-                viewer.render(); // Render the change
-            } else {
-                 console.log("Cell already hidden.");
-            }
-        });
-
-        // Supercell Buttons - Use direct event listeners
-        controlsElement.querySelectorAll('.supercell-controls button').forEach(button => {
-            button.addEventListener('click', function() {
-                 currentSupercell = parseInt(this.dataset.size); // Get size from data attribute
-                 updateActiveButtons(this, '.supercell-controls'); // Update within this group
-                 renderStructure();
-            });
-        });
-
+        setupButtonListener("btn-show-cell", () => { if (!cellShown) { cellShown = true; console.log("Setting cellShown=true, drawing"); drawUnitCellShape(currentSupercell); viewer.render(); } });
+        setupButtonListener("btn-hide-cell", () => { if (cellShown) { cellShown = false; console.log("Setting cellShown=false, removing shapes"); viewer.removeAllShapes(); viewer.render(); } });
+        // Supercell Buttons
+        controlsElement.querySelectorAll('.supercell-controls button').forEach(button => { button.addEventListener('click', function() { currentSupercell = parseInt(this.dataset.size); updateActiveButtons(this, '.supercell-controls'); renderStructure(); }); });
         // Action Buttons
-        setupButtonListener("btn-spin", () => viewer.spin(true));
-        setupButtonListener("btn-stop", () => viewer.spin(false));
-        setupButtonListener("btn-screenshot", function() { /* ... same screenshot logic ... */
-            let imageData = viewer.pngURI(); let link = document.createElement('a'); const safeMaterialName = allMaterialDetails.materialName.replace(/ /g, '_').toLowerCase(); let compString = (vizData.composition.min_x !== vizData.composition.max_x) ? `_x${currentComposition.toFixed(2)}` : ""; link.download = `${safeMaterialName}_${vizData.structure_type}${compString}_${currentSupercell}x${currentSupercell}x${currentSupercell}.png`; link.href = imageData; document.body.appendChild(link); link.click(); document.body.removeChild(link);
-        });
+        setupButtonListener("btn-spin", () => viewer.spin(true)); setupButtonListener("btn-stop", () => viewer.spin(false));
+        setupButtonListener("btn-screenshot", function() { let imageData = viewer.pngURI(); let link = document.createElement('a'); const safeMaterialName = allMaterialDetails.materialName.replace(/ /g, '_').toLowerCase(); let compString = (vizData.composition.min_x !== vizData.composition.max_x) ? `_x${currentComposition.toFixed(2)}` : ""; link.download = `${safeMaterialName}_${vizData.structure_type}${compString}_${currentSupercell}x${currentSupercell}x${currentSupercell}.png`; link.href = imageData; document.body.appendChild(link); link.click(); document.body.removeChild(link); });
 
         // --- Initial Render ---
         renderStructure();
