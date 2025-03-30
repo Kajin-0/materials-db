@@ -39,7 +39,7 @@ Unchecked items `[ ]` are missing a matching key in `material_details.json`.
 - [x] Silicon Nitride Reinforced Silicon Carbide
 - [x] TUFROC
 - [x] Tantalum Hafnium Carbide
-- [ ] Thulium-doped YAG (Tm:YAG)
+- [x] Thulium-doped YAG (Tm:YAG)
 - [ ] Ultra-High Molecular Weight Polyethylene (UHMWPE)
 - [ ] Vacuum Multilayer Insulation (MLI)
 - [x] Yttria-Stabilized Zirconia (YSZ)
