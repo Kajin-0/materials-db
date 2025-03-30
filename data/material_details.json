@@ -3827,5 +3827,102 @@
       "wear resistant", "hard", "tough", "structural ceramic", "cutting tool",
       "bearing", "seal", "industry:mechanical", "industry:tooling", "industry:aerospace"
     ]
+  },
+  "TUFROC": {
+    "name": "TUFROC",
+    "formula": "SiO₂/Al₂O₃/B/Si based",
+    "synonyms": [ "Toughened Uni-piece Fibrous Reinforced Oxidation-resistant Composite", "Advanced Fibrous Insulation" ],
+    "category": "Composite",
+    "constituent_elements": ["Si", "O", "Al", "B"],
+    "description": "An advanced, lightweight, high-temperature fibrous ceramic composite insulation system developed by NASA Ames. Designed for thermal protection on sharp leading edges and nose caps of reentry vehicles experiencing higher heat fluxes and temperatures than areas covered by standard silica tiles (like LI-900). It combines a toughened fibrous insulation base with oxidation inhibitors and a high-emissivity surface treatment for enhanced durability and performance up to ~1600°C.",
+    "wiki_link": "https://technology.nasa.gov/patent/TOP2-189",
+    "safety": {
+      "toxicity": "Low for the finished composite. Machining generates fine ceramic fiber/particle dust requiring respiratory protection and ventilation.",
+      "handling": "More robust than standard silica tiles but still requires careful handling to prevent impact damage or surface abrasion."
+    },
+    "identification": {
+      "class": "Fibrous Ceramic Composite Insulation / TPS Material",
+      "crystal_structure": "Amorphous/Polycrystalline fibers (Silica, Alumina based) in a partially sintered network with infiltrated phases.",
+      "appearance": {"notes": "Solid tile or component, surface appearance depends on final coating/treatment (often dark/gray)."}
+    },
+    "advanced_fabrication_insights": {
+        "process_control": "Multi-step process involving blending high-purity refractory fibers (e.g., silica, alumina, aluminoborosilicate), forming a low-density preform, infiltration with boron and silicon-containing species (acting as sintering aids and oxidation inhibitors), followed by high-temperature sintering and potentially a final surface treatment/coating.",
+        "common_defects_impact": "Density gradients, incomplete infiltration, cracks, coating imperfections. Affect thermal performance, oxidation resistance, and mechanical integrity.",
+        "toughening_mechanism": {"notes": "Toughness derived from fiber blend, optimized sintering, and potentially crack-deflecting infiltrated phases, making it more durable than LI-900."},
+        "oxidation_resistance": {"notes": "Enhanced by incorporated Boron and Silicon compounds which form a protective borosilicate glass layer at high temperatures."}
+    },
+    "growth_fabrication_properties": {
+        "common_growth_methods": "Fiber Blending, Slurry Casting/Molding, Infiltration (sol-gel or CVI routes possible), Sintering, Surface Treatment.",
+        "source_materials_purity": "High purity refractory oxide fibers (SiO₂, Al₂O₃, Nextel), Boron and Silicon precursors/compounds.",
+        "preferred_substrates_orientations": "N/A (Bulk composite, typically near-net shape).",
+        "typical_growth_parameters": "High sintering temperatures (e.g., >1300°C), controlled atmospheres during infiltration and sintering.",
+        "passivation_methods": "Relies on in-situ formation of protective borosilicate glass layer and potentially an outer high-emissivity coating."
+    },
+    "post_growth_processing": {
+        "annealing": "Sintering is the primary high-temperature treatment.",
+        "lapping_polishing": "Surface condition critical, but typically achieved via coating/treatment rather than polishing.",
+        "etching": "Highly resistant.",
+        "grinding_milling": "Machinable to final dimensions using specialized diamond tooling before final treatments. Generates hazardous dust."
+    },
+     "device_integration_characterization": {
+        "device_architectures": "Thermal Protection System (TPS) components for sharp geometries (leading edges, nose caps, control surfaces) on hypersonic and reentry vehicles.",
+        "readout_integration": "N/A",
+        "ar_coatings": "N/A",
+        "packaging_cooling": "Used as passive thermal insulation in extreme heating environments. Bonded to underlying structure.",
+        "key_characterization_techniques": ["Arc-jet Testing (Simulated reentry heating/oxidation)", "Thermal Conductivity Measurement (high temp)", "Mechanical Testing (Strength, Toughness - often at high temp)", "Microstructural Analysis (SEM, EDS - phases, infiltration)", "Emissivity Measurement", "Density Measurement"]
+    },
+    "electrical_properties": {
+      "bandgap_type": "Insulator (Oxide based)",
+      "resistivity": {"value": "Very High", "notes": "Excellent electrical insulator."},
+      "dielectric_constant": {"value": "Low", "notes": "Expected to be low due to fibrous nature and porosity."}
+    },
+    "optical_properties": {
+      "spectral_range": "Opaque.",
+      "emissivity": {"value": "High (>0.8)", "notes": "Surface designed or coated for high thermal emissivity to radiate heat effectively."}
+    },
+    "thermal_properties": {
+      "operating_temperature": {"value": "Up to ~1600", "unit": "°C", "notes": "Designed for higher heat flux environments than standard silica tiles."},
+      "thermal_conductivity": {"value": "Very Low", "unit": "W/(m·K)", "notes": "Excellent thermal insulation, similar range to other fibrous insulations but designed for higher temperatures."},
+      "specific_heat": {"value": "~0.8-1.2", "unit": "J/(g·K)"},
+      "melting_point": {"notes": "Components melt >1700°C, but operational limit defined by sintering, phase stability, and oxidation resistance."},
+      "thermal_expansion": {"value": "Very Low", "unit": "/°C", "notes": "Excellent thermal stability."}
+    },
+     "mechanical_properties": {
+         "density": {"value": "Low (~0.2 - 0.4 g/cm³)", "notes": "Lightweight, density higher than LI-900 but much lower than RCC or UHTCs."},
+         "strength": {"notes": "Low absolute strength, but designed for thermal loads and moderate mechanical loads."},
+         "toughness": {"notes": "Significantly improved toughness and impact resistance compared to LI-900 / HRSI tiles."}
+     },
+     "device_applications": {
+         "key_applications": ["Thermal Protection Systems for Hypersonic Vehicles (Sharp Leading Edges, Nose Cones)", "Reentry Vehicle Control Surfaces", "High Heat Flux Insulation applications"]
+     },
+     "chemical_properties": {
+         "stability_oxidation": "Designed for enhanced oxidation resistance up to ~1600°C via formation of borosilicate glass layer.",
+         "chemical_inertness": "Generally inert ceramic base."
+     },
+     "comparison_alternatives": {
+         "notes": "Alternative Sharp Leading Edge / High Heat Flux TPS:",
+         "vs_LI-900_HRSI": "TUFROC: Higher temperature capability (~1600°C vs ~1260°C), higher heat flux tolerance, significantly tougher/more impact resistant, higher density. LI-900: Lower density, lower cost, extensive flight heritage (lower heating areas).",
+         "vs_Reinforced_CarbonCarbon_RCC": "TUFROC: Lower density, potential for lower cost, inherently insulating. RCC: Higher temperature capability in inert atm (>2000°C), structural capability, electrically conductive, requires SiC coating for oxidation resistance (limit ~1650°C).",
+         "vs_UHTC_Composites_Dibordides_Carbides": "TUFROC: Significantly lower density, primarily insulating function. UHTCs: Much higher intrinsic temperature limits (>2000°C), higher density, higher thermal conductivity (less insulating), higher cost, complex processing.",
+         "vs_Ablatives": "TUFROC: Reusable, maintains shape. Ablatives: Single-use, cool via mass loss, different mechanism, can handle very high heat fluxes for short durations."
+     },
+     "references_further_reading": {
+         "notes": "Key Resources:",
+         "nasa_tech_reports": "NASA Technical Reports and Conference Papers (e.g., AIAA) describing TUFROC development and testing (Search authors like D. Stewart, D. Leiser, S. Johnson).",
+         "nasa_ames_tps_info": "Information from NASA Ames Research Center's thermal protection materials branch.",
+         "patent_info": "Patents related to TUFROC composition and manufacturing."
+     },
+     "vendor_info": {
+        "notes": "Example Vendors (Placeholder):",
+        "vendor_1": "Company A - www.example-vendor-a.com",
+        "vendor_2": "Company B - www.example-vendor-b.com",
+        "vendor_3": "Company C - www.example-vendor-c.com"
+     },
+    "tags": [
+      "tps", "thermal protection system", "fibrous insulation", "reentry", "hypersonic",
+      "heat shield", "ceramic", "composite", "high temperature", "oxidation resistant",
+      "lightweight", "tough", "nasa", "aerospace", "industry:aerospace", "industry:space",
+      "industry:thermal"
+    ]
   }
 }
