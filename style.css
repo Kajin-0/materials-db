@@ -577,13 +577,13 @@ span.na-value {
 
 #section-periodic-table h2 { margin-bottom: 1rem; }
 
-/* The main container using CSS Grid */
-.periodic-table-container {
+/* The main wrapper using CSS Grid */
+.periodic-table-wrapper {
   display: grid;
   /* Define 19 columns: 1 for period labels + 18 element groups */
   grid-template-columns: minmax(20px, auto) repeat(18, minmax(45px, 1fr));
-  /* Define 11 rows: 1 for group labels + 7 periods + 1 gap + 2 f-block rows */
-  grid-template-rows: minmax(20px, auto) repeat(7, minmax(45px, auto)) 20px repeat(2, minmax(45px, auto)); /* Increased gap row */
+  /* Define 11 rows: 1 group label + 7 periods + 1 gap + 2 f-block rows */
+  grid-template-rows: minmax(20px, auto) repeat(7, minmax(45px, auto)) 20px repeat(2, minmax(45px, auto));
   gap: 3px;
   padding: 10px;
   background-color: #f0f2f5; /* Slightly different background */
@@ -593,12 +593,12 @@ span.na-value {
   font-size: 0.8rem;
   margin-bottom: 1.5rem;
   margin-top: 1rem;
-  position: relative;
+  position: relative; /* Keep relative for potential absolute children like tooltip */
 }
 
 /* Remove scrollbar visibility but keep functionality */
-.periodic-table-container::-webkit-scrollbar { display: none; }
-.periodic-table-container { -ms-overflow-style: none; scrollbar-width: none; }
+.periodic-table-wrapper::-webkit-scrollbar { display: none; }
+.periodic-table-wrapper { -ms-overflow-style: none; scrollbar-width: none; }
 
 /* Style for Group/Period Labels */
 .pt-label {
@@ -611,8 +611,8 @@ span.na-value {
   background-color: transparent;
   border-radius: 2px;
 }
-.pt-group-label { grid-row: 1; /* Position in first row */ }
-.pt-period-label { grid-column: 1; /* Position in first column */ }
+/* Group labels are positioned via inline styles (grid-row: 1; grid-column: 2 to 19) */
+/* Period labels are positioned via inline styles (grid-row: 2 to 8; grid-column: 1) */
 
 /* Element Tile Styling */
 .pt-element {
@@ -631,6 +631,7 @@ span.na-value {
   cursor: default;
   transition: transform 0.1s ease-out, box-shadow 0.15s ease-out, border-color 0.15s ease-out;
   border-radius: 3px;
+  /* Grid positioning done via inline styles */
 }
 
 .pt-element:hover {
@@ -655,16 +656,19 @@ span.na-value {
   line-height: 1;
 }
 
+/* Placeholder style for Lanthanide/Actinide gaps in main table */
 .pt-placeholder {
   background-color: #e2e8f0;
   border: 1px dashed #a0aec0;
   font-size: 0.8em;
   color: #718096;
   align-items: center;
+  /* Grid positioning done via inline styles */
 }
 .pt-placeholder .pt-number,
 .pt-placeholder .pt-mass { display: none; }
 
+/* Label for the Lanthanide/Actinide rows below */
 .pt-series-label {
    font-weight: bold;
    background-color: transparent;
@@ -674,6 +678,7 @@ span.na-value {
    font-size: 0.75rem;
    align-items: center;
    color: #4a5568;
+   /* Grid positioning done via inline styles */
 }
 .pt-series-label .pt-number,
 .pt-series-label .pt-mass { display: none; }
@@ -734,8 +739,9 @@ span.na-value {
     gap: 0.25rem;
   }
   /* Periodic Table Responsive */
-  .periodic-table-container {
+  .periodic-table-wrapper {
       grid-template-columns: minmax(15px, auto) repeat(18, minmax(38px, 1fr));
+      /* Rows: 1 group + 7 periods + 1 gap + 2 f-block = 11 */
       grid-template-rows: minmax(15px, auto) repeat(7, minmax(38px, auto)) 15px repeat(2, minmax(38px, auto));
       font-size: 0.7rem;
       gap: 2px;
@@ -761,8 +767,9 @@ span.na-value {
   #material-content-container .material-section { padding: 1rem 1.5rem; }
 
   /* Periodic Table Responsive */
-  .periodic-table-container {
+  .periodic-table-wrapper {
       grid-template-columns: minmax(15px, auto) repeat(18, minmax(32px, 1fr));
+      /* Rows: 1 group + 7 periods + 1 gap + 2 f-block = 11 */
       grid-template-rows: minmax(15px, auto) repeat(7, minmax(32px, auto)) 10px repeat(2, minmax(32px, auto));
       font-size: 0.6rem;
       padding: 5px;
@@ -804,8 +811,9 @@ span.na-value {
     .back-link { margin-left: 0.5rem; }
 
      /* Periodic Table Responsive */
-    .periodic-table-container {
+    .periodic-table-wrapper {
         grid-template-columns: minmax(12px, auto) repeat(18, minmax(25px, 1fr)); /* Further shrink */
+        /* Rows: 1 group + 7 periods + 1 gap + 2 f-block = 11 */
         grid-template-rows: minmax(12px, auto) repeat(7, minmax(25px, auto)) 8px repeat(2, minmax(25px, auto)); /* Adjusted gap row */
         gap: 1px;
         font-size: 0.5rem; /* Even smaller font */
