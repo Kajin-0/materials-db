@@ -9,41 +9,41 @@
     <!-- Optional: Placeholder favicon -->
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
 
-    <!-- ********** ADDED STYLES for section_detail.html ********** -->
+    <!-- Styles for section_detail.html -->
     <style>
         body {
-            background-color: #f9f9f9; /* Slightly softer background */
+            background-color: #f9f9f9;
         }
 
         .section-detail-container {
-            max-width: 1000px; /* Slightly wider */
-            margin: 1.5rem auto; /* More space top/bottom */
-            padding: 2rem; /* More internal padding */
+            max-width: 1000px;
+            margin: 1.5rem auto;
+            padding: 2rem;
             background-color: #ffffff;
-            border: 1px solid #e0e0e0; /* Softer border */
+            border: 1px solid #e0e0e0;
             border-radius: 8px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.05); /* Softer shadow */
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
         }
 
         /* --- Header Bar --- */
         .section-title-bar {
-            border-bottom: 1px solid #ddd; /* Lighter border */
+            border-bottom: 1px solid #ddd;
             padding-bottom: 1rem;
-            margin-bottom: 2rem; /* More space below header */
+            margin-bottom: 2rem;
         }
         .section-title-bar h1 {
             margin: 0;
-            font-size: 2rem; /* Larger section title */
-            color: #2c3e50; /* Dark blue-grey */
+            font-size: 2rem;
+            color: #2c3e50;
             margin-bottom: 0.25rem;
         }
         .section-title-bar .material-context {
-            font-size: 1.1rem; /* Larger context font */
+            font-size: 1.1rem;
             color: #555;
         }
 
         /* --- Back Link Specific Styling --- */
-        .section-detail-container > .back-link { /* Target only the top back link */
+        .section-detail-container > .back-link {
              display: inline-block;
              margin-bottom: 1.5rem;
              font-size: 0.95rem;
@@ -54,23 +54,22 @@
              text-decoration: underline;
          }
 
-
         /* --- Introduction Block --- */
         .section-introduction {
             font-size: 1.05rem;
             line-height: 1.7;
-            margin-bottom: 2.5rem; /* More space */
-            padding: 1.25rem 1.5rem; /* More padding */
-            background-color: #eef2f7; /* Light blue background */
-            border-left: 5px solid #4a90e2; /* Accent color */
+            margin-bottom: 2.5rem;
+            padding: 1.25rem 1.5rem;
+            background-color: #eef2f7;
+            border-left: 5px solid #4a90e2;
             border-radius: 5px;
         }
 
         /* --- Property Block Styling --- */
         .property-detail-block {
-            margin-bottom: 3rem; /* Increased spacing between properties */
+            margin-bottom: 3rem;
             padding-bottom: 2rem;
-            border-bottom: 1px solid #e8e8e8; /* Lighter separator */
+            border-bottom: 1px solid #e8e8e8;
         }
          .property-detail-block:last-child {
             border-bottom: none;
@@ -79,191 +78,128 @@
 
         /* Property Name (H3) */
         .property-detail-block h3 {
-            font-size: 1.6rem; /* Larger property name */
+            font-size: 1.6rem;
             color: #333;
             margin-bottom: 0.5rem;
-            font-weight: 600; /* Bolder */
+            font-weight: 600;
         }
 
         /* Property Summary */
         .property-detail-block .summary {
-             font-style: normal; /* Removed italics */
+             font-style: normal;
              color: #444;
-             margin-bottom: 1.5rem; /* More space below summary */
+             margin-bottom: 1.5rem;
              font-size: 1.05rem;
              padding-left: 1rem;
-             border-left: 3px solid #bdc3c7; /* Subtle indicator bar */
-             line-height: 1.6; /* Ensure good line height */
+             border-left: 3px solid #bdc3c7;
+             line-height: 1.6;
         }
 
         /* --- Subsection Styling --- */
         .detail-subsection {
-            margin-top: 1.5rem; /* More space above subsection */
+            margin-top: 1.5rem;
             margin-bottom: 1.5rem;
+            padding-left: 0.5rem;
         }
         .detail-subsection h4 {
-            font-size: 1.2rem; /* Larger subsection titles */
-            color: #16a085; /* Distinctive color (teal) */
-            margin-bottom: 0.8rem; /* More space below title */
+            font-size: 1.2rem;
+            color: #16a085;
+            margin-bottom: 0.8rem;
             padding-bottom: 0.4rem;
-            border-bottom: 1px solid #e0e0e0; /* Match container border */
-            font-weight: 500; /* Slightly less bold than H3 */
+            border-bottom: 1px solid #e0e0e0;
+            font-weight: 500;
         }
-
-        /* Lists within subsections */
         .detail-subsection ul {
-            list-style: disc; /* Keep standard bullets */
-            padding-left: 1.8rem; /* Slightly more indent */
+            list-style: disc;
+            padding-left: 1.8rem;
             margin-top: 0.5rem;
             margin-bottom: 1rem;
-            color: #333; /* Darker list text */
+            color: #333;
         }
         .detail-subsection li, .detail-subsection p {
-            margin-bottom: 0.6rem; /* Slightly more space between items */
+            margin-bottom: 0.6rem;
             line-height: 1.65;
         }
-        .detail-subsection p { /* Paragraphs within subsections (like measurement notes) */
+        .detail-subsection p {
              color: #444;
         }
 
-
         /* --- Equation Block Styling --- */
         .equation-block {
-            background-color: #f8f9fa; /* Light gray background */
-            padding: 1.5rem; /* More padding */
+            background-color: #f8f9fa;
+            padding: 1.5rem;
             border-radius: 6px;
             margin-bottom: 1.5rem;
             border: 1px solid #e9ecef;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.04); /* Subtle shadow */
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
         }
-        /* Equation Name */
         .equation-block .eq-name {
-             font-weight: 600;
-             display: block;
-             margin-bottom: 1rem; /* More space */
-             font-size: 1.1rem; /* Slightly larger */
-             color: #2980b9; /* Blue for equation name */
+             font-weight: 600; display: block; margin-bottom: 1rem; font-size: 1.1rem; color: #2980b9;
         }
-        /* Equation Description */
         .equation-block .eq-desc {
-             font-size: 0.95rem;
-             color: #555;
-             margin-bottom: 1.2rem; /* More space */
-             line-height: 1.6;
+             font-size: 0.95rem; color: #555; margin-bottom: 1.2rem; line-height: 1.6;
         }
-        /* Equation Formulas */
         .equation-block .eq-formula-html,
         .equation-block .eq-formula-plain {
-            font-family: 'Consolas', 'Menlo', 'Monaco', monospace;
-            font-size: 1.2rem; /* Larger font */
-            margin-bottom: 1.2rem; /* More space below formula */
-            word-wrap: break-word;
-            text-align: center; /* Center the formula */
-            display: block; /* Ensure it takes full width for centering */
-            padding: 0.8rem 0; /* Vertical padding around formula */
-            color: #1d2c3f; /* Darker color for formula */
+            font-family: 'Consolas', 'Menlo', 'Monaco', monospace; font-size: 1.2rem; margin-bottom: 1.2rem; word-wrap: break-word;
+            text-align: center; display: block; padding: 0.8rem 0; color: #1d2c3f;
         }
-         /* Equation Units */
-        .equation-block .eq-units { /* Added a class for potential styling */
-            font-size: 0.95em;
-            color: #555;
-            margin-bottom: 1rem; /* More space */
-            text-align: right; /* Align units right */
-            display: block; /* Ensure it takes width */
+        .equation-block .eq-units {
+            font-size: 0.95em; color: #555; margin-bottom: 1rem; text-align: right; display: block;
         }
-        /* Equation Variables */
         .equation-block .eq-vars strong { color: #333; }
         .equation-block .eq-vars ul { padding-left: 1rem; list-style: none; margin-top: 0.5rem; }
-        .equation-block .eq-vars li {
-            font-size: 0.95rem;
-            margin-bottom: 0.4rem;
-        }
-        /* Equation Reference */
-        .equation-block .eq-ref {
-            font-size: 0.9rem;
-            margin-top: 1rem; /* More space above ref */
-            text-align: right;
-            color: #777;
-        }
+        .equation-block .eq-vars li { font-size: 0.95rem; margin-bottom: 0.4rem; }
+        .equation-block .eq-ref { font-size: 0.9rem; margin-top: 1rem; text-align: right; color: #777; }
+        .equation-block .eq-ref a { text-decoration: none; color: #007bff; }
+        .equation-block .eq-ref a:hover { text-decoration: underline; }
 
         /* --- References Section --- */
         #references-section {
-            margin-top: 3rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid #ddd;
+            margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid #ddd;
         }
         #references-section h4 {
-             font-size: 1.3rem; /* Larger */
-             color: #2c3e50; /* Match header */
-             margin-bottom: 1rem;
+             font-size: 1.3rem; color: #2c3e50; margin-bottom: 1rem;
         }
         #references-list {
-            list-style: none;
-            padding-left: 0;
-            font-size: 0.95rem; /* Slightly larger */
-            line-height: 1.7;
+            list-style: none; padding-left: 0; font-size: 0.95rem; line-height: 1.7;
         }
          #references-list li {
-             margin-bottom: 0.7rem;
-             padding-left: 1.5rem; /* Indent reference text */
-             position: relative;
+             margin-bottom: 0.7rem; padding-left: 1.5rem; position: relative; /* Added */
          }
           #references-list li strong { /* Style the [RefKey] */
-             position: absolute;
-             left: 0;
-             top: 0;
-             font-weight: 600;
-             color: #555;
+             position: absolute; left: 0; top: 0.1em; font-weight: 600; color: #555;
          }
-         /* Highlight reference on link click */
-         #references-list li:target { /* Use :target pseudo-class */
-            background-color: #ffffcc;
-            /* Transition needs to be on the element itself, not just the target state */
-            transition: background-color 0.5s ease;
+         #references-list li:target { /* Highlight reference on link click */
+            background-color: #ffffcc; transition: background-color 0.5s ease;
          }
-         /* Add a style to remove highlight after a delay (optional, needs JS or complex CSS) */
-
 
         .ref-link { text-decoration: none; color: #007bff; }
         .ref-link:hover { text-decoration: underline; }
-
         .error-message { color: #c0392b; font-weight: bold; background-color: #fbeae5; padding: 1rem; border-radius: 4px; border: 1px solid #e74c3c;}
-
     </style>
-    <!-- ********** END ADDED STYLES ********** -->
-
 </head>
 <body>
     <div class="section-detail-container">
-        <!-- Back Link -->
         <a href="index.html" class="back-link">← Back to Materials List</a>
-
         <div class="section-title-bar">
             <h1 id="section-display-name">Loading Section...</h1>
             <div class="material-context" id="material-context">for Loading Material...</div>
         </div>
-
         <div class="section-content" id="section-content">
-            <!-- Introduction will be loaded here -->
             <p id="section-introduction" class="section-introduction" style="display: none;">Loading introduction...</p>
-
-            <!-- Property details will be loaded here -->
             <div id="properties-container">
                 <!-- Content generated dynamically by section_loader.js -->
             </div>
-        </div>
-
-        <!-- References section -->
-        <div id="references-section" style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #eee; display: none;"> <!-- Initially hidden -->
+            <!-- NO dark-current-container div here -->
+        </div> <!-- End section-content -->
+        <div id="references-section" style="display: none;"> <!-- Initially hidden -->
             <h4>References Cited</h4>
-            <ul id="references-list" style="list-style: none; padding-left: 0; font-size: 0.9rem;">
-                <!-- References will be loaded here by section_loader.js -->
+            <ul id="references-list">
+                <!-- References loaded by JS -->
             </ul>
         </div>
-
     </div>
-
-    <!-- Load the JS file -->
     <script src="section_loader.js"></script>
 </body>
 </html>
