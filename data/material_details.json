@@ -4127,5 +4127,116 @@
       "industry:lasers", "industry:medical", "industry:photonics", "industry:defense",
       "single crystal", "crystal"
     ]
+  },
+  "Ultra-High Molecular Weight Polyethylene (UHMWPE)": {
+    "name": "Ultra-High Molecular Weight Polyethylene (UHMWPE)",
+    "formula": "(C₂H₄)n",
+    "synonyms": [ "UHMWPE", "UHMW", "High Modulus Polyethylene", "HMPE", "Dyneema® Fiber", "Spectra® Fiber" ],
+    "category": "Polymer",
+    "constituent_elements": ["C", "H"],
+    "description": "A type of polyethylene with extremely long polymer chains (molecular weight typically 2-6 million g/mol), resulting in exceptional properties like outstanding abrasion resistance, very high impact strength (highest among thermoplastics), low coefficient of friction, and good chemical resistance. Often processed into bulk shapes (sheets, rods) for wear applications or spun into high-strength fibers (e.g., Dyneema®, Spectra®) used in armor, ropes, and composites. Its high melt viscosity makes conventional melt processing difficult.",
+    "wiki_link": "https://en.wikipedia.org/wiki/Ultra-high-molecular-weight_polyethylene",
+    "safety": {
+      "toxicity": "Low, generally considered biocompatible and used in medical implants.",
+      "handling": "Handle bulk shapes normally. Machining generates stringy chips; use sharp tools. Avoid inhaling dust. Fibers require specialized cutting tools."
+    },
+    "identification": {
+      "class": "Thermoplastic Polymer (Polyolefin)",
+      "crystal_structure": "Semi-crystalline (~39-75%)",
+      "molecular_weight": {"notes": "Extremely high, typically 2-6 million g/mol or higher."},
+      "appearance": {"notes": "Typically white, waxy surface feel."}
+    },
+    "advanced_fabrication_insights": {
+        "process_control": "Difficult melt processing due to extremely high viscosity. Bulk shapes typically made via compression molding or ram extrusion of powder. Fibers made via gel spinning.",
+        "common_defects_impact": "Poor consolidation or fusion in molded parts leads to reduced strength. Residual stresses from processing. Fiber orientation crucial in fiber-based products.",
+        "crystallinity_control": "Degree of crystallinity affects stiffness, yield strength, and wear resistance. Controlled by processing conditions (cooling rate).",
+        "wear_mechanism": "Excellent resistance to abrasive and sliding wear due to long chain entanglement and low friction. Can be susceptible to fatigue/adhesive wear in some conditions."
+    },
+    "growth_fabrication_properties": {
+        "common_growth_methods": "Polymerization using Ziegler-Natta or metallocene catalysts. Processing: Compression Molding, Ram Extrusion, Skiving (films), Gel Spinning (fibers).",
+        "source_materials_purity": "Ethylene monomer, specialized catalysts.",
+        "preferred_substrates_orientations": "N/A (Bulk polymer or fiber).",
+        "typical_growth_parameters": "Processing involves high pressures for molding/extrusion, or complex solvent/spinning processes for fibers.",
+        "passivation_methods": "Surface is relatively inert polyethylene."
+    },
+    "post_growth_processing": {
+        "annealing": "Can be used for stress relief or to modify crystallinity.",
+        "lapping_polishing": "Can be smoothed but difficult to achieve high polish.",
+        "etching": "Resistant to most chemical etching.",
+        "grinding_milling": "Machinable with sharp tools designed for plastics; tends to produce continuous chips ('gummy' behavior). Requires care to avoid overheating."
+    },
+     "device_integration_characterization": {
+        "device_architectures": "Bearing surfaces (orthopedic implants), wear strips/guides, chute/hopper liners, gears, star wheels, high-strength ropes/cables, ballistic fabrics/armor panels, filters, battery separators.",
+        "readout_integration": "N/A",
+        "ar_coatings": "N/A",
+        "packaging_cooling": "Operates well down to cryogenic temperatures. Upper temperature limited.",
+        "key_characterization_techniques": ["Molecular Weight Determination (Viscometry)", "Mechanical Testing (Tensile, Izod Impact, Abrasion Wear - e.g., Sand Slurry, Taber)", "Differential Scanning Calorimetry (DSC - Tm, crystallinity)", "Coefficient of Friction Testing", "Density Measurement"]
+    },
+    "electrical_properties": {
+      "bandgap_type": "Insulator",
+      "resistivity": {"value": "Very High (> 10¹⁵)", "unit": "Ω·cm", "notes": "Excellent electrical insulator."},
+      "dielectric_constant": {"value": "~2.3", "notes": "Low Dk."},
+      "dissipation_factor": {"value": "Very Low (<0.0002 @ 1MHz)", "notes": "Low dielectric loss."},
+      "dielectric_strength": {"value": "High (~18-35 kV/mm)", "notes": "Depends on grade and thickness."}
+    },
+    "optical_properties": {
+      "spectral_range": "Translucent to opaque white."
+    },
+    "thermal_properties": {
+      "operating_temperature": {"value": "Cryogenic up to ~80-100", "unit": "°C", "notes": "Maintains toughness at low temperatures. Limited by relatively low melting point."},
+      "thermal_conductivity": {"value": "Low (~0.4)", "unit": "W/(m·K)"},
+      "specific_heat": {"value": "~1.9", "unit": "J/(g·K)", "notes": "High specific heat."},
+      "melting_point": {"value": "~130-136", "unit": "°C"},
+      "thermal_expansion": {"value": "Very High (~150-200 x 10⁻⁶ /°C)", "notes": "Requires careful design consideration for thermal cycling."}
+    },
+     "mechanical_properties": {
+         "density": {"value": "Low (~0.93-0.95)", "unit": "g/cm³"},
+         "youngs_modulus": {"value": "~0.5-1.0", "unit": "GPa", "notes": "Bulk material is relatively flexible. Fibers have extremely high modulus (~100+ GPa)."},
+         "tensile_strength": {"value": "~20-40", "unit": "MPa", "notes": "Bulk material moderate strength. Fibers have extremely high strength (~2-4 GPa)."},
+         "elongation_at_break": {"value": "Very High (>300%)", "notes": "Bulk material is very ductile."},
+         "hardness_shore_d": {"value": "~60-65", "notes": "Relatively soft."},
+         "coefficient_of_friction": {"value": "Very Low (0.05-0.15 vs steel)", "notes": "Self-lubricating."},
+         "impact_strength": {"notes": "Outstanding; highest of any thermoplastic. Often does not break in standard notched Izod tests."},
+         "abrasion_resistance": {"notes": "Exceptional; often considered the best among thermoplastics for sliding abrasion."}
+     },
+     "device_applications": {
+         "key_applications": ["Medical Implants (Bearing surfaces in total joint replacements - Hip, Knee, Shoulder)", "Ballistic Protection (Body armor vests, helmets, vehicle armor - as fiber/composite)", "High-Performance Ropes, Lines, and Cables (Marine, Climbing, Fishing, Lifting Slings)", "Industrial Wear Components (Liners for chutes/hoppers, guide rails, wear strips, chain guides)", "Low-Friction Gears and Bushings", "Porous Parts (Filters, Battery Separators)"]
+     },
+     "chemical_properties": {
+         "stability_oxidation": "Good at operating temperatures. Susceptible to long-term UV degradation unless stabilized.",
+         "solvent_resistance": "Excellent resistance to water, acids, bases, detergents, and most organic solvents at room temperature. Can be affected by oxidizing agents and some hydrocarbons at elevated temperatures.",
+         "acid_resistance": "Excellent.",
+         "base_resistance": "Excellent.",
+         "biocompatibility": {"notes": "Excellent biocompatibility; long history of use in medical implants."},
+         "water_absorption": {"value": "Extremely Low (<0.01%)"}
+     },
+     "comparison_alternatives": {
+         "notes": "Alternative Wear/Impact/Fiber Materials:",
+         "vs_HDPE_HMWPE": "UHMWPE: Significantly higher molecular weight, vastly superior abrasion resistance and impact strength, lower friction, more difficult to process. HDPE/HMWPE: Easier to process (injection moldable), lower cost, inferior wear/impact properties.",
+         "vs_PTFE": "UHMWPE: Much better abrasion and impact resistance, lower cost, potentially higher friction (but still very low). PTFE: Lower coefficient of friction, wider temperature range, better chemical inertness, higher cost, poor wear/creep resistance unless filled.",
+         "vs_Nylon_Acetal_POM": "UHMWPE: Significantly better abrasion and impact resistance, lower friction, better chemical/moisture resistance. Nylon/Acetal: Higher stiffness and yield strength, easier machining, higher friction coefficient.",
+         "vs_Aramid_Fibers_Kevlar_Twaron": "UHMWPE Fibers (Dyneema/Spectra): Higher specific strength (strength/weight), lower density, floats on water, excellent chemical/UV resistance, lower temperature limit (~100°C), higher creep. Aramid Fibers: Higher temperature resistance (~400°C), lower creep, good specific strength, susceptible to UV/moisture degradation.",
+         "vs_Carbon_Fibers": "UHMWPE Fibers: Higher impact toughness, lower density, electrically insulating. Carbon Fibers: Much higher stiffness (modulus), higher compressive strength, higher temperature resistance, electrically conductive."
+     },
+     "references_further_reading": {
+         "notes": "Key Resources:",
+         "book_polymer_science": "Standard textbooks on Polymer Science and Engineering.",
+         "supplier_datasheets": "Technical datasheets from major UHMWPE suppliers (e.g., Celanese (GUR), LyondellBasell, Braskem) and fiber suppliers (DSM Dyneema, Honeywell Spectra).",
+         "journal_wear": "Journal 'Wear' for tribological studies.",
+         "journal_biomaterials": "Journal 'Biomaterials' for medical implant applications.",
+         "wikipedia": "https://en.wikipedia.org/wiki/Ultra-high-molecular-weight_polyethylene"
+     },
+     "vendor_info": {
+        "notes": "Suppliers provide resin powder, stock shapes (rod, sheet, profiles), or fibers.",
+        "vendor_1": "Company A - www.example-vendor-a.com",
+        "vendor_2": "Company B - www.example-vendor-b.com",
+        "vendor_3": "Company C - www.example-vendor-c.com"
+     },
+    "tags": [
+      "polymer", "thermoplastic", "polyethylene", "uhmwpe", "high impact strength",
+      "abrasion resistant", "wear resistant", "low friction", "lightweight", "medical implant",
+      "biocompatible", "bearing", "fiber", "rope", "armor", "chemical resistant",
+      "industry:medical", "industry:defense", "industry:industrial", "industry:marine"
+    ]
   }
 }
