@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // --- Get DOM elements ---
     const materialNameEl = document.getElementById("material-name");
     const tocListEl = document.getElementById("toc-list");
-    const mainContentEl = document.getElementById("main-content"); // Container for all sections
+    const mainContentEl = document.getElementById("main-content");
     const referencesSectionEl = document.getElementById("references-section");
     const referencesListEl = document.getElementById("references-list");
 
@@ -14,7 +14,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.error("[Full Detail] Error:", message);
         if (materialNameEl) materialNameEl.textContent = "Error Loading Material";
         if (tocListEl) tocListEl.innerHTML = '<li>Error loading contents</li>';
-        // Display error within the main content area
         if (mainContentEl) mainContentEl.innerHTML = `<p class="error-message">Could not load material details: ${message}</p>`;
         if (referencesSectionEl) referencesSectionEl.style.display = 'none';
         document.title = "Error - Material Detail";
@@ -25,7 +24,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         displayError("Material name missing from URL parameters.");
         return;
     }
-
     const materialName = decodeURIComponent(materialNameParam);
 
     // --- Update Title Bar ---
@@ -47,9 +45,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         const materialDetails = await response.json();
-        const sectionDataMap = new Map(); // Store section data for later processing
+        const sectionDataMap = new Map();
 
-        // --- Process References (Collect all unique refs used anywhere) ---
+        // --- Process References ---
         const collectedRefs = new Set();
         const processRefs = (data) => {
              if (typeof data === 'object' && data !== null) {
@@ -62,13 +60,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         // --- Build Table of Contents & Store Section Data ---
         if (tocListEl && mainContentEl) {
-            tocListEl.innerHTML = ''; // Clear loading state
+            tocListEl.innerHTML = '';
             for (const sectionKey in materialDetails) {
                 if (sectionKey === 'materialName' || sectionKey === 'references') continue;
                 const sectionData = materialDetails[sectionKey];
                 if (typeof sectionData !== 'object' || sectionData === null) continue;
 
-                sectionDataMap.set(sectionKey, sectionData); // Store data
+                sectionDataMap.set(sectionKey, sectionData);
 
                 const sectionDisplayName = sectionData.displayName || sectionKey.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
                 const sectionId = `section-${sectionKey}`;
@@ -98,7 +96,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                  sectionIntroEl.style.display = sectionData.introduction ? 'block' : 'none';
              }
              if (propertiesContainerEl && sectionData.properties && typeof sectionData.properties === 'object') {
-                 propertiesContainerEl.innerHTML = ''; // Clear
+                 propertiesContainerEl.innerHTML = '';
                  Object.entries(sectionData.properties).forEach(([propKey, propData]) => {
                      const propertyBlockElement = renderPropertyBlock(propKey, propData, materialDetails);
                      if (propertyBlockElement) { propertiesContainerEl.appendChild(propertyBlockElement); }
@@ -107,37 +105,10 @@ document.addEventListener("DOMContentLoaded", async () => {
              } else if (propertiesContainerEl) {
                  propertiesContainerEl.style.display = 'none';
              }
-             sectionElement.style.display = 'block'; // Make section visible
+             sectionElement.style.display = 'block';
         }
 
-        // --- Trigger KaTeX Rendering AFTER content is added ---
-        // Check if katex object exists (loaded from CDN)
-        if (typeof katex !== 'undefined') {
-            // Find all elements meant for KaTeX rendering (e.g., the formula containers)
-            const mathElements = mainContentEl.querySelectorAll('.eq-formula-container.eq-formula-latex');
-            mathElements.forEach(el => {
-                 // Assuming the LaTeX string was stored somewhere accessible, or re-fetch if needed
-                 // This part needs refinement - how do we get the raw LaTeX string back here?
-                 // Option 1: Store raw LaTeX in a data attribute during block rendering
-                 // Option 2: Use KaTeX auto-render extension instead (simpler)
-
-                 // Let's revert to trying auto-render for simplicity now:
-                 // Re-add the auto-render call here, targeting the main content area
-                 renderMathInElement(mainContentEl, {
-                     delimiters: [
-                         {left: '$$', right: '$$', display: true},
-                         {left: '$', right: '$', display: false},
-                         {left: '\\(', right: '\\)', display: false},
-                         {left: '\\[', right: '\\]', display: true}
-                     ],
-                     throwOnError : false
-                 });
-
-            });
-            console.log("KaTeX rendering attempted using auto-render.");
-        } else {
-            console.warn("KaTeX library not found. LaTeX formulas will not be rendered.");
-        }
+        // --- KaTeX Rendering Call REMOVED ---
 
 
         // --- Populate References ---
@@ -185,7 +156,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                  const subsection = document.createElement('div');
                  subsection.className = `detail-subsection ${detailKey.replace(/ /g, '_').toLowerCase()}`;
                  const subsectionTitle = document.createElement('h4');
-                 subsection.appendChild(subsectionTitle);
+                 subsection.appendChild(subsectionTitle); // Title handled by CSS
 
                  if (Array.isArray(detailContent) && detailKey !== 'equations') { // List of strings
                      const ul = document.createElement('ul');
@@ -197,22 +168,21 @@ document.addEventListener("DOMContentLoaded", async () => {
                          if (eq.name) { const nameEl = document.createElement('span'); nameEl.className = 'eq-name'; nameEl.textContent = eq.name; eqBlock.appendChild(nameEl); }
                          if (eq.description) { const descEl = document.createElement('p'); descEl.className = 'eq-desc'; descEl.innerHTML = eq.description; eqBlock.appendChild(descEl); }
 
-                         // *** MODIFIED: Output LaTeX directly for auto-render or fallback ***
+                         // *** REVERTED: Prioritize HTML, then Plain for formula rendering ***
                          const formulaContainer = document.createElement('div');
-                         // Use a consistent class name regardless of content type
+                         // Use a consistent class name for styling
                          formulaContainer.className = 'eq-formula-container';
-                         if (eq.formula_latex) {
-                             // Output LaTeX string wrapped in delimiters for auto-render
-                             // Using block delimiters \[ \]
-                             formulaContainer.textContent = `\\[${eq.formula_latex}\\]`;
-                             formulaContainer.setAttribute('data-latex-source', eq.formula_latex); // Store raw latex if needed
-                         } else if (eq.formula_html) { // Fallback to HTML
+                         if (eq.formula_html) {
                              formulaContainer.innerHTML = eq.formula_html;
-                         } else if (eq.formula_plain) { // Fallback to Plain
+                             formulaContainer.classList.add('eq-formula-html'); // Add class if needed
+                         } else if (eq.formula_plain) {
                              formulaContainer.textContent = eq.formula_plain;
+                             formulaContainer.classList.add('eq-formula-plain');
+                         } else {
+                             formulaContainer.textContent = "[Formula not available]"; // Placeholder if neither exists
                          }
                          eqBlock.appendChild(formulaContainer);
-                         // *** END MODIFICATION ***
+                         // *** END REVERTED LOGIC ***
 
                          if(eq.units){ const unitsEl = document.createElement('div'); unitsEl.className = 'eq-units'; unitsEl.innerHTML = `Units: ${eq.units}`; eqBlock.appendChild(unitsEl); }
                          if (eq.variables && Array.isArray(eq.variables)) {
@@ -225,7 +195,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                              eqBlock.appendChild(refEl);
                          }
                          subsection.appendChild(eqBlock); });
-                 } else if (detailKey === 'measurement_characterization' && typeof detailContent === 'object') {
+                 } else if (detailKey === 'measurement_characterization' && typeof detailContent === 'object') { // Measurement object
                      if(detailContent.techniques && Array.isArray(detailContent.techniques)){ const techDiv = document.createElement('div'); techDiv.className = "techniques"; const ulTech = document.createElement('ul'); detailContent.techniques.forEach(tech => { const li = document.createElement('li'); li.innerHTML = tech; ulTech.appendChild(li); }); techDiv.appendChild(ulTech); subsection.appendChild(techDiv); }
                      if(detailContent.considerations && Array.isArray(detailContent.considerations)){ const considDiv = document.createElement('div'); considDiv.className = "considerations"; if (detailContent.techniques && subsection.querySelector('.techniques')) { const considTitle = document.createElement('p'); considTitle.innerHTML = '<strong>Considerations:</strong>'; considTitle.style.marginTop = '1rem'; considDiv.appendChild(considTitle); } const ulConsid = document.createElement('ul'); detailContent.considerations.forEach(note => { const li = document.createElement('li'); li.innerHTML = note; ulConsid.appendChild(li); }); considDiv.appendChild(ulConsid); subsection.appendChild(considDiv); }
                  } else if (typeof detailContent === 'string') { const p = document.createElement('p'); p.innerHTML = detailContent; subsection.appendChild(p);
