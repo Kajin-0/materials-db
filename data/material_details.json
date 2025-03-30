@@ -2883,5 +2883,112 @@
       "high light yield", "high density", "non-hygroscopic", "single crystal",
       "industry:medical", "industry:physics", "industry:security", "industry:energy"
     ]
+  },
+  "Lead Tungstate": {
+    "name": "Lead Tungstate",
+    "formula": "PbWO₄",
+    "synonyms": [ "PWO", "Lead Tungstate Crystal" ],
+    "category": "Scintillator",
+    "constituent_elements": ["Pb", "W", "O"],
+    "description": "A high-density, intrinsically fast, radiation-hard inorganic scintillator crystal. Known for its extremely high density, short radiation length, excellent radiation hardness, and very fast scintillation decay component (though with relatively low light yield). Its primary application was in large-scale electromagnetic calorimeters for high-energy physics experiments, notably at CERN (CMS and ALICE experiments).",
+    "wiki_link": "https://en.wikipedia.org/wiki/Lead(II)_tungstate",
+    "safety": {
+      "toxicity": "High (Contains Lead). Handle with gloves. Avoid generating dust during machining; follow lead safety protocols.",
+      "handling": "Standard optical crystal handling, but be mindful of lead content. Brittle."
+    },
+    "identification": {
+      "cas_number": "7759-01-5",
+      "class": "Inorganic Scintillator Crystal, Tungstate",
+      "crystal_structure": "Tetragonal (Scheelite structure, I4₁/a space group) - stable phase at RT. Monoclinic (Stolzite) phase also exists.",
+      "lattice_constant": {"value": "a=5.462, c=12.048", "unit": "Å", "notes": "Tetragonal Scheelite phase."},
+      "phase_diagram_notes": "Congruently melting compound. Typically grown by Czochralski or Bridgman methods."
+    },
+    "advanced_fabrication_insights": {
+        "stoichiometry_control": "Maintaining PbO:WO₃ stoichiometry is crucial. Deviations can lead to color centers and affect scintillation properties (light yield, transparency, radiation hardness).",
+        "common_defects_impact": "Oxygen vacancies, Pb vacancies, color centers (F-centers), inclusions (e.g., PbWO₄·PbO). Cause absorption bands (yellowing), reduce light yield, affect radiation hardness and decay kinetics.",
+        "surface_preparation": "Requires high-quality optical polishing for light collection.",
+        "method_specific_notes": "Growth requires high temperatures and careful control of atmosphere (often slightly oxidizing) and stoichiometry to minimize defects. Post-growth annealing critical for optimizing optical properties and radiation hardness."
+    },
+    "growth_fabrication_properties": {
+        "common_growth_methods": "Czochralski (CZ), Bridgman-Stockbarger methods.",
+        "source_materials_purity": "High purity PbO and WO₃ powders (>4N or 5N).",
+        "preferred_substrates_orientations": "N/A (Bulk crystal growth).",
+        "typical_growth_parameters": "Melting point ~1123°C. Requires platinum or iridium crucibles. Precise temperature control and slow cooling are necessary.",
+        "passivation_methods": "Surface typically polished."
+    },
+    "post_growth_processing": {
+        "annealing": "CRITICAL post-growth annealing in oxygen-containing atmosphere is used to reduce oxygen vacancies and improve optical transmission and radiation hardness.",
+        "lapping_polishing": "Standard optical grinding and polishing techniques using appropriate slurries.",
+        "etching": "Resistant to most common etchants.",
+        "grinding_milling": "Diamond tooling required for cutting and shaping the brittle crystals."
+    },
+     "device_integration_characterization": {
+        "device_architectures": "Scintillation detectors, primarily large tapered crystals for electromagnetic calorimeters.",
+        "readout_integration": "Coupled to photodetectors (historically PMTs or APDs).",
+        "ar_coatings": "Not typically used.",
+        "packaging_cooling": "Operated at controlled room temperature (performance is temperature dependent). Requires precise mechanical support in large detector arrays.",
+        "key_characterization_techniques": ["Light Yield Measurement (photons/MeV)", "Decay Time Measurement", "Emission Spectrum Measurement", "Optical Transmission Spectrum", "Radiation Hardness Testing (monitoring transmission/light yield after irradiation)", "Energy Resolution (difficult due to low light yield)"]
+    },
+    "electrical_properties": {
+      "bandgap_type": "Insulator (Wide Bandgap)",
+      "band_gap": {"value": "~4.4-5.0", "unit": "eV"},
+      "resistivity": {"value": "Very High (> 10¹⁰ Ω·cm)"}
+    },
+    "optical_properties": {
+      "spectral_range": "Transparent above ~330-350 nm (depending on purity/defects).",
+      "emission_peak": {"value": "~420-440 nm (blue), ~480-520 nm (green)", "notes": "Emission spectrum complex, sensitive to defects/temperature. Fast component mainly blue."},
+      "decay_time": {"value": "<10 ns (fast), ~30 ns (medium)", "unit": "ns", "notes": "Multiple decay components. Dominated by fast decay (~80-90%), crucial for high rate capability."},
+      "light_yield": {"value": "Low (~100-300 photons/MeV)", "notes": "Significantly lower than LYSO, BGO, or NaI(Tl). Requires sensitive photodetectors."},
+      "refractive_index": {"value": "~2.1-2.3", "notes": "High refractive index."},
+      "radiation_hardness": {"notes": "Excellent intrinsic radiation hardness, a key advantage for HEP calorimeters."}
+    },
+    "thermal_properties": {
+      "operating_temperature": {"value": "Typically controlled room temp (e.g., 18°C for CMS)", "notes": "Light yield strongly decreases with increasing temperature."},
+      "thermal_conductivity": {"value": "Low (~1-2)", "unit": "W/(m·K)"},
+      "specific_heat": {"value": "~0.2", "unit": "J/(g·K)"},
+      "melting_point": {"value": "1123", "unit": "°C"},
+      "thermal_expansion": {"value": "~15-25 x 10⁻⁶", "unit": "/°C", "notes": "Anisotropic and relatively high."}
+    },
+     "mechanical_properties": {
+         "density": {"value": "8.28", "unit": "g/cm³", "notes": "Very high density, short radiation length (X₀ ≈ 0.89 cm)."},
+         "youngs_modulus": {"value": "~50-60", "unit": "GPa"},
+         "hardness_mohs": {"value": "~3"},
+         "fracture_toughness": {"value": "Very Low (<0.5)", "unit": "MPa·m⁰·⁵", "notes": "Very brittle."}
+     },
+     "device_applications": {
+         "sensor_types": ["Scintillation Detector (for Electromagnetic Calorimetry)"],
+         "key_applications": ["High-Energy Physics Electromagnetic Calorimeters (e.g., CMS and ALICE at LHC, PANDA at FAIR)", "Photon detection in high radiation environments"]
+     },
+     "chemical_properties": {
+         "stability_oxidation": "Stable oxide/tungstate.",
+         "chemical_inertness": "Relatively inert.",
+         "water_solubility": "Practically insoluble in water.",
+         "hygroscopic": {"notes": "Non-hygroscopic."}
+     },
+     "comparison_alternatives": {
+         "notes": "Alternative Calorimeter Scintillators:",
+         "vs_BGO": "PWO: Much faster decay, more radiation hard, lower light yield, lower density. BGO: Higher light yield, slower decay, lower radiation hardness, higher density.",
+         "vs_LYSO_LSO": "PWO: Faster decay (dominant component), much lower light yield, higher density, potentially more radiation hard, cheaper raw materials. LYSO/LSO: Much higher light yield, slightly slower decay, lower density.",
+         "vs_CsI(Tl)": "PWO: Much faster, much more radiation hard, higher density, non-hygroscopic, much lower light yield. CsI(Tl): Very high light yield, very slow decay, hygroscopic, less radiation hard."
+     },
+     "references_further_reading": {
+         "notes": "Key Literature Resources:",
+         "cms_tdr": "CERN/LHCC 94-38, CMS Collaboration, The Electromagnetic Calorimeter Project Technical Design Report.",
+         "review_lecoq": "Lecoq, P. et al. 'Lead tungstate (PbWO₄) scintillators for high-energy physics experiments.' (Nuclear Instruments and Methods in Physics Research Section A, Reviews)",
+         "journal_nim_a": "Nuclear Instruments and Methods in Physics Research Section A.",
+         "wikipedia": "https://en.wikipedia.org/wiki/Lead(II)_tungstate"
+     },
+     "vendor_info": {
+        "notes": "Production often specialized for large HEP projects.",
+        "vendor_1": "Bogoroditsk Techno-Chemical Plant (BTCP, Russia - historical major producer for CMS)",
+        "vendor_2": "Shanghai Institute of Ceramics (SICCAS, China - historical major producer for CMS)",
+        "vendor_3": "Crytur (Czech Republic)"
+     },
+    "tags": [
+      "scintillator", "crystal", "radiation detection", "gamma ray", "calorimeter",
+      "high energy physics", "inorganic", "tungstate", "very fast decay", "radiation hard",
+      "high density", "non-hygroscopic", "single crystal", "lead", "toxic",
+      "industry:physics", "industry:research"
+    ]
   }
 }
