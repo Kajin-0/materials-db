@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Material Detail</title> <!-- Title will be set dynamically -->
+    <link rel="stylesheet" href="style.css"> <!-- Link to main style.css if needed -->
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    <style>
+        /* Clean, professional styling (Based on Claude's output + modifications) */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.5;
+            color: #333;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        .full-detail-container { /* Renamed container */
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        /* Back link */
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1.5rem;
+            color: #0066cc;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        .back-link:hover { text-decoration: underline; }
+        .back-link::before { content: "←"; margin-right: 0.4rem; }
+
+        /* Material Title Bar */
+        .material-title-bar {
+             margin-bottom: 2rem;
+             padding-bottom: 1rem;
+             border-bottom: 1px solid #e0e0e0;
+        }
+         .material-title-bar h1 {
+             margin: 0 0 0.25rem 0;
+             font-size: 2rem; /* Larger Material Name */
+             color: #1a1a1a;
+             font-weight: 600;
+         }
+         /* Style for main page elements if needed here */
+
+
+        /* Table of Contents */
+        #toc {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+        #toc h2 {
+            margin-top: 0;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            color: #495057;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 0.5rem;
+        }
+        #toc ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            columns: 2; /* Use columns for shorter TOC */
+            -webkit-columns: 2;
+            -moz-columns: 2;
+        }
+        #toc li {
+            margin-bottom: 0.5rem;
+        }
+        #toc a {
+            text-decoration: none;
+            color: #0066cc;
+            font-size: 0.95rem;
+        }
+        #toc a:hover {
+            text-decoration: underline;
+        }
+
+        /* Section Styling */
+        .detail-content-section {
+            margin-bottom: 2.5rem;
+            padding-top: 1rem; /* Add space for jumping via hash link */
+        }
+        .detail-content-section h2 { /* Section Title */
+            font-size: 1.75rem;
+            color: #2c3e50;
+            font-weight: 600;
+            margin-top: 0; /* Anchor point is the section itself */
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #ccc;
+        }
+
+        /* Introduction */
+        .section-introduction {
+            margin-bottom: 2rem; padding: 1.25rem; background-color: #f1f7fe;
+            border-left: 4px solid #2980b9; border-radius: 4px; font-size: 1rem; line-height: 1.6;
+        }
+
+        /* Property blocks */
+        .property-detail-block {
+            margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid #eee;
+        }
+        .property-detail-block:last-child { border-bottom: none; }
+        .property-detail-block h3 { /* Property Name */
+            font-size: 1.4rem; color: #343a40; /* Slightly darker */
+            margin: 0 0 0.5rem 0; font-weight: 600;
+        }
+        .property-detail-block .summary {
+            color: #555; margin-bottom: 1.25rem; padding-left: 0.75rem;
+            border-left: 3px solid #ddd; line-height: 1.6;
+        }
+
+        /* Subsections */
+        .detail-subsection { margin: 1.25rem 0 1.25rem 0.5rem; }
+        .detail-subsection h4 { font-size: 0; margin: 0 0 0.75rem 0; padding-bottom: 0.3rem; border-bottom: 1px solid #eee; }
+        .detail-subsection h4::before { font-size: 1.1rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; display: block; }
+        .detail-subsection.key_characteristics h4::before { content: "Key Characteristics"; color: #2980b9; }
+        .detail-subsection.measurement_characterization h4::before { content: "Measurement & Characterization"; color: #8e44ad; }
+        .detail-subsection.device_relevance h4::before { content: "Device Relevance / Impact"; color: #27ae60; }
+        .detail-subsection.doping_methods h4::before { content: "Doping Methods"; color: #c0392b; }
+        .detail-subsection.equations h4::before { content: "Equations"; color: #d35400; }
+        .detail-subsection.significance h4::before { content: "Significance"; color: #27ae60; }
+        .detail-subsection.techniques h4::before { content: "Techniques"; color: #8e44ad; }
+        .detail-subsection.considerations h4::before { content: "Considerations"; color: #8e44ad; }
+
+        .detail-subsection ul { padding-left: 1.5rem; margin: 0.5rem 0 1rem 0; list-style: none; }
+        .detail-subsection li { margin-bottom: 0.6rem; line-height: 1.6; position: relative; padding-left: 1.2rem; }
+        .detail-subsection li::before { content: "\2023"; color: #555; font-weight: normal; display: inline-block; position: absolute; left: 0; width: 1em; }
+        .detail-subsection p { margin-bottom: 0.5rem; line-height: 1.6; margin-left: 0.5rem; }
+        .detail-subsection.measurement_characterization .considerations li::before { content: "\25B8"; color: #8e44ad; }
+        .detail-subsection.measurement_characterization .considerations li,
+        .detail-subsection.measurement_characterization .considerations p { font-size: 0.9rem; color: #444; }
+
+        /* Equation blocks */
+        .equation-block { background-color: #f8f9fa; padding: 1.25rem; border-radius: 6px; margin: 1rem 0; border: 1px solid #e9ecef; }
+        .equation-block .eq-name { font-weight: 600; color: #2980b9; margin-bottom: 0.75rem; display: block; font-size: 1rem; }
+        .equation-block .eq-desc { color: #555; margin-bottom: 1rem; font-size: 0.9rem; }
+        .equation-block .eq-formula-html,
+        .equation-block .eq-formula-plain {
+            font-family: 'Consolas', 'Menlo', 'Monaco', monospace; background-color: #eef2f7;
+            padding: 0.75rem; border-radius: 4px; font-size: 1.1rem; overflow-x: auto;
+            color: #1d2c3f; margin: 0.75rem 0;
+            text-align: center; /* **** Centered Equation **** */
+            display: block;
+        }
+        .equation-block .eq-units { font-size: 0.85rem; color: #555; text-align: right; margin-bottom: 0.75rem; }
+        .equation-block .eq-vars strong { color: #333; }
+        .equation-block .eq-vars ul { padding-left: 1rem; list-style: none; margin-top: 0.5rem; }
+        .equation-block .eq-vars li { font-size: 0.9rem; margin-bottom: 0.4rem; }
+        .equation-block .eq-ref { font-size: 0.85rem; color: #777; text-align: right; margin-top: 0.75rem; }
+        .equation-block .eq-ref a { color: #0066cc; text-decoration: none; }
+        .equation-block .eq-ref a:hover { text-decoration: underline; }
+
+        /* References section */
+        #references-section { margin-top: 2.5rem; padding-top: 1.25rem; border-top: 1px solid #e0e0e0; }
+        #references-section h4 { font-size: 1.15rem; color: #2c3e50; margin: 0 0 1rem 0; }
+        #references-list { list-style: none; padding-left: 0; font-size: 0.9rem; }
+        #references-list li {
+             margin-bottom: 0.75rem;
+             padding-left: 0; /* Remove padding */
+             /* position: relative; */ /* REMOVED */
+             list-style-position: outside;
+             text-indent: -1.5rem; /* Apply negative indent */
+             margin-left: 1.5rem; /* Apply positive margin */
+        }
+        #references-list li strong {
+             /* position: absolute; */ /* REMOVED */
+             /* left: 0; */ /* REMOVED */
+             color: #555; font-weight: 600; margin-right: 0.5em; /* Space after key */
+         }
+        #references-list li:target { background-color: #fffde7; padding: 0.5rem; border-radius: 4px; transition: background-color 0.3s ease; margin-left: 0; text-indent: 0; padding-left: 0.5rem; }
+        .ref-link { color: #0066cc; text-decoration: none; }
+        .ref-link:hover { text-decoration: underline; }
+
+        /* Error message */
+        .error-message { color: #c0392b; background-color: #fbeae5; padding: 1rem; border-radius: 4px; border: 1px solid #e74c3c; margin: 1rem 0; }
+
+        /* Add smooth scrolling */
+        html { scroll-behavior: smooth; }
+
+        /* Simple responsive adjustments */
+        @media (max-width: 768px) {
+            .full-detail-container { margin: 1rem; padding: 1.5rem; }
+            #toc ul { columns: 1; -webkit-columns: 1; -moz-columns: 1; } /* Single column TOC on small screens */
+            .detail-content-section h2 { font-size: 1.5rem; }
+            .property-detail-block h3 { font-size: 1.25rem; }
+            .detail-subsection h4::before { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="full-detail-container">
+        <a href="index.html" class="back-link">Back to Materials List</a>
+
+        <!-- Material Title Area -->
+        <div class="material-title-bar">
+            <h1 id="material-name">Loading Material...</h1>
+            <!-- Maybe add formula/category here later -->
+        </div>
+
+        <!-- Table of Contents -->
+        <nav id="toc">
+            <h2>Contents</h2>
+            <ul id="toc-list">
+                <!-- TOC links generated dynamically -->
+                <li><a href="#section-placeholder">Loading...</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main id="main-content">
+            <!-- Sections will be populated here -->
+            <section id="section-identification" class="detail-content-section" style="display: none;">
+                 <h2 id="section-identification-title">Identification & Structure</h2>
+                 <p class="section-introduction" id="section-identification-intro"></p>
+                 <div class="properties-container" id="section-identification-properties"></div>
+            </section>
+
+            <section id="section-electrical_properties" class="detail-content-section" style="display: none;">
+                 <h2 id="section-electrical_properties-title">Electrical Properties</h2>
+                 <p class="section-introduction" id="section-electrical_properties-intro"></p>
+                 <div class="properties-container" id="section-electrical_properties-properties"></div>
+            </section>
+
+            <!-- Add more section placeholders as needed -->
+             <section id="section-optical_properties" class="detail-content-section" style="display: none;">
+                 <h2 id="section-optical_properties-title">Optical Properties</h2>
+                 <p class="section-introduction" id="section-optical_properties-intro"></p>
+                 <div class="properties-container" id="section-optical_properties-properties"></div>
+            </section>
+             <section id="section-thermal_properties" class="detail-content-section" style="display: none;">
+                 <h2 id="section-thermal_properties-title">Thermal Properties</h2>
+                 <p class="section-introduction" id="section-thermal_properties-intro"></p>
+                 <div class="properties-container" id="section-thermal_properties-properties"></div>
+            </section>
+             <section id="section-mechanical_properties" class="detail-content-section" style="display: none;">
+                 <h2 id="section-mechanical_properties-title">Mechanical Properties</h2>
+                 <p class="section-introduction" id="section-mechanical_properties-intro"></p>
+                 <div class="properties-container" id="section-mechanical_properties-properties"></div>
+            </section>
+            <!-- ... etc for all sections defined in the JSON -->
+
+        </main>
+
+        <!-- References section -->
+        <div id="references-section" style="display: none;">
+            <h4>References Cited</h4>
+            <ul id="references-list">
+                <!-- References loaded by JS -->
+            </ul>
+        </div>
+    </div>
+    <script src="full_detail_loader.js"></script> <!-- Link to the NEW loader -->
+</body>
+</html>
