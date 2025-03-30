@@ -212,7 +212,7 @@ main { /* ID is now #material-content-container on detail page */
   margin-bottom: 1.5rem;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
   transition: box-shadow 0.3s ease, transform 0.2s ease; /* Add transform transition */
-  cursor: pointer; /* *** ADDED: Indicate clickability *** */
+  cursor: pointer;
 }
 
 .material-card:hover {
@@ -249,7 +249,7 @@ main { /* ID is now #material-content-container on detail page */
   color: white;
   border-radius: 4px;
   font-size: 0.9rem;
-  cursor: pointer; /* Tags were already clickable */
+  cursor: pointer;
   transition: background-color 0.2s ease;
 }
 
@@ -270,7 +270,6 @@ main#results:empty::after { /* Targets index page main */
 
 /* ======================================== */
 /* Material Detail Page Sections & Styling */
-/* Applies to sections dynamically added */
 /* ======================================== */
 
 /* --- Detail Tags Section (Outside Main) --- */
@@ -302,7 +301,6 @@ main#results:empty::after { /* Targets index page main */
 }
 
 /* --- General Detail Section Styling --- */
-/* Applies to all <section> elements added to #material-content-container */
 #material-content-container .material-section {
   background: #ffffff;
   padding: 1.5rem 2rem;
@@ -350,19 +348,18 @@ main#results:empty::after { /* Targets index page main */
 }
 
 /* --- Property List Styling (Refined) --- */
-/* Applies to <dl class="property-list"> added within sections */
 .property-list {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 0.5rem 2.5rem;
   padding: 0;
   margin-top: 0.5rem;
-  list-style: none; /* Ensure dl has no bullets */
+  list-style: none;
 }
 
 .property-item {
   display: grid;
-  grid-template-columns: 160px 1fr;
+  grid-template-columns: 160px 1fr; /* Adjust key width if needed */
   align-items: baseline;
   gap: 0.8rem;
   padding: 0.8rem 0;
@@ -374,7 +371,6 @@ main#results:empty::after { /* Targets index page main */
     background-color: #fcfcfc;
 }
 
-/* Handle case where N/A message is the only item */
 .property-item.comparison-na-message dd {
     grid-column: 1 / -1; /* Span full width */
     text-align: left;
@@ -403,32 +399,33 @@ main#results:empty::after { /* Targets index page main */
     margin-left: 0.25em;
 }
 .property-value .notes,
-.property-value .notes-only { /* Style notes whether from complex object or simple notes object */
+.property-value .notes-only {
     display: block;
     font-size: 0.85rem;
     color: #6c757d;
     margin-top: 0.2rem;
     font-style: italic;
 }
+.property-value sub {
+    font-size: 0.75em;
+    line-height: 0;
+}
 
-/* Style N/A values */
 .property-value.na-value,
 span.na-value {
   color: #999;
   font-style: italic;
 }
 
-/* Style bulleted lists within property values */
 .property-value ul.property-list-items {
   margin: 0;
-  padding-left: 1.2rem; /* Indent list */
-  list-style-type: disc; /* Use standard bullets */
+  padding-left: 1.2rem;
+  list-style-type: disc;
 }
 .property-value ul.property-list-items li {
   margin-bottom: 0.25rem;
 }
 
-/* --- Highlighting Specific/Key Properties --- */
 .property-item.key-property .property-key {
    font-weight: 600;
    color: #0056b3;
@@ -439,7 +436,7 @@ span.na-value {
 
 /* --- Specific Section Adjustments --- */
 #material-content-container #section-safety .property-list {
-  grid-template-columns: 1fr; /* Safety uses single column */
+  grid-template-columns: 1fr;
   gap: 0;
 }
 #material-content-container #section-safety .property-item {
@@ -487,126 +484,206 @@ span.na-value {
 
 
 /* ======================================== */
-/* Periodic Table Styles                    */
+/* Periodic Table Styles (UPDATED)        */
 /* ======================================== */
 
-#section-periodic-table h2 { /* Section title */
-  margin-bottom: 1rem; /* Space below title */
+#section-periodic-table h2 {
+  margin-bottom: 1rem;
 }
 
+.periodic-table-wrapper {
+    display: grid;
+    /* Define columns for period labels + 18 element groups */
+    grid-template-columns: minmax(20px, auto) repeat(18, minmax(45px, 1fr)); /* Add col for period labels */
+    /* Define rows for group labels + 7 periods + gap + 2 f-block rows */
+    grid-template-rows: minmax(20px, auto) repeat(7, minmax(45px, auto)) 10px repeat(2, minmax(45px, auto)); /* Add row for group labels */
+    gap: 3px;
+    padding: 10px;
+    background-color: #f0f2f5; /* Slightly different background */
+    border-radius: 6px;
+    max-width: 100%;
+    overflow-x: auto;
+    font-size: 0.8rem; /* Base font size for table */
+    margin-bottom: 1.5rem;
+    margin-top: 1rem;
+    position: relative; /* Needed for tooltip positioning context */
+}
+
+/* Place the main element grid starting from column 2, row 2 */
 .periodic-table-container {
   display: grid;
-  grid-template-columns: repeat(18, minmax(40px, 1fr)); /* 18 columns */
-  grid-template-rows: repeat(10, minmax(40px, auto)); /* 7 periods + gap + 2 f-block rows */
-  gap: 3px; /* Small gap between elements */
-  padding: 10px;
-  background-color: #f8f9fa; /* Light background for the table area */
-  border-radius: 6px;
-  max-width: 100%;
-  overflow-x: auto; /* Allow horizontal scrolling on small screens */
-  font-size: 0.75rem; /* Smaller font for table */
-  margin-bottom: 1.5rem; /* Space below table */
-  margin-top: 1rem; /* Space above table */
+  grid-template-columns: subgrid; /* Inherit columns from wrapper */
+  grid-template-rows: subgrid; /* Inherit rows from wrapper */
+  gap: inherit; /* Inherit gap from wrapper */
+  grid-column: 2 / span 18; /* Span element columns (2 to 19) */
+  grid-row: 2 / span 10;    /* Span element rows (2 to 11) */
+}
+
+/* Style for Group/Period Labels */
+.pt-label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  color: #4a5568; /* Muted gray */
+  font-size: 0.7rem;
+  background-color: transparent; /* No background for labels */
+  /* border: 1px dashed #cbd5e0; /* Optional: subtle border */
+  border-radius: 2px;
+}
+.pt-group-label {
+    grid-row: 1; /* Place in the first row of the wrapper */
+}
+.pt-period-label {
+    grid-column: 1; /* Place in the first column of the wrapper */
+    /* grid-row is set inline in HTML based on period */
 }
 
 .pt-element {
-  border: 1px solid #ccc;
-  padding: 4px 2px;
+  border: 1px solid #cbd5e0; /* Softer border */
+  padding: 5px 3px;
   text-align: center;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-around; /* Distribute content vertically */
   align-items: center;
-  line-height: 1.2;
-  background-color: #e9ecef; /* Default background */
-  min-height: 40px; /* Ensure minimum height */
+  line-height: 1.1; /* Adjusted line height */
+  background-color: #fff; /* White background for elements */
+  min-height: 45px; /* Sync with grid rows */
   box-sizing: border-box;
-  position: relative; /* For atomic number positioning */
-  cursor: default; /* Default cursor */
+  position: relative;
+  cursor: default;
+  transition: transform 0.1s ease-out, box-shadow 0.15s ease-out, border-color 0.15s ease-out;
+  border-radius: 3px; /* Slightly rounded corners */
 }
 
-.pt-element span:first-child { /* Style for atomic number (target the first span) */
-  font-size: 0.6rem;
-  display: block;
+/* Subtle hover effect */
+.pt-element:hover {
+    border-color: #a0aec0;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
+    z-index: 1; /* Bring slightly forward on hover */
+}
+
+.pt-number {
+  font-size: 0.65rem;
   position: absolute;
-  top: 2px;
-  left: 3px;
-  color: #666;
+  top: 3px; /* Adjust positioning */
+  left: 4px;
+  color: #718096; /* Muted gray */
 }
 
 /* --- Style for Atomic Mass --- */
 .pt-mass {
-  font-size: 0.55rem; /* Even smaller */
-  color: #444;       /* Slightly darker than atomic number */
-  display: block;     /* Ensure it takes its own line/space */
-  margin-top: 1px;    /* Tiny space above mass */
-  line-height: 1;     /* Reduce line height */
+  font-size: 0.6rem;
+  color: #4a5568; /* Muted gray */
+  display: block;
+  margin-top: 1px;
+  line-height: 1;
 }
 
-.pt-placeholder { /* Style for the La/Ac placeholders in main table */
-  background-color: #dee2e6;
-  border-style: dashed;
+.pt-placeholder {
+  background-color: #e2e8f0; /* Lighter placeholder */
+  border: 1px dashed #a0aec0; /* Softer dashed border */
   font-size: 0.8em;
-  align-items: center; /* Center text vertically */
+  color: #718096;
+  align-items: center;
 }
-.pt-placeholder .pt-mass { display: none; } /* Hide mass for placeholders */
+.pt-placeholder .pt-number,
+.pt-placeholder .pt-mass { display: none; }
 
 
-.pt-series-label { /* Style for Lanthanides/Actinides labels */
-   grid-column: 1 / span 2; /* Span first two columns */
+.pt-series-label {
    font-weight: bold;
-   background-color: #f8f9fa; /* Match container background */
+   background-color: transparent; /* Match wrapper background */
    border: none;
    text-align: right;
-   padding-right: 5px;
-   font-size: 0.7rem;
-   align-items: center; /* Center text vertically */
+   padding-right: 8px;
+   font-size: 0.75rem;
+   align-items: center;
+   color: #4a5568; /* Muted text */
 }
-.pt-series-label .pt-mass { display: none; } /* Hide mass for labels */
+.pt-series-label .pt-number,
+.pt-series-label .pt-mass { display: none; }
 
-/* --- Element Category Colors (Match periodic_table_data.js) --- */
-.pt-element.alkali-metal           { background-color: #ffc0c0; color: #333; }
-.pt-element.alkaline-earth-metal   { background-color: #ffe0c0; color: #333; }
-.pt-element.lanthanide             { background-color: #ffc0ff; color: #333; }
-.pt-element.actinide               { background-color: #ffc0cc; color: #333; }
-.pt-element.transition-metal       { background-color: #ffecf0; color: #333; }
-.pt-element.post-transition-metal  { background-color: #cccccc; color: #333; }
-.pt-element.metalloid              { background-color: #cccc90; color: #333; }
-.pt-element.polyatomic-nonmetal    { background-color: #a0ffa0; color: #333; }
-.pt-element.diatomic-nonmetal      { background-color: #a0ffa0; color: #333; } /* Can share color */
-.pt-element.noble-gas              { background-color: #c0ffff; color: #333; }
-.pt-element.unknown                { background-color: #e8e8e8; color: #555; } /* For synthetic/unknown */
-.pt-element.halogen                { background-color: #ffffc0; color: #333;} /* Specific Halogen override if needed */
+/* --- Element Category Colors (Subtle Pastels) --- */
+.pt-element.alkali-metal           { background-color: #ffecdd; border-color: #ffdab9; }
+.pt-element.alkaline-earth-metal   { background-color: #fff2cc; border-color: #ffe6b3; }
+.pt-element.lanthanide             { background-color: #fde2ff; border-color: #fcc2ff; }
+.pt-element.actinide               { background-color: #ffd1dc; border-color: #ffb3c6; }
+.pt-element.transition-metal       { background-color: #e0f2fe; border-color: #bae6fd; }
+.pt-element.post-transition-metal  { background-color: #e2e8f0; border-color: #cbd5e0; } /* Grayish */
+.pt-element.metalloid              { background-color: #d1fae5; border-color: #a7f3d0; } /* Greenish */
+.pt-element.polyatomic-nonmetal    { background-color: #ccfbf1; border-color: #99f6e4; } /* Tealish */
+.pt-element.diatomic-nonmetal      { background-color: #ccfbf1; border-color: #99f6e4; }
+.pt-element.noble-gas              { background-color: #f3e8ff; border-color: #e9d5ff; } /* Purplish */
+.pt-element.unknown                { background-color: #f1f5f9; border-color: #e2e8f0; } /* Lighter Gray */
+.pt-element.halogen                { background-color: #fef9c3; border-color: #fef08a; } /* Yellowish */
 
 
-/* --- Highlight Style --- */
+/* --- Highlight Style (More prominent) --- */
 .pt-element.highlighted-element {
-  border: 3px solid #0056b3; /* Darker, thicker border */
-  box-shadow: 0 0 8px rgba(0, 86, 179, 0.6); /* More pronounced shadow */
-  font-weight: bold;
-  transform: scale(1.08); /* Slightly more noticeable enlargement */
+  border: 2px solid #1e3a8a; /* Dark blue border */
+  transform: scale(1.06); /* Slightly more zoom */
+  box-shadow: 0 0 8px rgba(30, 58, 138, 0.5); /* Matching shadow */
   z-index: 10;
-  transition: transform 0.15s ease-out, box-shadow 0.15s ease-out, border-color 0.15s ease-out;
+  color: #000;
 }
-/* Ensure text color remains readable when highlighted */
-.pt-element.highlighted-element {
-   color: #000; /* Black text when highlighted */
-}
-/* Make mass slightly bolder too when highlighted */
 .pt-element.highlighted-element .pt-mass {
    font-weight: 500;
+}
+
+/* --- Custom Tooltip Style --- */
+.pt-tooltip {
+    position: absolute;
+    display: none;
+    background-color: rgba(17, 24, 39, 0.96); /* Very dark gray, slightly transparent */
+    color: #f8f9fa; /* Light text */
+    padding: 10px 14px;
+    border-radius: 5px;
+    font-size: 0.9rem; /* Slightly larger tooltip font */
+    line-height: 1.5;
+    white-space: pre-line;
+    z-index: 1000; /* Ensure tooltip is definitely on top */
+    pointer-events: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    max-width: 280px;
+    border: 1px solid #4b5563; /* Subtle border */
+}
+.pt-tooltip strong {
+    color: #93c5fd; /* Light blue for name */
+    font-weight: 600;
+}
+.pt-tooltip br { /* Ensure line breaks work */
+    content: " ";
+    display: block;
+    margin-top: 0.3em;
 }
 
 
 /* ======================================== */
 /* Responsive Adjustments                 */
 /* ======================================== */
-@media (max-width: 768px) {
+@media (max-width: 1000px) {
   /* Detail Page adjustments */
-  #material-content-container .property-list { /* Target lists inside container */
-    grid-template-columns: 1fr; /* Stack properties */
+  #material-content-container .property-list {
+    grid-template-columns: 1fr;
     gap: 0.25rem;
   }
+  .periodic-table-wrapper {
+      grid-template-columns: minmax(15px, auto) repeat(18, minmax(38px, 1fr));
+      grid-template-rows: minmax(15px, auto) repeat(7, minmax(38px, auto)) 8px repeat(2, minmax(38px, auto));
+      font-size: 0.7rem;
+      gap: 2px;
+      padding: 8px;
+  }
+  .pt-element { min-height: 38px; font-size: 0.7rem; border-radius: 2px;}
+  .pt-number { font-size: 0.55rem; }
+  .pt-mass { font-size: 0.5rem; }
+  .pt-label { font-size: 0.6rem; }
+}
+
+@media (max-width: 768px) {
+  /* Detail Page adjustments */
   #material-content-container .property-item {
     grid-template-columns: 130px 1fr;
     padding: 0.6rem 0;
@@ -619,17 +696,19 @@ span.na-value {
   #material-content-container .material-section { padding: 1rem 1.5rem; }
 
   /* Periodic Table Responsive */
-  .periodic-table-container {
-      grid-template-columns: repeat(18, minmax(35px, 1fr));
-      gap: 2px;
-      font-size: 0.7rem;
+  .periodic-table-wrapper {
+      grid-template-columns: minmax(15px, auto) repeat(18, minmax(32px, 1fr));
+      grid-template-rows: minmax(15px, auto) repeat(7, minmax(32px, auto)) 5px repeat(2, minmax(32px, auto));
+      font-size: 0.6rem;
+      padding: 5px;
   }
-   .pt-element { min-height: 35px; }
-   .pt-element span:first-child { font-size: 0.55rem; } /* Adjust atomic number size */
-   .pt-mass { font-size: 0.5rem; } /* Adjust mass size */
+   .pt-element { min-height: 32px; font-size: 0.65rem; padding: 3px 1px;}
+   .pt-number { font-size: 0.5rem; }
+   .pt-mass { font-size: 0.45rem; }
+   .pt-label { font-size: 0.55rem; }
 
   /* Index page adjustments */
-  header, .toolbar, main#results, #search-container { /* Target index main */
+  header, .toolbar, main#results, #search-container {
       padding-left: 1rem;
       padding-right: 1rem;
   }
@@ -655,18 +734,20 @@ span.na-value {
     #material-content-container .material-section { padding: 1rem; }
 
      /* Periodic Table Responsive */
-    .periodic-table-container {
-        grid-template-columns: repeat(18, minmax(28px, 1fr)); /* Further shrink */
+    .periodic-table-wrapper {
+        grid-template-columns: minmax(12px, auto) repeat(18, minmax(25px, 1fr)); /* Further shrink */
+        grid-template-rows: minmax(12px, auto) repeat(7, minmax(25px, auto)) 4px repeat(2, minmax(25px, auto));
         gap: 1px;
-        font-size: 0.55rem; /* Even smaller font */
+        font-size: 0.5rem; /* Even smaller font */
         padding: 3px;
     }
-     .pt-element { min-height: 28px; padding: 1px; line-height: 1.1; } /* Adjust line height */
-     .pt-element span:first-child { font-size: 0.45rem; top: 1px; left: 1px; } /* Adjust atomic number size/pos */
-     .pt-mass { font-size: 0.4rem; margin-top: 0; } /* Adjust mass size */
-     .pt-series-label { font-size: 0.55rem; }
+     .pt-element { min-height: 25px; padding: 1px; line-height: 1.1; font-size: 0.55rem; } /* Adjust line height */
+     .pt-number { font-size: 0.4rem; top: 1px; left: 1px; } /* Adjust atomic number size/pos */
+     .pt-mass { font-size: 0.35rem; margin-top: 0; } /* Adjust mass size */
+     .pt-series-label { font-size: 0.45rem; padding-right: 3px;}
+     .pt-label { font-size: 0.5rem;}
      /* Ensure highlight border isn't too thick */
-     .pt-element.highlighted-element { border-width: 2px; }
+     .pt-element.highlighted-element { border-width: 1px; }
 
 
     /* Index page adjustments */
@@ -679,4 +760,13 @@ span.na-value {
      .filter-group { flex-direction: column; align-items: stretch; }
      .filter-group label { margin-bottom: 0.3rem; margin-right: 0;}
      .filter-group select { width: 100%; }
+}
+
+/* Hide scrollbar for the main table container, but allow scrolling */
+.periodic-table-container::-webkit-scrollbar {
+    display: none; /* Safari and Chrome */
+}
+.periodic-table-container {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
 }
