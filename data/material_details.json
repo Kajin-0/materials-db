@@ -2772,5 +2772,116 @@
       "lightweight", "low density", "porous", "space shuttle", "thermal insulation",
       "industry:space", "industry:aerospace", "industry:thermal", "fragile"
     ]
+  },
+  "LYSO:Ce Scintillator": {
+    "name": "LYSO:Ce Scintillator",
+    "formula": "Lu₍₂₋ₓ₎YₓSiO₅:Ce",
+    "synonyms": [ "LYSO", "Cerium-doped Lutetium-Yttrium Oxyorthosilicate", "Lutetium Oxyorthosilicate" ],
+    "category": "Scintillator",
+    "constituent_elements": ["Lu", "Y", "Si", "O", "Ce"],
+    "description": "A high-density, high-light-yield, relatively fast inorganic scintillator crystal widely used for gamma ray detection, particularly in Positron Emission Tomography (PET) medical imaging and high-energy physics experiments. It combines properties of LSO (Lutetium Oxyorthosilicate) and YSO (Yttrium Oxyorthosilicate), doped with Cerium as the activator.",
+    "wiki_link": "https://en.wikipedia.org/wiki/Lutetium_oxyorthosilicate",
+    "safety": {
+      "toxicity": "Low in solid form. Handle dust carefully during machining.",
+      "handling": "Standard optical crystal handling. Brittle material. Contains naturally occurring radioactive Lutetium-176 (low level beta/gamma emission)."
+    },
+    "identification": {
+      "cas_number": "101003-12-9 (generic LuYSiO5)",
+      "class": "Cerium-doped Rare-Earth Oxyorthosilicate Crystal",
+      "crystal_structure": "Monoclinic (C2/c space group)",
+      "lattice_constant": {"notes": "Varies with Lu/Y ratio, typically a≈14.4Å, b≈6.7Å, c≈10.3Å, β≈122° (approx.)"},
+      "phase_diagram_notes": "Solid solution between Lu₂SiO₅ and Y₂SiO₅. Grown from melt, typically Czochralski."
+    },
+    "advanced_fabrication_insights": {
+        "stoichiometry_control": "Control of Lu/Y ratio affects scintillation properties (light yield, decay time). Precise Ce doping level (~0.1-0.5 mol%) is critical for performance.",
+        "common_defects_impact": "Inclusions, cracking during cooling, color centers, dislocations. Affect light output uniformity, energy resolution, and radiation hardness.",
+        "surface_preparation": "Requires high-quality optical polishing for efficient light collection and coupling to photodetectors.",
+        "method_specific_notes": "Czochralski (CZ) growth from iridium crucible is standard. Requires high temperatures and controlled atmosphere (often slightly oxidizing)."
+    },
+    "growth_fabrication_properties": {
+        "common_growth_methods": "Czochralski (CZ) method.",
+        "source_materials_purity": "High purity oxides: Lu₂O₃, Y₂O₃, SiO₂, CeO₂ (>4N or 5N).",
+        "preferred_substrates_orientations": "N/A (Bulk crystal growth). Cut and polished into desired shapes (pixels, blocks).",
+        "typical_growth_parameters": "Melting point ~2050-2150°C. Slow pull rates, controlled cooling to minimize stress/cracking.",
+        "passivation_methods": "Surface usually polished; can be coated with reflective material (e.g., Teflon tape, BaSO₄ paint) or coupled directly to photodetector."
+    },
+    "post_growth_processing": {
+        "annealing": "Often annealed after growth to reduce stress and potentially improve scintillation properties/reduce afterglow.",
+        "lapping_polishing": "Standard optical grinding, lapping, and polishing using diamond slurries to achieve smooth, clear surfaces.",
+        "etching": "Generally not etched.",
+        "grinding_milling": "Diamond tooling used for cutting, dicing, and shaping the brittle crystals."
+    },
+     "device_integration_characterization": {
+        "device_architectures": "Scintillation detectors: Pixellated arrays (PET), large blocks (calorimetry), single crystals coupled to PMTs or Silicon Photomultipliers (SiPMs).",
+        "readout_integration": "Requires coupling to photodetectors (PMTs, APDs, SiPMs) using optical grease or direct bonding.",
+        "ar_coatings": "Not typical; focus is on efficient light extraction and reflection.",
+        "packaging_cooling": "Typically operated at room temperature. Requires light-tight housing. Sensitive to thermal shock.",
+        "key_characterization_techniques": ["Light Yield Measurement (photons/MeV)", "Energy Resolution (% @ 511 keV or 662 keV)", "Decay Time Measurement", "Emission Spectrum Measurement", "Afterglow Measurement", "Radiation Hardness Testing", "Optical Transmission", "Density/Refractive Index"]
+    },
+    "electrical_properties": {
+      "bandgap_type": "Insulator (Wide Bandgap)",
+      "band_gap": {"value": "~6.2", "unit": "eV", "notes": "Host crystal bandgap."},
+      "resistivity": {"value": "Very High (> 10¹² Ω·cm)", "notes": "Excellent electrical insulator."}
+    },
+    "optical_properties": {
+      "spectral_range": "Transparent in visible spectrum.",
+      "emission_peak": {"value": "~420", "unit": "nm", "notes": "Blue emission from Ce³⁺ activator."},
+      "decay_time": {"value": "~40-45", "unit": "ns", "notes": "Principal scintillation decay component. Relatively fast."},
+      "light_yield": {"value": "~25,000 - 35,000", "unit": "photons/MeV", "notes": "High light output."},
+      "refractive_index": {"value": "~1.81 - 1.82", "notes": "At emission wavelength."},
+      "afterglow": {"notes": "Can exhibit low-level, long-lasting phosphorescence after intense irradiation, which can be detrimental for high rate applications."}
+    },
+    "thermal_properties": {
+      "operating_temperature": {"value": "Typically Room Temperature", "notes": "Performance (light yield) can vary slightly with temperature."},
+      "thermal_conductivity": {"value": "~2-4", "unit": "W/(m·K)", "notes": "Relatively low thermal conductivity."},
+      "specific_heat": {"value": "~0.3-0.4", "unit": "J/(g·K)"},
+      "melting_point": {"value": "~2050-2150", "unit": "°C", "notes": "Depends on Lu/Y ratio."},
+      "thermal_expansion": {"value": "~5-10 x 10⁻⁶", "unit": "/°C", "notes": "Anisotropic."}
+    },
+     "mechanical_properties": {
+         "density": {"value": "~7.1-7.4", "unit": "g/cm³", "notes": "High density, beneficial for gamma ray stopping power."},
+         "youngs_modulus": {"value": "~150-200", "unit": "GPa"},
+         "hardness_mohs": {"value": "~5.5-6.0"},
+         "poissons_ratio": "~0.25-0.3",
+         "fracture_toughness": {"value": "Low (~1)", "unit": "MPa·m⁰·⁵", "notes": "Brittle, prone to cleavage."}
+     },
+     "device_applications": {
+         "sensor_types": ["Scintillation Detector"],
+         "key_applications": ["Positron Emission Tomography (PET) scanners", "High-Energy Physics (HEP) Calorimeters", "Gamma Ray Spectroscopy", "Nuclear Medicine Imaging", "Security inspection systems", "Well logging (Oil & Gas exploration)"]
+     },
+     "chemical_properties": {
+         "stability_oxidation": "Highly stable oxide.",
+         "chemical_inertness": "Very chemically stable.",
+         "water_solubility": "Insoluble.",
+         "hygroscopic": {"notes": "Non-hygroscopic, unlike some other scintillators (e.g., NaI(Tl), LaBr₃)."}
+     },
+     "comparison_alternatives": {
+         "notes": "Alternative Inorganic Scintillators:",
+         "vs_BGO": "LYSO: Much higher light yield, much faster decay time, lower density, less radiation hard (?). BGO: Higher density, very radiation hard, slow decay time, lower light yield, cheaper.",
+         "vs_NaI(Tl)": "LYSO: Much higher density, faster decay, non-hygroscopic, lower light yield. NaI(Tl): Very high light yield, hygroscopic (requires encapsulation), slow decay, lower density, standard for spectroscopy.",
+         "vs_LSO(Ce)": "LYSO: Similar properties, often slightly faster decay, potentially lower cost/easier growth due to Y addition, lower density. LSO: Highest density in family, higher intrinsic radioactivity.",
+         "vs_LaBr3(Ce)": "LYSO: Non-hygroscopic, lower intrinsic radioactivity, lower energy resolution. LaBr₃(Ce): Excellent energy resolution, higher light yield, very hygroscopic, significant intrinsic radioactivity.",
+         "vs_GAGG(Ce)": "LYSO: Higher density, faster primary decay. GAGG: High light yield, good energy resolution, non-hygroscopic, slower decay components can be present."
+     },
+     "references_further_reading": {
+         "notes": "Key Literature Resources:",
+         "book_knoll": "Knoll, G. F. 'Radiation Detection and Measurement'.",
+         "review_melcher": "Melcher, C. L. 'Perspectives on the Future Development of New Scintillators.' (Nuclear Instruments and Methods in Physics Research Section A)",
+         "journal_nim_a": "Nuclear Instruments and Methods in Physics Research Section A (Numerous papers).",
+         "journal_ieee_tns": "IEEE Transactions on Nuclear Science.",
+         "wikipedia": "https://en.wikipedia.org/wiki/Lutetium_oxyorthosilicate"
+     },
+     "vendor_info": {
+        "notes": "Example Crystal Growers/Vendors:",
+        "vendor_1": "Saint-Gobain Crystals",
+        "vendor_2": "EPIC Crystal",
+        "vendor_3": "Crytur"
+     },
+    "tags": [
+      "scintillator", "crystal", "radiation detection", "gamma ray", "PET",
+      "medical imaging", "high energy physics", "inorganic", "oxide", "fast decay",
+      "high light yield", "high density", "non-hygroscopic", "single crystal",
+      "industry:medical", "industry:physics", "industry:security", "industry:energy"
+    ]
   }
 }
