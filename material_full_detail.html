@@ -6,10 +6,8 @@
     <title>Material Detail</title> <!-- Title will be set dynamically -->
     <link rel="stylesheet" href="style.css"> <!-- Link to main style.css if needed -->
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
-    <!-- KaTeX links REMOVED -->
     <style>
-        /* Paste the CSS from the previous response here */
-        /* (Including reference fix and equation centering) */
+        /* General Page Styles */
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; line-height: 1.5; color: #333; background-color: #f5f5f5; margin: 0; padding: 0; }
         .full-detail-container { max-width: 1000px; margin: 2rem auto; padding: 2rem; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
         .back-link { display: inline-block; margin-bottom: 1.5rem; color: #0066cc; text-decoration: none; font-size: 0.9rem; }
@@ -17,74 +15,328 @@
         .back-link::before { content: "←"; margin-right: 0.4rem; }
         .material-title-bar { margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid #e0e0e0; }
         .material-title-bar h1 { margin: 0 0 0.25rem 0; font-size: 2rem; color: #1a1a1a; font-weight: 600; }
+        html { scroll-behavior: smooth; } /* Enable smooth scrolling for TOC links */
+
+        /* Table of Contents */
         #toc { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 6px; padding: 1rem 1.5rem; margin-bottom: 2.5rem; }
         #toc h2 { margin-top: 0; margin-bottom: 1rem; font-size: 1.2rem; color: #495057; border-bottom: 1px solid #ddd; padding-bottom: 0.5rem; }
-        #toc ul { list-style: none; padding: 0; margin: 0; columns: 2; -webkit-columns: 2; -moz-columns: 2; }
-        #toc li { margin-bottom: 0.5rem; }
-        #toc a { text-decoration: none; color: #0066cc; font-size: 0.95rem; }
-        #toc a:hover { text-decoration: underline; }
+        #toc ul { list-style: none; padding: 0; margin: 0; columns: 2; -webkit-columns: 2; -moz-columns: 2; column-gap: 2rem;}
+        #toc li { margin-bottom: 0.5rem; break-inside: avoid-column; /* Prevent items breaking across columns */ }
+        #toc a { text-decoration: none; color: #0066cc; font-size: 0.95rem; display: block; /* Make entire area clickable */ }
+        #toc a:hover { text-decoration: underline; color: #004080; }
+
+        /* Main Content Sections */
         .detail-content-section { margin-bottom: 2.5rem; padding-top: 1rem; }
+        /* Target sections by ID for scroll margin */
+        .detail-content-section[id] { scroll-margin-top: 20px; /* Adjust as needed for sticky headers etc. */ }
         .detail-content-section h2 { font-size: 1.75rem; color: #2c3e50; font-weight: 600; margin-top: 0; margin-bottom: 1.5rem; padding-bottom: 0.75rem; border-bottom: 1px solid #ccc; }
-        .section-introduction { margin-bottom: 2rem; padding: 1.25rem; background-color: #f1f7fe; border-left: 4px solid #2980b9; border-radius: 4px; font-size: 1rem; line-height: 1.6; }
+        .section-introduction { margin-bottom: 2rem; padding: 1.25rem; background-color: #f1f7fe; border-left: 4px solid #2980b9; border-radius: 4px; font-size: 1rem; line-height: 1.6; color: #333; }
+        .section-introduction p:first-child { margin-top: 0; }
+        .section-introduction p:last-child { margin-bottom: 0; }
+
+        /* Property Blocks */
         .property-detail-block { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid #eee; }
-        .property-detail-block:last-child { border-bottom: none; }
-        .property-detail-block h3 { font-size: 1.4rem; color: #343a40; margin: 0 0 0.5rem 0; font-weight: 600; }
-        .property-detail-block .summary { color: #555; margin-bottom: 1.25rem; padding-left: 0.75rem; border-left: 3px solid #ddd; line-height: 1.6; }
+        .property-detail-block:last-child { border-bottom: none; padding-bottom: 0.5rem;}
+        .property-detail-block h3 { font-size: 1.4rem; color: #343a40; margin: 0 0 0.75rem 0; font-weight: 600; }
+        .property-detail-block .summary { color: #555; margin-bottom: 1.25rem; padding: 0.5rem 0.75rem; border-left: 3px solid #ddd; line-height: 1.6; background-color: #fafafa; border-radius: 0 4px 4px 0; }
+        .property-detail-block .summary p:first-child { margin-top: 0;}
+        .property-detail-block .summary p:last-child { margin-bottom: 0;}
+
+        /* Detail Subsections */
         .detail-subsection { margin: 1.25rem 0 1.25rem 0.5rem; }
-        .detail-subsection h4 { font-size: 0; margin: 0 0 0.75rem 0; padding-bottom: 0.3rem; border-bottom: 1px solid #eee; }
-        .detail-subsection h4::before { font-size: 1.1rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; display: block; }
-        .detail-subsection.key_characteristics h4::before { content: "Key Characteristics"; color: #2980b9; }
-        .detail-subsection.measurement_characterization h4::before { content: "Measurement & Characterization"; color: #8e44ad; }
-        .detail-subsection.device_relevance h4::before { content: "Device Relevance / Impact"; color: #27ae60; }
-        .detail-subsection.doping_methods h4::before { content: "Doping Methods"; color: #c0392b; }
-        .detail-subsection.equations h4::before { content: "Equations"; color: #d35400; }
-        .detail-subsection.significance h4::before { content: "Significance"; color: #27ae60; }
-        .detail-subsection.techniques h4::before { content: "Techniques"; color: #8e44ad; }
-        .detail-subsection.considerations h4::before { content: "Considerations"; color: #8e44ad; }
+        .detail-subsection h4 { font-size: 0; /* Hide text node */ margin: 0 0 0.75rem 0; padding-bottom: 0.3rem; border-bottom: 1px solid #eee; position: relative; }
+        .detail-subsection h4::before { /* Use pseudo-element for title */
+            font-size: 1.1rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
+            display: block; content: attr(data-title); /* Default title from attribute if needed */
+        }
+        /* Specific Subsection Titles & Colors */
+        .detail-subsection.key_characteristics h4::before { content: "Key Characteristics"; color: #17a2b8; } /* Teal */
+        .detail-subsection.notes h4::before { content: "Notes"; color: #6c757d; } /* Gray */
+        .detail-subsection.measurement_characterization h4::before { content: "Measurement & Characterization"; color: #6f42c1; } /* Indigo */
+        .detail-subsection.techniques h4::before { content: "Techniques"; color: #6f42c1; }
+        .detail-subsection.considerations h4::before { content: "Considerations"; color: #6f42c1; }
+        .detail-subsection.device_relevance h4::before { content: "Device Relevance / Impact"; color: #28a745; } /* Green */
+        .detail-subsection.significance h4::before { content: "Significance"; color: #28a745; }
+        .detail-subsection.doping_methods h4::before { content: "Doping Methods"; color: #dc3545; } /* Red */
+        .detail-subsection.equations h4::before { content: "Equations"; color: #fd7e14; } /* Orange */
+
+        /* Lists within Subsections */
         .detail-subsection ul { padding-left: 1.5rem; margin: 0.5rem 0 1rem 0; list-style: none; }
         .detail-subsection li { margin-bottom: 0.6rem; line-height: 1.6; position: relative; padding-left: 1.2rem; }
-        .detail-subsection li::before { content: "\2023"; color: #555; font-weight: normal; display: inline-block; position: absolute; left: 0; width: 1em; }
-        .detail-subsection p { margin-bottom: 0.5rem; line-height: 1.6; margin-left: 0.5rem; }
-        .detail-subsection.measurement_characterization .considerations li::before { content: "\25B8"; color: #8e44ad; }
+        .detail-subsection li::before { content: "\2023"; /* Bullet */ color: #555; font-weight: normal; display: inline-block; position: absolute; left: 0; width: 1em; }
+        .detail-subsection p { margin-bottom: 0.5rem; line-height: 1.6; margin-left: 0.5rem; } /* Paragraphs within subsections */
+
+        /* Specific list styling */
+        .detail-subsection.measurement_characterization .considerations ul { margin-top: 0.25rem; }
+        .detail-subsection.measurement_characterization .considerations li::before { content: "\25B8"; /* Right-pointing triangle */ color: #6f42c1; }
         .detail-subsection.measurement_characterization .considerations li,
         .detail-subsection.measurement_characterization .considerations p { font-size: 0.9rem; color: #444; }
-        .equation-block { background-color: #f8f9fa; padding: 1.25rem; border-radius: 6px; margin: 1rem 0; border: 1px solid #e9ecef; }
-        .equation-block .eq-name { font-weight: 600; color: #2980b9; margin-bottom: 0.75rem; display: block; font-size: 1rem; }
-        .equation-block .eq-desc { color: #555; margin-bottom: 1rem; font-size: 0.9rem; }
-        /* Combined styling for formula containers */
-        .equation-block .eq-formula-container, /* Use a single class */
+
+        /* Equation Blocks */
+        .equation-block { background-color: #f8f9fa; padding: 1rem 1.25rem; border-radius: 6px; margin: 1rem 0; border: 1px solid #e9ecef; position: relative; }
+        .equation-block .eq-name { font-weight: 600; color: #0056b3; margin-bottom: 0.75rem; display: block; font-size: 1rem; }
+        .equation-block .eq-desc { color: #555; margin-bottom: 1rem; font-size: 0.9rem; line-height: 1.5; }
+        /* Formula Containers */
+        .equation-block .eq-formula-container,
         .equation-block .eq-formula-html,
         .equation-block .eq-formula-plain {
             font-family: 'Consolas', 'Menlo', 'Monaco', monospace; background-color: #eef2f7;
-            padding: 0.75rem; border-radius: 4px; font-size: 1.1rem; overflow-x: auto;
+            padding: 0.75rem 1rem; border-radius: 4px; font-size: 1.1rem; overflow-x: auto;
             color: #1d2c3f; margin: 0.75rem 0;
             text-align: center; /* Centered Equation */
-            display: block;
+            display: block; line-height: 1.4;
         }
-        .equation-block .eq-units { font-size: 0.85rem; color: #555; text-align: right; margin-bottom: 0.75rem; }
-        .equation-block .eq-vars strong { color: #333; }
+        .equation-block .eq-units { font-size: 0.85rem; color: #555; text-align: right; margin-bottom: 0.75rem; margin-top: -0.5rem; }
+        .equation-block .eq-vars { margin-top: 1rem; }
+        .equation-block .eq-vars strong { color: #333; font-size: 0.9rem; }
         .equation-block .eq-vars ul { padding-left: 1rem; list-style: none; margin-top: 0.5rem;}
-        .equation-block .eq-vars li { font-size: 0.9rem; margin-bottom: 0.4rem; }
+        .equation-block .eq-vars li { font-size: 0.9rem; margin-bottom: 0.4rem; line-height: 1.5; }
+        .equation-block .eq-vars li strong { margin-right: 0.3em; }
         .equation-block .eq-ref { font-size: 0.85rem; color: #777; text-align: right; margin-top: 0.75rem; }
-        .equation-block .eq-ref a { color: #0066cc; text-decoration: none; }
-        .equation-block .eq-ref a:hover { text-decoration: underline; }
+        .equation-block .eq-ref a.ref-link { color: #0066cc; text-decoration: none; font-weight: 500; }
+        .equation-block .eq-ref a.ref-link:hover { text-decoration: underline; }
+
+        /* References Section */
         #references-section { margin-top: 2.5rem; padding-top: 1.25rem; border-top: 1px solid #e0e0e0; }
         #references-section h4 { font-size: 1.15rem; color: #2c3e50; margin: 0 0 1rem 0; }
-        #references-list { list-style: none; padding-left: 0; font-size: 0.9rem; }
-        #references-list li { margin-bottom: 0.75rem; padding-left: 0; list-style-position: outside; text-indent: -1.5rem; margin-left: 1.5rem; }
-        #references-list li strong { color: #555; font-weight: 600; margin-right: 0.5em; }
-        #references-list li:target { background-color: #fffde7; padding: 0.5rem 0.5rem 0.5rem 1.5rem; border-radius: 4px; transition: background-color 0.3s ease; margin-left: 0; text-indent: 0; }
-        .ref-link { color: #0066cc; text-decoration: none; }
-        .ref-link:hover { text-decoration: underline; }
+        #references-list { list-style: none; padding-left: 0; font-size: 0.9rem; line-height: 1.5; }
+        #references-list li {
+            margin-bottom: 0.75rem;
+            padding-left: 0; /* Remove padding */
+            list-style-position: outside;
+            text-indent: -2.5em; /* Apply negative indent based on longest key expected e.g., [RefKey] */
+            margin-left: 2.5em; /* Apply positive margin to match indent */
+            position: relative; /* Needed for target pseudo element if used */
+        }
+        #references-list li strong {
+            color: #555;
+            font-weight: 600;
+            margin-right: 0.5em; /* Space after key */
+        }
+        #references-list li a { color: #0066cc; text-decoration: none; }
+        #references-list li a:hover { text-decoration: underline; }
+        /* Highlighting for clicked/targeted reference */
+        #references-list li:target,
+        #references-list li.highlight-ref {
+            background-color: #fff9c4; /* Light yellow */
+            transition: background-color 0.3s ease-out;
+            border-radius: 4px;
+            /* Adjust padding/margin ONLY for the target state */
+            margin-left: 0; /* Remove indent margin */
+            padding-left: 0.5rem; /* Add some left padding */
+            text-indent: 0; /* Reset indent */
+            padding-top: 0.3rem;
+            padding-bottom: 0.3rem;
+            margin-right: -0.5rem; /* Compensate container padding if needed */
+             outline: 1px dashed #fbc02d; /* Optional outline */
+        }
+
+        /* Error Message Style */
         .error-message { color: #c0392b; background-color: #fbeae5; padding: 1rem; border-radius: 4px; border: 1px solid #e74c3c; margin: 1rem 0; }
-        html { scroll-behavior: smooth; }
-        @media (max-width: 768px) {
+
+
+        /* --- Styles for 3Dmol.js Viewer --- */
+        .crystal-viewer-wrapper {
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            overflow: hidden; /* Contain elements */
+            background-color: #fdfdfd;
+        }
+
+        .crystal-viewer-container {
+            display: flex;
+            flex-direction: column; /* Default: controls below */
+            min-height: 400px; /* Ensure minimum height */
+        }
+
+        .viewer-area {
+            flex-grow: 1; /* Take available space */
+            position: relative; /* For potential overlays if needed */
+            background-color: white; /* Match viewer background */
+            min-height: 300px; /* Minimum drawing area height */
+        }
+
+        .viewer-controls {
+            width: 100%; /* Full width in column layout */
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-top: 1px solid #e0e0e0;
+            overflow-y: auto; /* Scroll if controls get too long */
+            box-sizing: border-box;
+        }
+        .viewer-controls h4 {
+             margin-top: 0;
+             margin-bottom: 15px;
+             font-size: 1.1rem;
+             color: #343a40;
+             border-bottom: 1px solid #dee2e6;
+             padding-bottom: 8px;
+        }
+
+
+        .control-group {
+            margin-bottom: 15px;
+        }
+        .control-group:last-child {
+             margin-bottom: 5px;
+        }
+
+        .control-title {
+            display: block; /* Ensure it's on its own line */
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: #495057;
+        }
+        label.control-title {
+             margin-bottom: 5px; /* Less space for sliders */
+        }
+
+
+        .viewer-controls button {
+            padding: 5px 10px;
+            margin: 3px 4px 3px 0;
+            cursor: pointer;
+            background-color: #e9ecef;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            transition: background-color 0.2s, border-color 0.2s;
+            font-size: 0.85rem;
+            color: #495057;
+        }
+
+        .viewer-controls button:hover {
+            background-color: #dee2e6;
+            border-color: #adb5bd;
+        }
+
+        .viewer-controls button.active {
+            background-color: #007bff; /* Use a primary color */
+            border-color: #0056b3;
+            color: white;
+            font-weight: 500; /* Normal weight for active */
+        }
+
+        .slider {
+            width: 100%;
+            height: 6px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: #ced4da;
+            outline: none;
+            border-radius: 3px;
+            cursor: pointer;
+             margin-bottom: 5px;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #007bff;
+            cursor: pointer;
+             border: 2px solid white;
+             box-shadow: 0 0 2px rgba(0,0,0,0.3);
+        }
+        .slider::-moz-range-thumb { /* Firefox */
+             width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #007bff;
+            cursor: pointer;
+             border: 2px solid white;
+             box-shadow: 0 0 2px rgba(0,0,0,0.3);
+        }
+
+        [id$='-composition-value'] { /* Target ID ending with -composition-value */
+            font-size: 0.85rem;
+            color: #6c757d;
+            text-align: right;
+            margin-top: 2px;
+            min-height: 1.2em; /* Reserve space */
+        }
+
+        /* Info Panel within controls */
+        .viewer-controls .info-panel {
+             background-color: #ffffff;
+             padding: 10px 12px;
+             border-radius: 4px;
+             font-size: 0.85rem;
+             border: 1px solid #dee2e6;
+             box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+         }
+         .viewer-controls .info-panel h5 {
+             margin-top: 0; margin-bottom: 8px; font-size: 0.95rem; color: #343a40; padding-bottom: 5px; border-bottom: 1px solid #eee;
+         }
+         .viewer-controls .info-panel div {
+             margin-bottom: 4px;
+             line-height: 1.4;
+         }
+         .viewer-controls .info-panel hr {
+             border: none; border-top: 1px solid #eee; margin: 8px 0;
+         }
+
+        .legend {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+            font-size: 0.85rem;
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            margin-right: 6px;
+            border-radius: 50%;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            display: inline-block;
+            vertical-align: middle;
+            flex-shrink: 0; /* Prevent shrinking */
+        }
+         .legend div:last-child { /* Text label */
+             display: inline-block;
+             vertical-align: middle;
+         }
+
+         /* Responsive Layout */
+         @media (max-width: 768px) {
             .full-detail-container { margin: 1rem; padding: 1.5rem; }
             #toc ul { columns: 1; -webkit-columns: 1; -moz-columns: 1; }
             .detail-content-section h2 { font-size: 1.5rem; }
             .property-detail-block h3 { font-size: 1.25rem; }
             .detail-subsection h4::before { font-size: 1rem; }
-        }
+            /* Ensure viewer controls stack on small screens */
+            .crystal-viewer-container { flex-direction: column; }
+            .viewer-controls { width: 100%; border-left: none; border-top: 1px solid #e0e0e0; max-height: none; }
+            .viewer-area { border-right: none; }
+         }
+
+         /* Controls beside viewer on wider screens */
+         @media (min-width: 769px) { /* Apply side-by-side layout */
+             .crystal-viewer-container {
+                 flex-direction: row; /* Side-by-side */
+                 /* Use height from JSON data if available, or set a default */
+                 height: var(--viewer-height, 450px); /* Default height, can be overridden */
+             }
+             .viewer-area {
+                 border-right: 1px solid #e0e0e0;
+                 border-bottom: none;
+                 height: 100%; /* Fill the container height */
+             }
+             .viewer-controls {
+                 width: 280px; /* Fixed width for controls */
+                 flex-shrink: 0; /* Prevent controls from shrinking */
+                 border-top: none;
+                 border-left: 1px solid #e0e0e0;
+                 height: 100%; /* Fill the container height */
+                 overflow-y: auto; /* Allow scrolling within fixed height */
+             }
+         }
+
     </style>
 </head>
 <body>
@@ -100,24 +352,46 @@
             </ul>
         </nav>
         <main id="main-content">
+            <!-- Section Placeholders - JS will populate these -->
             <section id="section-identification" class="detail-content-section" style="display: none;">
-                 <h2 id="section-identification-title"></h2> <p class="section-introduction" id="section-identification-intro"></p> <div class="properties-container" id="section-identification-properties"></div> </section>
+                 <h2 id="section-identification-title"></h2>
+                 <p class="section-introduction" id="section-identification-intro"></p>
+                 <div class="properties-container" id="section-identification-properties"></div>
+            </section>
             <section id="section-electrical_properties" class="detail-content-section" style="display: none;">
-                 <h2 id="section-electrical_properties-title"></h2> <p class="section-introduction" id="section-electrical_properties-intro"></p> <div class="properties-container" id="section-electrical_properties-properties"></div> </section>
+                 <h2 id="section-electrical_properties-title"></h2>
+                 <p class="section-introduction" id="section-electrical_properties-intro"></p>
+                 <div class="properties-container" id="section-electrical_properties-properties"></div>
+            </section>
             <section id="section-optical_properties" class="detail-content-section" style="display: none;">
-                 <h2 id="section-optical_properties-title"></h2> <p class="section-introduction" id="section-optical_properties-intro"></p> <div class="properties-container" id="section-optical_properties-properties"></div> </section>
+                 <h2 id="section-optical_properties-title"></h2>
+                 <p class="section-introduction" id="section-optical_properties-intro"></p>
+                 <div class="properties-container" id="section-optical_properties-properties"></div>
+            </section>
              <section id="section-thermal_properties" class="detail-content-section" style="display: none;">
-                 <h2 id="section-thermal_properties-title"></h2> <p class="section-introduction" id="section-thermal_properties-intro"></p> <div class="properties-container" id="section-thermal_properties-properties"></div> </section>
+                 <h2 id="section-thermal_properties-title"></h2>
+                 <p class="section-introduction" id="section-thermal_properties-intro"></p>
+                 <div class="properties-container" id="section-thermal_properties-properties"></div>
+             </section>
              <section id="section-mechanical_properties" class="detail-content-section" style="display: none;">
-                 <h2 id="section-mechanical_properties-title"></h2> <p class="section-introduction" id="section-mechanical_properties-intro"></p> <div class="properties-container" id="section-mechanical_properties-properties"></div> </section>
-            <!-- Add more section placeholders -->
+                 <h2 id="section-mechanical_properties-title"></h2>
+                 <p class="section-introduction" id="section-mechanical_properties-intro"></p>
+                 <div class="properties-container" id="section-mechanical_properties-properties"></div>
+             </section>
+            <!-- Add more section placeholders here if needed, following the pattern -->
+            <!-- e.g., <section id="section-safety_info" ...></section> -->
         </main>
         <div id="references-section" style="display: none;">
             <h4>References Cited</h4>
-            <ul id="references-list"></ul>
+            <ul id="references-list">
+                 <!-- References will be populated by JS -->
+            </ul>
         </div>
     </div>
-    <!-- KaTeX script REMOVED -->
+
+    <!-- IMPORTANT: Load 3Dmol.js library -->
+    <script src="https://3Dmol.org/build/3Dmol-min.js"></script>
+    <!-- Load your custom loader script -->
     <script src="full_detail_loader.js"></script>
 </body>
 </html>
