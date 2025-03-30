@@ -80,12 +80,14 @@
             {
               "name": "Cutoff Wavelength from E_g(x,T)",
               "description": "Calculates cutoff wavelength (μm) directly from the Hansen relation. Accurate determination of x and T is crucial.",
-              "formula_html": "λ<sub>c</sub>(x, T) ≈ 1.2398 / E<sub>g</sub>(x, T)",
+              "formula_html": "λ<sub>c</sub>(x, T) ≈ 1.2398 / E<sub>g</sub>(x, T) <br>= 1.2398 / [-0.302 + 1.93x + 5.35 × 10<sup>-4</sup> T (1 - 2x) - 0.810x<sup>2</sup> + 0.832x<sup>3</sup>]",
               "formula_plain": "λc(x,T) (μm) ≈ 1.24 / (-0.302 + 1.93*x + 5.35e-4*T*(1-2*x) - 0.810*x^2 + 0.832*x^3)",
               "units": "μm",
                "variables": [
                   {"symbol": "λ<sub>c</sub>", "description": "Cutoff Wavelength"},
-                  {"symbol": "E<sub>g</sub>", "description": "Bandgap Energy (eV, from Hansen Eq.)"}
+                  {"symbol": "E<sub>g</sub>(x, T)", "description": "Bandgap Energy (eV, from Hansen Eq.)"},
+                  {"symbol": "x", "description": "Cd mole fraction (0-1)"},
+                  {"symbol": "T", "description": "Temperature (K)"}
               ],
               "ref": "Hansen_1982"
             }
