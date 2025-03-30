@@ -9,7 +9,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     const materialContextEl = document.getElementById("material-context");
     const sectionIntroEl = document.getElementById("section-introduction");
     const propertiesContainerEl = document.getElementById("properties-container");
-    // REMOVED: const darkCurrentContainerEl = document.getElementById("dark-current-container");
     const referencesSectionEl = document.getElementById("references-section");
     const referencesListEl = document.getElementById("references-list");
 
@@ -71,41 +70,53 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         // --- Process References ---
         const collectedRefs = new Set();
-        const processRefs = (data) => {
+        const processRefs = (data) => { // Helper to find refs recursively
              if (typeof data === 'object' && data !== null) {
                  if (data.ref && materialDetails.references && materialDetails.references[data.ref]) {
                      collectedRefs.add(data.ref);
                  }
-                 Object.values(data).forEach(processRefs);
+                 // Check inside arrays and objects within the current object
+                 Object.values(data).forEach(value => {
+                     if (typeof value === 'object' || Array.isArray(value)) {
+                         processRefs(value);
+                     }
+                 });
              } else if (Array.isArray(data)) {
                  data.forEach(processRefs);
              }
         };
-        processRefs(sectionData.properties); // Only scan properties block for refs now
+        // Scan only the properties block for references associated with specific properties
+        if(sectionData.properties) {
+            processRefs(sectionData.properties);
+        }
 
 
         // --- Populate Properties ---
         if (propertiesContainerEl && sectionData.properties && typeof sectionData.properties === 'object') {
             propertiesContainerEl.innerHTML = ''; // Clear
             Object.entries(sectionData.properties).forEach(([propKey, propData]) => {
-                // --- Start of code to create propBlock --- (Same as previous correct version)
+                // --- Start of code to create propBlock ---
                 const propBlock = document.createElement('div');
                 propBlock.className = 'property-detail-block';
                 propBlock.id = `prop_${sectionKey.replace(/\./g, '_')}_${propKey}`;
 
                 const propTitle = document.createElement('h3');
+                // Use innerHTML for displayName in case it contains HTML entities/tags
                 propTitle.innerHTML = propData.displayName || propKey.replace(/_/g, ' ');
                 propBlock.appendChild(propTitle);
 
                 if (propData.summary) {
                     const summaryEl = document.createElement('div');
                     summaryEl.className = 'summary';
+                    // Use innerHTML for summary
                     summaryEl.innerHTML = propData.summary;
                     propBlock.appendChild(summaryEl);
                 }
 
+                // Process details subsections (notes, equations, measurement, significance)
                 if (propData.details && typeof propData.details === 'object') {
                     for (const [detailKey, detailContent] of Object.entries(propData.details)) {
+                        // Skip rendering if detailContent is null, undefined, or an empty array
                         if (!detailContent || (Array.isArray(detailContent) && detailContent.length === 0)) continue;
 
                         const subsection = document.createElement('div');
@@ -115,66 +126,122 @@ document.addEventListener("DOMContentLoaded", async () => {
                         subsectionTitle.textContent = detailKey.charAt(0).toUpperCase() + detailKey.slice(1);
                         subsection.appendChild(subsectionTitle);
 
+                        // Handle different detail types - USE innerHTML where HTML is expected
                         if ((detailKey === 'notes' || detailKey === 'significance') && Array.isArray(detailContent)) {
                             const ul = document.createElement('ul');
-                            detailContent.forEach(item => { const li = document.createElement('li'); li.innerHTML = item; ul.appendChild(li); });
+                            detailContent.forEach(item => {
+                                const li = document.createElement('li');
+                                li.innerHTML = item; // USE innerHTML
+                                ul.appendChild(li);
+                            });
                             subsection.appendChild(ul);
                         } else if (detailKey === 'equations' && Array.isArray(detailContent)) {
                              detailContent.forEach(eq => {
-                                const eqBlock = document.createElement('div'); eqBlock.className = 'equation-block';
-                                if (eq.name) { const nameEl = document.createElement('span'); nameEl.className = 'eq-name'; nameEl.textContent = eq.name; eqBlock.appendChild(nameEl); }
-                                if (eq.description) { const descEl = document.createElement('p'); descEl.className = 'eq-desc'; descEl.innerHTML = eq.description; eqBlock.appendChild(descEl); }
-                                if (eq.formula_html) { const formulaEl = document.createElement('div'); formulaEl.className = 'eq-formula-html'; formulaEl.innerHTML = eq.formula_html; eqBlock.appendChild(formulaEl); }
-                                else if (eq.formula_plain) { const formulaEl = document.createElement('div'); formulaEl.className = 'eq-formula-plain'; formulaEl.textContent = eq.formula_plain; eqBlock.appendChild(formulaEl); }
-                                else if (eq.formula_latex) { /* Placeholder logic */ }
-                                if(eq.units){ const unitsEl = document.createElement('div'); unitsEl.className = 'eq-units'; unitsEl.innerHTML = `Units: ${eq.units}`; eqBlock.appendChild(unitsEl); }
+                                const eqBlock = document.createElement('div');
+                                eqBlock.className = 'equation-block';
+                                if (eq.name) {
+                                    const nameEl = document.createElement('span'); nameEl.className = 'eq-name';
+                                    nameEl.textContent = eq.name; // Eq Name likely plain text
+                                    eqBlock.appendChild(nameEl);
+                                }
+                                if (eq.description) {
+                                     const descEl = document.createElement('p'); descEl.className = 'eq-desc';
+                                     descEl.innerHTML = eq.description; // USE innerHTML for description
+                                     eqBlock.appendChild(descEl);
+                                }
+                                // Prefer HTML formula, then plain, then LaTeX placeholder
+                                if (eq.formula_html) {
+                                    const formulaEl = document.createElement('div'); formulaEl.className = 'eq-formula-html';
+                                    formulaEl.innerHTML = eq.formula_html; // USE innerHTML
+                                    eqBlock.appendChild(formulaEl);
+                                } else if (eq.formula_plain) {
+                                     const formulaEl = document.createElement('div'); formulaEl.className = 'eq-formula-plain';
+                                     formulaEl.textContent = eq.formula_plain;
+                                     eqBlock.appendChild(formulaEl);
+                                 } else if (eq.formula_latex) {
+                                     const formulaEl = document.createElement('div'); formulaEl.className = 'eq-formula-latex';
+                                     formulaEl.textContent = `[LaTeX Placeholder: ${eq.formula_latex}]`;
+                                     eqBlock.appendChild(formulaEl);
+                                 }
+                                if(eq.units){
+                                     const unitsEl = document.createElement('div'); unitsEl.className = 'eq-units';
+                                     unitsEl.innerHTML = `Units: ${eq.units}`; // USE innerHTML
+                                     eqBlock.appendChild(unitsEl);
+                                }
                                 if (eq.variables && Array.isArray(eq.variables)) {
-                                    const varsDiv = document.createElement('div'); varsDiv.className = 'eq-vars'; varsDiv.innerHTML = '<strong>Variables:</strong>'; const varsUl = document.createElement('ul');
-                                    eq.variables.forEach(v => { const li = document.createElement('li'); li.innerHTML = `<strong>${v.symbol}:</strong> ${v.description}`; varsUl.appendChild(li); });
-                                    varsDiv.appendChild(varsUl); eqBlock.appendChild(varsDiv); }
-                                if (eq.ref) { const refEl = document.createElement('div'); refEl.className = 'eq-ref'; refEl.innerHTML = `Ref: <a href="#ref-${eq.ref}" class="ref-link" data-ref-key="${eq.ref}">${eq.ref}</a>`; eqBlock.appendChild(refEl); }
-                                subsection.appendChild(eqBlock); });
+                                    const varsDiv = document.createElement('div'); varsDiv.className = 'eq-vars';
+                                    varsDiv.innerHTML = '<strong>Variables:</strong>'; const varsUl = document.createElement('ul');
+                                    eq.variables.forEach(v => {
+                                        const li = document.createElement('li'); li.innerHTML = `<strong>${v.symbol}:</strong> ${v.description}`; // USE innerHTML
+                                        varsUl.appendChild(li); });
+                                    varsDiv.appendChild(varsUl); eqBlock.appendChild(varsDiv);
+                                }
+                                if (eq.ref) { // Ref processing handled globally
+                                    const refEl = document.createElement('div'); refEl.className = 'eq-ref';
+                                    // Create link that points to the reference ID in the references list
+                                    refEl.innerHTML = `Ref: <a href="#ref-${eq.ref}" class="ref-link" data-ref-key="${eq.ref}">${eq.ref}</a>`;
+                                    eqBlock.appendChild(refEl);
+                                }
+                                subsection.appendChild(eqBlock);
+                            });
                         } else if (detailKey === 'measurement' && typeof detailContent === 'object') {
-                            if(detailContent.techniques && Array.isArray(detailContent.techniques)){ const ul = document.createElement('ul'); detailContent.techniques.forEach(tech => { const li = document.createElement('li'); li.innerHTML = tech; ul.appendChild(li); }); subsection.appendChild(ul); }
-                            if(detailContent.notes && Array.isArray(detailContent.notes)){ detailContent.notes.forEach(note => { const p = document.createElement('p'); p.innerHTML = note; p.style.fontSize = '0.9em'; p.style.color = '#555'; subsection.appendChild(p); });
-                            } else if (typeof detailContent === 'string') { const p = document.createElement('p'); p.innerHTML = detailContent; subsection.appendChild(p); }
-                        } else if (typeof detailContent === 'string') { const p = document.createElement('p'); p.innerHTML = detailContent; subsection.appendChild(p);
-                        } else { console.warn(`Unhandled detail type '${detailKey}'`); }
+                            if(detailContent.techniques && Array.isArray(detailContent.techniques)){
+                                const ul = document.createElement('ul');
+                                detailContent.techniques.forEach(tech => { const li = document.createElement('li'); li.innerHTML = tech; ul.appendChild(li); }); // USE innerHTML
+                                subsection.appendChild(ul);
+                            }
+                            if(detailContent.notes && Array.isArray(detailContent.notes)){
+                                detailContent.notes.forEach(note => { const p = document.createElement('p'); p.innerHTML = note; p.style.fontSize = '0.9em'; p.style.color = '#555'; subsection.appendChild(p); }); // USE innerHTML
+                            } else if (typeof detailContent === 'string') { // Handle simple string case
+                                const p = document.createElement('p');
+                                p.innerHTML = detailContent; // USE innerHTML
+                                subsection.appendChild(p);
+                            }
+                        } else if (typeof detailContent === 'string') {
+                            const p = document.createElement('p');
+                            p.innerHTML = detailContent; // USE innerHTML
+                            subsection.appendChild(p);
+                        } else {
+                             console.warn(`Unhandled detail type '${detailKey}' for property '${propKey}'`);
+                        }
 
-                        if(subsection.children.length > 1) propBlock.appendChild(subsection);
+                        // Only append subsection if it contains more than just the title
+                        if(subsection.children.length > 1) {
+                           propBlock.appendChild(subsection);
+                        }
                     }
                 }
                  // --- End of code to create propBlock ---
                 propertiesContainerEl.appendChild(propBlock);
             });
         } else {
+            // Handle case where section exists but has no 'properties' object
             if (propertiesContainerEl) propertiesContainerEl.innerHTML = '<p>No specific properties detailed for this section yet.</p>';
         }
-
-        // --- REMOVED Dark Current Section Population Logic ---
 
 
         // --- Populate References ---
         if (collectedRefs.size > 0 && referencesListEl && materialDetails.references) {
-             referencesListEl.innerHTML = '';
+             referencesListEl.innerHTML = ''; // Clear
              collectedRefs.forEach(refKey => {
                  const refData = materialDetails.references[refKey];
                  if(refData){
-                     const li = document.createElement('li'); li.id = `ref-${refKey}`;
+                     const li = document.createElement('li');
+                     li.id = `ref-${refKey}`; // Add ID for linking
                      let linkHtml = refData.text;
                      if(refData.doi){ linkHtml += ` <a href="https://doi.org/${refData.doi}" target="_blank" title="View via DOI">[DOI]</a>`; }
+                     // Use innerHTML for the reference text itself in case it contains special chars
                      li.innerHTML = `<strong>[${refKey}]</strong> ${linkHtml}`;
                      referencesListEl.appendChild(li);
                  }
              });
-             referencesSectionEl.style.display = 'block';
+             referencesSectionEl.style.display = 'block'; // Show the section
 
              // Add smooth scroll for internal reference links - EVENT DELEGATION
-             // Listener only needed on properties container now
              propertiesContainerEl.addEventListener('click', handleRefLinkClick);
 
         } else if(referencesSectionEl){
-             referencesSectionEl.style.display = 'none';
+             referencesSectionEl.style.display = 'none'; // Hide if no refs used or found
         }
 
     } catch (error) {
@@ -183,12 +250,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Function to handle reference link clicks (for smooth scroll)
     function handleRefLinkClick(event) {
-        if (event.target.classList.contains('ref-link') && event.target.dataset.refKey) {
-            event.preventDefault();
-            const targetId = `ref-${event.target.dataset.refKey}`;
+        // Check if the clicked element or its parent is the reference link
+        const link = event.target.closest('a.ref-link');
+        if (link && link.dataset.refKey) {
+            event.preventDefault(); // Prevent default anchor jump
+            const targetId = `ref-${link.dataset.refKey}`;
             const targetElement = document.getElementById(targetId);
             if (targetElement) {
-                targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' }); // Scroll to center is often better
+                // Highlighting is now handled by CSS :target pseudo-class
             }
         }
     }
