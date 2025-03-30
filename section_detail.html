@@ -7,342 +7,424 @@
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
     <style>
+        /* Modern color scheme and variables */
         :root {
-            --primary-color: #2c3e50;
-            --accent-color: #3498db;
-            --border-color: #e0e0e0;
-            --light-bg: #f9f9f9;
-            --card-bg: #ffffff;
-            --text-primary: #333;
-            --text-secondary: #555;
-            --equation-bg: #f8f9fa;
-            --spacing-xs: 0.5rem;
-            --spacing-sm: 0.8rem;
-            --spacing-md: 1.25rem;
-            --spacing-lg: 1.8rem;
-            --spacing-xl: 2.5rem;
-            --border-radius: 6px;
+            --primary: #1a73e8;
+            --primary-dark: #0d47a1;
+            --secondary: #10b981;
+            --text-primary: #1f2937;
+            --text-secondary: #4b5563;
+            --text-muted: #6b7280;
+            --bg-main: #ffffff;
+            --bg-light: #f9fafb;
+            --bg-accent: #f3f4f6;
+            --border: #e5e7eb;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --radius-sm: 0.25rem;
+            --radius: 0.5rem;
+            --radius-lg: 0.75rem;
         }
 
+        /* Base and typography */
         body {
-            background-color: var(--light-bg);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', sans-serif;
+            line-height: 1.5;
+            color: var(--text-primary);
+            background: #f0f4f8;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', sans-serif;
-            line-height: 1.6;
-            color: var(--text-primary);
         }
 
+        /* Main container */
         .section-detail-container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 2rem auto;
-            padding: var(--spacing-xl);
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: var(--border-radius);
-            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            background: var(--bg-main);
+            overflow: hidden;
         }
 
-        /* --- Header Bar --- */
-        .section-title-bar {
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: var(--spacing-md);
-            margin-bottom: var(--spacing-lg);
-        }
-        
-        .section-title-bar h1 {
-            margin: 0;
-            font-size: 1.8rem;
-            color: var(--primary-color);
-            margin-bottom: var(--spacing-xs);
-            font-weight: 600;
-        }
-        
-        .section-title-bar .material-context {
-            font-size: 1rem;
-            color: var(--text-secondary);
+        /* Header section with gradient background */
+        .header-section {
+            background: linear-gradient(120deg, #1a73e8, #0d47a1);
+            color: white;
+            padding: 2.5rem 2rem 2rem;
+            position: relative;
         }
 
-        /* --- Back Link --- */
         .back-link {
             display: inline-flex;
             align-items: center;
-            margin-bottom: var(--spacing-md);
-            font-size: 0.9rem;
-            color: var(--accent-color);
+            color: rgba(255, 255, 255, 0.9);
             text-decoration: none;
-            transition: color 0.2s;
+            font-size: 0.9rem;
+            font-weight: 500;
+            padding: 0.5rem 0.75rem;
+            border-radius: var(--radius);
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(4px);
+            margin-bottom: 1.5rem;
+            transition: all 0.2s ease;
         }
-        
+
         .back-link:hover {
-            color: #1a6ca8;
+            background: rgba(255, 255, 255, 0.25);
         }
-        
+
         .back-link::before {
             content: "←";
-            margin-right: 6px;
+            margin-right: 0.5rem;
+            font-size: 1.1rem;
         }
 
-        /* --- Introduction Block --- */
+        .section-title-bar h1 {
+            margin: 0;
+            font-size: 2.25rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+        }
+
+        .material-context {
+            font-size: 1.1rem;
+            opacity: 0.85;
+            margin-top: 0.5rem;
+        }
+
+        /* Main content area */
+        .section-content {
+            padding: 2rem;
+        }
+
+        /* Introduction with card design */
         .section-introduction {
-            font-size: 1rem;
+            background: var(--bg-light);
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            border-left: 5px solid var(--primary);
+            margin-bottom: 2.5rem;
+            font-size: 1.05rem;
             line-height: 1.7;
-            margin-bottom: var(--spacing-lg);
-            padding: var(--spacing-md);
-            background-color: #eef2f7;
-            border-left: 4px solid var(--accent-color);
-            border-radius: 4px;
+            box-shadow: var(--shadow-sm);
         }
 
-        /* --- Property Block Styling --- */
+        /* Property blocks with cards */
         .property-detail-block {
-            margin-bottom: var(--spacing-lg);
-            padding-bottom: var(--spacing-md);
-            border-bottom: 1px solid var(--border-color);
-        }
-        
-        .property-detail-block:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
+            background: var(--bg-main);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 1.75rem;
+            margin-bottom: 2rem;
+            border-top: 4px solid var(--primary);
         }
 
-        /* Property Name (H3) */
         .property-detail-block h3 {
-            font-size: 1.4rem;
-            color: var(--primary-color);
-            margin: 0 0 var(--spacing-xs) 0;
+            font-size: 1.5rem;
+            color: var(--primary-dark);
+            margin: 0 0 0.75rem 0;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+
+        .property-detail-block h3::before {
+            content: "";
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border-radius: 50%;
+            margin-right: 0.75rem;
+        }
+
+        .property-detail-block .summary {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            padding: 0.75rem 1rem;
+            background: var(--bg-light);
+            border-radius: var(--radius-sm);
+        }
+
+        /* Subsections with better hierarchy */
+        .detail-subsection {
+            margin: 1.5rem 0;
+            padding-left: 1rem;
+            border-left: 2px solid var(--border);
+        }
+
+        .detail-subsection h4 {
+            font-size: 1.15rem;
+            color: var(--secondary);
+            margin: 0 0 0.75rem 0;
             font-weight: 600;
         }
 
-        /* Property Summary */
-        .property-detail-block .summary {
-            font-style: normal;
-            color: var(--text-secondary);
-            margin-bottom: var(--spacing-md);
-            font-size: 1rem;
-            padding-left: var(--spacing-sm);
-            border-left: 3px solid #bdc3c7;
-            line-height: 1.6;
+        .detail-subsection ul {
+            list-style-type: none;
+            padding-left: 0;
+            margin: 0.75rem 0;
         }
 
-        /* --- Subsection Styling --- */
-        .detail-subsection {
-            margin: var(--spacing-md) 0;
-            padding-left: var(--spacing-xs);
-        }
-        
-        .detail-subsection h4 {
-            font-size: 1.1rem;
-            color: #16a085;
-            margin: 0 0 var(--spacing-sm) 0;
-            padding-bottom: var(--spacing-xs);
-            border-bottom: 1px solid var(--border-color);
-            font-weight: 500;
-        }
-        
-        .detail-subsection ul {
-            list-style: disc;
+        .detail-subsection li {
+            position: relative;
             padding-left: 1.5rem;
-            margin: var(--spacing-xs) 0 var(--spacing-sm) 0;
-        }
-        
-        .detail-subsection li,
-        .detail-subsection p {
-            margin-bottom: var(--spacing-xs);
+            margin-bottom: 0.5rem;
             line-height: 1.65;
         }
 
-        /* --- Equation Block Styling --- */
-        .equation-block {
-            background-color: var(--equation-bg);
-            padding: var(--spacing-md);
-            border-radius: var(--border-radius);
-            margin-bottom: var(--spacing-md);
-            border: 1px solid #e9ecef;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+        .detail-subsection li::before {
+            content: "•";
+            color: var(--primary);
+            position: absolute;
+            left: 0;
+            font-weight: bold;
         }
-        
+
+        /* Equation blocks with modern styling */
+        .equation-block {
+            background: var(--bg-light);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
         .equation-block .eq-name {
             font-weight: 600;
-            display: block;
-            margin-bottom: var(--spacing-sm);
-            font-size: 1.05rem;
-            color: var(--accent-color);
+            color: var(--primary);
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
         }
-        
+
+        .equation-block .eq-name::before {
+            content: "ƒ";
+            margin-right: 0.5rem;
+            font-size: 1.2rem;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
         .equation-block .eq-desc {
-            font-size: 0.95rem;
             color: var(--text-secondary);
-            margin-bottom: var(--spacing-sm);
-            line-height: 1.6;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
         }
-        
+
         .equation-block .eq-formula-html,
         .equation-block .eq-formula-plain {
             font-family: 'Consolas', 'Menlo', 'Monaco', monospace;
+            background: rgba(0, 0, 0, 0.03);
+            padding: 1rem;
+            border-radius: var(--radius-sm);
             font-size: 1.1rem;
-            margin: var(--spacing-sm) 0;
-            word-wrap: break-word;
-            text-align: left;
-            display: block;
-            padding: var(--spacing-sm) 0;
-            color: #1d2c3f;
-        }
-        
-        .equation-block .eq-units {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            margin-bottom: var(--spacing-sm);
-            text-align: right;
-            display: block;
-        }
-        
-        .equation-block .eq-vars {
-            margin-top: var(--spacing-sm);
-        }
-        
-        .equation-block .eq-vars strong {
-            color: var(--text-primary);
-        }
-        
-        .equation-block .eq-vars ul {
-            padding-left: 1rem;
-            list-style: none;
-            margin-top: var(--spacing-xs);
-        }
-        
-        .equation-block .eq-vars li {
-            font-size: 0.9rem;
-            margin-bottom: var(--spacing-xs);
-        }
-        
-        .equation-block .eq-ref {
-            font-size: 0.85rem;
-            margin-top: var(--spacing-sm);
-            text-align: right;
-            color: #777;
-        }
-        
-        .equation-block .eq-ref a {
-            text-decoration: none;
-            color: var(--accent-color);
-            transition: color 0.2s;
-        }
-        
-        .equation-block .eq-ref a:hover {
-            color: #1a6ca8;
+            overflow-x: auto;
+            margin: 1rem 0;
         }
 
-        /* --- References Section --- */
-        #references-section {
-            margin-top: var(--spacing-xl);
-            padding-top: var(--spacing-md);
-            border-top: 1px solid var(--border-color);
+        .equation-block .eq-units {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            text-align: right;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
         }
-        
+
+        .equation-block .eq-vars strong {
+            color: var(--primary-dark);
+        }
+
+        .equation-block .eq-vars ul {
+            list-style: none;
+            padding-left: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 0.5rem;
+        }
+
+        .equation-block .eq-vars li {
+            background: rgba(0, 0, 0, 0.02);
+            padding: 0.5rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+        }
+
+        .equation-block .eq-ref {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-align: right;
+            margin-top: 1rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .equation-block .eq-ref a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .equation-block .eq-ref a:hover {
+            text-decoration: underline;
+        }
+
+        /* References section styling */
+        #references-section {
+            background: var(--bg-light);
+            margin-top: 2.5rem;
+            padding: 1.5rem 2rem;
+            border-top: 1px solid var(--border);
+        }
+
         #references-section h4 {
-            font-size: 1.15rem;
-            color: var(--primary-color);
-            margin: 0 0 var(--spacing-sm) 0;
+            font-size: 1.25rem;
+            color: var(--text-primary);
+            margin: 0 0 1rem 0;
             font-weight: 600;
         }
-        
+
         #references-list {
             list-style: none;
             padding-left: 0;
-            font-size: 0.9rem;
-            line-height: 1.65;
         }
-        
+
         #references-list li {
-            margin-bottom: var(--spacing-sm);
-            padding-left: 1.5rem;
+            margin-bottom: 0.75rem;
+            padding-left: 2.5rem;
             position: relative;
+            font-size: 0.95rem;
         }
-        
+
         #references-list li strong {
             position: absolute;
             left: 0;
-            top: 0.1em;
+            color: var(--primary);
             font-weight: 600;
-            color: #555;
         }
-        
+
         #references-list li:target {
-            background-color: #fffde7;
-            padding: var(--spacing-xs);
-            border-radius: 3px;
-            transition: background-color 0.5s ease;
+            background: #fffde7;
+            padding: 0.75rem;
+            padding-left: 2.5rem;
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-sm);
         }
 
         .ref-link {
+            color: var(--primary);
             text-decoration: none;
-            color: var(--accent-color);
-            transition: color 0.2s;
-        }
-        
-        .ref-link:hover {
-            color: #1a6ca8;
-        }
-        
-        .error-message {
-            color: #c0392b;
-            font-weight: bold;
-            background-color: #fbeae5;
-            padding: var(--spacing-md);
-            border-radius: 4px;
-            border: 1px solid #e74c3c;
-            margin: var(--spacing-md) 0;
         }
 
-        /* Loading States */
-        .loading {
-            opacity: 0.7;
-            position: relative;
+        .ref-link:hover {
+            text-decoration: underline;
         }
-        
+
+        /* Error message styling */
+        .error-message {
+            background: #fee2e2;
+            color: #b91c1c;
+            padding: 1rem;
+            border-radius: var(--radius);
+            margin: 1rem 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .error-message::before {
+            content: "!";
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 50%;
+            background: #b91c1c;
+            color: white;
+            margin-right: 0.75rem;
+            font-weight: bold;
+        }
+
+        /* Loading state */
+        .loading {
+            position: relative;
+            min-height: 100px;
+        }
+
         .loading::after {
             content: "";
             position: absolute;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(255, 255, 255, 0.5);
-            z-index: 1;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+            background-size: 200% 100%;
+            animation: loadingAnimation 1.5s infinite;
         }
 
-        /* Responsive adjustments */
+        @keyframes loadingAnimation {
+            0% {
+                background-position: -200% 0;
+            }
+            100% {
+                background-position: 200% 0;
+            }
+        }
+
+        /* Responsive design */
         @media (max-width: 768px) {
             .section-detail-container {
                 margin: 1rem;
-                padding: var(--spacing-md);
             }
-            
+
+            .header-section {
+                padding: 1.5rem 1.25rem 1.25rem;
+            }
+
             .section-title-bar h1 {
-                font-size: 1.5rem;
+                font-size: 1.75rem;
             }
-            
-            .equation-block {
-                padding: var(--spacing-sm);
+
+            .section-content {
+                padding: 1.25rem;
+            }
+
+            .property-detail-block {
+                padding: 1.25rem;
+            }
+
+            .equation-block .eq-vars ul {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
     <div class="section-detail-container">
-        <a href="index.html" class="back-link">Back to Materials List</a>
-        <div class="section-title-bar">
-            <h1 id="section-display-name">Loading Section...</h1>
-            <div class="material-context" id="material-context">for Loading Material...</div>
+        <!-- Header with gradient background -->
+        <div class="header-section">
+            <a href="index.html" class="back-link">Back to Materials List</a>
+            <div class="section-title-bar">
+                <h1 id="section-display-name">Loading Section...</h1>
+                <div class="material-context" id="material-context">for Loading Material...</div>
+            </div>
         </div>
+
+        <!-- Main content area -->
         <div class="section-content" id="section-content">
             <p id="section-introduction" class="section-introduction" style="display: none;">Loading introduction...</p>
-            <div id="properties-container">
+            <div id="properties-container" class="loading">
                 <!-- Content generated dynamically by section_loader.js -->
             </div>
-        </div> <!-- End section-content -->
-        <div id="references-section" style="display: none;"> <!-- Initially hidden -->
+        </div>
+
+        <!-- References section -->
+        <div id="references-section" style="display: none;">
             <h4>References Cited</h4>
             <ul id="references-list">
                 <!-- References loaded by JS -->
