@@ -2469,5 +2469,101 @@
       "strain sensing", "strong", "thermal conductive", "thin film", "transparent",
       "nanomaterial", "composite", "2d material", "polymer matrix composite"
     ]
+    },
+    "Hafnium Carbide Matrix Composite": {
+    "name": "Hafnium Carbide Matrix Composite",
+    "formula": "HfC matrix / Fiber",
+    "synonyms": [ "HfC Composite", "HfC-CMC", "Ultra High Temp Ceramic Composite" ],
+    "category": "Composite",
+    "constituent_elements": ["Hf", "C", "Si"],
+    "description": "An advanced Ceramic Matrix Composite (CMC) utilizing Hafnium Carbide (HfC) as the primary matrix material, typically reinforced with high-performance fibers like Silicon Carbide (SiC) or potentially Carbon (C) fibers (though C fibers have oxidation limits). HfC is an Ultra-High Temperature Ceramic (UHTC) with one of the highest known melting points (~3900°C). These composites aim to combine the extreme temperature resistance of HfC with improved toughness and damage tolerance provided by the fiber reinforcement, targeting applications like hypersonic vehicle leading edges, rocket propulsion components, and other extreme thermal-structural environments.",
+    "wiki_link": "https://en.wikipedia.org/wiki/Hafnium_carbide",
+    "safety": {
+      "toxicity": "Low for the dense composite. HfC powder can be an irritant. Machining generates hard ceramic dust requiring respiratory protection.",
+      "handling": "Handle components carefully; while tougher than monolithic HfC, still a brittle ceramic composite. Requires appropriate PPE during machining."
+    },
+    "identification": {
+      "cas_number": "12069-85-1 (HfC)",
+      "class": "Ultra-High Temperature Ceramic Matrix Composite (UHTC-CMC)",
+      "crystal_structure": "HfC: Cubic (Rocksalt, Fm-3m). Fiber: Varies (e.g., Hexagonal SiC, Graphitic Carbon).",
+      "phase_diagram_notes": "Complex fabrication involving processing HfC powder (or precursors) with fibers. Key challenges include achieving dense HfC matrix infiltration around fibers without damaging fibers, managing CTE mismatch, and ensuring good interfacial bonding."
+    },
+    "advanced_fabrication_insights": {
+        "process_control": "Fabrication is challenging due to extreme temperatures required for HfC densification (>2000°C). Methods include Chemical Vapor Infiltration (CVI) of HfC into a fiber preform, Polymer Impregnation and Pyrolysis (PIP) using Hf-containing precursors, Powder Infiltration & Hot Pressing/SPS, Reactive Melt Infiltration (RMI).",
+        "common_defects_impact": "Matrix porosity, fiber damage during high-temp processing, weak fiber/matrix interface, matrix cracking due to CTE mismatch. Severely degrade mechanical properties, thermal conductivity, and oxidation resistance.",
+        "interface_engineering": "Controlling the fiber/matrix interface is critical. A weak interface promotes fiber pull-out and toughness, but too weak limits load transfer. Interface coatings (e.g., BN, PyC on SiC fibers) are often necessary.",
+        "oxidation_protection": "While HfC is refractory, it oxidizes at high temperatures forming HfO₂. SiC fibers or SiC additions to the matrix can help form protective hafnia-silica scales for improved oxidation resistance in air."
+    },
+    "growth_fabrication_properties": {
+        "common_growth_methods": "Chemical Vapor Infiltration (CVI), Polymer Impregnation and Pyrolysis (PIP), Reactive Melt Infiltration (RMI), Powder Metallurgy routes (Hot Pressing, SPS with fiber preforms).",
+        "source_materials_purity": "High purity HfC powder or precursors (e.g., HfCl₄), high-performance fibers (SiC, potentially C), interface coating materials (e.g., BN).",
+        "preferred_substrates_orientations": "N/A (Bulk composite).",
+        "typical_growth_parameters": "Extremely high temperatures (>2000°C for densification), controlled atmospheres (vacuum, inert, or reactive gases depending on method).",
+        "passivation_methods": "Relies on inherent oxidation behavior (formation of HfO₂) or engineered matrix additions (e.g., SiC) for passive scale formation."
+    },
+    "post_growth_processing": {
+        "annealing": "May be used for stress relief or microstructural refinement.",
+        "lapping_polishing": "Extremely difficult due to hardness. Requires specialized diamond tooling.",
+        "etching": "Highly resistant to chemical etching.",
+        "grinding_milling": "Machinable only with diamond tooling, very slow removal rates."
+    },
+     "device_integration_characterization": {
+        "device_architectures": "Leading edges for hypersonic vehicles, rocket nozzle throats/liners, combustion chamber components, high-temperature structural elements.",
+        "readout_integration": "N/A",
+        "ar_coatings": "N/A",
+        "packaging_cooling": "Designed for operation at extreme temperatures with minimal or passive cooling.",
+        "key_characterization_techniques": ["Microscopy (SEM/TEM - microstructure, interface, defects)", "XRD (phase identification)", "Density/Porosity Measurement", "Mechanical Testing (Flexural/Tensile Strength, Toughness - often at elevated temperature)", "Thermal Property Measurement (Conductivity, Expansion - at high temp)", "Oxidation/Ablation Testing (Arc-jet or furnace exposure)"]
+    },
+    "electrical_properties": {
+      "bandgap_type": "N/A (Metallic Conductor)",
+      "band_gap": {"value": "0", "unit": "eV"},
+      "resistivity": {"value": "~20-50+", "unit": "µΩ·cm", "notes": "Relatively low resistivity (metallic-like). Fiber type/volume fraction will influence bulk composite resistivity."}
+    },
+    "optical_properties": {
+      "spectral_range": "Opaque", "notes": "Metallic gray appearance."
+    },
+    "thermal_properties": {
+      "operating_temperature": {"value": "Potentially >2200", "unit": "°C", "notes": "In appropriate atmospheres (inert/vacuum) or with oxidation protection. One of the highest temperature capable structural materials."},
+      "thermal_conductivity": {"value": "~20-60+", "unit": "W/(m·K)", "notes": "HfC itself has moderate conductivity. Composite value depends heavily on matrix density, fiber type/orientation, and interface."},
+      "specific_heat": {"value": "~0.15-0.25", "unit": "J/(g·K)"},
+      "melting_point": {"value": "~3900", "unit": "°C", "notes": "Melting point of HfC. Composite use limited by oxidation or fiber stability."},
+      "thermal_expansion": {"value": "~6.5-7.5 x 10⁻⁶", "unit": "/°C", "notes": "CTE of HfC. Composite CTE depends on fiber and matrix interaction."}
+    },
+     "mechanical_properties": {
+         "density": {"value": "~6-10+", "unit": "g/cm³", "notes": "Relatively high density due to HfC (~12.7 g/cm³). Depends on fiber type (SiC ~3.2, C ~1.8) and volume fractions/porosity."},
+         "youngs_modulus": {"value": "High (Potentially 200-450+ GPa)", "notes": "Depends on constituents and architecture. HfC modulus ~440 GPa."},
+         "strength": {"notes": "Strength maintained to very high temperatures, but specific values depend heavily on processing and testing conditions."},
+         "fracture_toughness": {"value": "Enhanced vs Monolithic HfC (~5-15+ MPa·m⁰·⁵)", "notes": "Improvement via fiber reinforcement mechanisms (crack deflection, pull-out). Significantly tougher than monolithic UHTCs."}
+     },
+     "device_applications": {
+         "key_applications": ["Thermal Protection Systems (TPS) for Hypersonic/Reentry Vehicles (Nose cones, Leading Edges)", "Rocket Propulsion Components (Nozzles, Combustion Liners)", "Ultra-High Temperature Furnace Components", "Advanced Nuclear Reactor Components (Potential)"]
+     },
+     "chemical_properties": {
+         "stability_oxidation": "HfC oxidizes above ~600-800°C forming HfO₂. Oxidation rate becomes significant at higher temperatures. Incorporation of SiC (fibers or matrix additive) improves oxidation resistance by forming HfO₂-SiO₂ scale.",
+         "inertness": "Very stable in non-oxidizing environments at extreme temperatures."
+     },
+     "comparison_alternatives": {
+         "notes": "Alternative Ultra-High Temperature Materials:",
+         "vs_ZrB2_HfB2_Composites": "HfC Comp: Potentially higher ultimate temperature capability (higher HfC melting point), higher density. Diboride Comp: Generally better oxidation resistance (esp. with SiC), lower density.",
+         "vs_TaC_HfC_Alloys": "HfC Comp: Ceramic matrix offers stiffness/strength at temp. Carbide Alloys (e.g., Ta₄HfC₅): Even higher melting points (highest known), metallic nature (ductility potential but very heavy), oxidation challenges.",
+         "vs_RCC_Coated_CarbonCarbon": "HfC Comp: Higher temperature capability in oxidizing environments, higher density, potentially higher stiffness. RCC: Lower density, established use, limited by SiC coating oxidation limit (~1650°C).",
+         "vs_SiC_SiC_Composites": "HfC Comp: Significantly higher temperature capability (>2000°C vs ~1400-1600°C). SiC/SiC: Lower density, better inherent oxidation resistance, more mature technology."
+     },
+     "references_further_reading": {
+         "notes": "Key Literature Areas:",
+         "journal_jacers": "Journal of the American Ceramic Society (articles on UHTC processing and properties).",
+         "journal_composites_a_b": "Composites Part A/B (articles on CMC development).",
+         "uhtc_reviews": "Review papers on Ultra-High Temperature Ceramics and Composites (search specific authors like W. Fahrenholtz, G. Hilmas, E.J. Wuchina).",
+         "wikipedia_hfc": "https://en.wikipedia.org/wiki/Hafnium_carbide"
+     },
+     "vendor_info": {
+        "notes": "Fabrication is primarily research/aerospace focused, limited commercial vendors.",
+        "vendor_1": "Specialized Aerospace/Defense Contractors/Labs"
+     },
+    "tags": [
+      "ceramic matrix composite", "refractory", "hypersonic", "reentry", "heat shield",
+      "ultra high temp", "oxidation resistant", "space", "industry:space",
+      "industry:defense", "industry:aerospace", "ceramic", "carbide", "uhtc"
+    ]
     }
 }
