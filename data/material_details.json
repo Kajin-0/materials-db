@@ -3924,5 +3924,103 @@
       "lightweight", "tough", "nasa", "aerospace", "industry:aerospace", "industry:space",
       "industry:thermal"
     ]
+  },
+  "Tantalum Hafnium Carbide": {
+    "name": "Tantalum Hafnium Carbide",
+    "formula": "TaₓHf₁₋ₓC (e.g., Ta₄HfC₅)",
+    "synonyms": [ "TaHfC", "Tantalum Hafnium Carbide Alloy", "Ta4HfC5" ],
+    "category": "Ceramic",
+    "constituent_elements": ["Ta", "Hf", "C"],
+    "description": "A solid solution carbide or specific alloy composition (notably Ta₄HfC₅) within the Tantalum-Hafnium-Carbon system. Considered an Ultra-High Temperature Ceramic (UHTC), this class of materials possesses potentially the highest melting points known for any substance (approaching 4000°C for Ta₄HfC₅). Characterized by extreme hardness, high stiffness, and metallic electrical conductivity, but faces challenges with high density and poor oxidation resistance at elevated temperatures. Primarily researched for extreme thermal-structural applications.",
+    "wiki_link": "https://en.wikipedia.org/wiki/Tantalum_hafnium_carbide",
+    "safety": {
+      "toxicity": "Low for the dense composite. Powder/dust is an irritant. Machining generates hard ceramic dust requiring respiratory protection.",
+      "handling": "Handle components carefully; extremely hard but brittle."
+    },
+    "identification": {
+      "class": "Ultra-High Temperature Ceramic (UHTC), Solid Solution Carbide",
+      "crystal_structure": "Cubic (Rocksalt, Fm-3m)",
+      "lattice_constant": {"notes": "Varies with Ta/Hf ratio, typically ~4.5-4.6 Å."},
+      "phase_diagram_notes": "Part of the ternary Ta-Hf-C system. Ta₄HfC₅ represents a specific composition within the solid solution range, often targeted for its maximum melting point."
+    },
+    "advanced_fabrication_insights": {
+        "process_control": "Extremely difficult to fabricate due to very high melting points and processing temperatures required for densification (>2200°C typically). Powder metallurgy (Hot Pressing, SPS) is common.",
+        "common_defects_impact": "Porosity significantly degrades mechanical and thermal properties. Achieving phase purity and homogeneity is challenging. Contamination (esp. Oxygen) is detrimental.",
+        "stoichiometry_control": "Precise control of Ta:Hf:C ratios is needed, especially when targeting specific compositions like Ta₄HfC₅.",
+        "grain_growth": "Controlling grain growth during high-temperature sintering is important for mechanical properties."
+    },
+    "growth_fabrication_properties": {
+        "common_growth_methods": "Powder Metallurgy: Hot Pressing (HP), Spark Plasma Sintering (SPS) of mixed elemental or pre-reacted carbide powders.",
+        "source_materials_purity": "High purity Ta, Hf, C powders or TaC, HfC powders.",
+        "preferred_substrates_orientations": "N/A (Bulk material).",
+        "typical_growth_parameters": "Extremely high temperatures (>2200°C) and high pressures (HP/SPS) under vacuum or inert atmosphere.",
+        "passivation_methods": "Requires coating for oxidation protection at high temperatures."
+    },
+    "post_growth_processing": {
+        "annealing": "High-temperature treatments are intrinsic to processing.",
+        "lapping_polishing": "Extremely difficult due to extreme hardness. Requires specialized diamond techniques.",
+        "etching": "Highly resistant to chemical etching.",
+        "grinding_milling": "Machinable only with diamond tooling, very challenging."
+    },
+     "device_integration_characterization": {
+        "device_architectures": "Potential components for extreme environments: rocket nozzles, hypersonic vehicle leading edges, furnace elements (research stage).",
+        "readout_integration": "N/A",
+        "ar_coatings": "N/A",
+        "packaging_cooling": "Targeted for applications where materials operate at the highest possible temperatures, often uncooled.",
+        "key_characterization_techniques": ["Melting Point Measurement (Laser heating)", "XRD (phase identification, lattice parameter)", "SEM/TEM (microstructure)", "High-Temperature Mechanical Testing (Strength, Hardness)", "High-Temperature Thermal Property Measurement (Conductivity, Expansion)", "Oxidation Testing (TGA, furnace/arc-jet)"]
+    },
+    "electrical_properties": {
+      "bandgap_type": "N/A (Metallic Conductor)",
+      "band_gap": {"value": "0", "unit": "eV"},
+      "resistivity": {"value": "~20-70+", "unit": "µΩ·cm", "notes": "Metallic conductivity, varies with Ta/Hf ratio."}
+    },
+    "optical_properties": {
+      "spectral_range": "Opaque", "notes": "Metallic gray/black appearance."
+    },
+    "thermal_properties": {
+      "operating_temperature": {"value": "Potentially >2500", "unit": "°C", "notes": "In inert/vacuum environments. Oxidation limits use in air. Highest potential operating temperature material."},
+      "thermal_conductivity": {"value": "Moderate (~20-50 W/(m·K))", "notes": "Similar to other UHTC carbides."},
+      "specific_heat": {"value": "~0.15-0.2", "unit": "J/(g·K)"},
+      "melting_point": {"value": "Extremely High (~3900-3990+)", "unit": "°C", "notes": "Highest recorded melting points for Ta₄HfC₅ composition."},
+      "thermal_expansion": {"value": "~6-7 x 10⁻⁶", "unit": "/°C"}
+    },
+     "mechanical_properties": {
+         "density": {"value": "High (~13-14)", "unit": "g/cm³", "notes": "Very dense material."},
+         "youngs_modulus": {"value": "Very High (~450-550 GPa)"},
+         "hardness_vickers": {"value": "Very High (~18-22 GPa)"},
+         "fracture_toughness": {"value": "Low (~2-4 MPa·m⁰·⁵)", "notes": "Intrinsically brittle ceramic."}
+     },
+     "device_applications": {
+         "key_applications": ["Extreme High-Temperature Structural Components (Research/Potential)", "Rocket Propulsion Components", "Hypersonic Vehicle Leading Edges", "High-Temperature Furnace Elements / Crucibles"]
+     },
+     "chemical_properties": {
+         "stability_oxidation": "Poor at high temperatures (>800°C). Oxidizes to form mixture of Ta₂O₅ and HfO₂, often non-protective.",
+         "chemical_inertness": "Very stable in non-oxidizing conditions at extreme temperatures."
+     },
+     "comparison_alternatives": {
+         "notes": "Alternative Extreme Temperature Materials:",
+         "vs_HfC_ZrC": "TaHfC: Potentially higher melting point (esp. Ta₄HfC₅), higher density. HfC/ZrC: Lower density, slightly better characterized, still require oxidation protection.",
+         "vs_HfB2_ZrB2": "TaHfC: Higher melting point potential, poorer oxidation resistance, higher density. Diborides: Better oxidation resistance (esp. with SiC), lower density, lower melting points.",
+         "vs_Refractory_Metals_W_Ta": "TaHfC: Much higher melting point, much harder/stiffer, brittle. Refractory Metals: Lower melting points, ductile, require oxidation protection coatings at much lower temperatures.",
+         "vs_Carbon_Carbon_RCC": "TaHfC: Much higher melting point, much higher density, isotropic properties, poor oxidation resistance. C/C: Lower density, anisotropic, requires oxidation protection coating (limit ~1650°C)."
+     },
+     "references_further_reading": {
+         "notes": "Key Literature Resources:",
+         "uhtc_reviews": "Review articles on UHTCs (e.g., Journal of the European Ceramic Society, J. American Ceramic Society) often cover Ta-Hf-C system.",
+         "cederbaum_paper": "Cedervall, J., et al. 'Phase stability and properties of (TaxHf1-x)C solid solutions.' (Acta Materialia or similar - example of research paper).",
+         "melting_point_studies": "Research papers focusing on ultra-high temperature measurements (e.g., laser heating experiments).",
+         "wikipedia": "https://en.wikipedia.org/wiki/Tantalum_hafnium_carbide"
+     },
+     "vendor_info": {
+        "notes": "Example Vendors (Placeholder):",
+        "vendor_1": "Company A - www.example-vendor-a.com",
+        "vendor_2": "Company B - www.example-vendor-b.com",
+        "vendor_3": "Company C - www.example-vendor-c.com"
+     },
+    "tags": [
+      "uhtc", "ultra high temp", "extreme temperature", "refractory", "carbide",
+      "ceramic", "dense", "hard", "hypersonic", "propulsion", "research",
+      "high melting point", "industry:aerospace", "industry:defense", "industry:research"
+    ]
   }
 }
