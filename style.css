@@ -1,94 +1,100 @@
 /* ======================================== */
 /* General Styles & Base Elements         */
 /* ======================================== */
+html, body {
+  height: 100%; /* Ensure body can take full height if needed */
+  margin: 0;
+}
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: #f4f6f8; /* Lighter overall background */
+  background: #f4f6f8;
   color: #333;
-  margin: 0;
   padding: 0;
   line-height: 1.6;
+  display: flex; /* Use flexbox for overall layout */
+  flex-direction: column; /* Stack header, main content vertically */
 }
 
 .container { /* Used by detail page */
-  max-width: 1200px; /* Allow slightly wider container */
-  margin: 0 auto; /* Center container */
-  padding: 0 1rem 2rem 1rem; /* Add padding */
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem 1rem 2rem 1rem; /* Added top padding */
+  flex-grow: 1; /* Allow container to grow */
 }
 
 /* ======================================== */
-/* Header (Shared & Detail Specific)      */
+/* Header (Index Page)                   */
 /* ======================================== */
-header { /* Used by index.html */
-  background: #2c3e50; /* Darker header */
+header#index-header { /* Specific ID for index header */
+  background: #2c3e50;
   color: white;
-  padding: 1.5rem 2rem;
-  text-align: left; /* Align title to the left */
+  padding: 1rem 2rem; /* Slightly reduced padding */
+  text-align: left;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0; /* Prevent header from shrinking */
 }
 
-header h1 { /* Used by index.html */
+header#index-header h1 {
   margin: 0;
-  font-size: 1.8rem;
+  font-size: 1.6rem; /* Slightly smaller */
   cursor: pointer;
+  display: inline-block; /* Allow clicking only on text */
 }
-
-/* Detail Page Header Specific */
-.detail-header {
-  background: #f8f9fa; /* Lighter header background for detail */
-  color: #343a40; /* Darker text */
-  padding: 2rem;
-  margin-bottom: 2rem;
-  border-bottom: 1px solid #dee2e6;
-  text-align: center; /* Center header content */
-}
-
-.detail-header h1 { /* Overrides index header h1 within detail-header */
-  margin-bottom: 0.5rem;
-  font-size: 2.2rem;
-  font-weight: 600;
-  color: #2c3e50; /* Match main header color */
-  cursor: default; /* Not clickable */
-}
-
-.detail-header .formula {
-  font-family: 'Consolas', 'Monaco', monospace; /* Monospace for formula */
-  font-size: 1.1rem;
-  color: #495057;
-  margin-top: 0.5rem;
-}
-
 
 /* ======================================== */
-/* Search Container & Suggestions (Index) */
+/* Homepage Centered Search Layout        */
 /* ======================================== */
-#search-container {
-  padding: 2rem;
+body.homepage { /* Add class to body in index.html */
+   justify-content: center; /* Center content vertically */
+}
+
+main#index-main { /* Specific ID for index main content area */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* Center search vertically */
+  flex-grow: 1; /* Allow main to take up remaining space */
+  padding: 2rem 1rem;
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#search-container { /* Repurposed for centering */
+  padding: 0; /* Remove padding */
   display: flex;
   justify-content: center;
   flex-direction: column;
   align-items: center;
-  background: #fff; /* White background for search area */
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  position: relative; /* Needed for suggestions positioning */
+  background: none; /* Remove background */
+  box-shadow: none; /* Remove shadow */
+  position: relative;
+  width: 100%;
+  max-width: 650px; /* Limit search width */
+  margin-bottom: 1.5rem; /* Space below search bar */
 }
 
 #search-container input {
-  padding: 0.8rem 1rem;
-  font-size: 1.1rem;
+  padding: 0.9rem 1.2rem; /* Larger padding */
+  font-size: 1.15rem; /* Larger font */
   width: 100%;
-  max-width: 700px; /* Slightly wider search bar */
   color: #333;
-  background: #f9f9f9;
-  border: 1px solid #ddd;
-  border-radius: 6px;
+  background: #fff; /* White background */
+  border: 1px solid #dfe1e5; /* Google-like border */
+  border-radius: 24px; /* Rounded corners */
   box-sizing: border-box;
-  transition: border-color 0.3s ease;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 1px 6px rgba(32,33,36,0.1); /* Subtle shadow */
+}
+
+#search-container input:hover,
+#search-container input:focus {
+  border-color: #d2d3d6;
+  box-shadow: 0 1px 8px rgba(32,33,36,0.15);
 }
 
 #search-container input:focus {
   outline: none;
-  border-color: #007bff; /* Highlight on focus */
 }
 
 #search-container input::placeholder {
@@ -97,63 +103,102 @@ header h1 { /* Used by index.html */
 
 #suggestions {
   list-style: none;
-  margin: 5px 0 0 0; /* Add slight top margin */
+  margin: 8px 0 0 0; /* Adjust margin */
   padding: 0;
-  max-height: 200px; /* Increased max height */
+  max-height: 250px; /* Allow more suggestions */
   overflow-y: auto;
   background: white;
-  border: 1px solid #ddd;
-  border-radius: 6px;
+  border: 1px solid #dfe1e5;
+  border-radius: 0 0 24px 24px; /* Match bottom rounding */
   width: 100%;
-  max-width: 700px;
-  z-index: 10;
-  position: absolute; /* Position suggestions below input */
-  top: 100%; /* Start right below the search container's content */
-  left: 50%; /* Center horizontally */
-  transform: translateX(-50%); /* Adjust centering */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-  box-sizing: border-box; /* Include padding/border in width */
+  max-width: 650px; /* Match input max-width */
+  z-index: 100; /* Ensure it's above other content */
+  position: absolute;
+  top: 100%;
+  left: 0; /* Align left */
+  /* transform: none; Remove centering transform */
+  box-shadow: 0 4px 6px rgba(32,33,36,0.15);
+  box-sizing: border-box;
+  text-align: left; /* Align suggestion text left */
+}
+/* Hide suggestions border top when input is focused for seamless look */
+#search-container input:focus + #suggestions {
+    border-top-color: transparent;
+    margin-top: -1px; /* Overlap slightly */
+    border-radius: 0 0 24px 24px;
 }
 
+
 #suggestions li {
-  padding: 0.7rem 1rem;
-  border-bottom: 1px solid #eee;
+  padding: 0.8rem 1.2rem; /* Match input padding */
+  border: none; /* Remove internal borders */
   cursor: pointer;
   color: #333;
   transition: background-color 0.2s ease;
-}
-
-#suggestions li:last-child {
-  border-bottom: none;
+  font-size: 1rem;
 }
 
 #suggestions li:hover,
 #suggestions li.active {
-  background: #e9f5ff; /* Lighter hover color */
+  background: #f1f3f4; /* Light gray hover */
 }
 
-#suggestions li.disabled { /* Style for 'Loading...' or 'No results' */
-  color: #999;
+#suggestions li:last-child {
+  border-bottom-left-radius: 24px;
+  border-bottom-right-radius: 24px;
+}
+
+
+#suggestions li.disabled {
+  color: #70757a;
   cursor: default;
 }
 
+/* Initial Results/Toolbar state on Homepage */
+main#results,
+section#toolbar {
+    display: none; /* Initially hide results and toolbar */
+}
+
+/* State after a search is performed */
+body.results-active main#results,
+body.results-active section#toolbar {
+    display: block; /* Show results */
+}
+body.results-active section#toolbar {
+    display: flex; /* Show toolbar as flex */
+}
+
+/* Adjust main layout when results are active */
+body.results-active {
+   justify-content: flex-start; /* Align header to top */
+}
+body.results-active main#index-main {
+    justify-content: flex-start; /* Align content to top */
+    padding-top: 1rem; /* Add some top padding */
+}
+body.results-active #search-container {
+    max-width: 750px; /* Slightly wider search when results shown */
+    margin-bottom: 1rem;
+}
+
 
 /* ======================================== */
-/* Toolbar / Filters (Index)              */
+/* Toolbar / Filters (Index - Styling remains mostly same) */
 /* ======================================== */
 .toolbar {
-  display: none; /* Initially hidden */
+  /* display: none; <- Now controlled by body.results-active */
   gap: 1.5rem;
   flex-wrap: wrap;
   justify-content: center;
-  padding: 1.5rem 2rem;
+  padding: 1rem 2rem; /* Reduced padding */
   background: #fff;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  margin-bottom: 1rem;
-}
-
-.toolbar.active {
-  display: flex;
+  margin-bottom: 1.5rem; /* Space below toolbar */
+  border-radius: 8px;
+  max-width: 1100px; /* Match results width */
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .filter-group {
@@ -163,20 +208,21 @@ header h1 { /* Used by index.html */
 
 .filter-group label {
   margin-right: 0.6rem;
-  font-weight: bold;
-  color: #555;
+  font-weight: 600; /* Bolder label */
+  color: #4a5568;
+  font-size: 0.9rem;
 }
 
 .filter-group select {
   padding: 0.6rem 0.8rem;
-  font-size: 1rem;
+  font-size: 0.95rem;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 6px;
   background-color: #fff;
   color: #333;
   cursor: pointer;
   transition: border-color 0.3s ease;
-  min-width: 150px; /* Give dropdowns a minimum width */
+  min-width: 160px;
 }
 
 .filter-group select:focus {
@@ -188,15 +234,18 @@ header h1 { /* Used by index.html */
 /* ======================================== */
 /* Main Content Area (Shared)             */
 /* ======================================== */
-main { /* ID is now #material-content-container on detail page */
-  max-width: 1100px; /* Max width for both index results and detail content */
-  margin: 2rem auto; /* Top/bottom margin, centered */
-  padding: 0 1rem; /* Padding for smaller screens */
+/* Removed the specific 'main' selector, relying on IDs */
+#results, #material-content-container {
+  max-width: 1100px;
+  margin: 0 auto; /* Toolbar/Search handles top margin */
+  padding: 0 1rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 @media (min-width: 768px) {
-  main {
-    padding: 0 2rem; /* More padding on larger screens */
+  #results, #material-content-container {
+    padding: 0 2rem;
   }
 }
 
@@ -206,35 +255,37 @@ main { /* ID is now #material-content-container on detail page */
 /* ======================================== */
 .material-card {
   background: white;
-  border: 1px solid #ddd;
+  border: 1px solid #dfe1e5; /* Match search border */
   border-radius: 8px;
   padding: 1.5rem;
   margin-bottom: 1.5rem;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
-  transition: box-shadow 0.3s ease, transform 0.2s ease; /* Add transform transition */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  transition: box-shadow 0.25s ease, transform 0.2s ease;
   cursor: pointer;
 }
 
 .material-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12); /* Enhance hover shadow */
-  transform: translateY(-2px); /* Slight lift on hover */
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
 }
 
 .material-card h2 {
   margin-top: 0;
-  margin-bottom: 0.5rem;
-  font-size: 1.5rem;
-  color: #2c3e50;
+  margin-bottom: 0.6rem;
+  font-size: 1.4rem; /* Slightly smaller */
+  color: #1a0dab; /* Google-like link color */
+  font-weight: 500;
 }
 
 .material-card p {
-  margin-bottom: 0.5rem;
-  color: #555;
+  margin-bottom: 0.4rem;
+  color: #4d5156; /* Google-like text color */
+  font-size: 0.95rem;
 }
 
 .material-card strong {
-  font-weight: 600;
-  color: #333;
+  font-weight: normal; /* Remove default bold */
+  color: #4d5156;
 }
 
 .material-card .tags {
@@ -243,61 +294,112 @@ main { /* ID is now #material-content-container on detail page */
 
 .material-card .tag {
   display: inline-block;
-  margin: 0.3rem 0.4rem 0 0;
+  margin: 0.3rem 0.4rem 0.3rem 0;
   padding: 0.3rem 0.7rem;
-  background: #007bff; /* More vibrant tag color */
-  color: white;
+  background: #e9ecef; /* Lighter tag background */
+  color: #495057; /* Darker tag text */
   border-radius: 4px;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  border: 1px solid #dee2e6; /* Subtle border */
 }
 
 .material-card .tag:hover {
-  background: #0056b3;
+  background: #d1d5db;
+  color: #1f2937;
+  border-color: #adb5bd;
 }
 
 /* No Results Message Styling (Index) */
-main#results:empty::after { /* Targets index page main */
-  content: "No materials found matching your criteria.";
+main#results:empty::after {
+  content: "No materials found matching your search and filters.";
   display: block;
-  padding: 2rem;
+  padding: 3rem 1rem;
   text-align: center;
-  color: #777;
-  font-style: italic;
+  color: #70757a; /* Darker gray */
+  font-size: 1.1rem;
+}
+/* Placeholder for initial state (before search) */
+main#results > p.initial-message {
+    padding: 3rem 1rem;
+    text-align: center;
+    color: #70757a;
+    font-size: 1.1rem;
 }
 
 
 /* ======================================== */
+/* Detail Page Back Link                  */
+/* ======================================== */
+.back-link {
+  display: inline-block;
+  margin: 1rem 0 0 0; /* Adjust margin */
+  padding: 0.5rem 1rem;
+  color: #007bff;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+  font-size: 0.95rem;
+}
+
+.back-link:hover {
+  background-color: #e9ecef;
+  text-decoration: underline;
+}
+
+/* ======================================== */
 /* Material Detail Page Sections & Styling */
+/* (Rest remains largely the same)        */
 /* ======================================== */
 
-/* --- Detail Tags Section (Outside Main) --- */
+/* --- Detail Header --- */
+/* (No changes needed from previous version) */
+.detail-header {
+  background: #f8f9fa;
+  color: #343a40;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid #dee2e6;
+  text-align: center;
+}
+.detail-header h1 {
+  margin-bottom: 0.5rem;
+  font-size: 2.2rem;
+  font-weight: 600;
+  color: #2c3e50;
+  cursor: default;
+}
+.detail-header .formula {
+  font-family: 'Consolas', 'Monaco', monospace;
+  font-size: 1.1rem;
+  color: #495057;
+  margin-top: 0.5rem;
+}
+
+
+/* --- Detail Tags Section --- */
 #section-tags {
    background: none;
    border: none;
    box-shadow: none;
-   padding: 0 1rem 1.5rem 1rem; /* Use container padding */
-   margin: 0 auto 1.5rem auto; /* Center within container width */
-   max-width: 1100px; /* Match main content width */
-   border-bottom: 1px solid #eee; /* Separate from overview */
+   padding: 0 1rem 1.5rem 1rem;
+   margin: 0 auto 1.5rem auto;
+   max-width: 1100px;
+   border-bottom: 1px solid #eee;
    box-sizing: border-box;
 }
-#section-tags h2 {
-    display: none; /* Hide the "Tags & Categories" header */
-}
-.tags-list {
-  text-align: left; /* Align tags left */
-}
-.tags-list .tag { /* Style tags on detail page */
+#section-tags h2 { display: none; }
+.tags-list { text-align: left; }
+.tags-list .tag {
   display: inline-block;
   margin: 0.3rem 0.4rem 0.3rem 0;
   padding: 0.4rem 0.8rem;
-  background: #6c757d; /* Slightly muted background */
+  background: #6c757d;
   color: white;
-  border-radius: 15px; /* Pill shape */
+  border-radius: 15px;
   font-size: 0.9rem;
-  cursor: default; /* Not clickable */
+  cursor: default;
 }
 
 /* --- General Detail Section Styling --- */
@@ -322,11 +424,10 @@ main#results:empty::after { /* Targets index page main */
   align-items: center;
 }
 
-/* Style Safety Icon */
 #material-content-container .material-section#section-safety h2 span[aria-hidden="true"] {
     margin-right: 0.75rem;
     font-size: 1.8rem;
-    color: #dc3545; /* Red for warning */
+    color: #dc3545;
 }
 
 /* --- Overview Section Specific --- */
@@ -347,7 +448,7 @@ main#results:empty::after { /* Targets index page main */
   margin-top: 1rem;
 }
 
-/* --- Property List Styling (Refined) --- */
+/* --- Property List Styling --- */
 .property-list {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -359,7 +460,7 @@ main#results:empty::after { /* Targets index page main */
 
 .property-item {
   display: grid;
-  grid-template-columns: 160px 1fr; /* Adjust key width if needed */
+  grid-template-columns: 160px 1fr;
   align-items: baseline;
   gap: 0.8rem;
   padding: 0.8rem 0;
@@ -367,12 +468,10 @@ main#results:empty::after { /* Targets index page main */
   transition: background-color 0.2s ease-in-out;
 }
 
-.property-item:hover {
-    background-color: #fcfcfc;
-}
+.property-item:hover { background-color: #fcfcfc; }
 
 .property-item.comparison-na-message dd {
-    grid-column: 1 / -1; /* Span full width */
+    grid-column: 1 / -1;
     text-align: left;
 }
 
@@ -422,17 +521,13 @@ span.na-value {
   padding-left: 1.2rem;
   list-style-type: disc;
 }
-.property-value ul.property-list-items li {
-  margin-bottom: 0.25rem;
-}
+.property-value ul.property-list-items li { margin-bottom: 0.25rem; }
 
 .property-item.key-property .property-key {
    font-weight: 600;
    color: #0056b3;
 }
-.property-item.key-property .property-value {
-  font-weight: 500;
-}
+.property-item.key-property .property-value { font-weight: 500; }
 
 /* --- Specific Section Adjustments --- */
 #material-content-container #section-safety .property-list {
@@ -448,9 +543,7 @@ span.na-value {
     margin-bottom: 0.75rem;
     transition: none;
 }
-#material-content-container #section-safety .property-item:hover {
-    background-color: #fff3cd;
-}
+#material-content-container #section-safety .property-item:hover { background-color: #fff3cd; }
 #material-content-container #section-safety .property-key {
     color: #856404;
     font-weight: 600;
@@ -462,34 +555,27 @@ span.na-value {
     font-size: 0.95rem;
     font-weight: 400;
 }
-#material-content-container #section-safety .property-item.key-property .property-value {
-    font-weight: 500;
-}
+#material-content-container #section-safety .property-item.key-property .property-value { font-weight: 500; }
 
-/* Style References/Vendor lists */
 #reference-list, #vendor-list {
     padding-left: 1.5rem;
     margin-top: 0.5rem;
     list-style: disc;
 }
-#reference-list li, #vendor-list li {
-    margin-bottom: 0.5rem;
-}
+#reference-list li, #vendor-list li { margin-bottom: 0.5rem; }
 #reference-list li.ref-notes, #vendor-list li.vendor-notes {
     list-style: none;
-    margin-left: -1.5rem; /* Remove indent */
+    margin-left: -1.5rem;
     margin-bottom: 0.8rem;
     font-size: 0.9rem;
 }
 
 
 /* ======================================== */
-/* Periodic Table Styles (UPDATED)        */
+/* Periodic Table Styles (UPDATED LAYOUT) */
 /* ======================================== */
 
-#section-periodic-table h2 {
-  margin-bottom: 1rem;
-}
+#section-periodic-table h2 { margin-bottom: 1rem; }
 
 /* The main container using CSS Grid */
 .periodic-table-container {
@@ -504,10 +590,10 @@ span.na-value {
   border-radius: 6px;
   max-width: 100%;
   overflow-x: auto;
-  font-size: 0.8rem; /* Base font size for table */
+  font-size: 0.8rem;
   margin-bottom: 1.5rem;
   margin-top: 1rem;
-  position: relative; /* Needed for tooltip positioning context */
+  position: relative;
 }
 
 /* Remove scrollbar visibility but keep functionality */
@@ -520,23 +606,17 @@ span.na-value {
   justify-content: center;
   align-items: center;
   font-weight: bold;
-  color: #4a5568; /* Muted gray */
+  color: #4a5568;
   font-size: 0.7rem;
-  background-color: transparent; /* No background */
+  background-color: transparent;
   border-radius: 2px;
 }
-.pt-group-label {
-    grid-row: 1; /* Place in the first row */
-    /* grid-column set inline */
-}
-.pt-period-label {
-    grid-column: 1; /* Place in the first column */
-    /* grid-row set inline */
-}
+.pt-group-label { grid-row: 1; /* Position in first row */ }
+.pt-period-label { grid-column: 1; /* Position in first column */ }
 
 /* Element Tile Styling */
 .pt-element {
-  border: 1px solid #cbd5e0; /* Softer border */
+  border: 1px solid #cbd5e0;
   padding: 5px 3px;
   text-align: center;
   display: flex;
@@ -545,7 +625,7 @@ span.na-value {
   align-items: center;
   line-height: 1.1;
   background-color: #fff;
-  min-height: 45px; /* Should match grid row height */
+  min-height: 45px;
   box-sizing: border-box;
   position: relative;
   cursor: default;
@@ -615,42 +695,33 @@ span.na-value {
 
 /* --- Highlight Style (More prominent) --- */
 .pt-element.highlighted-element {
-  border: 2px solid #1e3a8a; /* Dark blue border */
+  border: 2px solid #1e3a8a;
   transform: scale(1.06);
   box-shadow: 0 0 8px rgba(30, 58, 138, 0.5);
-  z-index: 10; /* Bring highlighted elements to the very top */
+  z-index: 10;
   color: #000;
 }
-.pt-element.highlighted-element .pt-mass {
-   font-weight: 500;
-}
+.pt-element.highlighted-element .pt-mass { font-weight: 500; }
 
 /* --- Custom Tooltip Style --- */
 .pt-tooltip {
     position: absolute;
     display: none;
-    background-color: rgba(17, 24, 39, 0.96); /* Very dark gray */
+    background-color: rgba(17, 24, 39, 0.96);
     color: #f8f9fa;
     padding: 10px 14px;
     border-radius: 5px;
     font-size: 0.9rem;
     line-height: 1.5;
-    white-space: pre-line; /* Respects '\n' from JS data attribute */
-    z-index: 1000; /* Ensure tooltip is definitely on top */
-    pointer-events: none; /* Prevent tooltip from interfering */
+    white-space: pre-line;
+    z-index: 1000;
+    pointer-events: none;
     box-shadow: 0 2px 8px rgba(0,0,0,0.4);
     max-width: 280px;
     border: 1px solid #4b5563;
 }
-.pt-tooltip strong {
-    color: #93c5fd; /* Light blue for name */
-    font-weight: 600;
-}
-.pt-tooltip br { /* Ensure line breaks work */
-    content: " ";
-    display: block;
-    margin-top: 0.3em;
-}
+.pt-tooltip strong { color: #93c5fd; font-weight: 600; }
+.pt-tooltip br { content: " "; display: block; margin-top: 0.3em; }
 
 
 /* ======================================== */
@@ -662,9 +733,10 @@ span.na-value {
     grid-template-columns: 1fr;
     gap: 0.25rem;
   }
+  /* Periodic Table Responsive */
   .periodic-table-container {
       grid-template-columns: minmax(15px, auto) repeat(18, minmax(38px, 1fr));
-      grid-template-rows: minmax(15px, auto) repeat(7, minmax(38px, auto)) 15px repeat(2, minmax(38px, auto)); /* Adjusted gap row */
+      grid-template-rows: minmax(15px, auto) repeat(7, minmax(38px, auto)) 15px repeat(2, minmax(38px, auto));
       font-size: 0.7rem;
       gap: 2px;
       padding: 8px;
@@ -691,7 +763,7 @@ span.na-value {
   /* Periodic Table Responsive */
   .periodic-table-container {
       grid-template-columns: minmax(15px, auto) repeat(18, minmax(32px, 1fr));
-      grid-template-rows: minmax(15px, auto) repeat(7, minmax(32px, auto)) 10px repeat(2, minmax(32px, auto)); /* Adjusted gap row */
+      grid-template-rows: minmax(15px, auto) repeat(7, minmax(32px, auto)) 10px repeat(2, minmax(32px, auto));
       font-size: 0.6rem;
       padding: 5px;
   }
@@ -701,10 +773,14 @@ span.na-value {
    .pt-label { font-size: 0.55rem; }
 
   /* Index page adjustments */
-  header, .toolbar, main#results, #search-container {
+  header#index-header, .toolbar, #results, #search-container {
       padding-left: 1rem;
       padding-right: 1rem;
   }
+  /* Adjust search input width */
+  #search-container { max-width: 95%; }
+  #search-container input { max-width: 100%; }
+  #suggestions { max-width: 100%; }
 }
 
 @media (max-width: 576px) {
@@ -725,6 +801,7 @@ span.na-value {
     .detail-header { padding: 1.5rem 1rem; }
     #section-tags { padding-left: 0.5rem; padding-right: 0.5rem; }
     #material-content-container .material-section { padding: 1rem; }
+    .back-link { margin-left: 0.5rem; }
 
      /* Periodic Table Responsive */
     .periodic-table-container {
@@ -734,7 +811,7 @@ span.na-value {
         font-size: 0.5rem; /* Even smaller font */
         padding: 3px;
     }
-     .pt-element { min-height: 25px; padding: 1px; line-height: 1.1; font-size: 0.55rem; } /* Adjust line height */
+     .pt-element { min-height: 25px; padding: 1px; line-height: 1.1; font-size: 0.55rem; }
      .pt-number { font-size: 0.4rem; top: 1px; left: 1px; }
      .pt-mass { font-size: 0.35rem; margin-top: 0; }
      .pt-series-label { font-size: 0.45rem; padding-right: 3px;}
@@ -743,13 +820,15 @@ span.na-value {
 
 
     /* Index page adjustments */
-     header, .toolbar, main#results, #search-container {
+     header#index-header, .toolbar, #results, #search-container {
       padding-left: 0.5rem;
       padding-right: 0.5rem;
      }
-     header h1 { font-size: 1.6rem;}
+     header#index-header h1 { font-size: 1.4rem;} /* Smaller */
      #search-container input { font-size: 1rem;}
-     .filter-group { flex-direction: column; align-items: stretch; }
-     .filter-group label { margin-bottom: 0.3rem; margin-right: 0;}
+     .filter-group { flex-direction: column; align-items: stretch; gap: 0.5rem;}
+     .filter-group label { margin-bottom: 0.2rem; margin-right: 0;}
      .filter-group select { width: 100%; }
+     .toolbar { gap: 1rem; }
+     main#index-main { padding: 1rem 0.5rem; } /* Reduce padding */
 }
