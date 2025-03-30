@@ -3624,5 +3624,107 @@
       "medical shielding", "lightweight shielding", "industry:nuclear", "industry:medical",
       "industry:research"
     ]
+  },
+  "Silicon Carbide Fiber Reinforced Composite": {
+    "name": "Silicon Carbide Fiber Reinforced Composite",
+    "formula": "SiC Fiber / SiC Matrix",
+    "synonyms": [ "SiC/SiC", "SiC-CMC", "Silicon Carbide CMC", "Continuous Fiber Reinforced Silicon Carbide" ],
+    "category": "Composite",
+    "constituent_elements": ["Si", "C"],
+    "description": "An advanced Ceramic Matrix Composite (CMC) consisting of Silicon Carbide (SiC) fibers reinforcing a Silicon Carbide matrix. These composites offer exceptional high-temperature strength and stiffness retention (up to 1200-1400°C+), good oxidation and corrosion resistance, relatively low density compared to superalloys, and significantly improved toughness over monolithic SiC. Key applications are in aerospace propulsion (jet engine hot sections), thermal protection systems, nuclear energy, and high-temperature industrial components.",
+    "wiki_link": "https://en.wikipedia.org/wiki/Ceramic_matrix_composite#Non-oxide_silicon_carbide_matrix_composites",
+    "safety": {
+      "toxicity": "Low for the finished composite. Machining generates fine SiC dust which is an abrasive irritant and requires respiratory protection (N95 or better) and ventilation.",
+      "handling": "Handle components carefully; while tougher than monolithic SiC, they can be damaged by impact."
+    },
+    "identification": {
+      "class": "Non-Oxide Ceramic Matrix Composite (SiC-CMC)",
+      "crystal_structure": "Fiber: Polycrystalline SiC (often β-SiC based, e.g., Nicalon, Tyranno) or crystalline (Sylramic). Matrix: Polycrystalline SiC (α or β phases).",
+      "appearance": {"notes": "Typically dark gray to black solid material."}
+    },
+    "advanced_fabrication_insights": {
+        "process_control": "Complex and high-temperature processes. Common routes: Chemical Vapor Infiltration (CVI) of SiC into fiber preform (slow, good quality), Polymer Impregnation and Pyrolysis (PIP) using Si-containing polymers (faster, potentially more porosity), Melt Infiltration (MI) using molten Silicon reaction with Carbon (fast, can leave residual Si).",
+        "common_defects_impact": "Matrix porosity, fiber damage, poor infiltration, residual stresses, inadequate interface coating. Impact strength, toughness, thermal conductivity, and environmental stability.",
+        "interface_engineering": "CRITICAL for toughness. A weak interphase layer (typically Boron Nitride (BN) or Pyrolytic Carbon (PyC) applied to fibers via CVD) is required to allow fiber debonding and pull-out, preventing brittle fracture.",
+        "environmental_barrier_coatings_ebcs": {"notes": "While SiC has good oxidation resistance (forms SiO₂ scale), long-term exposure to high-temperature steam/combustion environments requires EBCs (e.g., Mullite, rare-earth silicates) to prevent SiO₂ volatilization and recession."}
+    },
+    "growth_fabrication_properties": {
+        "common_growth_methods": "CVI, PIP, MI (e.g., GE's Silcomp™), Hybrid Processes.",
+        "source_materials_purity": "SiC fibers (various grades), SiC powder (for MI/slurry routes), Gas precursors for CVI (e.g., MTS - Methyltrichlorosilane), Polymer precursors for PIP, Interface coating precursors (e.g., BCl₃/NH₃ for BN).",
+        "preferred_substrates_orientations": "N/A (Bulk composite, often fabricated to near-net shape).",
+        "typical_growth_parameters": "High temperatures (900-1400°C+ depending on method), controlled atmospheres (vacuum, inert, reactive), often long processing times (esp. CVI).",
+        "passivation_methods": "Relies on inherent SiO₂ scale formation or requires applied EBCs."
+    },
+    "post_growth_processing": {
+        "annealing": "Heat treatments are part of the CVI/PIP/MI processes. Post-fabrication annealing may be used for stress relief.",
+        "lapping_polishing": "Very difficult due to extreme hardness. Requires diamond abrasives.",
+        "etching": "Highly resistant to chemical etching.",
+        "grinding_milling": "Machinable only with diamond tooling, slow material removal, generates hazardous dust. Often fabricated near-net shape."
+    },
+     "device_integration_characterization": {
+        "device_architectures": "Jet engine components (turbine shrouds, combustor liners, exhaust nozzles, vanes), Thermal Protection System (TPS) panels/leading edges, heat exchangers, furnace components, nuclear reactor core structures.",
+        "readout_integration": "N/A",
+        "ar_coatings": "N/A",
+        "packaging_cooling": "Enables higher operating temperatures in engines, potentially reducing cooling requirements compared to metal alloys.",
+        "key_characterization_techniques": ["Mechanical Testing (Tensile/Flexural Strength & Modulus, ILSS - at RT and high temp)", "Fracture Toughness Testing", "Creep and Fatigue Testing (at high temp)", "Thermal Conductivity/Expansion Measurement", "Oxidation/Environmental Durability Testing (furnace, burner rigs, steam)", "Microstructural Analysis (SEM, TEM - interface, matrix, porosity)", "NDE (Ultrasonics, Thermography, X-ray CT)"]
+    },
+    "electrical_properties": {
+      "bandgap_type": "Semiconductor (SiC)",
+      "band_gap": {"value": "~2.4-3.2", "unit": "eV", "notes": "Depends on SiC polytype (e.g., 3C, 6H, 4H)."},
+      "resistivity": {"value": "Variable (typically 10⁻² - 10⁶+ Ω·cm)", "notes": "Depends heavily on SiC purity, polytype, doping levels in matrix/fibers, and fiber connectivity. Can range from semiconducting to semi-insulating."},
+      "dielectric_constant": {"value": "~10-15", "notes": "Higher than Ox/Ox composites."}
+    },
+    "optical_properties": {
+      "spectral_range": "Opaque (dark gray/black)."
+    },
+    "thermal_properties": {
+      "operating_temperature": {"value": "Up to ~1200-1400+", "unit": "°C", "notes": "Maintains excellent strength at high temperatures. Limit often set by fiber stability or EBC effectiveness in oxidizing/steam environments."},
+      "thermal_conductivity": {"value": "Moderate (~15-50+ W/(m·K))", "notes": "Higher than Ox/Ox CMCs but lower than monolithic SiC or metals. Anisotropic, depends on fiber type/orientation and matrix density/purity."},
+      "specific_heat": {"value": "~0.7-1.2", "unit": "J/(g·K)", "notes": "Increases with temperature."},
+      "melting_point": {"notes": "SiC sublimes/decomposes at very high temperatures (>2500°C), not a typical failure mode."},
+      "thermal_expansion": {"value": "Low (~4-5 x 10⁻⁶ /°C)", "notes": "Good thermal shock resistance."},
+      "thermal_shock_resistance": {"notes": "Generally very good due to low CTE, moderate thermal conductivity, and toughness mechanisms."}
+    },
+     "mechanical_properties": {
+         "density": {"value": "~2.5-3.1", "unit": "g/cm³", "notes": "Significantly lighter than superalloys (~1/3 density). Depends on fiber/matrix/porosity."},
+         "youngs_modulus": {"value": "High (~200-350+ GPa)", "notes": "High stiffness, anisotropic."},
+         "tensile_strength": {"value": "High (~200-600+ MPa)", "notes": "Good strength retention at high temperatures."},
+         "fracture_toughness": {"value": "High for ceramics (~15-30+ MPa·m⁰·⁵)", "notes": "Non-catastrophic failure due to fiber bridging/pull-out enabled by interface coatings."}
+     },
+     "device_applications": {
+         "key_applications": ["Aerospace Gas Turbine Engine Components (static and rotating parts in hot section)", "Hypersonic Vehicle TPS and Control Surfaces", "Rocket Nozzles and Thruster Components", "Heat Exchangers for High Temperatures", "Nuclear Fuel Cladding and Core Structures", "Industrial Furnace Components"]
+     },
+     "chemical_properties": {
+         "stability_oxidation": "Good intrinsic oxidation resistance forming protective SiO₂ scale. However, requires EBCs for long-term (>100s hours) durability above ~1200°C in combustion environments containing water vapor.",
+         "chemical_inertness": "Generally good resistance to corrosion.",
+         "steam_resistance": {"notes": "Susceptible to accelerated degradation (Si(OH)₄ volatilization) in high-temperature steam without EBCs."}
+     },
+     "comparison_alternatives": {
+         "notes": "Alternative High-Temperature Structural Materials:",
+         "vs_Oxide_Oxide_CMCs": "SiC/SiC: Higher strength/stiffness, higher thermal conductivity, higher temperature capability, requires EBCs for long-term use in steam. Ox/Ox: Inherently oxidation stable, lower thermal conductivity, generally lower strength/stiffness, potentially lower cost.",
+         "vs_Carbon_Carbon_RCC": "SiC/SiC: Much better oxidation resistance, usable in oxidizing atm. C/C: Higher temperature capability in inert atm, lower density, requires oxidation protection coating.",
+         "vs_Superalloys": "SiC/SiC: Significantly lower density (~1/3), higher operating temperature capability (less cooling needed), brittle fracture mode (but tough for a ceramic). Superalloys: Ductile, well-established database, lower cost, temperature limited (~1100°C without extensive cooling).",
+         "vs_Monolithic_SiC": "SiC/SiC: Vastly superior fracture toughness, non-catastrophic failure, allows larger/complex components. Monolithic SiC: Higher hardness, higher thermal conductivity, brittle failure, lower cost raw material."
+     },
+     "references_further_reading": {
+         "notes": "Key Literature Resources:",
+         "book_cmc_handbook": "'Handbook of Ceramic Composites' (Ed. Bansal).",
+         "review_kerans_hay": "Reviews on SiC/SiC CMCs and EBCs (e.g., by R. Kerans, R. Hay).",
+         "journal_jacers": "Journal of the American Ceramic Society.",
+         "journal_composites_science_tech": "Composites Science and Technology.",
+         "nasa_cmc_reports": "NASA reports on CMC development for aerospace applications (e.g., LEAP engine components)."
+     },
+     "vendor_info": {
+        "notes": "Example Vendors (Placeholder):",
+        "vendor_1": "Company A - www.example-vendor-a.com",
+        "vendor_2": "Company B - www.example-vendor-b.com",
+        "vendor_3": "Company C - www.example-vendor-c.com"
+     },
+    "tags": [
+      "composite", "ceramic matrix composite", "cmc", "silicon carbide", "sic",
+      "high temperature", "aerospace", "jet engine", "oxidation resistant", "lightweight",
+      "tough", "semiconductor", "industry:aerospace", "industry:energy", "industry:nuclear",
+      "ceramic", "ebc"
+    ]
   }
 }
