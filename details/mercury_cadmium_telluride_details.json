@@ -73,7 +73,7 @@
         }
       },
       "electron_mobility": {
-        "displayName": "Electron Mobility (μ<0xE2><0x82><0x91>)",
+        "displayName": "Electron Mobility (μₑ)",
         "summary": "High (>10⁴ cm²/Vs @ 77K)",
         "details": {
           "notes": [
@@ -81,7 +81,7 @@
             "HgCdTe exhibits high electron mobility, especially at low temperatures (77K) and low doping.",
             "Key scattering mechanisms limiting mobility: Polar optical phonon scattering (dominant at higher T), ionized impurity scattering (dominant at low T, high doping), alloy scattering (due to random Hg/Cd placement).",
             "Mobility decreases with increasing temperature, doping concentration, and often with increasing Cd fraction (x) due to alloy scattering.",
-            "Hole mobility (μ<0xE2><0x82><0x95>) is significantly lower (~100-600 cm²/Vs)."
+            "Hole mobility (μₕ) is significantly lower (~100-600 cm²/Vs)."
           ],
           "measurement": {
              "techniques": ["Hall Effect Measurement"],
@@ -101,8 +101,8 @@
         }
       },
       "carrier_concentration": {
-        "displayName": "Carrier Concentration (n, p, n<0xE1><0xB5><0xA2>)",
-        "summary": "Tunable doping (n/p), low n<0xE1><0xB5><0xA2> at 77K",
+        "displayName": "Carrier Concentration (n, p, nᵢ)",
+        "summary": "Tunable doping (n/p), low nᵢ at 77K",
         "details": {
           "notes": [
             "Intrinsic carrier concentration (ni) is highly sensitive to bandgap (Eg) and temperature: ni ∝ T^(3/2) * exp(-Eg / 2kT).",
@@ -127,7 +127,7 @@
         }
       },
       "hole_mobility": {
-        "displayName": "Hole Mobility (μ<0xE2><0x82><0x95>)",
+        "displayName": "Hole Mobility (μₕ)",
         "summary": "Low (100-600 cm²/Vs @ 77K)",
          "details": {
           "notes": ["Significantly lower than electron mobility due to larger effective mass of holes.", "Similar scattering mechanisms apply as for electrons.", "Less critical for majority carrier devices but impacts minority carrier diffusion/collection."],
@@ -157,12 +157,20 @@
         "displayName": "Breakdown Field",
         "summary": "Low (~10³-10⁴ V/cm)",
         "details": {
-          "notes": ["Maximum electric field before significant avalanche multiplication or Zener tunneling occurs.", "Lower in narrow-gap semiconductors.", "Limits operating bias for APDs and reverse bias for photodiodes.", "Tunneling currents can become dominant at high fields, especially in narrow gap / highly doped material."],
+          "notes": [
+            "Maximum electric field before significant avalanche multiplication or Zener tunneling occurs.",
+            "Lower in narrow-gap semiconductors.",
+            "Limits operating bias for APDs and reverse bias for photodiodes.",
+            "Tunneling currents can become dominant at high fields, especially in narrow gap / highly doped material."
+          ],
           "measurement": ["Reverse bias I-V measurements on diode structures."],
-          "significance": ["Defines maximum operating voltage/field.", "Crucial for Avalanche Photodiode (APD) design.", "Impacts dark current mechanisms at high bias."]
-         }
+          "significance": [
+            "Defines maximum operating voltage/field.",
+            "Crucial for Avalanche Photodiode (APD) design.",
+            "Impacts dark current mechanisms at high bias."
+          ]
+        }
       }
-      // Add bandgap_equation, common_dopants details here if desired, though partially covered above.
     }
   },
   "optical_properties": {
@@ -204,7 +212,6 @@
           "summary": "Low (~10⁻¹¹ - 10⁻¹³ W/√Hz cooled)",
            "details": { "notes": ["Incident optical power required to produce a signal-to-noise ratio of 1 in a 1 Hz bandwidth.", "NEP = Inoise / R, where Inoise is the total noise current.", "Lower NEP indicates better sensitivity."], "measurement": ["Calculated from measured noise current spectral density and responsivity."], "significance": ["Defines the minimum detectable optical power."] }
       }
-      // ... Add photoluminescence_peak_nm, optical_loss details ...
     }
   },
   "thermal_properties": {
@@ -226,7 +233,6 @@
          "summary": "Moderate (~4.5-5.5 ppm/°C)",
           "details": { "notes": ["Coefficient of Thermal Expansion (CTE).", "Mismatch between HgCdTe CTE and Silicon ROIC CTE (~2.6 ppm/°C) is a major challenge for large format focal plane arrays.", "Indium bump interconnects accommodate some stress, but CTE mismatch limits array size and reliability through thermal cycling."], "measurement": ["Dilatometry."], "significance": ["Critical for mechanical design and reliability of hybrid focal plane arrays (detector bonded to readout circuit)."] }
        }
-      // ... Add specific_heat, melting_point, thermal_shock_resistance details ...
     }
   },
   "mechanical_properties": {
@@ -237,8 +243,6 @@
        "hardness": { "displayName": "Hardness", "summary": "Very Low (Mohs ~2-3)" },
        "fracture_toughness": { "displayName": "Fracture Toughness (K<0xE2><0x82><0x91><0xE1><0xB5><0x9C>)", "summary": "Very Low (<0.5 MPa√m)" },
        "youngs_modulus": { "displayName": "Young's Modulus (E)", "summary": "Low (~40-50 GPa)" }
-      // ... Add more detail if needed ...
     }
   }
-  // ... Add placeholders for other sections: safety, identification, growth, processing, applications, etc. ...
 }
