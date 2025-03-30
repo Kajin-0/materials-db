@@ -1,6 +1,7 @@
 // Global variables
 let allMaterialsData = []; // Holds combined data
 let fuse; // Fuse.js instance
+let hasPerformedSearch = false; // Flag to track if initial search/filter has happened
 
 // --- Core Data Loading ---
 
@@ -21,25 +22,21 @@ async function fetchJson(url) {
         const data = await response.json(); // Parse JSON first
 
         // === Data Structure Validation ===
-        // Check structure based on filename
         if (url.endsWith('materials-index.json')) {
-             // Index MUST be an object with a 'sources' array of strings
              if (!data || typeof data !== 'object' || !Array.isArray(data.sources) || !data.sources.every(s => typeof s === 'string')) {
                  console.error(`Data format error: ${url} MUST be an object like { "sources": ["file1.json", ...] }. Received:`, data);
                  return null; // Indicate validation failure
              }
         } else {
-             // Source files MUST be arrays of objects (basic check)
-             if (!Array.isArray(data) || !data.every(item => typeof item === 'object' && item !== null)) {
-                // Allow empty arrays, but log if non-object found
-                if (data.some(item => typeof item !== 'object' || item === null)) {
-                    console.warn(`Data format warning: ${url} should be an array of objects [...], but contains non-object elements. Processing objects only.`);
-                    // Filter out non-objects just in case, though ideally the source is fixed
-                    data = data.filter(item => typeof item === 'object' && item !== null);
-                } else if (!Array.isArray(data)) {
-                     console.error(`Data format error: ${url} MUST be a JSON array [...]. Received:`, data);
-                     return null; // Indicate validation failure for non-arrays
-                }
+             if (!Array.isArray(data)) { // Allow empty arrays
+                 console.error(`Data format error: ${url} MUST be a JSON array [...]. Received:`, data);
+                 return null; // Indicate validation failure for non-arrays
+             }
+             // Optional: Check if all items are objects (more robust)
+             if (!data.every(item => typeof item === 'object' && item !== null)) {
+                  console.warn(`Data format warning: ${url} should ideally be an array of objects [...], but contains non-object elements. Check source file.`);
+                  // Filter out non-objects before proceeding
+                  data = data.filter(item => typeof item === 'object' && item !== null);
              }
         }
         // ============================
@@ -64,13 +61,12 @@ async function initializeDatabase() {
   console.log("Initializing database...");
 
   const indexUrl = './data/materials-index.json';
-  const indexData = await fetchJson(indexUrl); // fetchJson validates index structure
+  const indexData = await fetchJson(indexUrl);
 
   if (!indexData) {
     console.error(`Failed to load or invalid format for index: ${indexUrl}. See previous logs.`);
-    // Update message only if fetchJson didn't already show a specific format error
     if (resultsContainer && !resultsContainer.querySelector('p[style*="color: red"]')) {
-        updateLoadingMessage(`Error: Could not load or validate material index (${indexUrl}). Check console.`, true);
+        updateLoadingMessage(`Error: Could not load material index (${indexUrl}). Check console.`, true);
     }
     disableFilters();
     return;
@@ -79,7 +75,6 @@ async function initializeDatabase() {
   updateLoadingMessage(`Loading ${indexData.sources.length} source files...`);
   console.log("Index loaded. Sources:", indexData.sources);
 
-  // Ensure sources are valid strings ending in .json before mapping
   const validSourceFiles = indexData.sources.filter(sourceFile =>
       typeof sourceFile === 'string' && sourceFile.trim() !== '' && sourceFile.endsWith('.json')
   );
@@ -95,12 +90,11 @@ async function initializeDatabase() {
       return;
   }
 
-  // Fetch source files using relative paths
-  const fetchPromises = validSourceFiles.map(sourceFile => fetchJson(`./data/${sourceFile}`)); // fetchJson validates these are arrays
+  const fetchPromises = validSourceFiles.map(sourceFile => fetchJson(`./data/${sourceFile}`));
 
   try {
     const results = await Promise.all(fetchPromises);
-    allMaterialsData = results.filter(data => data !== null).flat(); // Filter nulls (errors) before flattening
+    allMaterialsData = results.filter(data => data !== null).flat();
 
     console.log(`Total materials loaded: ${allMaterialsData.length}`);
 
@@ -114,7 +108,6 @@ async function initializeDatabase() {
     // --- Initialize Fuse.js ---
     updateLoadingMessage("Initializing search index...");
     try {
-        // Define Fuse options - Adjust keys and threshold as needed
         const fuseOptions = {
             keys: [
                 { name: "name", weight: 0.4 },
@@ -123,10 +116,10 @@ async function initializeDatabase() {
                 { name: "tags", weight: 0.1 },
                 { name: "category", weight: 0.1 }
             ],
-            threshold: 0.35, // Allow slightly more fuzziness
+            threshold: 0.35,
             includeScore: true,
-            ignoreLocation: true, // Search whole strings
-            minMatchCharLength: 2 // Require at least 2 characters to match
+            ignoreLocation: true,
+            minMatchCharLength: 2
         };
         fuse = new Fuse(allMaterialsData, fuseOptions);
         console.log("Fuse.js initialized successfully.");
@@ -141,12 +134,14 @@ async function initializeDatabase() {
     updateLoadingMessage("Updating filters...");
     updateFilters(allMaterialsData); // Populate filters based on loaded data
 
-    updateLoadingMessage(""); // Clear loading message
-    performSearch(""); // Perform initial display (all materials or based on URL params if implemented)
+    // **** CHANGE: Don't perform initial search. Set initial message instead. ****
+    updateLoadingMessage("", false); // Clear "Loading..."
+    setInitialResultsMessage("Enter a search query or select filters to begin."); // Set default message
+    // performSearch(""); // REMOVED - No initial display of all items
+
     console.log("Database initialization complete.");
 
   } catch (error) {
-    // Catch errors from Promise.all or subsequent processing
     console.error("Unexpected error during source file processing or initialization:", error);
     updateLoadingMessage("Error: Failed to process material data. Check console.", true);
     disableFilters();
@@ -156,78 +151,80 @@ async function initializeDatabase() {
 // --- UI Updates ---
 function updateLoadingMessage(message, isError = false) {
     const resultsContainer = document.getElementById("results");
-    if (!resultsContainer) return; // Exit if container not found
+    if (!resultsContainer) return;
     if (message) {
-        resultsContainer.innerHTML = `<p style="text-align: center; color: ${isError ? 'red' : '#777'};">${message}</p>`;
+        resultsContainer.innerHTML = `<p class="initial-message" style="text-align: center; color: ${isError ? 'red' : '#70757a'}; font-size: 1.1rem; padding: 3rem 1rem;">${message}</p>`;
     } else {
-         // Only clear if there isn't already an error message displayed
+         // Clear only if it's not an error message
          if (!resultsContainer.querySelector('p[style*="color: red"]')) {
-            resultsContainer.innerHTML = '';
+            resultsContainer.innerHTML = ''; // Clear loading/initial messages
          }
     }
 }
 
+// **** NEW: Function to set initial/placeholder message ****
+function setInitialResultsMessage(message) {
+    const resultsContainer = document.getElementById("results");
+    if (!resultsContainer) return;
+    resultsContainer.innerHTML = `<p class="initial-message" style="text-align: center; color: #70757a; font-size: 1.1rem; padding: 3rem 1rem;">${message}</p>`;
+}
+
 function disableFilters() {
-    // Disable all filter dropdowns gracefully
     ["industryFilter", "categoryFilter", "propertyFilter"].forEach(id => {
         const filterElement = document.getElementById(id);
         if (filterElement) {
             filterElement.disabled = true;
-            // Optional: Set a disabled message
             if (filterElement.options.length === 0 || filterElement.options[0].value === "") {
                 filterElement.innerHTML = '<option value="">Filters Unavailable</option>';
             }
         }
     });
+    // Also hide the toolbar if filters are disabled
+    const toolbar = document.getElementById("toolbar");
+    if (toolbar) {
+        toolbar.classList.remove("active");
+    }
     console.log("Filters disabled due to error or lack of data.");
 }
 
 function updateFilters(materials) {
-  // Safely get filter elements
   const industrySelect = document.getElementById("industryFilter");
   const categorySelect = document.getElementById("categoryFilter");
   const propertySelect = document.getElementById("propertyFilter");
 
   if (!industrySelect || !categorySelect || !propertySelect) {
       console.warn("One or more filter dropdowns not found in DOM during updateFilters.");
-      return; // Exit if elements aren't found
+      return;
   }
 
   try {
-      // Extract unique, sorted values for filters
       const industries = [...new Set(
           materials.flatMap(m => m.tags || [])
                    .filter(t => typeof t === 'string' && t.startsWith("industry:"))
                    .map(t => t.replace("industry:", ""))
-                   .filter(Boolean) // Remove empty strings if any
+                   .filter(Boolean)
       )].sort();
 
       const categories = [...new Set(
           materials.map(m => m.category).filter(Boolean)
       )].sort();
 
-      // Exclude industry tags from the general 'Tag' filter
       const tags = [...new Set(
           materials.flatMap(m => m.tags || [])
                    .filter(t => typeof t === 'string' && !t.startsWith("industry:"))
-                   .filter(Boolean) // Remove empty strings
+                   .filter(Boolean)
       )].sort();
 
-      // Helper function to populate a select dropdown
       function fillSelect(selectElement, items, defaultLabel = "All") {
-        // Keep track of current value to restore it if possible
         const currentValue = selectElement.value;
-        // Clear existing options except the default 'All' if it exists
         selectElement.innerHTML = `<option value="">${defaultLabel}</option>`;
-        // Add new options
         selectElement.innerHTML += items.map(item => `<option value="${item}">${item}</option>`).join("");
-        // Restore previous value if it's still valid
         if (items.includes(currentValue)) {
             selectElement.value = currentValue;
         } else {
-            selectElement.value = ""; // Reset if previous value is no longer valid
+            selectElement.value = "";
         }
-        // Enable the dropdown only if there are items to select
+        // Enable based on *initial* load, not current selection
         selectElement.disabled = items.length === 0;
       }
 
@@ -240,13 +237,14 @@ function updateFilters(materials) {
   } catch (error) {
       console.error("Error updating filters:", error);
       updateLoadingMessage("Error: Failed to update filters. Check console.", true);
-      disableFilters(); // Disable filters on error
+      disableFilters();
   }
 }
 
 // --- Search and Rendering ---
 function performSearch(query) {
   query = query.trim(); // Trim whitespace
+  hasPerformedSearch = true; // Mark that a search/filter action has occurred
   console.log(`Performing search. Query: "${query}"`);
   const resultsContainer = document.getElementById("results");
 
@@ -258,27 +256,49 @@ function performSearch(query) {
   if (!fuse) {
     console.warn("Search attempted before Fuse was ready.");
     if (!resultsContainer.querySelector('p[style*="color: red"]')) {
-        // Avoid overwriting potential error messages
         updateLoadingMessage("Initializing database...", false);
     }
     return;
   }
 
-  // Get current filter values safely
   const industry = document.getElementById("industryFilter")?.value || "";
   const category = document.getElementById("categoryFilter")?.value || "";
   const tag = document.getElementById("propertyFilter")?.value || "";
   const toolbar = document.getElementById("toolbar");
+  const body = document.body;
 
-  // Show/hide toolbar based on whether any search/filter is active
+  // **** UPDATED: Toolbar and Body Class Logic ****
+  const isAnyFilterActive = industry || category || tag;
+  const isSearchActive = query !== "";
+  const shouldShowResultsArea = isSearchActive || isAnyFilterActive;
+
+  // Activate toolbar if search or filters are active
   if (toolbar) {
-    toolbar.classList.toggle("active", query !== "" || industry || category || tag);
+    toolbar.classList.toggle("active", shouldShowResultsArea);
   }
+  // Add class to body to adjust layout when results are shown
+  if (body) {
+      body.classList.toggle("results-active", shouldShowResultsArea);
+  }
+  // Clear initial message only if we are about to show results/toolbar
+  if (shouldShowResultsArea) {
+     const initialMsg = resultsContainer.querySelector('p.initial-message');
+     if (initialMsg) {
+         resultsContainer.innerHTML = ''; // Clear the initial message
+     }
+  } else {
+     // If no search/filter, ensure initial message is present
+     setInitialResultsMessage("Enter a search query or select filters to begin.");
+     render([]); // Ensure render function clears any old results
+     return; // Don't proceed with search/filter if nothing is active
+  }
+  // ************************************************
+
 
   // Perform Fuse search or use all data if query is empty
   let results = query === ""
-    ? allMaterialsData.map(item => ({ item })) // Wrap in { item } for consistency if needed later, or just use allMaterialsData directly
-    : fuse.search(query); // Fuse returns results with score and item
+    ? allMaterialsData.map(item => ({ item })) // Wrap for consistency if Fuse results are used
+    : fuse.search(query);
 
   // Filter based on dropdowns
   let filteredResults = results.map(result => result.item); // Extract items
@@ -290,7 +310,6 @@ function performSearch(query) {
       filteredResults = filteredResults.filter(m => m.category === category);
   }
   if (tag) {
-      // Ensure tag filtering looks for exact match within the tags array
       filteredResults = filteredResults.filter(m => m.tags?.includes(tag));
   }
 
@@ -300,37 +319,45 @@ function performSearch(query) {
 
 function render(materials) {
   const resultsContainer = document.getElementById("results");
-  if (!resultsContainer) return; // Exit if container not found
-  resultsContainer.innerHTML = ""; // Clear previous results
+  if (!resultsContainer) return;
+
+  // Clear previous results *only if* we are going to add new ones or if no results were found *after a search*
+  if (materials.length > 0 || hasPerformedSearch) {
+     resultsContainer.innerHTML = "";
+  }
+  // If no materials AND no search was performed, the initial message should already be there.
 
   if (!materials || materials.length === 0) {
-    console.log("Render: No materials to display.");
-    // The :empty CSS pseudo-class in style.css will handle the "No materials found" message
+      if (hasPerformedSearch) { // Only show "No results" if a search was actually done
+         console.log("Render: No materials to display after search/filter.");
+         // CSS :empty selector handles the "No materials found" message
+      } else {
+          console.log("Render: No materials to display (initial state).");
+          // Initial message is handled by setInitialResultsMessage
+      }
     return;
   }
 
   console.log(`Render: Displaying ${materials.length} cards.`);
-  const fragment = document.createDocumentFragment(); // Use fragment for performance
+  const fragment = document.createDocumentFragment();
 
-  materials.forEach(material => { // Use forEach for clarity
-    // Basic validation for essential properties
+  materials.forEach(material => {
     if (!material || typeof material.name !== 'string' || material.name.trim() === '') {
         console.warn("Skipping material with missing or invalid name:", material);
-        return; // Skip this material
+        return;
     }
 
     const el = document.createElement("div");
-    el.className = "material-card"; // Add class for styling and click detection
+    el.className = "material-card";
 
-    const name = material.name; // Already validated
+    const name = material.name;
     const formula = material.formula || 'N/A';
     const category = material.category || 'N/A';
 
-    // Generate HTML for tags, filtering out non-strings and trimming
     const tagsHtml = Array.isArray(material.tags)
       ? material.tags
-          .filter(t => typeof t === 'string' && t.trim() !== '') // Ensure tag is a non-empty string
-          .map(t => `<span class='tag'>${t.trim()}</span>`) // Trim tag content
+          .filter(t => typeof t === 'string' && t.trim() !== '')
+          .map(t => `<span class='tag'>${t.trim()}</span>`)
           .join(" ")
       : '';
 
@@ -339,46 +366,41 @@ function render(materials) {
                     <p><strong>Category:</strong> ${category}</p>
                     <div class="tags">${tagsHtml}</div>`;
 
-    // Add data attribute for click handling using the validated name
     el.dataset.materialName = name;
-
     fragment.appendChild(el);
   });
 
-  resultsContainer.appendChild(fragment); // Append all cards at once
+  resultsContainer.appendChild(fragment);
 }
 
 function showSuggestions(query) {
     const suggestionsList = document.getElementById("suggestions");
-    if (!suggestionsList || !fuse) return; // Exit if dependencies missing
-    suggestionsList.innerHTML = ""; // Clear previous suggestions
+    if (!suggestionsList || !fuse) return;
+    suggestionsList.innerHTML = "";
 
     try {
-        // Limit suggestions for performance and usability
         const results = fuse.search(query, { limit: 8 });
 
-        if (results.length === 0) {
+        if (results.length === 0 && query.length > 0) { // Only show 'no suggestions' if query is not empty
             suggestionsList.innerHTML = "<li class='disabled'>No suggestions found</li>";
             return;
         }
 
-        results.forEach(result => { // Use forEach
+        results.forEach(result => {
             const item = result.item;
-            // Ensure item and item.name are valid before creating list item
             if (!item?.name || typeof item.name !== 'string' || item.name.trim() === '') return;
 
             const li = document.createElement("li");
-            li.textContent = item.name; // Use validated name
+            li.textContent = item.name;
 
-            // Use mousedown to register click before blur hides the list
             li.addEventListener("mousedown", (e) => {
-                e.preventDefault(); // Prevent input blur before click registers
+                e.preventDefault();
                 const searchInput = document.getElementById("searchInput");
                 if (searchInput) {
-                    searchInput.value = item.name; // Fill input with selected suggestion
+                    searchInput.value = item.name;
                 }
-                suggestionsList.innerHTML = ""; // Clear suggestions list
-                performSearch(item.name); // Trigger search immediately
+                suggestionsList.innerHTML = "";
+                performSearch(item.name); // Trigger search on suggestion click
             });
             suggestionsList.appendChild(li);
         });
@@ -393,7 +415,6 @@ document.addEventListener("DOMContentLoaded", () => {
   console.log("DOM loaded. Initializing database...");
   initializeDatabase(); // Start data loading
 
-  // Get references to DOM elements safely
   const searchInput = document.getElementById("searchInput");
   const suggestionsList = document.getElementById("suggestions");
   const resultsContainer = document.getElementById("results");
@@ -401,46 +422,45 @@ document.addEventListener("DOMContentLoaded", () => {
   const categoryFilter = document.getElementById("categoryFilter");
   const propertyFilter = document.getElementById("propertyFilter");
 
-  // Attach listeners only if elements exist
   if (searchInput && suggestionsList) {
-      // --- Search Input Listeners ---
       searchInput.addEventListener("input", () => {
         const query = searchInput.value.trim();
-        if (query) {
-          showSuggestions(query); // Show suggestions as user types
+        if (query.length > 1) { // Show suggestions only after 2+ chars
+          showSuggestions(query);
         } else {
-          suggestionsList.innerHTML = ""; // Clear suggestions if input is empty
-          performSearch(""); // Show all results when input is cleared
+          suggestionsList.innerHTML = ""; // Clear suggestions if input is too short or empty
+          if (query === "" && hasPerformedSearch) { // If user clears search after performing one, reset view
+             performSearch("");
+          } else if (query === "") {
+             // Keep initial message if search wasn't performed yet
+             setInitialResultsMessage("Enter a search query or select filters to begin.");
+             document.body.classList.remove("results-active"); // Ensure layout resets
+             const toolbar = document.getElementById("toolbar");
+             if (toolbar) toolbar.classList.remove("active");
+          }
         }
       });
 
       searchInput.addEventListener("keydown", e => {
         if (e.key === "Enter") {
-          e.preventDefault(); // Prevent potential form submission
-          suggestionsList.innerHTML = ""; // Hide suggestions
+          e.preventDefault();
+          suggestionsList.innerHTML = "";
           performSearch(searchInput.value); // Perform search with current input value
         }
       });
 
-      // Hide suggestions when input loses focus (using focusout for better compatibility)
       searchInput.addEventListener("focusout", (event) => {
-          // Check if the focus moved to an element within the suggestions list
-          // If not, then hide the suggestions after a brief delay
           if (!suggestionsList.contains(event.relatedTarget)) {
-              // Delay hiding to allow click events on suggestions to register
               setTimeout(() => {
-                  // Final check: Hide only if focus isn't back on input or in suggestions
                    if (document.activeElement !== searchInput && !suggestionsList.contains(document.activeElement)) {
                        suggestionsList.innerHTML = "";
                    }
-              }, 150); // Delay in ms
+              }, 150);
           }
       });
 
-
-      // Show suggestions again on focus if there's already text
       searchInput.addEventListener("focus", () => {
-        if (searchInput.value.trim()) {
+        if (searchInput.value.trim().length > 1) { // Reshow suggestions on focus if applicable
             showSuggestions(searchInput.value.trim());
         }
       });
@@ -448,68 +468,58 @@ document.addEventListener("DOMContentLoaded", () => {
       console.warn("Search input or suggestions list element not found. Search functionality disabled.");
   }
 
-  // --- Filter Dropdown Listeners ---
   [industryFilter, categoryFilter, propertyFilter].forEach(filterElement => {
       if (filterElement) {
           filterElement.addEventListener("change", () => {
-              // Perform search using the current value in the search input
               const currentQuery = searchInput ? searchInput.value : "";
-              performSearch(currentQuery);
+              performSearch(currentQuery); // Trigger search on filter change
           });
       } else {
           console.warn("A filter dropdown element was not found.");
       }
   });
 
-  // --- Results Container Click Listener (Event Delegation) ---
   if (resultsContainer) {
       resultsContainer.addEventListener("click", (event) => {
         let targetElement = event.target;
 
         // --- Handle Tag Click ---
         if (targetElement.classList.contains("tag")) {
-          const clickedTag = targetElement.textContent.trim(); // Trim tag text
+          const clickedTag = targetElement.textContent.trim();
           console.log("Tag clicked:", clickedTag);
           const industryPrefix = "industry:";
           let searchTriggered = false;
 
-          // Check if tag is an industry tag
           if (clickedTag.startsWith(industryPrefix)) {
             const industry = clickedTag.substring(industryPrefix.length);
-            // Update industry filter if valid and different, reset property filter
             if (industryFilter && [...industryFilter.options].some(opt => opt.value === industry)) {
                  if (industryFilter.value !== industry) { industryFilter.value = industry; searchTriggered = true; }
                  if (propertyFilter && propertyFilter.value !== "") { propertyFilter.value = ""; searchTriggered = true; }
             } else { console.warn(`Industry filter option not found: ${industry}`); }
           }
-          // Else, check if it's a general property tag
           else {
-            // Update property filter if valid and different, reset industry filter
             if (propertyFilter && [...propertyFilter.options].some(opt => opt.value === clickedTag)) {
                 if (propertyFilter.value !== clickedTag) { propertyFilter.value = clickedTag; searchTriggered = true; }
                 if (industryFilter && industryFilter.value !== "") { industryFilter.value = ""; searchTriggered = true; }
             } else { console.warn(`Property filter option not found: ${clickedTag}`); }
           }
 
-          // Trigger search only if a filter value was actually changed
           if (searchTriggered) {
               const currentQuery = searchInput ? searchInput.value : "";
               performSearch(currentQuery);
+              searchInput.value = ""; // Clear search input when filter tag is clicked
+              suggestionsList.innerHTML = ""; // Clear suggestions
           }
         }
         // --- Handle Material Card Click ---
         else {
-            // Find the closest ancestor element with the class 'material-card'
             const card = targetElement.closest('.material-card');
             if (card) {
-                const materialName = card.dataset.materialName; // Get name from data attribute
-
+                const materialName = card.dataset.materialName;
                 if (materialName) {
-                    // Construct the URL for the detail page
                     const encodedName = encodeURIComponent(materialName);
                     const url = `material_detail.html?material=${encodedName}`;
                     console.log('Navigating to material detail:', url);
-                    // Navigate the browser to the detail page
                     window.location.href = url;
                 } else {
                     console.warn("Clicked card does not have a valid 'data-material-name' attribute.");
