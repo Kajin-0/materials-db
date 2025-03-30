@@ -40,7 +40,7 @@ Unchecked items `[ ]` are missing a matching key in `material_details.json`.
 - [x] TUFROC
 - [x] Tantalum Hafnium Carbide
 - [x] Thulium-doped YAG (Tm:YAG)
-- [ ] Ultra-High Molecular Weight Polyethylene (UHMWPE)
+- [x] Ultra-High Molecular Weight Polyethylene (UHMWPE)
 - [ ] Vacuum Multilayer Insulation (MLI)
 - [x] Yttria-Stabilized Zirconia (YSZ)
 - [x] ZBLAN Fluoride Glass
