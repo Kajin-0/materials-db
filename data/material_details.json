@@ -2367,5 +2367,107 @@
       "industry:energy", "industry:membranes", "2d material", "nanomaterial", "composite",
       "electrode", "membrane", "paper"
     ]
+    },
+    "Graphene Polymer Composite": {
+    "name": "Graphene Polymer Composite",
+    "formula": "Graphene/Polymer",
+    "synonyms": [ "Graphene Composite", "Graphene Reinforced Polymer", "GNP Composite" ],
+    "category": "Composite",
+    "constituent_elements": ["C", "H", "O"],
+    "description": "A composite material incorporating graphene (typically as nanoplatelets (GNPs), flakes, or sometimes CVD-grown sheets) as a filler within a polymer matrix (e.g., epoxy, thermoplastics like PEEK, polypropylene). Graphene offers exceptional intrinsic properties: extremely high mechanical strength and modulus, high electrical and thermal conductivity, and large surface area. Composites aim to transfer these properties to the polymer, enhancing strength, stiffness, electrical conductivity (for EMI shielding, static dissipation), thermal conductivity, and barrier properties, often at very low filler loadings compared to conventional fillers. Achieving good exfoliation, dispersion, and interfacial adhesion are critical challenges.",
+    "wiki_link": "https://en.wikipedia.org/wiki/Graphene#Composite_materials",
+    "safety": {
+      "toxicity": "Research ongoing regarding potential toxicity of graphene nanoparticles/platelets, especially via inhalation. Handle graphene powders/dispersions with appropriate PPE (gloves, respiratory protection, eye protection) and engineering controls.",
+      "handling": "Handle raw graphene materials under controlled conditions. Cured composites are generally stable, but machining/sanding generates dust containing graphene, requiring respiratory protection."
+    },
+    "identification": {
+      "cas_number": "1034343-98-0 (Graphene, generic), N/A (Polymer varies)",
+      "class": "Nanoplatelet Reinforced Polymer Composite",
+      "crystal_structure": "Graphene: Hexagonal lattice. Polymer: Amorphous or semi-crystalline.",
+      "phase_diagram_notes": "Properties highly dependent on graphene type (number of layers, flake size, defects, functionalization), polymer matrix, volume/weight fraction, dispersion quality, alignment (if any), and interfacial bonding."
+    },
+    "advanced_fabrication_insights": {
+        "dispersion_challenges": "CRITICAL: Strong van der Waals forces and π-π stacking cause graphene sheets to agglomerate. Requires high-energy mixing (shear, ultrasonication, ball milling), often combined with surfactants, solvents, or graphene surface functionalization compatible with the polymer matrix.",
+        "common_defects_impact": "Agglomerates act as stress risers, reducing mechanical performance. Poor dispersion limits conductivity improvements and barrier properties. Wrinkled or folded sheets are less effective.",
+        "interface_engineering": "Functionalization of graphene can improve compatibility and covalent/non-covalent bonding with the polymer matrix, enhancing load transfer, thermal transport, and overall performance.",
+        "method_specific_notes": "Melt compounding (for thermoplastics) requires careful control to avoid excessive shear degrading the graphene flakes. Solution mixing allows for better initial dispersion but requires solvent removal. In-situ polymerization can create strong interfaces."
+    },
+    "growth_fabrication_properties": {
+        "common_growth_methods": "Graphene Synthesis: Exfoliation (liquid phase, mechanical), CVD (less common for bulk composites). Composite Fabrication: Melt compounding, Solution mixing, In-situ polymerization, Powder mixing & sintering (for some matrices), 3D Printing (using graphene-loaded filaments/resins).",
+        "source_materials_purity": "Requires well-characterized graphene/GNP powder or dispersion, appropriate polymer resin/pellets.",
+        "preferred_substrates_orientations": "N/A (Bulk composite). Processing methods (e.g., extrusion, film casting) can induce alignment of graphene platelets.",
+        "typical_growth_parameters": "Processing depends on matrix (e.g., extruder temperature profiles, cure cycles). Graphene loading typically 0.1-10 wt%, higher loadings significantly increase viscosity and processing difficulty.",
+        "passivation_methods": "Composite surface is polymer."
+    },
+    "post_growth_processing": {
+        "annealing": "Post-curing for thermosets; annealing for thermoplastics can affect crystallinity and properties.",
+        "lapping_polishing": "Possible, surface quality depends on matrix and graphene dispersion.",
+        "etching": "Matrix dependent.",
+        "grinding_milling": "Possible, generates potentially hazardous dust."
+    },
+     "device_integration_characterization": {
+        "device_architectures": "Lightweight structural components, conductive casings/enclosures (EMI shielding, ESD), thermal management materials (TIMs, heat spreaders), conductive inks/coatings, sensor elements (strain, gas, bio), barrier layers.",
+        "readout_integration": "N/A",
+        "ar_coatings": "N/A (Generally opaque).",
+        "packaging_cooling": "Operating temperature limited by polymer matrix. Potential use in enhanced thermal management.",
+        "key_characterization_techniques": ["Microscopy (SEM/TEM - dispersion, exfoliation)", "Raman Spectroscopy (graphene quality, defects, strain)", "XRD (exfoliation state, matrix crystallinity)", "Electrical Conductivity/Sheet Resistance", "EMI Shielding Effectiveness", "Thermal Conductivity Measurement", "Mechanical Testing (Tensile/Flexural Strength & Modulus)", "Gas Permeation Testing (barrier properties)"]
+    },
+    "electrical_properties": {
+      "bandgap_type": "Graphene: Zero-gap Semimetal. Polymer: Insulator.",
+      "resistivity": {"value": "Variable (Insulating to ~10⁻⁴ Ω·cm or lower)", "notes": "Highly dependent on graphene type, loading, dispersion, and processing. Shows percolation behavior similar to CNT composites, often at slightly higher thresholds (e.g., 0.5-5 wt%)."},
+      "conductivity_electrical": {"notes": "Tunable from insulating to highly conductive for a polymer composite."},
+      "emi_shielding_effectiveness": {"notes": "Can provide effective EMI shielding due to high electrical conductivity, especially at higher loadings."}
+    },
+    "optical_properties": {
+      "spectral_range": "Opaque at typical loadings.", "notes": "Very thin films with low loading can be semi-transparent."
+    },
+    "thermal_properties": {
+      "operating_temperature": {"value": "Limited by Polymer Matrix (~ -50 to 150-300+)", "unit": "°C", "notes": "Depends on specific polymer (e.g., Epoxy vs PEEK)."},
+      "thermal_conductivity": {"value": "Significant Enhancement Possible (e.g., 1 -> 20+ W/(m·K))", "notes": "Intrinsic graphene conductivity is very high (~2000-5000 W/mK). Composite conductivity improvement depends strongly on loading, dispersion, alignment, low interfacial resistance, and minimizing phonon scattering. Significant enhancements over neat polymers are routinely reported."},
+      "specific_heat": {"notes": "Primarily determined by polymer matrix."},
+      "melting_point": {"notes": "Polymer matrix melts or decomposes. Graphene stable to very high temperatures (>2500°C vacuum)."},
+      "thermal_expansion": {"notes": "Composite CTE generally lowered compared to neat polymer due to very low intrinsic CTE of graphene. Anisotropic if graphene is aligned."}
+    },
+     "mechanical_properties": {
+         "density": {"value": "Low (~1.1-1.5 g/cm³ for typical polymers)", "notes": "Slightly higher than neat polymer. Graphene density ~2.2 g/cm³."},
+         "youngs_modulus": {"value": "Significantly Enhanced (e.g., 5 -> 20+ GPa)", "notes": "Intrinsic graphene modulus ~1 TPa. Composite modulus increases substantially even at low loadings if dispersion/interface is good."},
+         "tensile_strength": {"value": "Enhanced (e.g., 50 -> 150+ MPa)", "notes": "Intrinsic graphene strength ~130 GPa. Composite strength improves, sensitive to defects, dispersion, and interface."},
+         "fracture_toughness": {"notes": "Can increase toughness via crack deflection/bridging, but agglomerates can decrease it."}
+     },
+     "device_applications": {
+         "key_applications": ["Aerospace/Automotive (Lightweight structural parts, conductive components)", "Electronics (EMI shielding, ESD protection, thermal management, conductive inks)", "Energy Storage (Electrodes for batteries/supercapacitors)", "Sensors (Strain, pressure, chemical, bio)", "Coatings (Anti-corrosion, conductive, barrier)", "Sporting Goods", "Water purification membranes"]
+     },
+     "chemical_properties": {
+         "stability_oxidation": "Graphene starts oxidizing in air ~500-600°C. Composite stability limited by polymer matrix.",
+         "chemical_inertness": "Graphene is relatively inert but edges/defects can be reactive. Can be functionalized.",
+         "solvent_resistance": "Determined by polymer matrix.",
+         "barrier_properties": {"notes": "Addition of impermeable graphene flakes can significantly improve gas and liquid barrier properties of polymers if well-dispersed and aligned."}
+     },
+     "comparison_alternatives": {
+         "notes": "Alternative Reinforcements/Composites:",
+         "vs_Carbon_Fiber_Composites": "Graphene Comp: Nanoscale reinforcement, multifunctionality (conductivity, barrier), potential for improvement at lower loading. Carbon Fiber Comp: Mature, macroscopic reinforcement, easier processing, established design data, typically higher mechanical properties currently achievable in bulk.",
+         "vs_CNT_Composites": "Graphene Comp: 2D platelet reinforcement vs 1D tubes, different processing/dispersion behavior, potentially better barrier properties. CNT Comp: Different electrical percolation behavior, potentially easier alignment.",
+         "vs_Clay_Nanocomposites": "Graphene Comp: Electrically conductive, much higher intrinsic mechanical/thermal properties. Clay Comp: Lower cost, easier dispersion (sometimes), primarily used for barrier and mechanical reinforcement.",
+         "vs_Conductive_Fillers_Carbon_Black_Metal": "Graphene Comp: Achieves conductivity at much lower loadings, potentially better mechanical reinforcement, lower density increase. Conventional Fillers: Lower cost, easier dispersion."
+     },
+     "references_further_reading": {
+         "notes": "Key Reviews/Books:",
+         "review_adv_mater": "Review articles on graphene composites in journals like 'Advanced Materials', 'Composites Science and Technology', 'Carbon'.",
+         "book_graphene_composites": "Books focusing on Graphene Composites.",
+         "wikipedia_graphene": "https://en.wikipedia.org/wiki/Graphene#Composite_materials"
+     },
+     "vendor_info": {
+        "notes": "Example Vendors (Placeholder - often sell graphene powder/dispersion):",
+        "vendor_1": "Company A - www.example-vendor-a.com",
+        "vendor_2": "Company B - www.example-vendor-b.com",
+        "vendor_3": "Company C - www.example-vendor-c.com"
+     },
+    "tags": [
+      "electrically conductive", "emi shielding", "flexible", "graphene",
+      "industry:defense", "industry:electronics", "industry:energy", "industry:photonics",
+      "lightweight", "mechanical reinforcement", "nanocomposite", "photonics", "sensor",
+      "strain sensing", "strong", "thermal conductive", "thin film", "transparent",
+      "nanomaterial", "composite", "2d material", "polymer matrix composite"
+    ]
     }
 }
