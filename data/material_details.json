@@ -2673,7 +2673,7 @@
       "gasket", "tim", "solder", "post-transition metal"
     ]
     },
-  "LI-900 Silica Tile": {
+    "LI-900 Silica Tile": {
     "name": "LI-900 Silica Tile",
     "formula": "SiO₂ Fiber Network",
     "synonyms": [ "Space Shuttle Tile", "LI-900", "HRSI", "High-Temperature Reusable Surface Insulation" ],
@@ -2723,7 +2723,7 @@
       "dielectric_constant": {"value": "Very Low (~1.1 - 1.2)", "notes": "Due to high porosity, slightly higher than air."}
     },
     "optical_properties": {
-      "spectral_range": {"Opaque black with RCG coating.", "notes": "Uncoated tile is white and scatters visible light strongly."},
+      "spectral_range": {"value": "Opaque black with RCG coating.", "notes": "Uncoated tile is white and scatters visible light strongly."},
       "emissivity": {"value": "High (~0.85)", "notes": "RCG coating designed for high thermal emissivity in the infrared to radiate heat away during reentry."}
     },
     "thermal_properties": {
