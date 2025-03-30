@@ -20,7 +20,7 @@ Unchecked items `[ ]` are missing a matching key in `material_details.json`.
 - [x] Indium Gallium Arsenide
 - [x] Kapton Polyimide Film
 - [x] LI-900 Silica Tile
-- [ ] LYSO:Ce Scintillator
+- [x] LYSO:Ce Scintillator
 - [ ] Lead Tungstate
 - [x] Lithium Niobate
 - [ ] Maraging Steel
