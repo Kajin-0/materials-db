@@ -21,41 +21,28 @@
     "displayName": "Electrical Properties",
     "introduction": "Electrical characteristics govern HgCdTe's performance as an IR detector, primarily through its tunable bandgap and carrier transport properties. Precise control and understanding of these parameters are crucial for device design and optimization.",
     "properties": {
-      "band_gap": {
-        "displayName": "Bandgap (E_g)",
-        "summary": "Direct, Tunable (0 - 1.5 eV via x)",
+      "bandgap_type": {
+        "displayName": "Bandgap Type",
+        "summary": "Direct, Tunable",
         "details": {
           "notes": [
-            "Determines the absorption edge wavelength (cutoff wavelength, λc) and intrinsic carrier concentration (n<sub>i</sub>).",
+            "HgCdTe possesses a direct bandgap, allowing for efficient light absorption and emission near the band edge energy.",
+            "The bandgap energy (E_g) is tunable by adjusting the Cadmium mole fraction (x), making it suitable for various IR spectral ranges."
+           ],
+           "significance": [
+             "Direct gap enables high quantum efficiency for photodetectors.",
+             "Tunability allows tailoring the material for specific SWIR, MWIR, or LWIR applications."
+           ]
+        }
+      },
+      "band_gap": {
+        "displayName": "Bandgap (E_g)",
+        "summary": "Tunable (0 - 1.5 eV via x)",
+        "details": {
+          "notes": [
+            "Determines the absorption edge wavelength (cutoff wavelength, λ<sub>c</sub>) and intrinsic carrier concentration (n<sub>i</sub>).",
             "Strongly temperature-dependent, narrowing significantly as temperature increases.",
             "Tunability via Cd mole fraction (x) is the key advantage for targeting specific IR bands (SWIR/MWIR/LWIR)."
-          ],
-          "equations": [
-            {
-              "name": "Hansen E_g(x,T) Empirical Relation",
-              "description": "Standard empirical fit for bandgap (eV) vs. Cd mole fraction (x) and temperature (T [K]). Valid for x < 0.6, T > 4.2K.",
-              "formula_html": "E<sub>g</sub>(x, T) = -0.302 + 1.93x + 5.35 × 10<sup>-4</sup> T (1 - 2x) - 0.810x<sup>2</sup> + 0.832x<sup>3</sup>",
-              "formula_plain": "Eg(x,T) = -0.302 + 1.93*x + 5.35e-4*T*(1 - 2*x) - 0.810*x^2 + 0.832*x^3",
-              "units": "eV",
-              "variables": [
-                  {"symbol": "E<sub>g</sub>", "description": "Bandgap Energy"},
-                  {"symbol": "x", "description": "Cd mole fraction (0-1)"},
-                  {"symbol": "T", "description": "Temperature (K)"}
-              ],
-              "ref": "Hansen_1982"
-            },
-            {
-              "name": "Cutoff Wavelength from E_g(x,T)",
-              "description": "Calculates cutoff wavelength (μm) directly from the Hansen relation.",
-              "formula_html": "λ<sub>c</sub>(x, T) ≈ 1.2398 / E<sub>g</sub>(x, T)",
-              "formula_plain": "λc(x,T) (μm) ≈ 1.24 / (-0.302 + 1.93*x + 5.35e-4*T*(1-2*x) - 0.810*x^2 + 0.832*x^3)",
-              "units": "μm",
-               "variables": [
-                  {"symbol": "λ<sub>c</sub>", "description": "Cutoff Wavelength"},
-                  {"symbol": "E<sub>g</sub>", "description": "Bandgap Energy (from Hansen Eq.)"}
-              ],
-              "ref": "Hansen_1982"
-            }
           ],
           "measurement": {
              "techniques": ["Fourier Transform Infrared (FTIR) Spectroscopy (Absorption edge)", "Photoluminescence (PL) Spectroscopy (Peak energy)"],
@@ -72,6 +59,53 @@
           ]
         }
       },
+       "bandgap_equation": {
+         "displayName": "Bandgap Equations",
+         "summary": "Empirical relations for E_g(x,T) and λ_c(x,T)",
+         "details": {
+           "equations": [
+            {
+              "name": "Hansen E_g(x,T) Empirical Relation",
+              "description": "Standard empirical fit for bandgap (eV) vs. Cd mole fraction (x) and temperature (T [K]). Widely used for device modeling. Valid for x < 0.6, T > 4.2K.",
+              "formula_html": "E<sub>g</sub>(x, T) = -0.302 + 1.93x + 5.35 × 10<sup>-4</sup> T (1 - 2x) - 0.810x<sup>2</sup> + 0.832x<sup>3</sup>",
+              "formula_plain": "Eg(x,T) = -0.302 + 1.93*x + 5.35e-4*T*(1 - 2*x) - 0.810*x^2 + 0.832*x^3",
+              "units": "eV",
+              "variables": [
+                  {"symbol": "E<sub>g</sub>", "description": "Bandgap Energy"},
+                  {"symbol": "x", "description": "Cd mole fraction (0-1)"},
+                  {"symbol": "T", "description": "Temperature (K)"}
+              ],
+              "ref": "Hansen_1982"
+            },
+            {
+              "name": "Cutoff Wavelength from E_g(x,T)",
+              "description": "Calculates cutoff wavelength (μm) directly from the Hansen relation. Accurate determination of x and T is crucial.",
+              "formula_html": "λ<sub>c</sub>(x, T) ≈ 1.2398 / E<sub>g</sub>(x, T)",
+              "formula_plain": "λc(x,T) (μm) ≈ 1.24 / (-0.302 + 1.93*x + 5.35e-4*T*(1-2*x) - 0.810*x^2 + 0.832*x^3)",
+              "units": "μm",
+               "variables": [
+                  {"symbol": "λ<sub>c</sub>", "description": "Cutoff Wavelength"},
+                  {"symbol": "E<sub>g</sub>", "description": "Bandgap Energy (eV, from Hansen Eq.)"}
+              ],
+              "ref": "Hansen_1982"
+            }
+           ],
+           "significance": ["Allows prediction of spectral response based on material composition and operating temperature."]
+         }
+       },
+      "common_dopants": {
+         "displayName": "Common Dopants",
+         "summary": "n-type: In, I; p-type: As, Au, V<sub>Hg</sub>",
+         "details": {
+           "notes": [
+            "n-type doping achieved using Group III elements substituting cation sites (e.g., Indium) or Group VII substituting anion sites (e.g., Iodine).",
+            "p-type doping uses Group V substituting anion sites (e.g., Arsenic) or Group IB substituting cation sites (e.g., Gold).",
+            "Native mercury vacancies (V<sub>Hg</sub>) act as acceptors and are often dominant, requiring careful annealing under Hg overpressure to control p-type concentration or achieve n-type conversion.",
+            "Doping level control (typically 10¹⁴ - 10¹⁶ cm⁻³) is critical for junction formation and device performance."
+           ],
+           "significance": ["Enables creation of p-n junctions for photodiodes.", "Controls conductivity type and level.", "Influences carrier lifetime and dark current."]
+         }
+       },
       "carrier_concentration": {
         "displayName": "Carrier Concentration (n, p, n_i)",
         "summary": "Low n_i at 77K; Extrinsic control via doping (10¹⁴-10¹⁶ cm⁻³ typical)",
@@ -79,14 +113,12 @@
           "notes": [
             "Intrinsic concentration (n<sub>i</sub>) is highly sensitive to E<sub>g</sub> and T.",
             "Cryogenic operation (e.g., 77K) is required for LWIR detectors to suppress thermally generated carriers (dark current).",
-            "n-type doping typically uses In or I; p-type uses As, Au, or controlled Hg vacancies (V<sub>Hg</sub>).",
-            "Control of acceptor concentration (esp. V<sub>Hg</sub>) via annealing under Hg overpressure is crucial.",
-            "Doping level impacts depletion width, junction capacitance, tunneling currents, and resistivity."
+            "Extrinsic concentration determined by net active dopant density (N<sub>D</sub> - N<sub>A</sub> or N<sub>A</sub> - N<sub>D</sub>)."
           ],
           "equations": [
              {
               "name": "Intrinsic Carrier Conc. (n_i) Empirical Relation",
-              "description": "Approximate fit for n<sub>i</sub> (cm⁻³) vs. composition (x) and temperature (T [K]). Various forms exist.",
+              "description": "Approximate fit for n<sub>i</sub> (cm⁻³) vs. composition (x) and temperature (T [K]).",
               "formula_html": "n<sub>i</sub>(x,T) ≈ (5.585 - 3.82x + 1.753 × 10<sup>-3</sup>T - 1.364 × 10<sup>-3</sup>xT) × 10<sup>14</sup> × E<sub>g</sub><sup>0.75</sup> T<sup>1.5</sup> exp(-E<sub>g</sub> / 2kT)",
               "formula_plain": "ni(x,T) ≈ (5.585 - 3.82*x + 1.753e-3*T - 1.364e-3*x*T) * 1e14 * Eg^0.75 * T^1.5 * exp(-Eg / (2*k*T))",
               "units": "cm⁻³",
@@ -131,18 +163,18 @@
       },
       "electron_mobility": {
         "displayName": "Electron Mobility (μ<sub>e</sub>)",
-        "summary": "High (>10⁴ cm²/Vs @ 77K); Sensitive to T, x, N_D, N_A",
+        "summary": "High (>10⁴ cm²/Vs @ 77K); Sensitive to T, x, N_D, N_A, Defects",
         "details": {
           "notes": [
             "Governs electron drift velocity under electric field.",
-            "Limited by polar optical phonons (higher T), ionized impurities (low T, high doping), alloy scattering.",
+            "Limited by polar optical phonons (higher T), ionized impurities (low T, high doping), alloy scattering (depends on x), and defect scattering.",
             "Decreases with increasing T, doping (N<sub>A</sub>, N<sub>D</sub>), and typically Cd fraction (x).",
-            "Hole mobility (μ<sub>h</sub>) significantly lower (~100-600 cm²/Vs)."
+            "Effective electron mass (m*<sub>e</sub>) is small and dependent on x, contributing to high mobility."
           ],
            "equations": [
              {
               "name": "Mobility from Hall Measurement",
-              "description": "Calculates Hall mobility from measured Hall coefficient (R<sub>H</sub>) and resistivity (ρ) or conductivity (σ).",
+              "description": "Calculates Hall mobility from measured Hall coefficient (R<sub>H</sub>) and resistivity (ρ) or conductivity (σ). Note μ<sub>H</sub> = r<sub>H</sub>μ<sub>drift</sub>.",
               "formula_html": "μ<sub>H</sub> = |R<sub>H</sub>| σ = |R<sub>H</sub>| / ρ",
               "formula_plain": "μ_H = |R_H| * σ = |R_H| / ρ",
               "units": "cm²/Vs",
@@ -157,11 +189,11 @@
            ],
           "measurement": {
              "techniques": ["Hall Effect Measurement"],
-             "notes": ["Standard technique, provides Hall mobility μ<sub>H</sub> = r<sub>H</sub>μ<sub>e</sub> (for n-type).", "Low temperature (77K) often used for characterization."]
+             "notes": ["Standard technique, provides Hall mobility.", "Low temperature (77K) often used for characterization."]
           },
           "significance": [
             "Affects device speed (transit time).",
-            "Influences diffusion length (L<sub>e</sub> ∝ √μ<sub>e</sub>) and collection efficiency.",
+            "Influences diffusion length (L<sub>e</sub> ∝ √μ<sub>e</sub>τ<sub>e</sub>) and collection efficiency.",
             "Contributes to diffusion dark current."
           ]
         }
@@ -170,9 +202,9 @@
         "displayName": "Hole Mobility (μ<sub>h</sub>)",
         "summary": "Low (100-600 cm²/Vs @ 77K)",
          "details": {
-          "notes": ["Lower than μ<sub>e</sub> due to larger hole effective mass.", "Impacts minority carrier transport."],
+          "notes": ["Lower than μ<sub>e</sub> due to larger hole effective mass (m*<sub>h</sub>).", "Impacts minority carrier transport."],
           "measurement": ["Hall Effect (careful analysis needed)."],
-          "significance": ["Affects minority carrier diffusion length (L<sub>h</sub> ∝ √μ<sub>h</sub>).", "Influences bipolar transport."]
+          "significance": ["Affects minority carrier diffusion length (L<sub>h</sub> ∝ √μ<sub>h</sub>τ<sub>h</sub>).", "Influences bipolar transport."]
          }
       },
        "dielectric_constant": {
@@ -232,66 +264,33 @@
     "properties": {
       "spectral_range": {
         "displayName": "Spectral Range",
-        "summary": "SWIR, MWIR, LWIR (0.8 to >30 μm)",
-         "details": {
-           "notes": ["Defined by the tunable bandgap E_g(x).", "SWIR: x ~ 0.5-0.7", "MWIR: x ~ 0.25-0.4", "LWIR: x ~ 0.18-0.22", "VLWIR: x < 0.18"],
-           "significance": ["Determines the application space (thermal imaging, gas sensing, astronomy)."]
-         }
+        "summary": "SWIR, MWIR, LWIR (0.8 to >30 μm)"
       },
       "cutoff_wavelength": {
           "displayName": "Cutoff Wavelength (λ<sub>c</sub>)",
-          "summary": "Tunable (0.8 to >30 μm)",
-           "details": {
-             "notes": ["Wavelength at which absorption drops sharply, defined by λ<sub>c</sub> ≈ 1.24 / E_g(eV).", "Primary specification for detector material."],
-             "measurement": ["FTIR transmission spectrum (typically defined at 50% transmission point)."],
-             "significance": ["Sets the long-wavelength limit of the detector's sensitivity."]
-           }
+          "summary": "Tunable (0.8 to >30 μm)"
       },
       "refractive_index": {
           "displayName": "Refractive Index (n)",
-          "summary": "High (~3.4-4.0)",
-           "details": {
-             "notes": ["High index requires anti-reflection (AR) coatings for efficient light coupling (~30% reflection loss per surface without AR).", "Dispersion exists (index varies with wavelength)."],
-             "measurement": ["Ellipsometry", "FTIR reflectance/transmission analysis."],
-             "significance": ["Needed for designing AR coatings.", "Affects optical cavity effects within the detector structure."]
-           }
+          "summary": "High (~3.4-4.0)"
       },
       "absorption_coefficient": {
           "displayName": "Absorption Coefficient (α)",
-          "summary": "High (>10⁴ cm⁻¹ near band edge)",
-           "details": {
-             "notes": ["Strong absorption due to direct bandgap allows efficient photon capture in relatively thin layers (few μm).", "α depends strongly on photon energy relative to E_g."],
-             "measurement": ["Calculated from transmission/reflectance spectra."],
-             "significance": ["Determines required detector thickness for high quantum efficiency.", "Affects optimal device design."]
-           }
+          "summary": "High (>10⁴ cm⁻¹ near band edge)"
       },
       "quantum_efficiency": {
           "displayName": "Quantum Efficiency (QE or η)",
-          "summary": "High (>70-80% achievable)",
-           "details": {
-             "notes": ["Ratio of collected charge carriers to incident photons.", "Internal QE can be very high (>90%).", "External QE limited by reflection losses (needs AR coating) and collection efficiency (diffusion length, surface recombination)."],
-             "measurement": ["Measured using calibrated light sources and reference detectors, determining spectral response R(λ), then QE = R(λ) * hc / (qλ)."],
-             "significance": ["Fundamental measure of detector sensitivity."]
-           }
+          "summary": "High (>70-80% achievable)"
       },
       "responsivity": {
           "displayName": "Responsivity (R)",
-          "summary": "High (~1-10 A/W @ 77K)",
-           "details": {
-             "notes": ["Ratio of output photocurrent to incident optical power (R = I<sub>ph</sub> / P<sub>inc</sub>).", "R = QE * qλ / hc.", "Higher at longer wavelengths for a given QE."],
-             "measurement": ["Measured using calibrated blackbody source or monochromatic source and calibrated power meter."],
-             "significance": ["Direct measure of signal output for a given input power."]
-           }
+          "summary": "High (~1-10 A/W @ 77K)"
       },
       "noise_equivalent_power": {
           "displayName": "Noise Equivalent Power (NEP)",
-          "summary": "Low (~10⁻¹¹ - 10⁻¹³ W/√Hz cooled)",
-           "details": {
-             "notes": ["Incident optical power required to produce a signal-to-noise ratio of 1 in a 1 Hz bandwidth.", "NEP = I<sub>noise</sub> / R, where I<sub>noise</sub> is the total noise current spectral density.", "Lower NEP indicates better sensitivity."],
-             "measurement": ["Calculated from measured noise current spectral density and responsivity."],
-             "significance": ["Defines the minimum detectable optical power."]
-           }
+          "summary": "Low (~10⁻¹¹ - 10⁻¹³ W/√Hz cooled)"
       }
+      // Detailed subsections for optical properties would go here
     }
   },
   "thermal_properties": {
@@ -300,30 +299,17 @@
     "properties": {
        "operating_temperature": {
          "displayName": "Operating Temperature",
-         "summary": "Typically 77K (LN2), higher possible for MWIR/SWIR",
-          "details": {
-            "notes": ["Cryogenic cooling drastically reduces thermally generated dark current (n<sub>i</sub> reduction).", "LWIR detectors almost always require 77K or lower.", "MWIR/SWIR can operate at higher temps (e.g., 150-200K or even near RT for SWIR) with acceptable performance, enabling smaller/cheaper TEC cooling."],
-            "significance": ["Dictates cooling system requirements (LN2 dewar, Stirling cooler, TEC), impacting system size, weight, power (SWaP), and cost."]
-          }
+         "summary": "Typically 77K (LN2), higher possible for MWIR/SWIR"
        },
        "thermal_conductivity": {
          "displayName": "Thermal Conductivity (k)",
-         "summary": "Low (~1-5 W/mK)",
-          "details": {
-            "notes": ["Poor thermal conductor compared to Si or metals.", "Can lead to localized heating in high power devices (lasers) or challenges in heat sinking focal plane arrays."],
-            "measurement": ["Laser flash method or other standard techniques."],
-            "significance": ["Impacts heat dissipation from focal plane arrays.", "Affects thermal stability and potential for thermal gradients."]
-          }
+         "summary": "Low (~1-5 W/mK)"
        },
        "thermal_expansion": {
          "displayName": "Thermal Expansion (CTE)",
-         "summary": "Moderate (~4.5-5.5 ppm/°C)",
-          "details": {
-            "notes": ["Coefficient of Thermal Expansion (CTE).", "Mismatch between HgCdTe CTE and Silicon ROIC CTE (~2.6 ppm/°C) is a major challenge for large format focal plane arrays.", "Indium bump interconnects accommodate some stress, but CTE mismatch limits array size and reliability through thermal cycling."],
-            "measurement": ["Dilatometry."],
-            "significance": ["Critical for mechanical design and reliability of hybrid focal plane arrays (detector bonded to readout circuit)."]
-          }
+         "summary": "Moderate (~4.5-5.5 ppm/°C)"
        }
+       // Detailed subsections for thermal properties would go here
     }
   },
   "mechanical_properties": {
@@ -334,6 +320,7 @@
        "hardness": { "displayName": "Hardness", "summary": "Very Low (Mohs ~2-3)" },
        "fracture_toughness": { "displayName": "Fracture Toughness (K<sub>IC</sub>)", "summary": "Very Low (<0.5 MPa√m)" },
        "youngs_modulus": { "displayName": "Young's Modulus (E)", "summary": "Low (~40-50 GPa)" }
+       // Detailed subsections for mechanical properties would go here
     }
   }
 }
