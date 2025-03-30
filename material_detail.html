@@ -27,33 +27,41 @@
     <section class="material-section" id="section-periodic-table">
       <h2>Constituent Elements</h2>
       <div class="periodic-table-wrapper">
-        {/* --- Group Labels (Row 0) --- */}
-        <div class="pt-label pt-group-label" style="grid-row: 1; grid-column: 1;">1</div>
-        <div class="pt-label pt-group-label" style="grid-row: 1; grid-column: 2;">2</div>
-        <div class="pt-label pt-group-label" style="grid-row: 1; grid-column: 3;">3</div>
-        <div class="pt-label pt-group-label" style="grid-row: 1; grid-column: 4;">4</div>
-        <div class="pt-label pt-group-label" style="grid-row: 1; grid-column: 5;">5</div>
-        <div class="pt-label pt-group-label" style="grid-row: 1; grid-column: 6;">6</div>
-        <div class="pt-label pt-group-label" style="grid-row: 1; grid-column: 7;">7</div>
-        <div class="pt-label pt-group-label" style="grid-row: 1; grid-column: 8;">8</div>
-        <div class="pt-label pt-group-label" style="grid-row: 1; grid-column: 9;">9</div>
-        <div class="pt-label pt-group-label" style="grid-row: 1; grid-column: 10;">10</div>
-        <div class="pt-label pt-group-label" style="grid-row: 1; grid-column: 11;">11</div>
-        <div class="pt-label pt-group-label" style="grid-row: 1; grid-column: 12;">12</div>
-        <div class="pt-label pt-group-label" style="grid-row: 1; grid-column: 13;">13</div>
-        <div class="pt-label pt-group-label" style="grid-row: 1; grid-column: 14;">14</div>
-        <div class="pt-label pt-group-label" style="grid-row: 1; grid-column: 15;">15</div>
-        <div class="pt-label pt-group-label" style="grid-row: 1; grid-column: 16;">16</div>
-        <div class="pt-label pt-group-label" style="grid-row: 1; grid-column: 17;">17</div>
-        <div class="pt-label pt-group-label" style="grid-row: 1; grid-column: 18;">18</div>
+        {/* --- Group Labels (Row 0 of wrapper grid) --- */}
+        <div class="pt-label pt-group-label" style="grid-row: 1; grid-column: 2;">1</div>
+        <div class="pt-label pt-group-label" style="grid-row: 1; grid-column: 3;">2</div>
+        <div class="pt-label pt-group-label" style="grid-row: 1; grid-column: 4;">3</div>
+        <div class="pt-label pt-group-label" style="grid-row: 1; grid-column: 5;">4</div>
+        <div class="pt-label pt-group-label" style="grid-row: 1; grid-column: 6;">5</div>
+        <div class="pt-label pt-group-label" style="grid-row: 1; grid-column: 7;">6</div>
+        <div class="pt-label pt-group-label" style="grid-row: 1; grid-column: 8;">7</div>
+        <div class="pt-label pt-group-label" style="grid-row: 1; grid-column: 9;">8</div>
+        <div class="pt-label pt-group-label" style="grid-row: 1; grid-column: 10;">9</div>
+        <div class="pt-label pt-group-label" style="grid-row: 1; grid-column: 11;">10</div>
+        <div class="pt-label pt-group-label" style="grid-row: 1; grid-column: 12;">11</div>
+        <div class="pt-label pt-group-label" style="grid-row: 1; grid-column: 13;">12</div>
+        <div class="pt-label pt-group-label" style="grid-row: 1; grid-column: 14;">13</div>
+        <div class="pt-label pt-group-label" style="grid-row: 1; grid-column: 15;">14</div>
+        <div class="pt-label pt-group-label" style="grid-row: 1; grid-column: 16;">15</div>
+        <div class="pt-label pt-group-label" style="grid-row: 1; grid-column: 17;">16</div>
+        <div class="pt-label pt-group-label" style="grid-row: 1; grid-column: 18;">17</div>
+        <div class="pt-label pt-group-label" style="grid-row: 1; grid-column: 19;">18</div>
+
+        {/* --- Period Labels (Column 0 of wrapper grid) --- */}
+        <div class="pt-label pt-period-label" style="grid-row: 2; grid-column: 1;">1</div>
+        <div class="pt-label pt-period-label" style="grid-row: 3; grid-column: 1;">2</div>
+        <div class="pt-label pt-period-label" style="grid-row: 4; grid-column: 1;">3</div>
+        <div class="pt-label pt-period-label" style="grid-row: 5; grid-column: 1;">4</div>
+        <div class="pt-label pt-period-label" style="grid-row: 6; grid-column: 1;">5</div>
+        <div class="pt-label pt-period-label" style="grid-row: 7; grid-column: 1;">6</div>
+        <div class="pt-label pt-period-label" style="grid-row: 8; grid-column: 1;">7</div>
+
 
         <div class="periodic-table-container" id="periodic-table-main">
-          {/* --- Period 1 (Row 1 -> Now Row 2 in grid) --- */}
-          <div class="pt-label pt-period-label" style="grid-row: 1;">1</div>
+          {/* --- Period 1 --- */}
           <div class="pt-element p-1 s-block diatomic-nonmetal" data-symbol="H" data-number="1"><span class="pt-number">1</span>H<span class="pt-mass"></span></div>
           <div class="pt-element p-1 p-block noble-gas" data-symbol="He" data-number="2" style="grid-column: 18;"><span class="pt-number">2</span>He<span class="pt-mass"></span></div>
-          {/* --- Period 2 (Row 2 -> Row 3) --- */}
-          <div class="pt-label pt-period-label" style="grid-row: 2;">2</div>
+          {/* --- Period 2 --- */}
           <div class="pt-element p-2 s-block alkali-metal" data-symbol="Li" data-number="3"><span class="pt-number">3</span>Li<span class="pt-mass"></span></div>
           <div class="pt-element p-2 s-block alkaline-earth-metal" data-symbol="Be" data-number="4"><span class="pt-number">4</span>Be<span class="pt-mass"></span></div>
           <div class="pt-element p-2 p-block metalloid" data-symbol="B" data-number="5" style="grid-column: 13;"><span class="pt-number">5</span>B<span class="pt-mass"></span></div>
@@ -62,8 +70,7 @@
           <div class="pt-element p-2 p-block diatomic-nonmetal" data-symbol="O" data-number="8"><span class="pt-number">8</span>O<span class="pt-mass"></span></div>
           <div class="pt-element p-2 p-block diatomic-nonmetal halogen" data-symbol="F" data-number="9"><span class="pt-number">9</span>F<span class="pt-mass"></span></div>
           <div class="pt-element p-2 p-block noble-gas" data-symbol="Ne" data-number="10"><span class="pt-number">10</span>Ne<span class="pt-mass"></span></div>
-          {/* --- Period 3 (Row 3 -> Row 4) --- */}
-          <div class="pt-label pt-period-label" style="grid-row: 3;">3</div>
+          {/* --- Period 3 --- */}
           <div class="pt-element p-3 s-block alkali-metal" data-symbol="Na" data-number="11"><span class="pt-number">11</span>Na<span class="pt-mass"></span></div>
           <div class="pt-element p-3 s-block alkaline-earth-metal" data-symbol="Mg" data-number="12"><span class="pt-number">12</span>Mg<span class="pt-mass"></span></div>
           <div class="pt-element p-3 p-block post-transition-metal" data-symbol="Al" data-number="13" style="grid-column: 13;"><span class="pt-number">13</span>Al<span class="pt-mass"></span></div>
@@ -72,8 +79,7 @@
           <div class="pt-element p-3 p-block polyatomic-nonmetal" data-symbol="S" data-number="16"><span class="pt-number">16</span>S<span class="pt-mass"></span></div>
           <div class="pt-element p-3 p-block diatomic-nonmetal halogen" data-symbol="Cl" data-number="17"><span class="pt-number">17</span>Cl<span class="pt-mass"></span></div>
           <div class="pt-element p-3 p-block noble-gas" data-symbol="Ar" data-number="18"><span class="pt-number">18</span>Ar<span class="pt-mass"></span></div>
-          {/* --- Period 4 (Row 4 -> Row 5) --- */}
-          <div class="pt-label pt-period-label" style="grid-row: 4;">4</div>
+          {/* --- Period 4 --- */}
           <div class="pt-element p-4 s-block alkali-metal" data-symbol="K" data-number="19"><span class="pt-number">19</span>K<span class="pt-mass"></span></div>
           <div class="pt-element p-4 s-block alkaline-earth-metal" data-symbol="Ca" data-number="20"><span class="pt-number">20</span>Ca<span class="pt-mass"></span></div>
           <div class="pt-element p-4 d-block transition-metal" data-symbol="Sc" data-number="21"><span class="pt-number">21</span>Sc<span class="pt-mass"></span></div>
@@ -92,8 +98,7 @@
           <div class="pt-element p-4 p-block polyatomic-nonmetal" data-symbol="Se" data-number="34"><span class="pt-number">34</span>Se<span class="pt-mass"></span></div>
           <div class="pt-element p-4 p-block diatomic-nonmetal halogen" data-symbol="Br" data-number="35"><span class="pt-number">35</span>Br<span class="pt-mass"></span></div>
           <div class="pt-element p-4 p-block noble-gas" data-symbol="Kr" data-number="36"><span class="pt-number">36</span>Kr<span class="pt-mass"></span></div>
-          {/* --- Period 5 (Row 5 -> Row 6) --- */}
-          <div class="pt-label pt-period-label" style="grid-row: 5;">5</div>
+          {/* --- Period 5 --- */}
           <div class="pt-element p-5 s-block alkali-metal" data-symbol="Rb" data-number="37"><span class="pt-number">37</span>Rb<span class="pt-mass"></span></div>
           <div class="pt-element p-5 s-block alkaline-earth-metal" data-symbol="Sr" data-number="38"><span class="pt-number">38</span>Sr<span class="pt-mass"></span></div>
           <div class="pt-element p-5 d-block transition-metal" data-symbol="Y" data-number="39"><span class="pt-number">39</span>Y<span class="pt-mass"></span></div>
@@ -112,8 +117,7 @@
           <div class="pt-element p-5 p-block metalloid" data-symbol="Te" data-number="52"><span class="pt-number">52</span>Te<span class="pt-mass"></span></div>
           <div class="pt-element p-5 p-block diatomic-nonmetal halogen" data-symbol="I" data-number="53"><span class="pt-number">53</span>I<span class="pt-mass"></span></div>
           <div class="pt-element p-5 p-block noble-gas" data-symbol="Xe" data-number="54"><span class="pt-number">54</span>Xe<span class="pt-mass"></span></div>
-          {/* --- Period 6 (Row 6 -> Row 7) --- */}
-          <div class="pt-label pt-period-label" style="grid-row: 6;">6</div>
+          {/* --- Period 6 --- */}
           <div class="pt-element p-6 s-block alkali-metal" data-symbol="Cs" data-number="55"><span class="pt-number">55</span>Cs<span class="pt-mass"></span></div>
           <div class="pt-element p-6 s-block alkaline-earth-metal" data-symbol="Ba" data-number="56"><span class="pt-number">56</span>Ba<span class="pt-mass"></span></div>
           <div class="pt-element p-6 f-block lanthanide pt-placeholder" style="grid-column: 3;"><span class="pt-number"></span>57-71<span class="pt-mass"></span></div> <!-- Placeholder -->
@@ -132,8 +136,7 @@
           <div class="pt-element p-6 p-block post-transition-metal" data-symbol="Po" data-number="84"><span class="pt-number">84</span>Po<span class="pt-mass"></span></div>
           <div class="pt-element p-6 p-block metalloid halogen" data-symbol="At" data-number="85"><span class="pt-number">85</span>At<span class="pt-mass"></span></div>
           <div class="pt-element p-6 p-block noble-gas" data-symbol="Rn" data-number="86"><span class="pt-number">86</span>Rn<span class="pt-mass"></span></div>
-          {/* --- Period 7 (Row 7 -> Row 8) --- */}
-          <div class="pt-label pt-period-label" style="grid-row: 7;">7</div>
+          {/* --- Period 7 --- */}
           <div class="pt-element p-7 s-block alkali-metal" data-symbol="Fr" data-number="87"><span class="pt-number">87</span>Fr<span class="pt-mass"></span></div>
           <div class="pt-element p-7 s-block alkaline-earth-metal" data-symbol="Ra" data-number="88"><span class="pt-number">88</span>Ra<span class="pt-mass"></span></div>
           <div class="pt-element p-7 f-block actinide pt-placeholder" style="grid-column: 3;"><span class="pt-number"></span>89-103<span class="pt-mass"></span></div> <!-- Placeholder -->
@@ -153,7 +156,7 @@
           <div class="pt-element p-7 p-block unknown" data-symbol="Ts" data-number="117"><span class="pt-number">117</span>Ts<span class="pt-mass"></span></div>
           <div class="pt-element p-7 p-block unknown" data-symbol="Og" data-number="118"><span class="pt-number">118</span>Og<span class="pt-mass"></span></div>
 
-          {/* --- Lanthanides Row (Row 9 -> Row 10) --- */}
+          {/* --- Lanthanides Row --- */}
           <div class="pt-element f-block lanthanide pt-series-label" style="grid-row: 9; grid-column: 1 / span 2;">Lanthanides<span class="pt-mass"></span></div>
           <div class="pt-element f-block lanthanide" data-symbol="La" data-number="57" style="grid-row: 9; grid-column: 3;"><span class="pt-number">57</span>La<span class="pt-mass"></span></div>
           <div class="pt-element f-block lanthanide" data-symbol="Ce" data-number="58" style="grid-row: 9;"><span class="pt-number">58</span>Ce<span class="pt-mass"></span></div>
@@ -171,7 +174,7 @@
           <div class="pt-element f-block lanthanide" data-symbol="Yb" data-number="70" style="grid-row: 9;"><span class="pt-number">70</span>Yb<span class="pt-mass"></span></div>
           <div class="pt-element f-block lanthanide" data-symbol="Lu" data-number="71" style="grid-row: 9;"><span class="pt-number">71</span>Lu<span class="pt-mass"></span></div>
 
-           {/* --- Actinides Row (Row 10 -> Row 11) --- */}
+           {/* --- Actinides Row --- */}
            <div class="pt-element f-block actinide pt-series-label" style="grid-row: 10; grid-column: 1 / span 2;">Actinides<span class="pt-mass"></span></div>
            <div class="pt-element f-block actinide" data-symbol="Ac" data-number="89" style="grid-row: 10; grid-column: 3;"><span class="pt-number">89</span>Ac<span class="pt-mass"></span></div>
            <div class="pt-element f-block actinide" data-symbol="Th" data-number="90" style="grid-row: 10;"><span class="pt-number">90</span>Th<span class="pt-mass"></span></div>
