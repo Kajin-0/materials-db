@@ -35,7 +35,7 @@ Unchecked items `[ ]` are missing a matching key in `material_details.json`.
 - [x] Sapphire Substrate
 - [x] Silica Aerogel
 - [x] Silicon
-- [ ] Silicon Carbide Fiber Reinforced Composite
+- [x] Silicon Carbide Fiber Reinforced Composite
 - [ ] Silicon Nitride Reinforced Silicon Carbide
 - [ ] TUFROC
 - [ ] Tantalum Hafnium Carbide
