@@ -129,8 +129,13 @@ document.addEventListener("DOMContentLoaded", async () => {
                                      descEl.textContent = eq.description;
                                      eqBlock.appendChild(descEl);
                                 }
-                                // Prefer plain formula, add placeholder for LaTeX rendering later
-                                if (eq.formula_plain) {
+                                // Prefer HTML formula, then plain, then LaTeX placeholder
+                                if (eq.formula_html) {
+                                    const formulaEl = document.createElement('div');
+                                    formulaEl.className = 'eq-formula-html'; // Use a different class if desired
+                                    formulaEl.innerHTML = eq.formula_html; // Use innerHTML to render HTML tags
+                                    eqBlock.appendChild(formulaEl);
+                                } else if (eq.formula_plain) {
                                     const formulaEl = document.createElement('div');
                                     formulaEl.className = 'eq-formula-plain';
                                     formulaEl.textContent = eq.formula_plain;
@@ -156,6 +161,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                                     const varsUl = document.createElement('ul');
                                     eq.variables.forEach(v => {
                                         const li = document.createElement('li');
+                                        // Use innerHTML for symbol and description in case they contain HTML
                                         li.innerHTML = `<strong>${v.symbol}:</strong> ${v.description}`;
                                         varsUl.appendChild(li);
                                     });
