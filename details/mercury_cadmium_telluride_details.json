@@ -1,171 +1,325 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Section Detail</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
-    <style>
-        body {
-            background-color: #f9f9f9;
+{
+  "materialName": "Mercury Cadmium Telluride",
+  "references": {
+    "Hansen_1982": {
+      "text": "Hansen, G. L., Schmit, J. L., & Casselman, T. N. (1982). Energy gap versus alloy composition and temperature in Hg₁₋ₓCdₓTe. Journal of Applied Physics, 53(10), 7099-7101.",
+      "doi": "10.1063/1.330018"
+    },
+    "Rogalski_IR": {
+      "text": "Rogalski, A. (2019). Infrared Detectors (2nd ed.). CRC Press.",
+      "doi": "10.1201/9780429501918"
+    },
+    "Norton_2002": {
+       "text": "Norton, P. R. (2002). HgCdTe infrared detectors. Opto-Electronics Review, 10(3), 159-174."
+    },
+    "Schroder_Semicon": {
+      "text": "Schroder, D. K. (2006). Semiconductor Material and Device Characterization (3rd ed.). Wiley-IEEE Press.",
+      "doi": "10.1002/0471749095"
+    }
+  },
+  "electrical_properties": {
+    "displayName": "Electrical Properties",
+    "introduction": "Electrical characteristics govern HgCdTe's performance as an IR detector, primarily through its tunable bandgap and carrier transport properties. Precise control and understanding of these parameters are crucial for device design and optimization.",
+    "properties": {
+      "bandgap_type": {
+        "displayName": "Bandgap Type",
+        "summary": "Direct, Tunable",
+        "details": {
+          "notes": [
+            "HgCdTe possesses a direct bandgap, allowing for efficient light absorption and emission near the band edge energy.",
+            "The bandgap energy (E_g) is tunable by adjusting the Cadmium mole fraction (x), making it suitable for various IR spectral ranges."
+           ],
+           "significance": [
+             "Direct gap enables high quantum efficiency for photodetectors.",
+             "Tunability allows tailoring the material for specific SWIR, MWIR, or LWIR applications."
+           ]
         }
-
-        .section-detail-container {
-            max-width: 1000px;
-            margin: 1.5rem auto;
-            padding: 2rem;
-            background-color: #ffffff;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+      },
+      "band_gap": {
+        "displayName": "Bandgap (E_g)",
+        "summary": "Tunable (0 - 1.5 eV via x)",
+        "details": {
+          "notes": [
+            "Determines the absorption edge wavelength (cutoff wavelength, λ<sub>c</sub>) and intrinsic carrier concentration (n<sub>i</sub>).",
+            "Strongly temperature-dependent, narrowing significantly as temperature increases.",
+            "Tunability via Cd mole fraction (x) is the key advantage for targeting specific IR bands (SWIR/MWIR/LWIR)."
+          ],
+          "measurement": {
+             "techniques": ["Fourier Transform Infrared (FTIR) Spectroscopy (Absorption edge)", "Photoluminescence (PL) Spectroscopy (Peak energy)"],
+             "notes": [
+                "FTIR transmission provides direct λ<sub>c</sub> determination (often defined at 50% transmission point).",
+                "PL peak energy gives E<sub>g</sub>, useful for non-contact composition mapping.",
+                "Accurate temperature control during measurement is essential."
+              ]
+          },
+          "significance": [
+            "Defines spectral operating range.",
+            "Critical input for calculating n<sub>i</sub> and modeling dark current mechanisms.",
+            "Composition control during growth is verified via E<sub>g</sub>/λ<sub>c</sub> measurements."
+          ]
         }
-
-        /* --- Header Bar --- */
-        .section-title-bar {
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 1rem;
-            margin-bottom: 2rem;
-        }
-        .section-title-bar h1 {
-            margin: 0; font-size: 2rem; color: #2c3e50; margin-bottom: 0.25rem;
-        }
-        .section-title-bar .material-context {
-            font-size: 1.1rem; color: #555;
-        }
-
-        /* --- Back Link Specific Styling --- */
-        .section-detail-container > .back-link {
-             display: inline-block; margin-bottom: 1.5rem; font-size: 0.95rem; color: #007bff; text-decoration: none;
-        }
-         .section-detail-container > .back-link:hover {
-             text-decoration: underline;
+      },
+       "bandgap_equation": {
+         "displayName": "Bandgap Equations",
+         "summary": "Empirical relations for E_g(x,T) and λ_c(x,T)",
+         "details": {
+           "equations": [
+            {
+              "name": "Hansen E_g(x,T) Empirical Relation",
+              "description": "Standard empirical fit for bandgap (eV) vs. Cd mole fraction (x) and temperature (T [K]). Widely used for device modeling. Valid for x < 0.6, T > 4.2K.",
+              "formula_html": "E<sub>g</sub>(x, T) = -0.302 + 1.93x + 5.35 × 10<sup>-4</sup> T (1 - 2x) - 0.810x<sup>2</sup> + 0.832x<sup>3</sup>",
+              "formula_plain": "Eg(x,T) = -0.302 + 1.93*x + 5.35e-4*T*(1 - 2*x) - 0.810*x^2 + 0.832*x^3",
+              "units": "eV",
+              "variables": [
+                  {"symbol": "E<sub>g</sub>", "description": "Bandgap Energy"},
+                  {"symbol": "x", "description": "Cd mole fraction (0-1)"},
+                  {"symbol": "T", "description": "Temperature (K)"}
+              ],
+              "ref": "Hansen_1982"
+            },
+            {
+              "name": "Cutoff Wavelength from E_g(x,T)",
+              "description": "Calculates cutoff wavelength (μm) directly from the Hansen relation. Accurate determination of x and T is crucial.",
+              "formula_html": "λ<sub>c</sub>(x, T) ≈ 1.2398 / E<sub>g</sub>(x, T) <br>= 1.2398 / [-0.302 + 1.93x + 5.35 × 10<sup>-4</sup> T (1 - 2x) - 0.810x<sup>2</sup> + 0.832x<sup>3</sup>]",
+              "formula_plain": "λc(x,T) (μm) ≈ 1.24 / (-0.302 + 1.93*x + 5.35e-4*T*(1-2*x) - 0.810*x^2 + 0.832*x^3)",
+              "units": "μm",
+               "variables": [
+                  {"symbol": "λ<sub>c</sub>", "description": "Cutoff Wavelength"},
+                  {"symbol": "E<sub>g</sub>(x, T)", "description": "Bandgap Energy (eV, from Hansen Eq.)"},
+                  {"symbol": "x", "description": "Cd mole fraction (0-1)"},
+                  {"symbol": "T", "description": "Temperature (K)"}
+              ],
+              "ref": "Hansen_1982"
+            }
+           ],
+           "significance": ["Allows prediction of spectral response based on material composition and operating temperature."]
          }
-
-        /* --- Introduction Block --- */
-        .section-introduction {
-            font-size: 1.05rem; line-height: 1.7; margin-bottom: 2.5rem; padding: 1.25rem 1.5rem;
-            background-color: #eef2f7; border-left: 5px solid #4a90e2; border-radius: 5px;
-        }
-
-        /* --- Property Block Styling --- */
-        .property-detail-block {
-            margin-bottom: 2.5rem; /* Reduced spacing */
-            padding-bottom: 1.8rem; /* Reduced spacing */
-            border-bottom: 1px solid #e8e8e8;
-        }
-         .property-detail-block:last-child {
-            border-bottom: none; margin-bottom: 0;
+       },
+      "common_dopants": {
+         "displayName": "Common Dopants",
+         "summary": "n-type: In, I; p-type: As, Au, V<sub>Hg</sub>",
+         "details": {
+           "notes": [
+            "n-type doping achieved using Group III elements substituting cation sites (e.g., Indium) or Group VII substituting anion sites (e.g., Iodine).",
+            "p-type doping uses Group V substituting anion sites (e.g., Arsenic) or Group IB substituting cation sites (e.g., Gold).",
+            "Native mercury vacancies (V<sub>Hg</sub>) act as acceptors and are often dominant, requiring careful annealing under Hg overpressure to control p-type concentration or achieve n-type conversion.",
+            "Doping level control (typically 10¹⁴ - 10¹⁶ cm⁻³) is critical for junction formation and device performance."
+           ],
+           "significance": ["Enables creation of p-n junctions for photodiodes.", "Controls conductivity type and level.", "Influences carrier lifetime and dark current."]
          }
-
-        /* Property Name (H3) */
-        .property-detail-block h3 {
-            font-size: 1.5rem; /* Slightly smaller */
-            color: #333; margin-bottom: 0.5rem; font-weight: 600;
+       },
+      "carrier_concentration": {
+        "displayName": "Carrier Concentration (n, p, n_i)",
+        "summary": "Low n_i at 77K; Extrinsic control via doping (10¹⁴-10¹⁶ cm⁻³ typical)",
+        "details": {
+          "notes": [
+            "Intrinsic concentration (n<sub>i</sub>) is highly sensitive to E<sub>g</sub> and T.",
+            "Cryogenic operation (e.g., 77K) is required for LWIR detectors to suppress thermally generated carriers (dark current).",
+            "Extrinsic concentration determined by net active dopant density (N<sub>D</sub> - N<sub>A</sub> or N<sub>A</sub> - N<sub>D</sub>)."
+          ],
+          "equations": [
+             {
+              "name": "Intrinsic Carrier Conc. (n_i) Empirical Relation",
+              "description": "Approximate fit for n<sub>i</sub> (cm⁻³) vs. composition (x) and temperature (T [K]).",
+              "formula_html": "n<sub>i</sub>(x,T) ≈ (5.585 - 3.82x + 1.753 × 10<sup>-3</sup>T - 1.364 × 10<sup>-3</sup>xT) × 10<sup>14</sup> × E<sub>g</sub><sup>0.75</sup> T<sup>1.5</sup> exp(-E<sub>g</sub> / 2kT)",
+              "formula_plain": "ni(x,T) ≈ (5.585 - 3.82*x + 1.753e-3*T - 1.364e-3*x*T) * 1e14 * Eg^0.75 * T^1.5 * exp(-Eg / (2*k*T))",
+              "units": "cm⁻³",
+              "variables": [
+                  {"symbol": "n<sub>i</sub>", "description": "Intrinsic carrier concentration"},
+                  {"symbol": "E<sub>g</sub>", "description": "Bandgap Energy (eV, use Hansen Eq.)"},
+                  {"symbol": "x", "description": "Cd mole fraction (0-1)"},
+                  {"symbol": "T", "description": "Temperature (K)"},
+                  {"symbol": "k", "description": "Boltzmann constant (8.617e-5 eV/K)"}
+              ],
+               "ref": "Rogalski_IR"
+            },
+             {
+              "name": "Carrier Conc. from Hall Coefficient (Single Carrier)",
+              "description": "Relates measured Hall coefficient (R<sub>H</sub>) to carrier concentration for dominant n-type or p-type conduction.",
+              "formula_html": "n = -r<sub>H</sub> / (q R<sub>H</sub>)   or   p = r<sub>H</sub> / (q R<sub>H</sub>)",
+              "formula_plain": "n = -r_H / (q * R_H)   OR   p = r_H / (q * R_H)",
+              "units": "cm⁻³",
+              "variables": [
+                  {"symbol": "n, p", "description": "Electron/Hole concentration"},
+                  {"symbol": "R<sub>H</sub>", "description": "Hall coefficient (cm³/C)"},
+                  {"symbol": "q", "description": "Elementary charge (1.602e-19 C)"},
+                  {"symbol": "r<sub>H</sub>", "description": "Hall scattering factor (often assumed ≈ 1)"}
+              ],
+              "ref": "Schroder_Semicon"
+            }
+          ],
+          "measurement": {
+             "techniques": ["Hall Effect Measurement (Van der Pauw, Hall bar)", "C-V Profiling (Schottky/MIS)", "ECV Profiling (destructive)"],
+             "notes": [
+                "Hall provides bulk average concentration and type; requires low temp for intrinsic evaluation.",
+                "C-V provides profiling near surface/junction.",
+                "Careful interpretation needed in mixed conduction or degenerate cases."
+              ]
+          },
+          "significance": [
+            "Primary determinant of dark current.",
+            "Defines junction characteristics.",
+            "Influences resistivity and free carrier absorption."
+          ]
         }
-
-        /* Property Summary */
-        .property-detail-block .summary {
-             font-style: normal; color: #444; margin-bottom: 1.3rem; /* Reduced spacing */
-             font-size: 1.05rem; padding-left: 1rem; border-left: 3px solid #bdc3c7; line-height: 1.6;
+      },
+      "electron_mobility": {
+        "displayName": "Electron Mobility (μ<sub>e</sub>)",
+        "summary": "High (>10⁴ cm²/Vs @ 77K); Sensitive to T, x, N_D, N_A, Defects",
+        "details": {
+          "notes": [
+            "Governs electron drift velocity under electric field.",
+            "Limited by polar optical phonons (higher T), ionized impurities (low T, high doping), alloy scattering (depends on x), and defect scattering.",
+            "Decreases with increasing T, doping (N<sub>A</sub>, N<sub>D</sub>), and typically Cd fraction (x).",
+            "Effective electron mass (m*<sub>e</sub>) is small and dependent on x, contributing to high mobility."
+          ],
+           "equations": [
+             {
+              "name": "Mobility from Hall Measurement",
+              "description": "Calculates Hall mobility from measured Hall coefficient (R<sub>H</sub>) and resistivity (ρ) or conductivity (σ). Note μ<sub>H</sub> = r<sub>H</sub>μ<sub>drift</sub>.",
+              "formula_html": "μ<sub>H</sub> = |R<sub>H</sub>| σ = |R<sub>H</sub>| / ρ",
+              "formula_plain": "μ_H = |R_H| * σ = |R_H| / ρ",
+              "units": "cm²/Vs",
+              "variables": [
+                  {"symbol": "μ<sub>H</sub>", "description": "Hall mobility"},
+                  {"symbol": "R<sub>H</sub>", "description": "Hall coefficient (cm³/C)"},
+                  {"symbol": "σ", "description": "Conductivity (S/cm or (Ω·cm)¯¹)"},
+                  {"symbol": "ρ", "description": "Resistivity (Ω·cm)"}
+              ],
+              "ref": "Schroder_Semicon"
+             }
+           ],
+          "measurement": {
+             "techniques": ["Hall Effect Measurement"],
+             "notes": ["Standard technique, provides Hall mobility.", "Low temperature (77K) often used for characterization."]
+          },
+          "significance": [
+            "Affects device speed (transit time).",
+            "Influences diffusion length (L<sub>e</sub> ∝ √μ<sub>e</sub>τ<sub>e</sub>) and collection efficiency.",
+            "Contributes to diffusion dark current."
+          ]
         }
-
-        /* --- Subsection Styling --- */
-        .detail-subsection {
-            margin-top: 1.3rem; /* Reduced spacing */
-            margin-bottom: 1.3rem; /* Reduced spacing */
-            padding-left: 0.5rem;
-        }
-        .detail-subsection h4 {
-            font-size: 1.15rem; /* Slightly smaller */
-            color: #16a085; margin-bottom: 0.7rem; /* Reduced spacing */
-            padding-bottom: 0.4rem; border-bottom: 1px solid #e0e0e0; font-weight: 500;
-        }
-        .detail-subsection ul {
-            list-style: disc; padding-left: 1.8rem; margin-top: 0.5rem; margin-bottom: 1rem; color: #333;
-        }
-        .detail-subsection li, .detail-subsection p {
-            margin-bottom: 0.6rem; line-height: 1.65;
-        }
-        .detail-subsection p { color: #444; }
-
-        /* --- Equation Block Styling --- */
-        .equation-block {
-            background-color: #f8f9fa; padding: 1.3rem; /* Reduced padding */
-            border-radius: 6px; margin-bottom: 1.3rem; /* Reduced spacing */
-            border: 1px solid #e9ecef; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-        }
-        .equation-block .eq-name {
-             font-weight: 600; display: block; margin-bottom: 0.8rem; /* Reduced */
-             font-size: 1.05rem; /* Reduced */ color: #2980b9;
-        }
-        .equation-block .eq-desc {
-             font-size: 0.95rem; color: #555; margin-bottom: 1rem; /* Reduced */ line-height: 1.6;
-        }
-        .equation-block .eq-formula-html,
-        .equation-block .eq-formula-plain {
-            font-family: 'Consolas', 'Menlo', 'Monaco', monospace; font-size: 1.15rem; /* Reduced */
-            margin-bottom: 1rem; /* Reduced */ word-wrap: break-word;
-            text-align: left; /* **** REVERTED: No longer centered **** */
-            display: block; padding: 0.6rem 0; color: #1d2c3f;
-        }
-        .equation-block .eq-units {
-            font-size: 0.9em; color: #555; margin-bottom: 0.8rem; /* Reduced */
-            text-align: right; display: block;
-        }
-        .equation-block .eq-vars strong { color: #333; }
-        .equation-block .eq-vars ul { padding-left: 1rem; list-style: none; margin-top: 0.5rem; }
-        .equation-block .eq-vars li { font-size: 0.9rem; /* Reduced */ margin-bottom: 0.4rem; }
-        .equation-block .eq-ref {
-            font-size: 0.85rem; /* Reduced */ margin-top: 0.8rem; /* Reduced */
-            text-align: right; color: #777;
-        }
-        .equation-block .eq-ref a { text-decoration: none; color: #007bff; }
-        .equation-block .eq-ref a:hover { text-decoration: underline; }
-
-        /* --- References Section --- */
-        #references-section {
-            margin-top: 2.5rem; /* Reduced */ padding-top: 1.3rem; /* Reduced */ border-top: 1px solid #ddd;
-        }
-        #references-section h4 {
-             font-size: 1.2rem; /* Reduced */ color: #2c3e50; margin-bottom: 0.8rem; /* Reduced */
-        }
-        #references-list {
-            list-style: none; padding-left: 0; font-size: 0.9rem; /* Reduced */ line-height: 1.65;
-        }
-         #references-list li {
-             margin-bottom: 0.6rem; padding-left: 1.5rem; position: relative; /* Keep fix */
+      },
+      "hole_mobility": {
+        "displayName": "Hole Mobility (μ<sub>h</sub>)",
+        "summary": "Low (100-600 cm²/Vs @ 77K)",
+         "details": {
+          "notes": ["Lower than μ<sub>e</sub> due to larger hole effective mass (m*<sub>h</sub>).", "Impacts minority carrier transport."],
+          "measurement": ["Hall Effect (careful analysis needed)."],
+          "significance": ["Affects minority carrier diffusion length (L<sub>h</sub> ∝ √μ<sub>h</sub>τ<sub>h</sub>).", "Influences bipolar transport."]
          }
-          #references-list li strong { /* Style the [RefKey] */
-             position: absolute; left: 0; top: 0.1em; font-weight: 600; color: #555;
+      },
+       "dielectric_constant": {
+        "displayName": "Dielectric Constant (ε<sub>r</sub>)",
+        "summary": "High (~15-20); Static relative permittivity",
+        "details": {
+          "notes": ["Influences junction capacitance and electric field distribution.", "Slight composition (x) and temperature dependence."],
+          "measurement": ["C-V measurements on MIS structures."],
+          "significance": ["Determines junction capacitance.", "Needed for device modeling (RC time constant, field calculations)."]
          }
-         #references-list li:target { background-color: #ffffcc; transition: background-color 0.5s ease; }
-
-        .ref-link { text-decoration: none; color: #007bff; }
-        .ref-link:hover { text-decoration: underline; }
-        .error-message { color: #c0392b; font-weight: bold; background-color: #fbeae5; padding: 1rem; border-radius: 4px; border: 1px solid #e74c3c;}
-    </style>
-</head>
-<body>
-    <div class="section-detail-container">
-        <a href="index.html" class="back-link">← Back to Materials List</a>
-        <div class="section-title-bar">
-            <h1 id="section-display-name">Loading Section...</h1>
-            <div class="material-context" id="material-context">for Loading Material...</div>
-        </div>
-        <div class="section-content" id="section-content">
-            <p id="section-introduction" class="section-introduction" style="display: none;">Loading introduction...</p>
-            <div id="properties-container">
-                <!-- Content generated dynamically by section_loader.js -->
-            </div>
-        </div> <!-- End section-content -->
-        <div id="references-section" style="display: none;"> <!-- Initially hidden -->
-            <h4>References Cited</h4>
-            <ul id="references-list">
-                <!-- References loaded by JS -->
-            </ul>
-        </div>
-    </div>
-    <script src="section_loader.js"></script>
-</body>
-</html>
+      },
+       "resistivity": {
+        "displayName": "Resistivity (ρ)",
+        "summary": "Highly Variable; Inversely related to n, p, μ",
+        "details": {
+           "equations":[
+             {
+                "name": "Resistivity Definition",
+                "description": "Fundamental relation between resistivity, carrier concentrations, and mobilities.",
+                "formula_html": "ρ = 1 / σ = 1 / (q (n μ<sub>e</sub> + p μ<sub>h</sub>))",
+                "formula_plain": "ρ = 1 / σ = 1 / (q * (n*μe + p*μh))",
+                "units": "Ω·cm",
+                "variables": [
+                    {"symbol": "ρ", "description": "Resistivity"},
+                    {"symbol": "σ", "description": "Conductivity (S/cm)"},
+                    {"symbol": "q", "description": "Elementary charge (1.602e-19 C)"},
+                    {"symbol": "n, p", "description": "Electron/Hole concentration (cm⁻³)"},
+                    {"symbol": "μ<sub>e</sub>, μ<sub>h</sub>", "description": "Electron/Hole drift mobility (cm²/Vs)"}
+                 ],
+                "ref": "Schroder_Semicon"
+             }
+           ],
+          "notes": ["Strongly dependent on doping, temperature, and composition (via n<sub>i</sub> and mobilities)."],
+          "measurement": ["Four-Point Probe", "Spreading Resistance Profiling (SRP)", "Calculated from Hall data."],
+          "significance": ["Impacts device series resistance.", "Used to estimate doping levels."]
+         }
+      },
+      "breakdown_field": {
+        "displayName": "Breakdown Field (E_br)",
+        "summary": "Low (~10³-10⁴ V/cm); Limits reverse bias",
+        "details": {
+          "notes": [
+            "Field at which avalanche multiplication or Zener/trap-assisted tunneling becomes significant.",
+            "Lower in narrow-gap (low x) HgCdTe.",
+            "Sets practical limit on reverse bias for photodiodes and gain for APDs.",
+            "Tunneling dark currents often dominate before avalanche in narrow-gap devices."
+          ],
+          "measurement": ["Reverse bias I-V characteristics of diode structures."],
+          "significance": ["Defines maximum operating voltage/field.", "Critical for APD design and understanding high-field dark currents."]
+         }
+      }
+    }
+  },
+  "optical_properties": {
+    "displayName": "Optical Properties",
+    "introduction": "Optical characteristics define how HgCdTe interacts with light, enabling its use as an infrared detector. Key properties include spectral range, absorption, and refractive index.",
+    "properties": {
+      "spectral_range": {
+        "displayName": "Spectral Range",
+        "summary": "SWIR, MWIR, LWIR (0.8 to >30 μm)"
+      },
+      "cutoff_wavelength": {
+          "displayName": "Cutoff Wavelength (λ<sub>c</sub>)",
+          "summary": "Tunable (0.8 to >30 μm)"
+      },
+      "refractive_index": {
+          "displayName": "Refractive Index (n)",
+          "summary": "High (~3.4-4.0)"
+      },
+      "absorption_coefficient": {
+          "displayName": "Absorption Coefficient (α)",
+          "summary": "High (>10⁴ cm⁻¹ near band edge)"
+      },
+      "quantum_efficiency": {
+          "displayName": "Quantum Efficiency (QE or η)",
+          "summary": "High (>70-80% achievable)"
+      },
+      "responsivity": {
+          "displayName": "Responsivity (R)",
+          "summary": "High (~1-10 A/W @ 77K)"
+      },
+      "noise_equivalent_power": {
+          "displayName": "Noise Equivalent Power (NEP)",
+          "summary": "Low (~10⁻¹¹ - 10⁻¹³ W/√Hz cooled)"
+      }
+    }
+  },
+  "thermal_properties": {
+    "displayName": "Thermal Properties",
+    "introduction": "Thermal characteristics influence operating temperature requirements, cooling needs, and thermal stability.",
+    "properties": {
+       "operating_temperature": {
+         "displayName": "Operating Temperature",
+         "summary": "Typically 77K (LN2), higher possible for MWIR/SWIR"
+       },
+       "thermal_conductivity": {
+         "displayName": "Thermal Conductivity (k)",
+         "summary": "Low (~1-5 W/mK)"
+       },
+       "thermal_expansion": {
+         "displayName": "Thermal Expansion (CTE)",
+         "summary": "Moderate (~4.5-5.5 ppm/°C)"
+       }
+    }
+  },
+  "mechanical_properties": {
+    "displayName": "Mechanical Properties",
+    "introduction": "HgCdTe is a relatively soft and brittle semiconductor, requiring careful handling during processing and integration.",
+    "properties": {
+       "density": { "displayName": "Density (ρ)", "summary": "High (~5.8-8.1 g/cm³)" },
+       "hardness": { "displayName": "Hardness", "summary": "Very Low (Mohs ~2-3)" },
+       "fracture_toughness": { "displayName": "Fracture Toughness (K<sub>IC</sub>)", "summary": "Very Low (<0.5 MPa√m)" },
+       "youngs_modulus": { "displayName": "Young's Modulus (E)", "summary": "Low (~40-50 GPa)" }
+    }
+  }
+}
