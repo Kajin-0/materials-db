@@ -27,7 +27,7 @@
   },
   "identification": {
     "displayName": "Identification & Structure",
-    "introduction": "Basic identification parameters and crystallographic information for HgCdTe.",
+    "introduction": "Basic identification parameters and crystallographic information for HgCdTe. An interactive 3D viewer is available below.",
     "properties": {
         "cas_number": {
             "displayName": "CAS Number",
@@ -41,8 +41,37 @@
         },
         "crystal_structure": {
             "displayName": "Crystal Structure",
-            "summary": "Zinc Blende (FCC)",
-             "details": { "key_characteristics": ["Common structure for II-VI/III-V materials.", "Two interpenetrating FCC sublattices (Cation: Hg/Cd, Anion: Te).", "Non-centrosymmetric."] }
+            "summary": "Zinc Blende (FCC). See interactive viewer below.",
+             "details": {
+                 "key_characteristics": [
+                     "Common structure for II-VI/III-V materials.",
+                     "Two interpenetrating FCC sublattices (Cation: Hg/Cd, Anion: Te).",
+                     "Non-centrosymmetric."
+                 ],
+                 "visualization_data": {
+                   "structure_type": "zincblende_alloy",
+                   "container_id": "crystal-viewer-hgcdte",
+                   "lattice_constants": {
+                       "HgTe": 6.461,
+                       "CdTe": 6.481
+                   },
+                   "atom_info": {
+                       "Hg": {"color": "#FF5252", "radius": 1.5, "role": "cation_host"},
+                       "Cd": {"color": "#FFD740", "radius": 1.4, "role": "cation_subst"},
+                       "Te": {"color": "#40C4FF", "radius": 1.4, "role": "anion"}
+                   },
+                   "composition": {
+                       "variable_element": "Cd",
+                       "min_x": 0.0,
+                       "max_x": 1.0,
+                       "initial_x": 0.3,
+                       "formula_template": "Hg<sub>{1-x}</sub>Cd<sub>{x}</sub>Te"
+                   },
+                   "supercell_options": [1, 2],
+                   "bond_cutoff": 3.0,
+                   "viewer_height": "450px"
+                 }
+             }
         },
         "space_group": {
             "displayName": "Space Group",
