@@ -37,8 +37,8 @@ Unchecked items `[ ]` are missing a matching key in `material_details.json`.
 - [x] Silicon
 - [x] Silicon Carbide Fiber Reinforced Composite
 - [x] Silicon Nitride Reinforced Silicon Carbide
-- [ ] TUFROC
-- [ ] Tantalum Hafnium Carbide
+- [x] TUFROC
+- [x] Tantalum Hafnium Carbide
 - [ ] Thulium-doped YAG (Tm:YAG)
 - [ ] Ultra-High Molecular Weight Polyethylene (UHMWPE)
 - [ ] Vacuum Multilayer Insulation (MLI)
