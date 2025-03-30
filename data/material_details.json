@@ -3199,5 +3199,105 @@
       "oxide", "alumina", "silica", "insulator", "creep resistant", "CMC",
       "industry:aerospace", "industry:thermal", "industry:defense"
     ]
+  },
+  "Oxide-Oxide Ceramic Composite (Ox/Ox)": {
+    "name": "Oxide-Oxide Ceramic Composite (Ox/Ox)",
+    "formula": "Oxide Fiber / Oxide Matrix",
+    "synonyms": [ "Ox/Ox CMC", "Oxide CMC", "All-Oxide Composite" ],
+    "category": "Composite",
+    "constituent_elements": ["Al", "Si", "O"],
+    "description": "A type of Ceramic Matrix Composite (CMC) consisting of oxide ceramic fibers (e.g., Nextel 610/720 Alumina/Mullite) embedded within an oxide ceramic matrix (e.g., Alumina, Mullite, Zirconia, often porous). Key advantages include inherent stability in oxidizing environments at high temperatures without needing protective coatings, lower density than superalloys, and non-brittle fracture behavior compared to monolithic ceramics. Used in demanding high-temperature applications like jet engine components and industrial heat management.",
+    "wiki_link": "https://en.wikipedia.org/wiki/Ceramic_matrix_composite#Oxide/oxide_CMCs",
+    "safety": {
+      "toxicity": "Low for the finished composite. Machining generates abrasive ceramic dust (alumina, silica), requiring appropriate respiratory protection and ventilation.",
+      "handling": "Handle components carefully; while tougher than monolithic ceramics, they can still be damaged by impact."
+    },
+    "identification": {
+      "class": "Oxide Ceramic Matrix Composite (Oxide CMC)",
+      "crystal_structure": "Polycrystalline fibers (e.g., α-Al₂O₃, Mullite) within a polycrystalline matrix (e.g., Al₂O₃, Mullite). Matrix often designed to be porous.",
+      "appearance": {"notes": "Typically white or off-white solid material."}
+    },
+    "advanced_fabrication_insights": {
+        "process_control": "Fabrication methods include Polymer Impregnation and Pyrolysis (PIP) using oxide precursors, slurry infiltration followed by sintering, directed melt oxidation (DIMOX), or sol-gel routes. Achieving controlled matrix porosity and fiber/matrix interface properties is critical.",
+        "common_defects_impact": "Excessive matrix porosity or large pores degrade strength. Fiber damage during processing, poor infiltration, strong fiber/matrix bonding (leading to brittle failure).",
+        "interface_engineering": "Crucial for toughness. Unlike non-oxide CMCs that use weak interfaces (BN, PyC), Ox/Ox often relies on a porous matrix to allow crack deflection or uses fugitive interface coatings (removed during processing) to create a gap.",
+        "matrix_porosity": {"notes": "Often intentionally introduced (~10-30%) to lower stiffness and enhance toughness via crack deflection mechanisms."}
+    },
+    "growth_fabrication_properties": {
+        "common_growth_methods": "PIP, Slurry Infiltration and Sintering, Sol-Gel Infiltration, Reaction Bonding/Sintering.",
+        "source_materials_purity": "Oxide fibers (e.g., Nextel series), oxide powders or precursors (Al₂O₃, SiO₂, ZrO₂ based) for matrix formation.",
+        "preferred_substrates_orientations": "N/A (Bulk composite, often near-net shape fabrication).",
+        "typical_growth_parameters": "Multiple infiltration/pyrolysis cycles (PIP), high sintering temperatures (1100-1300°C+), controlled atmospheres.",
+        "passivation_methods": "Inherently oxidation resistant due to oxide nature."
+    },
+    "post_growth_processing": {
+        "annealing": "Sintering/heat treatment is part of the fabrication process.",
+        "lapping_polishing": "Difficult due to hardness and potential porosity. Diamond tooling required.",
+        "etching": "Highly resistant.",
+        "grinding_milling": "Machinable with diamond tooling, slow material removal. Often made near-net shape."
+    },
+     "device_integration_characterization": {
+        "device_architectures": "Gas turbine engine components (combustor liners, shrouds, turbine vanes, exhaust components), heat shields, furnace components, thermal protection systems.",
+        "readout_integration": "N/A",
+        "ar_coatings": "N/A",
+        "packaging_cooling": "Designed for high-temperature operation, often replacing heavier superalloys requiring cooling.",
+        "key_characterization_techniques": ["Mechanical Testing (Tensile/Flexural Strength & Modulus, ILSS - at RT and high temp)", "Fracture Toughness Testing", "Creep Testing (at high temp)", "Thermal Conductivity/Expansion Measurement", "Oxidation/Environmental Exposure Testing", "Microstructural Analysis (SEM, porosity, interface)", "Non-Destructive Evaluation (NDE - e.g., ultrasonic, X-ray CT)"]
+    },
+    "electrical_properties": {
+      "bandgap_type": "Insulator (Oxide components)",
+      "resistivity": {"value": "Very High (> 10¹² Ω·cm)", "notes": "Excellent electrical insulator."},
+      "dielectric_constant": {"value": "~5-9", "notes": "Depends on constituents and porosity."}
+    },
+    "optical_properties": {
+      "spectral_range": "Opaque white/off-white."
+    },
+    "thermal_properties": {
+      "operating_temperature": {"value": "Up to ~1100-1250", "unit": "°C", "notes": "Maximum use temperature often limited by fiber creep resistance or matrix sintering/phase stability rather than melting."},
+      "thermal_conductivity": {"value": "Low (~2-6)", "unit": "W/(m·K)", "notes": "Good thermal insulation properties. Lower than non-oxide CMCs or metals."},
+      "specific_heat": {"value": "~0.8-1.1", "unit": "J/(g·K)"},
+      "melting_point": {"notes": "Constituent oxides melt at high temperatures (>1800°C), but practical limit is lower."},
+      "thermal_expansion": {"value": "Low (~5-8 x 10⁻⁶ /°C)", "notes": "Relatively low CTE, good thermal shock resistance potential."},
+      "thermal_shock_resistance": {"notes": "Generally good due to low modulus, low CTE, and toughness mechanisms."}
+    },
+     "mechanical_properties": {
+         "density": {"value": "~2.5-3.5", "unit": "g/cm³", "notes": "Significantly lighter than superalloys (~8-9 g/cm³)."},
+         "youngs_modulus": {"value": "~50-150", "unit": "GPa", "notes": "Lower than SiC/SiC or monolithic ceramics, influenced by porosity."},
+         "tensile_strength": {"value": "~100-300+", "unit": "MPa", "notes": "Strength maintained well at high temperatures."},
+         "fracture_toughness": {"value": "Moderate (~6-15+ MPa·m⁰·⁵)", "notes": "Exhibits graceful, non-brittle failure due to fiber pull-out and matrix cracking."}
+     },
+     "device_applications": {
+         "key_applications": ["Jet Engine Hot Section Components (Shrouds, Liners, Nozzles, Vanes)", "Industrial Gas Turbine Components", "Heat Exchangers", "Furnace Linings and Fixtures", "Thermal Protection Systems (TPS) for Aerospace Vehicles"]
+     },
+     "chemical_properties": {
+         "stability_oxidation": "Excellent inherent stability in oxidizing environments.",
+         "chemical_inertness": "Generally good resistance to combustion environments.",
+         "water_vapor_resistance": {"notes": "Can be susceptible to degradation in high-temperature steam environments (environmental barrier coatings sometimes considered)."}
+     },
+     "comparison_alternatives": {
+         "notes": "Alternative High-Temperature Materials:",
+         "vs_SiC_SiC_Composites": "Ox/Ox: Inherently oxidation stable (no coating needed), lower thermal conductivity, generally lower strength/stiffness, potentially lower cost. SiC/SiC: Higher strength/stiffness, higher thermal conductivity, requires environmental barrier coatings (EBCs) for long term oxidation/steam resistance.",
+         "vs_Reinforced_CarbonCarbon_RCC": "Ox/Ox: Stable in oxidizing environments. RCC: Higher temperature capability in inert environments, requires oxidation protection coating (e.g., SiC), electrically conductive.",
+         "vs_Superalloys_Ni_Co_based": "Ox/Ox: Much lower density (~1/3), higher operating temperature capability (allowing reduced cooling), brittle failure mode (but tougher than monolithics). Superalloys: Ductile, well-established design/manufacturing, require significant cooling at Ox/Ox operating temperatures.",
+         "vs_Monolithic_Oxide_Ceramics": "Ox/Ox: Much higher fracture toughness, graceful failure, allows larger/complex shapes. Monolithics: Higher hardness/stiffness, catastrophic brittle failure, cheaper raw materials but potentially harder to fabricate large/complex parts."
+     },
+     "references_further_reading": {
+         "notes": "Key Literature Resources:",
+         "book_cmc_handbook": "'Handbook of Ceramic Composites' (Ed. Bansal).",
+         "review_levi_zokhttp": "Levi, C.G., Zok, F.W., Yang, J.Y., et al. 'Oxide/Oxide Composites for High Temperature Structural Applications.' (Comprehensive review articles).",
+         "journal_jacers": "Journal of the American Ceramic Society.",
+         "journal_composites_a_b": "Composites Part A/Part B.",
+         "wikipedia_cmc": "https://en.wikipedia.org/wiki/Ceramic_matrix_composite"
+     },
+     "vendor_info": {
+        "notes": "Example Vendors (Placeholder):",
+        "vendor_1": "Company A - www.example-vendor-a.com",
+        "vendor_2": "Company B - www.example-vendor-b.com",
+        "vendor_3": "Company C - www.example-vendor-c.com"
+     },
+    "tags": [
+      "composite", "ceramic matrix composite", "cmc", "oxide", "high temperature",
+      "aerospace", "jet engine", "oxidation resistant", "lightweight", "thermal insulation",
+      "industry:aerospace", "industry:energy", "industry:thermal", "ceramic"
+    ]
   }
 }
