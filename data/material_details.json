@@ -2565,5 +2565,112 @@
       "ultra high temp", "oxidation resistant", "space", "industry:space",
       "industry:defense", "industry:aerospace", "ceramic", "carbide", "uhtc"
     ]
+    },
+    "Indium Foil": {
+    "name": "Indium Foil",
+    "formula": "In",
+    "synonyms": [ "Indium Gasket", "Indium Seal", "Indium TIM", "In Foil" ],
+    "category": "Metal",
+    "constituent_elements": ["In"],
+    "description": "A high-purity foil made from the element Indium (In). Indium is a soft, malleable, silvery-white post-transition metal known for its low melting point (~156.6°C), ability to wet glass and ceramics, excellent thermal conductivity, and ductility even at cryogenic temperatures. Indium foil is widely used as a compressible gasket for creating vacuum seals (especially in cryogenics), as a thermal interface material (TIM) due to its ability to conform to surfaces and high thermal conductivity, and in specialized soldering applications.",
+    "wiki_link": "https://en.wikipedia.org/wiki/Indium",
+    "safety": {
+      "toxicity": "Generally considered low toxicity in metallic form. Indium compounds (like Indium Tin Oxide dust) have shown some lung toxicity concerns with chronic occupational exposure, but metallic foil is less problematic.",
+      "handling": "Very soft and easily deformed or scratched. Handle with clean tools or gloves to avoid contamination. Can 'cold weld' to itself or other clean metals under pressure."
+    },
+    "identification": {
+      "cas_number": "7440-74-6",
+      "class": "Post-Transition Metal",
+      "crystal_structure": "Body-Centered Tetragonal (BCT)",
+      "lattice_constant": {"value": "a=3.25, c=4.95", "unit": "Å", "notes": "Approximate values."},
+      "appearance": {"notes": "Silvery-white, very soft metallic foil."}
+    },
+    "advanced_fabrication_insights": {
+        "process_control": "Typically produced by rolling high-purity Indium ingots into thin foils. Thickness control is important for gasket/TIM applications.",
+        "common_defects_impact": "Impurities can affect melting point and wetting characteristics. Surface contamination (oxides, oils) can hinder sealing or thermal contact. Thickness variations affect gasket performance.",
+        "cold_welding": {"notes": "Indium readily cold welds to itself and other clean metal surfaces under moderate pressure, which aids sealing but requires care during handling."},
+        "surface_preparation": "Requires clean surfaces on both the foil and mating components for effective sealing or thermal transfer."
+    },
+    "growth_fabrication_properties": {
+        "common_growth_methods": "Refining Indium metal followed by Rolling into foil.",
+        "source_materials_purity": "High purity Indium metal (>4N or 5N typical).",
+        "preferred_substrates_orientations": "N/A (Bulk foil).",
+        "typical_growth_parameters": "Rolling parameters (reduction per pass, temperature) determine thickness and temper (usually supplied fully annealed/soft).",
+        "passivation_methods": "Forms a thin, self-passivating oxide layer in air."
+    },
+    "post_growth_processing": {
+        "annealing": "Supplied in annealed state.",
+        "lapping_polishing": "Not typically polished as foil.",
+        "etching": "Dissolves in acids.",
+        "grinding_milling": "N/A (Cut or stamped from foil)."
+    },
+     "device_integration_characterization": {
+        "device_architectures": "Vacuum seals/gaskets (especially cryogenic), Thermal Interface Material (TIM) between heat sinks and devices, Solder preforms, Targets for PVD.",
+        "readout_integration": "N/A",
+        "ar_coatings": "N/A",
+        "packaging_cooling": "Widely used in cryogenic systems due to maintained ductility. Used as a TIM for cooling electronics.",
+        "key_characterization_techniques": ["Purity Analysis (e.g., ICP-MS)", "Thickness Measurement", "Hardness/Ductility Assessment", "Melting Point (DSC)", "Thermal Conductivity Measurement"]
+    },
+    "electrical_properties": {
+      "bandgap_type": "N/A (Metal)",
+      "band_gap": {"value": "0", "unit": "eV"},
+      "resistivity": {"value": "~8.37", "unit": "µΩ·cm", "notes": "At 20°C. Lower at cryogenic temperatures."},
+      "conductivity_electrical": {"value": "~20 %IACS", "notes": "Moderate electrical conductor."},
+      "superconductivity": {"notes": "Becomes superconducting below Tc ≈ 3.4 K."}
+    },
+    "optical_properties": {
+      "spectral_range": "Opaque", "notes": "Reflective metallic surface."
+    },
+    "thermal_properties": {
+      "operating_temperature": {"value": "Cryogenic up to near melting point", "unit": "°C", "notes": "Excellent performance at very low temperatures."},
+      "thermal_conductivity": {"value": "~81.8", "unit": "W/(m·K)", "notes": "At 300K. Good thermal conductor."},
+      "specific_heat": {"value": "~0.233", "unit": "J/(g·K)"},
+      "melting_point": {"value": "156.6", "unit": "°C", "notes": "Low melting point."},
+      "boiling_point": {"value": "2072", "unit": "°C"},
+      "thermal_expansion": {"value": "~32.1 x 10⁻⁶", "unit": "/°C", "notes": "Relatively high CTE."}
+    },
+     "mechanical_properties": {
+         "density": {"value": "7.31", "unit": "g/cm³"},
+         "youngs_modulus": {"value": "~11", "unit": "GPa", "notes": "Very low modulus (soft)."},
+         "tensile_strength": {"value": "Very Low", "notes": "Highly ductile, low strength."},
+         "elongation_at_break": {"value": "High", "notes": "Very ductile."},
+         "hardness_mohs": {"value": "1.2", "notes": "Extremely soft, can be scratched by a fingernail."},
+         "ductility": {"notes": "Remains ductile even at liquid helium temperatures (4 K), unlike many other metals that become brittle."}
+     },
+     "device_applications": {
+         "key_applications": ["Cryogenic Vacuum Seals/Gaskets", "Thermal Interface Material (TIM) for electronics cooling / cryogenics", "Low-temperature Solder", "Wetting agent for bonding glass/ceramics", "Alloying element (e.g., in low-melting point alloys like Galinstan)", "Thin film coatings (via PVD)", "Neutron detection (activation foil - ¹¹⁵In)"]
+     },
+     "chemical_properties": {
+         "stability_oxidation": "Forms a thin passive oxide layer in air.",
+         "wetting": {"notes": "Wets many surfaces including glass, quartz, and ceramics."},
+         "acid_resistance": "Dissolves in mineral acids.",
+         "base_resistance": "Resistant to strong alkalis.",
+         "corrosion_resistance": "Good resistance to atmospheric corrosion."
+     },
+     "comparison_alternatives": {
+         "notes": "Alternative Sealing/TIM Materials:",
+         "vs_Copper_Gaskets": "Indium: Much softer/more conforming (better seal with lower force), works at lower temps (remains ductile), lower melting point, lower strength. Copper: Higher strength, requires higher sealing force, higher temperature capability, cheaper.",
+         "vs_Elastomer_O-rings": "Indium: Metal (no outgassing), suitable for UHV and cryo, permanent seal (single use typical). Elastomers: Reusable (often), easier to use, significant outgassing (not UHV compatible), limited low-temperature capability (become brittle).",
+         "vs_Thermal_Grease_Pads": "Indium: Higher thermal conductivity than most greases/pads, solid (no pump-out), conforms well under pressure, potentially higher cost, requires pressure for good contact. Greases/Pads: Easier application, lower cost, lower conductivity, can dry out/pump out.",
+         "vs_Lead_Foil": "Indium: Lower toxicity, lower melting point, better wetting. Lead: Cheaper, higher density, toxicity concerns."
+     },
+     "references_further_reading": {
+         "notes": "Key Resources:",
+         "indium_corp_data": "Technical datasheets from Indium Corporation (major supplier).",
+         "cryogenic_handbooks": "Sections on materials and seals in cryogenic engineering handbooks.",
+         "wikipedia": "https://en.wikipedia.org/wiki/Indium"
+     },
+     "vendor_info": {
+        "notes": "Example Vendors (Placeholder):",
+        "vendor_1": "Company A - www.example-vendor-a.com",
+        "vendor_2": "Company B - www.example-vendor-b.com",
+        "vendor_3": "Company C - www.example-vendor-c.com"
+     },
+    "tags": [
+      "cryogenic", "soft metal", "vacuum seal", "thermal interface", "cold welding",
+      "corrosion resistant", "low temp", "industry:cryogenics", "industry:space",
+      "industry:vacuum", "industry:electronics", "metal", "ductile", "low melting point",
+      "gasket", "tim", "solder", "post-transition metal"
+    ]
     }
 }
