@@ -29,7 +29,7 @@ Unchecked items `[ ]` are missing a matching key in `material_details.json`.
 - [x] Niobium Titanium (NbTi) Wire
 - [x] Oxide-Oxide Ceramic Composite (Ox/Ox)
 - [x] PEEK Carbon Fiber Composite
-- [ ] PTFE Glass Fiber Composite
+- [x] PTFE Glass Fiber Composite
 - [ ] Polyethylene Neutron Shielding
 - [x] Reinforced Carbon–Carbon (RCC)
 - [x] Sapphire Substrate
