@@ -4238,5 +4238,107 @@
       "biocompatible", "bearing", "fiber", "rope", "armor", "chemical resistant",
       "industry:medical", "industry:defense", "industry:industrial", "industry:marine"
     ]
+  },
+  "Vacuum Multilayer Insulation (MLI)": {
+    "name": "Vacuum Multilayer Insulation (MLI)",
+    "formula": "N/A (System)",
+    "synonyms": [ "MLI", "Superinsulation" ],
+    "category": "Composite",
+    "constituent_elements": ["Al", "C", "H", "O", "N"],
+    "description": "A highly effective thermal insulation system designed primarily for vacuum environments. It consists of multiple thin layers of low-emissivity material (e.g., aluminized or gold-coated Mylar or Kapton films) stacked together, often separated by low-conductivity spacer materials (like Dacron netting) or deliberate crinkling, all under vacuum. MLI minimizes heat transfer by radiation, making it crucial for thermal control of spacecraft, cryogenic systems (dewars, transfer lines), and scientific instruments.",
+    "wiki_link": "https://en.wikipedia.org/wiki/Multi-layer_insulation",
+    "safety": {
+      "toxicity": "Low. Constituent materials (Mylar, Kapton, Aluminum) are generally inert.",
+      "handling": "Handle blankets carefully to avoid tearing thin layers or damaging reflective coatings. Ensure proper grounding during handling/installation to prevent static discharge."
+    },
+    "identification": {
+      "class": "Thermal Insulation System",
+      "appearance": {"notes": "Thin, lightweight, highly reflective, often crinkled layers, assembled into blankets."},
+      "layer_density": {"notes": "Typically 10-80 layers per inch, influences performance."}
+    },
+    "advanced_fabrication_insights": {
+        "process_control": "Assembly process is critical. Requires careful layering, tension control, cleanroom conditions (to minimize particulate contamination and outgassing). Proper installation techniques (managing seams, penetrations, edges) are vital for performance.",
+        "common_defects_impact": "Tears, compressed layers, contamination, poor vacuum, thermal shorts through penetrations. Significantly degrade insulation performance.",
+        "spacer_material": {"notes": "Choice of spacer (e.g., Dacron net, silk net, embossed dots) or crinkling method affects layer separation and conduction heat leak."},
+        "outgassing": {"notes": "Materials must be low-outgassing for vacuum/space applications. Bake-out procedures may be required."}
+    },
+    "growth_fabrication_properties": {
+        "common_growth_methods": "Assembly of pre-fabricated layers: Cutting, Stacking, Sewing/Stitching (with low-conductivity thread), Edge Taping.",
+        "source_materials_purity": "Polymer films (PET/Mylar, Polyimide/Kapton), high-purity metal coatings (Aluminum, Gold, Silver), low-conductivity spacer materials (Dacron, fiberglass net).",
+        "preferred_substrates_orientations": "N/A (Assembled system).",
+        "typical_growth_parameters": "Layer count, layer density, spacer type, seam/edge design.",
+        "passivation_methods": "Outer layers may be chosen for specific optical properties (alpha/epsilon) or ESD protection."
+    },
+    "post_growth_processing": {
+        "annealing": "Component materials may be baked out to reduce outgassing.",
+        "lapping_polishing": "N/A.",
+        "etching": "N/A.",
+        "grinding_milling": "N/A (Blankets are cut and tailored)."
+    },
+     "device_integration_characterization": {
+        "device_architectures": "Thermal control blankets for spacecraft and satellites, insulation for cryogenic tanks and transfer lines, insulation for scientific instruments (e.g., vacuum chambers, detectors).",
+        "readout_integration": "N/A",
+        "ar_coatings": "N/A (Low emissivity coatings are key).",
+        "packaging_cooling": "Functions *as* insulation, requires vacuum environment for optimal performance. Performance highly dependent on installation details (penetrations, boundary temperatures).",
+        "key_characterization_techniques": ["Thermal Performance Testing (Effective Emissivity, Heat Flux Measurement under vacuum)", "Layer Density Measurement", "Outgassing Tests (ASTM E595)", "Visual Inspection (tears, contamination)", "Electrical Grounding Checks"]
+    },
+    "electrical_properties": {
+      "resistivity": {"notes": "Bulk insulation is very high. Metallized layers are conductive and require proper grounding."},
+      "dielectric_constant": {"notes": "Effective dielectric constant is very low, approaching vacuum."},
+      "static_discharge": {"notes": "Potential for static buildup on isolated conductive layers; grounding is essential."}
+    },
+    "optical_properties": {
+      "spectral_range": "Opaque.",
+      "reflectivity": {"notes": "High reflectivity (low emissivity) in the infrared is the key operating principle. Surface layers may have tailored solar absorptance/emissivity."},
+      "emissivity": {"value": "Very Low (<0.05 per surface typically)", "notes": "Low thermal emissivity minimizes radiative heat transfer."}
+    },
+    "thermal_properties": {
+      "operating_temperature": {"value": "Cryogenic up to ~150°C (Mylar) or ~300°C+ (Kapton)", "notes": "Range limited by the polymer film used."},
+      "thermal_conductivity": {"value": "Extremely Low (Effective k << 0.001 W/(m·K) achievable)", "unit": "W/(m·K)", "notes": "In vacuum. Performance dominated by radiation; conduction through spacers/contacts is secondary. Effective conductivity depends strongly on boundary temperatures, layer density, vacuum level, and installation quality."},
+      "specific_heat": {"notes": "Low overall specific heat due to low mass."},
+      "melting_point": {"notes": "Limited by polymer film (Mylar ~254°C, Kapton decomposes >500°C)."},
+      "thermal_expansion": {"notes": "Determined by polymer films (Mylar ~17 ppm/°C, Kapton ~20 ppm/°C)."}
+    },
+     "mechanical_properties": {
+         "density": {"value": "Very Low (Effective density of blanket system)", "notes": "Extremely lightweight construction."},
+         "tensile_strength": {"notes": "Low structural strength; designed as a non-load-bearing blanket."},
+         "flexibility": {"notes": "Highly flexible, allows wrapping around complex shapes."},
+         "tear_strength": {"notes": "Individual layers are thin films susceptible to tearing."}
+     },
+     "device_applications": {
+         "key_applications": ["Spacecraft Thermal Control", "Cryogenic Storage Dewars", "Cryogenic Transfer Lines", "Superconducting Magnet Insulation", "Vacuum Chamber Insulation", "Scientific Instrument Thermal Isolation"]
+     },
+     "chemical_properties": {
+         "stability_oxidation": "Depends on outer layer material if exposed. Polymer films susceptible to atomic oxygen erosion in LEO (Kapton generally better than Mylar).",
+         "outgassing": {"notes": "Must meet stringent low-outgassing requirements for space/vacuum use."},
+         "uv_resistance": "Outer layers may require UV resistance depending on exposure (e.g., using Kapton or specific coatings).",
+         "solvent_resistance": "Depends on polymer film."
+     },
+     "comparison_alternatives": {
+         "notes": "Alternative Vacuum/Cryogenic Insulation:",
+         "vs_Silica_Aerogel": "MLI: Significantly lower effective thermal conductivity *in vacuum*, much lighter weight, flexible blanket form. Aerogel: Provides insulation even at moderate pressures (not solely reliant on vacuum), rigid/brittle (monolithic) or granular form, higher density.",
+         "vs_Vacuum_Insulation_Panels_VIPs": "MLI: Lighter weight, more flexible/conformable, requires external vacuum source (spacecraft, cryostat). VIPs: Self-contained vacuum (core material + envelope), potentially very low conductivity, limited shapes, susceptible to vacuum loss if punctured.",
+         "vs_Foam_Insulation": "MLI: Orders of magnitude lower thermal conductivity *in vacuum*, much lighter. Foam: Provides structural support, insulates in air/gas, heavier, much higher thermal conductivity.",
+         "vs_Powder_Insulation_Perlite": "MLI: Lower conductivity in vacuum, lighter, cleaner. Powder Insulation: Lower cost, requires vacuum, can settle, potential contamination issues."
+     },
+     "references_further_reading": {
+         "notes": "Key Resources:",
+         "book_spacecraft_thermal_control": "'Spacecraft Thermal Control Handbook' (Ed. Gilmore).",
+         "nasa_thermal_docs": "NASA technical handbooks and design guidelines on thermal control and MLI.",
+         "cryogenics_handbooks": "Chapters on insulation in cryogenic engineering handbooks.",
+         "wikipedia": "https://en.wikipedia.org/wiki/Multi-layer_insulation"
+     },
+     "vendor_info": {
+        "notes": "Specialized suppliers for aerospace and cryogenics.",
+        "vendor_1": "Company A - www.example-vendor-a.com",
+        "vendor_2": "Company B - www.example-vendor-b.com",
+        "vendor_3": "Company C - www.example-vendor-c.com"
+     },
+    "tags": [
+      "insulation", "thermal insulation", "vacuum", "spacecraft", "cryogenic",
+      "lightweight", "reflective", "low emissivity", "superinsulation", "mli",
+      "thermal control", "space qualified", "industry:space", "industry:cryogenics",
+      "industry:vacuum", "composite", "film"
+    ]
   }
 }
