@@ -2262,5 +2262,110 @@
       "electrical insulation", "flame retardant", "industry:electronics", "industry:aerospace",
       "composite", "thermoset", "glass fiber"
     ]
-      } 
+      },
+    "Graphene Oxide Paper": {
+    "name": "Graphene Oxide Paper",
+    "formula": "GO sheets",
+    "synonyms": [ "Graphene Oxide", "GO Paper", "GO Film" ],
+    "category": "Composite",
+    "constituent_elements": ["C", "O", "H"],
+    "description": "A macroscopic paper-like material formed by the assembly (e.g., via vacuum filtration, casting, or layer-by-layer deposition) of individual graphene oxide (GO) sheets, typically derived from the oxidation and exfoliation of graphite. GO paper is generally flexible, mechanically robust (for a paper-like material), and electrically insulating in its native state due to disrupted sp² hybridization and oxygen functional groups. Its properties (electrical conductivity, optical transparency, mechanical strength) can be significantly tuned via reduction processes (thermal, chemical, photoreduction) which remove oxygen groups and partially restore the graphene lattice.",
+    "wiki_link": "https://en.wikipedia.org/wiki/Graphene_oxide_paper",
+    "safety": {
+      "toxicity": "Research ongoing regarding potential toxicity of GO nanoparticles/platelets, particularly via inhalation. Handle GO dispersions and dry GO powder with appropriate PPE (gloves, respiratory protection, eye protection) and engineering controls (fume hood).",
+      "handling": "Handle fabricated paper/film with care, can be brittle depending on thickness and processing. Avoid generating dust during cutting/handling."
+    },
+    "identification": {
+      "cas_number": "7782-42-5 (Graphite precursor), N/A (GO structure varies)",
+      "class": "2D Material Assembly / Nanocomposite Paper",
+      "appearance": {"notes": "Typically brown to black, depending on thickness and degree of oxidation/reduction. Can be flexible."},
+      "xrd_pattern": {"notes": "Characterized by a broad peak corresponding to the interlayer spacing of stacked GO sheets (typically larger than graphite's d₀₀₂ spacing due to oxygen groups and intercalated water)."}
+    },
+    "advanced_fabrication_insights": {
+        "process_control": "Formation relies on controlling the assembly of GO sheets from dispersion. Methods like vacuum filtration allow control over thickness and potentially alignment. Concentration, pH, and ionic strength of the GO dispersion affect sheet interactions and final structure.",
+        "common_defects_impact": "Wrinkles, folds, voids, non-uniform thickness, incomplete reduction (if intended). Affect mechanical strength, electrical conductivity pathways, barrier properties, and optical uniformity.",
+        "reduction_methods": {"notes": "Chemical (hydrazine, ascorbic acid, NaBH₄), Thermal (vacuum/inert atmosphere annealing), or Photochemical reduction tunes electrical/optical properties by removing oxygen groups. Degree and uniformity of reduction are critical."},
+        "interface_engineering": {"notes": "Interactions between GO sheets (hydrogen bonding, π-π stacking) govern the paper's mechanical integrity. Functionalization can modify these interactions."}
+    },
+    "growth_fabrication_properties": {
+        "common_growth_methods": "Preparation from Graphene Oxide (GO) dispersion via: Vacuum Filtration, Solution Casting, Layer-by-Layer Assembly, Electrophoretic Deposition.",
+        "source_materials_purity": "Graphene Oxide dispersion (quality depends on graphite source and oxidation method - Hummers', modified Hummers', etc.).",
+        "preferred_substrates_orientations": "N/A (Self-standing paper/film, though often formed on a filter or temporary substrate).",
+        "typical_growth_parameters": "Filtration rate, casting conditions, drying method (air drying, freeze drying) affect structure and properties.",
+        "passivation_methods": "Surface reactivity depends on oxygen functional groups. Can be further functionalized or coated."
+    },
+    "post_growth_processing": {
+        "annealing": "Thermal annealing used for reduction and sometimes densification (can make it more brittle).",
+        "lapping_polishing": "Generally not applicable.",
+        "etching": "Can be patterned using techniques like laser ablation or plasma etching.",
+        "grinding_milling": "N/A (Cut or shaped as paper/film)."
+    },
+     "device_integration_characterization": {
+        "device_architectures": "Membranes (water filtration, gas separation), Electrodes (supercapacitors, batteries), Sensors (humidity, chemical, strain), Flexible electronic substrates/components, Conductive paper/films (after reduction), EMI shielding materials.",
+        "readout_integration": "Electrical contacts needed for electronic applications.",
+        "ar_coatings": "N/A",
+        "packaging_cooling": "Generally stable at room temperature. Upper temperature limit depends on reduction state and environment (oxidizes in air at elevated temperatures). Sensitive to high humidity unless reduced/functionalized.",
+        "key_characterization_techniques": ["Microscopy (SEM/AFM - surface morphology, thickness)", "XRD (interlayer spacing)", "Raman Spectroscopy (D/G bands indicate defects/graphitization)", "XPS (elemental composition, C/O ratio)", "Electrical Conductivity/Sheet Resistance", "Mechanical Testing (Tensile Strength/Modulus of film)", "Water Contact Angle (hydrophilicity/phobicity)", "Gas/Liquid Permeation Testing (membranes)"]
+    },
+    "electrical_properties": {
+      "bandgap_type": "Insulator (as-synthesized GO) to Semiconductor/Semi-metal (after reduction)",
+      "band_gap": {"notes": "Variable, typically insulating (>2-3 eV) for fully oxidized GO, decreases significantly upon reduction."},
+      "resistivity": {"value": "Highly Variable (10¹² Ω·cm down to ~10⁻³ Ω·cm)", "notes": "Electrically insulating as-synthesized GO. Resistivity decreases by many orders of magnitude upon reduction, tunable by reduction degree."},
+      "conductivity_electrical": {"notes": "Tunable from insulating to moderately conductive."},
+      "carrier_concentration": {"notes": "Low in GO, increases upon reduction (typically p-type doping initially after moderate reduction)."},
+      "electron_mobility": {"notes": "Low in GO, increases upon reduction but generally lower than pristine graphene due to residual defects."}
+    },
+    "optical_properties": {
+      "spectral_range": "Semi-transparent in visible range (brownish), strong UV absorption.", "notes": "Transparency decreases with thickness. Reduction affects color and absorption spectrum.",
+      "absorption_coefficient": {"notes": "Strong absorption in UV (~230 nm peak for GO), broad absorption in visible."}
+    },
+    "thermal_properties": {
+      "operating_temperature": {"notes": "Limited by thermal stability of oxygen functional groups (~200°C onset of decomposition for GO). Reduced GO (rGO) paper more stable, but oxidizes in air above ~400-500°C."},
+      "thermal_conductivity": {"value": "Low (~1-10 W/(m·K) in-plane, much lower through-plane)", "notes": "Lower than pristine graphene due to disrupted lattice and inter-sheet resistance. Increases upon reduction and with alignment."},
+      "specific_heat": {"notes": "Expected to be similar to graphite/carbon materials."},
+      "melting_point": {"notes": "Does not melt; decomposes/oxidizes."},
+      "thermal_expansion": {"notes": "Expected to be low, potentially anisotropic."}
+    },
+     "mechanical_properties": {
+         "density": {"value": "~0.5 - 1.8", "unit": "g/cm³", "notes": "Depends significantly on packing density achieved during fabrication."},
+         "youngs_modulus": {"value": "~1 - 40+", "unit": "GPa", "notes": "Highly variable based on processing, reduction state, humidity. Higher than paper, lower than pristine graphene."},
+         "tensile_strength": {"value": "~10 - 200+", "unit": "MPa", "notes": "Highly variable."},
+         "flexibility": {"notes": "Can be highly flexible, depending on thickness and processing."}
+     },
+     "device_applications": {
+         "sensor_types": ["Humidity sensors", "Chemical/Gas sensors", "Strain sensors", "Biosensors"],
+         "key_applications": ["Water Filtration / Desalination Membranes", "Gas Separation Membranes", "Supercapacitor Electrodes", "Battery Electrodes", "Flexible Electronics Substrates/Circuits", "Conductive Paper / EMI Shielding (Reduced GO)", "Biomedical Scaffolds / Drug Delivery"]
+     },
+     "chemical_properties": {
+         "stability_oxidation": "GO itself is an oxidized form of graphene. Reduced GO is susceptible to oxidation at elevated temperatures in air.",
+         "water_solubility": "GO forms stable dispersions in water due to hydrophilic functional groups. GO paper swells in water; reduction decreases water interaction.",
+         "functional_groups": {"notes": "Contains various oxygen functional groups (hydroxyl, epoxy, carboxyl, carbonyl) which influence properties and allow further chemical modification."}
+     },
+     "comparison_alternatives": {
+         "notes": "Alternative Paper/Film/Membrane Materials:",
+         "vs_Cellulose_Paper": "GO Paper: Higher potential strength/modulus, tunable electrical conductivity (after reduction), potential for specific chemical interactions/sensing. Cellulose: Much lower cost, established technology, biodegradable.",
+         "vs_CNT_Paper_BuckyPaper": "GO Paper: Starts insulating (tunable conductivity), potentially easier processing from water dispersions, different mechanical properties. CNT Paper: Inherently conductive, different mechanical reinforcement.",
+         "vs_Polymer_Films_Kapton_PET": "GO Paper: Potential for higher modulus/strength (esp. specific), tunable conductivity, different chemical reactivity. Polymer Films: Established processing, better toughness/elongation, generally insulating, good barrier properties.",
+         "vs_Reduced_Graphene_Oxide_rGO_Films": "GO Paper: Insulating precursor, reduction step needed for conductivity. rGO Films: Directly fabricated reduced material, properties depend on reduction method used during synthesis/processing."
+     },
+     "references_further_reading": {
+         "notes": "Key Reviews/Articles:",
+         "review_chem_soc_rev": "Reviews on Graphene Oxide synthesis and applications in 'Chemical Society Reviews', 'Advanced Materials', 'ACS Nano'.",
+         "paper_dikin": "Dikin, D. A. et al. 'Preparation and characterization of graphene oxide paper.' Nature 448, 457–460 (2007).",
+         "wikipedia_go": "https://en.wikipedia.org/wiki/Graphene_oxide",
+         "wikipedia_go_paper": "https://en.wikipedia.org/wiki/Graphene_oxide_paper"
+     },
+     "vendor_info": {
+        "notes": "Example Vendors (Placeholder - often sold as GO dispersion rather than pre-made paper):",
+        "vendor_1": "Company A - www.example-vendor-a.com",
+        "vendor_2": "Company B - www.example-vendor-b.com",
+        "vendor_3": "Company C - www.example-vendor-c.com"
+     },
+    "tags": [
+      "graphene", "flexible", "conductive", "sensor", "wearable", "transparent",
+      "layered", "printable", "stretchable", "industry:electronics", "industry:wearables",
+      "industry:energy", "industry:membranes", "2d material", "nanomaterial", "composite",
+      "electrode", "membrane", "paper"
+    ]
+    }
 }
