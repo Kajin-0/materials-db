@@ -3,13 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Title will be set dynamically -->
     <title>Section Detail</title>
-    <link rel="stylesheet" href="style.css"> <!-- Link to your main stylesheet -->
-    <!-- Optional: Placeholder favicon -->
+    <link rel="stylesheet" href="style.css">
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
-
-    <!-- Styles for section_detail.html -->
     <style>
         body {
             background-color: #f9f9f9;
@@ -32,23 +28,15 @@
             margin-bottom: 2rem;
         }
         .section-title-bar h1 {
-            margin: 0;
-            font-size: 2rem;
-            color: #2c3e50;
-            margin-bottom: 0.25rem;
+            margin: 0; font-size: 2rem; color: #2c3e50; margin-bottom: 0.25rem;
         }
         .section-title-bar .material-context {
-            font-size: 1.1rem;
-            color: #555;
+            font-size: 1.1rem; color: #555;
         }
 
         /* --- Back Link Specific Styling --- */
         .section-detail-container > .back-link {
-             display: inline-block;
-             margin-bottom: 1.5rem;
-             font-size: 0.95rem;
-             color: #007bff;
-             text-decoration: none;
+             display: inline-block; margin-bottom: 1.5rem; font-size: 0.95rem; color: #007bff; text-decoration: none;
         }
          .section-detail-container > .back-link:hover {
              text-decoration: underline;
@@ -56,123 +44,102 @@
 
         /* --- Introduction Block --- */
         .section-introduction {
-            font-size: 1.05rem;
-            line-height: 1.7;
-            margin-bottom: 2.5rem;
-            padding: 1.25rem 1.5rem;
-            background-color: #eef2f7;
-            border-left: 5px solid #4a90e2;
-            border-radius: 5px;
+            font-size: 1.05rem; line-height: 1.7; margin-bottom: 2.5rem; padding: 1.25rem 1.5rem;
+            background-color: #eef2f7; border-left: 5px solid #4a90e2; border-radius: 5px;
         }
 
         /* --- Property Block Styling --- */
         .property-detail-block {
-            margin-bottom: 3rem;
-            padding-bottom: 2rem;
+            margin-bottom: 2.5rem; /* Reduced spacing */
+            padding-bottom: 1.8rem; /* Reduced spacing */
             border-bottom: 1px solid #e8e8e8;
         }
          .property-detail-block:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
+            border-bottom: none; margin-bottom: 0;
          }
 
         /* Property Name (H3) */
         .property-detail-block h3 {
-            font-size: 1.6rem;
-            color: #333;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
+            font-size: 1.5rem; /* Slightly smaller */
+            color: #333; margin-bottom: 0.5rem; font-weight: 600;
         }
 
         /* Property Summary */
         .property-detail-block .summary {
-             font-style: normal;
-             color: #444;
-             margin-bottom: 1.5rem;
-             font-size: 1.05rem;
-             padding-left: 1rem;
-             border-left: 3px solid #bdc3c7;
-             line-height: 1.6;
+             font-style: normal; color: #444; margin-bottom: 1.3rem; /* Reduced spacing */
+             font-size: 1.05rem; padding-left: 1rem; border-left: 3px solid #bdc3c7; line-height: 1.6;
         }
 
         /* --- Subsection Styling --- */
         .detail-subsection {
-            margin-top: 1.5rem;
-            margin-bottom: 1.5rem;
+            margin-top: 1.3rem; /* Reduced spacing */
+            margin-bottom: 1.3rem; /* Reduced spacing */
             padding-left: 0.5rem;
         }
         .detail-subsection h4 {
-            font-size: 1.2rem;
-            color: #16a085;
-            margin-bottom: 0.8rem;
-            padding-bottom: 0.4rem;
-            border-bottom: 1px solid #e0e0e0;
-            font-weight: 500;
+            font-size: 1.15rem; /* Slightly smaller */
+            color: #16a085; margin-bottom: 0.7rem; /* Reduced spacing */
+            padding-bottom: 0.4rem; border-bottom: 1px solid #e0e0e0; font-weight: 500;
         }
         .detail-subsection ul {
-            list-style: disc;
-            padding-left: 1.8rem;
-            margin-top: 0.5rem;
-            margin-bottom: 1rem;
-            color: #333;
+            list-style: disc; padding-left: 1.8rem; margin-top: 0.5rem; margin-bottom: 1rem; color: #333;
         }
         .detail-subsection li, .detail-subsection p {
-            margin-bottom: 0.6rem;
-            line-height: 1.65;
+            margin-bottom: 0.6rem; line-height: 1.65;
         }
-        .detail-subsection p {
-             color: #444;
-        }
+        .detail-subsection p { color: #444; }
 
         /* --- Equation Block Styling --- */
         .equation-block {
-            background-color: #f8f9fa;
-            padding: 1.5rem;
-            border-radius: 6px;
-            margin-bottom: 1.5rem;
-            border: 1px solid #e9ecef;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            background-color: #f8f9fa; padding: 1.3rem; /* Reduced padding */
+            border-radius: 6px; margin-bottom: 1.3rem; /* Reduced spacing */
+            border: 1px solid #e9ecef; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
         }
         .equation-block .eq-name {
-             font-weight: 600; display: block; margin-bottom: 1rem; font-size: 1.1rem; color: #2980b9;
+             font-weight: 600; display: block; margin-bottom: 0.8rem; /* Reduced */
+             font-size: 1.05rem; /* Reduced */ color: #2980b9;
         }
         .equation-block .eq-desc {
-             font-size: 0.95rem; color: #555; margin-bottom: 1.2rem; line-height: 1.6;
+             font-size: 0.95rem; color: #555; margin-bottom: 1rem; /* Reduced */ line-height: 1.6;
         }
         .equation-block .eq-formula-html,
         .equation-block .eq-formula-plain {
-            font-family: 'Consolas', 'Menlo', 'Monaco', monospace; font-size: 1.2rem; margin-bottom: 1.2rem; word-wrap: break-word;
-            text-align: center; display: block; padding: 0.8rem 0; color: #1d2c3f;
+            font-family: 'Consolas', 'Menlo', 'Monaco', monospace; font-size: 1.15rem; /* Reduced */
+            margin-bottom: 1rem; /* Reduced */ word-wrap: break-word;
+            text-align: left; /* **** REVERTED: No longer centered **** */
+            display: block; padding: 0.6rem 0; color: #1d2c3f;
         }
         .equation-block .eq-units {
-            font-size: 0.95em; color: #555; margin-bottom: 1rem; text-align: right; display: block;
+            font-size: 0.9em; color: #555; margin-bottom: 0.8rem; /* Reduced */
+            text-align: right; display: block;
         }
         .equation-block .eq-vars strong { color: #333; }
         .equation-block .eq-vars ul { padding-left: 1rem; list-style: none; margin-top: 0.5rem; }
-        .equation-block .eq-vars li { font-size: 0.95rem; margin-bottom: 0.4rem; }
-        .equation-block .eq-ref { font-size: 0.9rem; margin-top: 1rem; text-align: right; color: #777; }
+        .equation-block .eq-vars li { font-size: 0.9rem; /* Reduced */ margin-bottom: 0.4rem; }
+        .equation-block .eq-ref {
+            font-size: 0.85rem; /* Reduced */ margin-top: 0.8rem; /* Reduced */
+            text-align: right; color: #777;
+        }
         .equation-block .eq-ref a { text-decoration: none; color: #007bff; }
         .equation-block .eq-ref a:hover { text-decoration: underline; }
 
         /* --- References Section --- */
         #references-section {
-            margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid #ddd;
+            margin-top: 2.5rem; /* Reduced */ padding-top: 1.3rem; /* Reduced */ border-top: 1px solid #ddd;
         }
         #references-section h4 {
-             font-size: 1.3rem; color: #2c3e50; margin-bottom: 1rem;
+             font-size: 1.2rem; /* Reduced */ color: #2c3e50; margin-bottom: 0.8rem; /* Reduced */
         }
         #references-list {
-            list-style: none; padding-left: 0; font-size: 0.95rem; line-height: 1.7;
+            list-style: none; padding-left: 0; font-size: 0.9rem; /* Reduced */ line-height: 1.65;
         }
          #references-list li {
-             margin-bottom: 0.7rem; padding-left: 1.5rem; position: relative; /* Added */
+             margin-bottom: 0.6rem; padding-left: 1.5rem; position: relative; /* Keep fix */
          }
           #references-list li strong { /* Style the [RefKey] */
              position: absolute; left: 0; top: 0.1em; font-weight: 600; color: #555;
          }
-         #references-list li:target { /* Highlight reference on link click */
-            background-color: #ffffcc; transition: background-color 0.5s ease;
-         }
+         #references-list li:target { background-color: #ffffcc; transition: background-color 0.5s ease; }
 
         .ref-link { text-decoration: none; color: #007bff; }
         .ref-link:hover { text-decoration: underline; }
@@ -191,7 +158,6 @@
             <div id="properties-container">
                 <!-- Content generated dynamically by section_loader.js -->
             </div>
-            <!-- No dark current div -->
         </div> <!-- End section-content -->
         <div id="references-section" style="display: none;"> <!-- Initially hidden -->
             <h4>References Cited</h4>
