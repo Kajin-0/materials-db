@@ -4,6 +4,7 @@
     "formula": "Hg(1-x)Cd(x)Te",
     "synonyms": [ "HgCdTe", "MCT" ],
     "category": "Semiconductor",
+    "constituent_elements": ["Hg", "Cd", "Te"],
     "description": "II-VI alloy semiconductor with bandgap tuned via Cadmium mole fraction (x). Key material for high-performance SWIR/MWIR/LWIR detectors, typically requiring cryogenic cooling. Preferred substrate: CdZnTe (~4% Zn).",
     "wiki_link": "https://en.wikipedia.org/wiki/Mercury_cadmium_telluride",
     "safety": {
@@ -14,8 +15,10 @@
       "cas_number": "30784-21-9 (generic)",
       "class": "II-VI Compound Semiconductor Alloy",
       "crystal_structure": "Zinc blende (FCC)",
+      "space_group": {"value": "F-43m", "notes": "Zinc Blende structure type."},
       "lattice_constant": {"value": "~6.461 to ~6.481", "unit": "Å", "notes": "Near-linear variation with x"},
-      "phase_diagram_notes": "Pseudo-binary. Narrow liquidus-solidus gap. Critical Hg partial pressure control needed."
+      "phase_diagram_notes": "Pseudo-binary. Narrow liquidus-solidus gap. Critical Hg partial pressure control needed.",
+      "appearance": {"notes": "Typically appears dark gray or black with a metallic luster."}
     },
     "advanced_fabrication_insights": {
         "stoichiometry_control": "Challenge: High Hg vapor pressure. Requires precise Temp/Pressure control (MBE, MOCVD, Annealing).",
@@ -62,27 +65,34 @@
       "absorption_coefficient": {"value": ">10^4", "unit": "cm^-1", "notes": "High near band edge."},
       "quantum_efficiency": {"value": ">70-80%", "notes": "With good material/AR coating."},
       "responsivity": {"value": "~1 - 10", "unit": "A/W", "notes": "At 77K."},
-      "noise_equivalent_power": {"value": "~10^-11 - 10^-13", "unit": "W/Hz^0.5", "notes": "Cooled detectors."}
+      "noise_equivalent_power": {"value": "~10^-11 - 10^-13", "unit": "W/Hz^0.5", "notes": "Cooled detectors."},
+      "photoluminescence_peak_nm": {"notes": "PL peak wavelength corresponds closely to bandgap energy, used for non-contact composition/cutoff wavelength determination."},
+      "optical_loss": {"notes": "Scattering from defects (precipitates, dislocations) and free carrier absorption can contribute to optical losses, especially in longer wavelength material."}
     },
     "thermal_properties": {
       "operating_temperature": {"value": "Typically 77 K (LN2)", "notes": "Reduces dark current."},
       "thermal_conductivity": {"value": "Low (~1 - 5)", "unit": "W/(m K)", "notes": "Poor conductor."},
-      "specific_heat": {"value": "~0.16 - 0.20", "unit": "J/(g K)", "notes": "RT."},
-      "melting_point": {"value": "~700 - 800", "unit": "C", "notes": "Composition dependent."}
+      "specific_heat_capacity_j_gk": {"value": "~0.16 - 0.20"},
+      "melting_point_c": {"value": "~700 - 800", "notes": "Composition dependent."},
+      "thermal_expansion_ppm_k": {"value": "~4.5 - 5.5", "notes": "Composition dependent, important for bonding."},
+      "thermal_shock_resistance": {"notes": "Poor due to low thermal conductivity and brittleness."}
     },
      "mechanical_properties": {
-         "density": {"value": "~5.8 to ~8.1", "unit": "g/cm^3", "notes": "Increases with Hg."},
-         "youngs_modulus": {"value": "~40 - 50", "unit": "GPa"},
-         "hardness_vickers": {"value": "~70 - 100", "unit": "HV", "notes": "Soft, brittle."},
-         "poissons_ratio": "~0.3",
-         "fracture_toughness": {"value": "< 0.5", "unit": "MPa m^0.5", "notes": "Brittle."}
+         "density_g_cm3": {"value": "~5.8 to ~8.1", "notes": "Increases with Hg."},
+         "youngs_modulus_gpa": {"value": "~40 - 50"},
+         "hardness_vickers_gpa": {"value": "~0.7 - 1.0", "notes": "Soft, brittle."},
+         "hardness_mohs": {"value": "~2-3", "notes": "Very soft."},
+         "poissons_ratio": {"value":"~0.3"},
+         "fracture_toughness_mpa_m_sqrt": {"value": "< 0.5", "notes": "Brittle."}
      },
      "device_applications": {
          "sensor_types": ["Photoconductor (PC)", "Photovoltaic (PV / Photodiode)", "APD (less common)"],
          "key_applications": ["Thermal Imaging/FLIR", "Night Vision", "Medical Thermography", "Gas Sensing", "IR Astronomy", "Missile Guidance"]
      },
      "chemical_properties": {
-         "stability_oxidation": "Surface unstable; requires passivation. Readily oxidizes."
+         "stability_oxidation": "Surface unstable; requires passivation. Readily oxidizes.",
+         "chemical_resistance": {"notes": "Attacked by oxidizing acids (e.g., nitric acid) and etchants like Bromine-Methanol."},
+         "radiation_hardness": {"notes": "Generally considered less radiation hard than III-V detectors, performance can degrade under high radiation fluences."}
      },
      "magnetic_properties": {
          "type": "Diamagnetic"
@@ -111,7 +121,8 @@
       "epitaxial", "group 12", "group 16", "industry:aerospace", "industry:infrared",
       "industry:photonics", "ir", "lwir", "mercury", "mwir", "nitrogen cooled",
       "photoconductive", "photoconductor", "photodiode", "photosensor", "semiconductor",
-      "sensor", "single crystal", "tellurium", "toxic", "tunable bandgap"
+      "sensor", "single crystal", "tellurium", "toxic", "tunable bandgap", "narrow bandgap",
+      "variable composition", "epitaxy", "detector"
     ]
   },
   "Gallium Arsenide": {
