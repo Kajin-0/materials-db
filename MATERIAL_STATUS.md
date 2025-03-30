@@ -30,7 +30,7 @@ Unchecked items `[ ]` are missing a matching key in `material_details.json`.
 - [x] Oxide-Oxide Ceramic Composite (Ox/Ox)
 - [x] PEEK Carbon Fiber Composite
 - [x] PTFE Glass Fiber Composite
-- [ ] Polyethylene Neutron Shielding
+- [x] Polyethylene Neutron Shielding
 - [x] Reinforced Carbon–Carbon (RCC)
 - [x] Sapphire Substrate
 - [x] Silica Aerogel
