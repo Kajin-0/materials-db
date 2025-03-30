@@ -4351,19 +4351,20 @@
     "wiki_link": "https://en.wikipedia.org/wiki/Zirconia_toughened_alumina",
     "safety": {
       "toxicity": "Low for the dense composite. Machining generates hard ceramic dust requiring respiratory protection and ventilation.",
-      "handling": "Standard ceramic component handling. While tougher than pure Alumina, it remains a brittle material."
+      "handling": "Standard ceramic component handling. While tougher than pure Alumina, it remains a brittle material. Wear appropriate PPE during machining/grinding."
     },
     "identification": {
       "class": "Ceramic-Ceramic Composite / Particle-Reinforced Ceramic",
       "crystal_structure": "Matrix: Hexagonal α-Al₂O₃. Reinforcement: Tetragonal ZrO₂ (metastable), Monoclinic ZrO₂ (transformed).",
       "appearance": {"notes": "Typically dense white or ivory solid."},
-      "zirconia_content": {"notes": "Typically 5-30 vol% ZrO₂."}
+      "zirconia_content": {"notes": "Typically 5-30 vol% ZrO₂."},
+      "grain_size_um": {"value": "Variable (0.5 - 5 µm typically)", "notes": "Grain sizes of both Al₂O₃ and ZrO₂ phases influence properties, especially toughness mechanism."}
     },
     "advanced_fabrication_insights": {
         "process_control": "Fabricated via powder metallurgy. Uniform mixing of fine Al₂O₃ and ZrO₂ (often YSZ) powders is critical. Sintering aids (e.g., MgO, Y₂O₃) used. Densification via Pressureless Sintering, Hot Pressing (HP), or Hot Isostatic Pressing (HIP).",
         "common_defects_impact": "Porosity, uncontrolled grain growth (Al₂O₃ matrix or ZrO₂ particles), inhomogeneous phase distribution. Degrade strength, toughness, and reliability.",
         "interface_engineering": "Grain boundary phases formed from sintering aids can influence high-temperature properties like creep resistance.",
-        "transformation_toughening": {"notes": "Requires maintaining ZrO₂ particles within a critical size range (~0.2-1 µm) to keep them in the metastable tetragonal phase at room temperature, enabling the transformation toughening effect."}
+        "transformation_toughening": {"notes": "Requires maintaining ZrO₂ particles within a critical size range (~0.2-1 µm) to keep them in the metastable tetragonal phase at room temperature, enabling the stress-induced transformation toughening effect."}
     },
     "growth_fabrication_properties": {
         "common_growth_methods": "Powder Mixing, Pressing (Uniaxial, Isostatic), Sintering (Pressureless, HP, HIP).",
@@ -4376,7 +4377,7 @@
         "annealing": "May be used for stress relief or microstructural optimization.",
         "lapping_polishing": "Requires diamond abrasives due to high hardness.",
         "etching": "Highly resistant to chemical etching.",
-        "grinding_milling": "Machinable only with diamond tooling. Can be ground to precise dimensions."
+        "grinding_milling": "Machinable only with diamond tooling. Can be ground to precise dimensions. Generates hazardous dust."
     },
      "device_integration_characterization": {
         "device_architectures": "Cutting tool inserts, wear-resistant components (seals, nozzles, liners, valves), wire drawing dies, grinding media, structural ceramic components, potentially biomedical implants (historical use for hip balls, less common now).",
@@ -4387,35 +4388,44 @@
     },
     "electrical_properties": {
       "bandgap_type": "Insulator (Al₂O₃ / ZrO₂)",
-      "resistivity": {"value": "Very High (> 10¹² Ω·cm)", "notes": "Excellent electrical insulator."},
-      "dielectric_constant": {"value": "~9-12", "notes": "Slightly higher than pure Alumina."}
+      "band_gap": {"value": ">8", "unit": "eV", "notes": "Wide bandgap insulator."},
+      "resistivity": {"value": "Very High (> 10¹²)", "unit": "Ω·cm", "notes": "Excellent electrical insulator."},
+      "dielectric_constant": {"value": "~9-12", "notes": "Slightly higher than pure Alumina."},
+      "dielectric_breakdown_mv_cm": {"value": "~10-15", "notes": "Estimate, good insulator."}
     },
     "optical_properties": {
       "spectral_range": "Opaque white/ivory."
     },
     "thermal_properties": {
       "operating_temperature": {"value": "Up to ~1000-1500", "unit": "°C", "notes": "Good strength retention, but toughness mechanism (transformation) becomes less effective at very high temperatures. Limit depends on grade and load."},
-      "thermal_conductivity": {"value": "Moderate (~15-30 W/(m·K))", "notes": "Lower than pure Alumina due to ZrO₂ inclusions and interfaces."},
-      "specific_heat": {"value": "~0.8-0.9", "unit": "J/(g·K)"},
-      "melting_point": {"notes": "Very high (>2000°C based on constituents)."},
-      "thermal_expansion": {"value": "Moderate (~7-8 x 10⁻⁶ /°C)", "notes": "Between Al₂O₃ (~8-9) and ZrO₂ (~10-11)."}
+      "thermal_conductivity": {"value": "~15-30", "unit": "W/(m·K)", "notes": "Lower than pure Alumina due to ZrO₂ inclusions and interfaces."},
+      "specific_heat_capacity_j_gk": {"value": "~0.8-0.9"},
+      "melting_point_c": {"notes": "Very high (>2000°C based on constituents)."},
+      "thermal_expansion_ppm_k": {"value": "~7-8"},
+      "thermal_shock_resistance": {"notes": "Good, better than monolithic Alumina due to increased toughness and relatively moderate thermal expansion."}
     },
      "mechanical_properties": {
-         "density": {"value": "~4.0-4.4", "unit": "g/cm³", "notes": "Depends on ZrO₂ content."},
-         "youngs_modulus": {"value": "High (~350-390 GPa)"},
+         "density_g_cm3": {"value": "~4.0-4.4"},
+         "youngs_modulus_gpa": {"value": "~350-390"},
          "flexural_strength": {"value": "High (500-800+ MPa)"},
-         "hardness_vickers": {"value": "Very High (~15-18 GPa)", "notes": "Slightly lower than pure Alumina but much higher than Zirconia."},
-         "fracture_toughness": {"value": "Significantly Enhanced (K<small>IC</small> ~5-12+ MPa·m⁰·⁵)", "notes": "Key property. Toughness significantly higher than Al₂O₃ (~3-4 MPa·m⁰·⁵) due to transformation toughening."}
+         "compressive_strength_mpa": {"value": "Very High (>2000)"},
+         "hardness_vickers_gpa": {"value": "~15-18"},
+         "fracture_toughness_mpa_m_sqrt": {"value": "Significantly Enhanced (K<small>IC</small> ~5-12+)"},
+         "poissons_ratio": {"value": "~0.23-0.26"},
+         "wear_resistance": {"notes": "Excellent resistance to sliding and abrasive wear."},
+         "impact_resistance": {"notes": "Improved compared to Alumina due to toughness, but still brittle compared to metals."}
      },
      "device_applications": {
+         "industries": ["industrial", "tooling", "medical", "chemical"],
          "key_applications": ["Cutting Tool Inserts (esp. for cast iron/superalloys)", "Wear Parts (Mechanical seals, pump plungers, nozzles, liners)", "Wire Drawing Dies", "Grinding Media", "Valve Components", "Biomedical Implants (Femoral heads - less common now due to some long-term stability concerns/alternatives)"]
      },
      "chemical_properties": {
          "stability_oxidation": "Excellent stability (stable oxides).",
-         "chemical_inertness": "Excellent resistance to corrosion and chemical attack.",
+         "chemical_resistance": {"notes": "Excellent resistance to corrosion and chemical attack by most acids, bases, and solvents."},
          "acid_resistance": "Excellent.",
          "base_resistance": "Excellent.",
-         "water_solubility": "Insoluble."
+         "water_solubility": "Insoluble.",
+         "biocompatibility": {"notes": "Generally considered biocompatible, though long-term stability in vivo for implants has faced scrutiny compared to alternatives like PSZ or Si₃N₄."}
      },
      "comparison_alternatives": {
          "notes": "Alternative Wear-Resistant/Tough Ceramics:",
@@ -4423,7 +4433,7 @@
          "vs_Monolithic_Zirconia_(PSZ/YSZ)": "ZTA: Higher hardness, higher stiffness, better wear resistance in many cases. Zirconia: Generally higher fracture toughness (esp. PSZ), lower hardness/stiffness.",
          "vs_Silicon_Nitride_(Si₃N₄)": "ZTA: Higher hardness, potentially lower cost. Si₃N₄: Often higher toughness, better thermal shock resistance, lower density.",
          "vs_Silicon_Carbide_(SiC)": "ZTA: Higher toughness, easier processing, lower cost. SiC: Significantly higher hardness, higher thermal conductivity, better thermal shock resistance.",
-         "vs_Tungsten_Carbide_(WC-Co)": "ZTA: Lower density, better corrosion/oxidation resistance, lower toughness. WC-Co: Much higher toughness and hardness, higher density, limited temperature/corrosion resistance due to binder."
+         "vs_Tungsten_Carbide_(WC-Co)": "ZTA: Lower density, better corrosion/oxidation resistance, lower toughness. WC-Co: Much higher toughness and hardness (due to metal binder), higher density, limited temperature/corrosion resistance due to binder."
      },
      "references_further_reading": {
          "notes": "Key Literature Resources:",
@@ -4441,9 +4451,9 @@
      },
     "tags": [
       "ceramic", "composite", "alumina", "zirconia", "zta", "tough", "hard",
-      "wear resistant", "structural ceramic", "cutting tool", "biomedical",
+      "wear resistant", "structural ceramic", "cutting tool", "biomedical", "prop:hard",
       "transformation toughening", "industry:industrial", "industry:tooling",
-      "industry:medical", "oxide"
+      "industry:medical", "industry:chemical", "oxide", "app:wear_resistance"
     ]
   }
 }
