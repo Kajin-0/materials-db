@@ -54,7 +54,7 @@
             "summary": "Approx. 6.461 - 6.481 Å (at RT, near linear with x)",
              "details": {
                  "key_characteristics": [ "Follows Vegard's law approx.", "a<sub>HgTe</sub> ≈ 6.461 Å", "a<sub>CdTe</sub> ≈ 6.481 Å", "Small variation enables lattice-matching to CdZnTe." ],
-                 "equations": [ {"name": "Vegard's Law Approximation", "description": "Linear interpolation vs. composition (x).", "formula_html": "a(x) ≈ a<sub>HgTe</sub>(1-x) + a<sub>CdTe</sub>x", "units": "Å", "variables": [ {"symbol": "a(x)", "description": "Lattice const. of Hg<sub>1-x</sub>Cd<sub>x</sub>Te"}, {"symbol": "a<sub>HgTe</sub>", "description": "Lattice const. of HgTe"}, {"symbol": "a<sub>CdTe</sub>", "description": "Lattice const. of CdTe"}, {"symbol": "x", "description": "Cd fraction"} ], "ref": null } ],
+                 "equations": [ {"name": "Vegard's Law Approximation", "description": "Linear interpolation vs. composition (x).", "formula_html": "a(x) ≈ a<sub>HgTe</sub>(1-x) + a<sub>CdTe</sub>x", "formula_plain": "a(x) approx a_HgTe*(1-x) + a_CdTe*x", "formula_latex": "a(x) \\approx a_{\\text{HgTe}}(1-x) + a_{\\text{CdTe}}x", "units": "Å", "variables": [ {"symbol": "a(x)", "description": "Lattice const. of Hg<sub>1-x</sub>Cd<sub>x</sub>Te"}, {"symbol": "a<sub>HgTe</sub>", "description": "Lattice const. of HgTe"}, {"symbol": "a<sub>CdTe</sub>", "description": "Lattice const. of CdTe"}, {"symbol": "x", "description": "Cd fraction"} ], "ref": null } ],
                   "measurement_characterization": { "techniques": ["High-Resolution X-Ray Diffraction (HRXRD)"] },
                   "device_relevance": ["Crucial for substrate choice (defect minimization).", "Strain affects band structure."]
              }
@@ -98,6 +98,8 @@
               "name": "Hansen E_g(x,T) Empirical Relation",
               "description": "Standard fit for E_g (eV) vs. x and T [K]. Valid x < 0.6, T > 4.2K.",
               "formula_html": "E<sub>g</sub>(x, T) = -0.302 + 1.93x + 5.35 × 10<sup>-4</sup> T (1 - 2x) - 0.810x<sup>2</sup> + 0.832x<sup>3</sup>",
+              "formula_plain": "Eg(x,T) = -0.302 + 1.93*x + 5.35e-4*T*(1 - 2*x) - 0.810*x^2 + 0.832*x^3",
+              "formula_latex": "E_g(x, T) = -0.302 + 1.93x + 5.35 \\times 10^{-4} T (1 - 2x) - 0.810x^2 + 0.832x^3",
               "units": "eV",
               "variables": [ {"symbol": "E<sub>g</sub>", "description": "Bandgap Energy"}, {"symbol": "x", "description": "Cd fraction"}, {"symbol": "T", "description": "Temperature (K)"} ],
               "ref": "Hansen_1982"
@@ -119,12 +121,30 @@
         "displayName": "Carrier Concentration (n, p, n_i)",
         "summary": "Low n_i at 77K; Extrinsic control (10¹⁴-10¹⁶ cm⁻³ typical)",
         "details": {
-          "key_characteristics": ["n<sub>i</sub> highly sensitive to E<sub>g</sub> & T; Needs cryo-cooling for LWIR.", "Extrinsic level set by net active dopants."],
+          "key_characteristics": ["Intrinsic n<sub>i</sub> highly sensitive to E<sub>g</sub> & T; Needs cryo-cooling for LWIR.", "Extrinsic level set by net active dopants."],
           "equations": [
-             { "name": "Intrinsic Carrier Conc. (n_i) Empirical Relation", "description": "Approx fit for n<sub>i</sub> (cm⁻³) vs. x and T [K].", "formula_html": "n<sub>i</sub>(x,T) ≈ (5.585 - ...) × 10<sup>14</sup> E<sub>g</sub><sup>0.75</sup> T<sup>1.5</sup> exp(-E<sub>g</sub> / 2kT)", "units": "cm⁻³", "variables": [ {"symbol": "n<sub>i</sub>", "description": "Intrinsic conc."}, {"symbol": "E<sub>g</sub>", "description": "Bandgap (eV)"}, {"symbol": "x", "description": "Cd fraction"}, {"symbol": "T", "description": "Temp (K)"}, {"symbol": "k", "description": "Boltzmann const."} ], "ref": "Rogalski_IR" },
-             { "name": "Carrier Conc. from Hall (Single Carrier)", "description": "Relates R<sub>H</sub> to concentration.", "formula_html": "n = -r<sub>H</sub> / (q R<sub>H</sub>)   or   p = r<sub>H</sub> / (q R<sub>H</sub>)", "units": "cm⁻³", "variables": [ {"symbol": "n, p", "description": "Concentration"}, {"symbol": "R<sub>H</sub>", "description": "Hall coefficient"}, {"symbol": "q", "description": "Charge"}, {"symbol": "r<sub>H</sub>", "description": "Hall factor"} ], "ref": "Schroder_Semicon" }
+             {
+              "name": "Intrinsic Carrier Conc. (n_i) Empirical Relation",
+              "description": "Approximate fit for n<sub>i</sub> (cm⁻³) vs. x and T [K].",
+              "formula_html": "n<sub>i</sub>(x,T) ≈ (5.585 - 3.82x + 1.753 × 10<sup>-3</sup>T - 1.364 × 10<sup>-3</sup>xT) × 10<sup>14</sup> × E<sub>g</sub><sup>0.75</sup> T^{1.5} exp(-E<sub>g</sub> / 2kT)",
+              "formula_plain": "ni(x,T) approx (5.585 - 3.82*x + 1.753e-3*T - 1.364e-3*x*T) * 1e14 * Eg^0.75 * T^1.5 * exp(-Eg / (2*k*T))",
+              "formula_latex": "n_i(x,T) \\approx (5.585 - 3.82x + 1.753 \\times 10^{-3}T - 1.364 \\times 10^{-3}xT) \\times 10^{14} E_g^{0.75} T^{1.5} \\exp(-E_g / 2kT)",
+              "units": "cm⁻³",
+              "variables": [ {"symbol": "n<sub>i</sub>", "description": "Intrinsic concentration"}, {"symbol": "E<sub>g</sub>", "description": "Bandgap (eV)"}, {"symbol": "x", "description": "Cd fraction"}, {"symbol": "T", "description": "Temp (K)"}, {"symbol": "k", "description": "Boltzmann const."} ],
+              "ref": "Rogalski_IR"
+            },
+             {
+              "name": "Carrier Conc. from Hall (Single Carrier)",
+              "description": "Relates R<sub>H</sub> to concentration.",
+              "formula_html": "n = -r<sub>H</sub> / (q R<sub>H</sub>)   or   p = r<sub>H</sub> / (q R<sub>H</sub>)",
+              "formula_plain": "n = -r_H / (q * R_H)   OR   p = r_H / (q * R_H)",
+              "formula_latex": "n = -\\frac{r_H}{q R_H} \\quad \\text{or} \\quad p = \\frac{r_H}{q R_H}",
+              "units": "cm⁻³",
+              "variables": [ {"symbol": "n, p", "description": "Concentration"}, {"symbol": "R<sub>H</sub>", "description": "Hall coefficient (cm³/C)"}, {"symbol": "q", "description": "Charge"}, {"symbol": "r<sub>H</sub>", "description": "Hall factor (≈ 1)"} ],
+              "ref": "Schroder_Semicon"
+            }
           ],
-          "measurement_characterization": { "techniques": ["Hall Effect", "C-V", "ECV"], "considerations": ["Hall: Bulk avg.", "C-V: Near surface.", "ECV: Destructive.", "Mixed conduction complicates."] },
+          "measurement_characterization": { "techniques": ["Hall Effect", "C-V", "ECV"], "considerations": ["Hall: Bulk avg.", "C-V: Near surface.", "ECV: Destructive.", "Mixed conduction."] },
           "device_relevance": ["Major factor in dark current.", "Defines junction.", "Influences ρ, absorption, τ."]
         }
       },
@@ -133,7 +153,7 @@
         "summary": "High (>10⁴ cm²/Vs @ 77K); Sensitive to T, x, Doping, Defects",
         "details": {
           "key_characteristics": ["Governs drift velocity.", "Limited by: Phonons, Impurities, Alloy scattering, Defects.", "Decreases with T, doping, usually x.", "Small m*<sub>e</sub>(x) contributes."],
-           "equations": [ { "name": "Mobility from Hall Measurement", "description": "Calculates Hall mobility (μ<sub>H</sub> = r<sub>H</sub>μ<sub>drift</sub>) from R<sub>H</sub> and ρ.", "formula_html": "μ<sub>H</sub> = |R<sub>H</sub>| / ρ", "units": "cm²/Vs", "variables": [ {"symbol": "μ<sub>H</sub>", "description": "Hall mobility"}, {"symbol": "R<sub>H</sub>", "description": "Hall coefficient"}, {"symbol": "ρ", "description": "Resistivity"} ], "ref": "Schroder_Semicon" } ],
+           "equations": [ { "name": "Mobility from Hall Measurement", "description": "Calculates Hall mobility (μ<sub>H</sub> = r<sub>H</sub>μ<sub>drift</sub>) from R<sub>H</sub> and ρ.", "formula_html": "μ<sub>H</sub> = |R<sub>H</sub>| / ρ", "formula_latex": "\\mu_H = \\frac{|R_H|}{\\rho}", "units": "cm²/Vs", "variables": [ {"symbol": "μ<sub>H</sub>", "description": "Hall mobility"}, {"symbol": "R<sub>H</sub>", "description": "Hall coefficient"}, {"symbol": "ρ", "description": "Resistivity"} ], "ref": "Schroder_Semicon" } ],
           "measurement_characterization": { "techniques": ["Hall Effect"], "considerations": ["77K standard.", "Geometry."] },
           "device_relevance": ["Impacts speed.", "Influences L<sub>e</sub> → Collection efficiency.", "Affects diffusion dark current."]
         }
@@ -161,7 +181,7 @@
         "summary": "Highly Variable; ρ = 1 / (q(nμ<sub>e</sub> + pμ<sub>h</sub>))",
         "details": {
            "key_characteristics": ["Depends on doping, T, x."],
-           "equations": [ { "name": "Resistivity Definition", "description": "Fundamental relation.", "formula_html": "ρ = 1 / σ = 1 / (q (n μ<sub>e</sub> + p μ<sub>h</sub>))", "units": "Ω·cm", "variables": [ {"symbol": "ρ", "description": "Resistivity"}, {"symbol": "σ", "description": "Conductivity"}, {"symbol": "q", "description": "Charge"}, {"symbol": "n, p", "description": "Conc."}, {"symbol": "μ<sub>e,h</sub>", "description": "Mobilities"} ], "ref": "Schroder_Semicon" } ],
+           "equations": [ { "name": "Resistivity Definition", "description": "Fundamental relation.", "formula_html": "ρ = 1 / σ = 1 / (q (n μ<sub>e</sub> + p μ<sub>h</sub>))", "formula_latex": "\\rho = \\frac{1}{\\sigma} = \\frac{1}{q (n \\mu_e + p \\mu_h)}", "units": "Ω·cm", "variables": [ {"symbol": "ρ", "description": "Resistivity"}, {"symbol": "σ", "description": "Conductivity"}, {"symbol": "q", "description": "Charge"}, {"symbol": "n, p", "description": "Concentrations"}, {"symbol": "μ<sub>e,h</sub>", "description": "Mobilities"} ], "ref": "Schroder_Semicon" } ],
           "measurement_characterization": { "techniques": ["4-Point Probe", "SRP", "From Hall."], "considerations": ["Contacts."] },
           "device_relevance": ["Impacts series R.", "Indicator of doping."]
          }
@@ -199,22 +219,24 @@
                   "name": "Cutoff Wavelength from E_g(x,T)",
                   "description": "Calculates λ<sub>c</sub> (μm) using the E_g(x,T) relation.",
                   "formula_html": "λ<sub>c</sub>(x, T) ≈ 1.2398 / E<sub>g</sub>(x, T)",
+                  "formula_plain": "λc(x,T) (μm) ≈ 1.24 / Eg(x,T)",
+                  "formula_latex": "\\lambda_c(x, T) \\approx \\frac{1.2398}{E_g(x, T)}",
                   "units": "μm",
                    "variables": [ {"symbol": "λ<sub>c</sub>", "description": "Cutoff Wavelength"}, {"symbol": "E<sub>g</sub>(x, T)", "description": "Bandgap Energy (eV)"} ],
                   "ref": "Hansen_1982"
                 }
              ],
-             "measurement_characterization": { "techniques": ["FTIR Transmission"], "considerations": ["Often defined at 50% transmission point.", "Requires accurate T control."] },
-             "device_relevance": ["Directly sets long-wavelength sensitivity limit."]
+             "measurement_characterization": { "techniques": ["FTIR Transmission"], "considerations": ["Defined at 50% T point.", "Requires accurate T control."] },
+             "device_relevance": ["Sets long-λ sensitivity limit."]
            }
       },
       "refractive_index": {
           "displayName": "Refractive Index (n)",
           "summary": "High (~3.4-4.0)",
            "details": {
-             "key_characteristics": ["High index causes ~30% Fresnel reflection.", "Dispersive (n varies with λ).", "Slight dependence on x and T."],
+             "key_characteristics": ["High index causes ~30% Fresnel loss.", "Dispersive (n varies with λ).", "Slight x, T dependence."],
              "measurement_characterization": { "techniques": ["Ellipsometry", "FTIR R/T."] },
-             "device_relevance": ["Requires AR coatings.", "Influences optical cavity effects."]
+             "device_relevance": ["Requires AR coatings.", "Influences cavity effects."]
            }
       },
       "absorption_coefficient": {
@@ -223,18 +245,18 @@
            "details": {
              "key_characteristics": ["Strong absorption for E > E_g (direct gap).", "α increases sharply above E_g."],
              "equations": [
-                { "name": "Absorption Near Band Edge (Direct Gap Approx.)", "description": "Approximate dependence on photon energy (hν).", "formula_html": "α(hν) ≈ A (hν - E_g)^{1/2}", "units": "cm⁻¹", "variables": [ {"symbol":"α(hν)", "description":"Abs. coefficient"}, {"symbol":"A", "description":"Material parameter"}, {"symbol":"hν", "description":"Photon energy (eV)"}, {"symbol":"E_g", "description":"Bandgap (eV)"} ], "ref": "Pankove_Optical" }
+                { "name": "Absorption Near Band Edge (Direct Gap Approx.)", "description": "Approximate dependence on photon energy (hν).", "formula_html": "α(hν) ≈ A (hν - E_g)^{1/2}", "formula_plain": "alpha(hv) approx A * (hv - Eg)^0.5", "formula_latex": "\\alpha(h\\nu) \\approx A (h\\nu - E_g)^{1/2}", "units": "cm⁻¹", "variables": [ {"symbol":"α(hν)", "description":"Abs. coefficient"}, {"symbol":"A", "description":"Material parameter"}, {"symbol":"hν", "description":"Photon energy (eV)"}, {"symbol":"E_g", "description":"Bandgap (eV)"} ], "ref": "Pankove_Optical" }
              ],
              "measurement_characterization": { "techniques": ["Calculated from T/R spectra."] },
-             "device_relevance": ["Allows high absorption in thin layers (few μm).", "Dictates minimum absorber thickness."]
+             "device_relevance": ["Allows high absorption in thin layers.", "Dictates min. absorber thickness."]
            }
       },
       "quantum_efficiency": {
           "displayName": "Quantum Efficiency (QE or η)",
           "summary": "High (>70-80% achievable with AR coating)",
            "details": {
-             "key_characteristics": ["Ratio of collected carriers to incident photons.", "Internal QE (IQE) >90% possible.", "External QE (EQE) = T * IQE.", "Limited by reflection, surface recombination, τ, L."],
-             "equations": [ {"name": "QE from Responsivity", "description": "Relates QE to responsivity R(λ).", "formula_html": "η(λ) = R(λ) \\frac{hc}{qλ}", "units": "Dimensionless or %", "variables": [{"symbol":"η", "description":"QE"}, {"symbol":"R(λ)", "description":"Responsivity (A/W)"}, {"symbol":"h,c,q,λ", "description":"Const/Wavelength"}], "ref": null} ],
+             "key_characteristics": ["Ratio collected carriers / incident photons.", "Internal QE (IQE) >90% possible.", "External QE (EQE) = T * IQE.", "Limited by reflection, surface recombination, τ, L."],
+             "equations": [ {"name": "QE from Responsivity", "description": "Relates QE to R(λ).", "formula_html": "η(λ) = R(λ) \\frac{hc}{qλ}", "formula_latex": "\\eta(\\lambda) = R(\\lambda) \\frac{hc}{q\\lambda}", "units": "Dimensionless or %", "variables": [{"symbol":"η", "description":"QE"}, {"symbol":"R(λ)", "description":"Responsivity (A/W)"}, {"symbol":"h,c,q,λ", "description":"Const/Wavelength"}], "ref": null} ],
              "measurement_characterization": { "techniques": ["Spectral response vs. reference."] },
              "device_relevance": ["Fundamental sensitivity measure.", "Requires AR coating & quality material."]
            }
@@ -244,7 +266,7 @@
           "summary": "High (~1-10 A/W @ 77K)",
            "details": {
              "key_characteristics": ["Photocurrent per incident power.", "Increases with λ for constant QE."],
-             "equations": [ {"name": "Responsivity from QE", "description": "Relates R to QE.", "formula_html": "R(λ) = η(λ) \\frac{qλ}{hc}", "units": "A/W", "variables": [{"symbol":"R(λ)", "description":"Responsivity"}, {"symbol":"η(λ)", "description":"QE"}, {"symbol":"q,h,c,λ", "description":"Const/Wavelength"}], "ref": null} ],
+             "equations": [ {"name": "Responsivity from QE", "description": "Relates R to QE.", "formula_html": "R(λ) = η(λ) \\frac{qλ}{hc}", "formula_latex": "R(\\lambda) = \\eta(\\lambda) \\frac{q\\lambda}{hc}", "units": "A/W", "variables": [{"symbol":"R(λ)", "description":"Responsivity"}, {"symbol":"η(λ)", "description":"QE"}, {"symbol":"q,h,c,λ", "description":"Const/Wavelength"}], "ref": null} ],
              "measurement_characterization": { "techniques": ["Measure I<sub>ph</sub> vs. calibrated P<sub>inc</sub>."] },
              "device_relevance": ["Determines signal output."]
            }
@@ -254,7 +276,7 @@
           "summary": "Low (~10⁻¹¹ - 10⁻¹³ W/√Hz cooled)",
            "details": {
              "key_characteristics": ["Incident power for SNR=1 in 1 Hz BW.", "Lower NEP = better sensitivity.", "Limited by detector noise."],
-             "equations": [ {"name": "NEP Definition", "description": "Relates NEP to noise current (i<sub>n</sub>) and responsivity (R).", "formula_html": "NEP = i<sub>n</sub> / R", "units": "W/√Hz", "variables": [{"symbol":"NEP", "description":"NEP"}, {"symbol":"i<sub>n</sub>", "description":"Noise current density (A/√Hz)"}, {"symbol":"R", "description":"Responsivity (A/W)"}], "ref": null} ],
+             "equations": [ {"name": "NEP Definition", "description": "Relates NEP to noise current (i<sub>n</sub>) and responsivity (R).", "formula_html": "NEP = i<sub>n</sub> / R", "formula_latex": "NEP = \\frac{i_n}{R}", "units": "W/√Hz", "variables": [{"symbol":"NEP", "description":"NEP"}, {"symbol":"i<sub>n</sub>", "description":"Noise current density (A/√Hz)"}, {"symbol":"R", "description":"Responsivity (A/W)"}], "ref": null} ],
              "measurement_characterization": { "techniques": ["Measure noise spectrum & responsivity."] },
              "device_relevance": ["Defines minimum detectable power.", "Related to D* = √Area / NEP."]
            }
