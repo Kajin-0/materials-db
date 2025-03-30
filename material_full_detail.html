@@ -160,7 +160,7 @@
         }
         .equation-block .eq-units { font-size: 0.85rem; color: #555; text-align: right; margin-bottom: 0.75rem; }
         .equation-block .eq-vars strong { color: #333; }
-        .equation-block .eq-vars ul { padding-left: 1rem; list-style: none; margin-top: 0.5rem; }
+        .equation-block .eq-vars ul { padding-left: 1rem; list-style: none; margin-top: 0.5rem;}
         .equation-block .eq-vars li { font-size: 0.9rem; margin-bottom: 0.4rem; }
         .equation-block .eq-ref { font-size: 0.85rem; color: #777; text-align: right; margin-top: 0.75rem; }
         .equation-block .eq-ref a { color: #0066cc; text-decoration: none; }
@@ -173,12 +173,14 @@
         #references-list li {
              margin-bottom: 0.75rem;
              padding-left: 0; /* Remove padding */
+             /* position: relative; */ /* REMOVED */
              list-style-position: outside;
              text-indent: -1.5rem; /* Apply negative indent */
              margin-left: 1.5rem; /* Apply positive margin */
         }
         #references-list li strong {
-             /* Removed absolute positioning */
+             /* position: absolute; */ /* REMOVED */
+             /* left: 0; */ /* REMOVED */
              color: #555; font-weight: 600; margin-right: 0.5em; /* Space after key */
          }
         #references-list li:target { background-color: #fffde7; padding: 0.5rem 0.5rem 0.5rem 1.5rem; border-radius: 4px; transition: background-color 0.3s ease; margin-left: 0; text-indent: 0; /* Reset indent on target */ }
