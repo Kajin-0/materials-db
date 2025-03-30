@@ -9,7 +9,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     const mainContentEl = document.getElementById("main-content"); // Container for all sections
     const referencesSectionEl = document.getElementById("references-section");
     const referencesListEl = document.getElementById("references-list");
-    // Removed containerEl as error message is placed in mainContentEl now
 
     const displayError = (message) => {
         console.error("[Full Detail] Error:", message);
@@ -59,12 +58,13 @@ document.addEventListener("DOMContentLoaded", async () => {
                  if (data.ref && materialDetails.references && materialDetails.references[data.ref]) {
                      collectedRefs.add(data.ref);
                  }
+                 // Check inside arrays and objects within the current object
                  Object.values(data).forEach(value => {
                      if (typeof value === 'object' || Array.isArray(value)) { processRefs(value); }
                  });
              } else if (Array.isArray(data)) { data.forEach(processRefs); }
         };
-        processRefs(materialDetails);
+        processRefs(materialDetails); // Scan the entire fetched object
 
 
         // --- Build Table of Contents & Populate Sections ---
@@ -114,18 +114,14 @@ document.addEventListener("DOMContentLoaded", async () => {
                 // Populate Properties within the section
                 const propertiesContainerEl = document.getElementById(`${sectionId}-properties`);
                 if (propertiesContainerEl && sectionData.properties && typeof sectionData.properties === 'object') {
-                    propertiesContainerEl.innerHTML = ''; // Clear any potential placeholder
+                    propertiesContainerEl.innerHTML = ''; // Clear
 
-                    // *** CORRECTED LOOP ***
                     Object.entries(sectionData.properties).forEach(([propKey, propData]) => {
-                        // Call renderPropertyBlock to CREATE the block
                         const propertyBlockElement = renderPropertyBlock(propKey, propData, materialDetails);
-                        // Append the returned block DIRECTLY to this section's container
                         if (propertyBlockElement) {
                              propertiesContainerEl.appendChild(propertyBlockElement);
                         }
                     });
-                    // *** REMOVED erroneous appendChild call after loop ***
 
                 } else if (propertiesContainerEl) {
                     propertiesContainerEl.style.display = 'none';
@@ -163,7 +159,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // --- Helper Function to Render a Single Property Block ---
-    // *** CORRECTED: Returns the created block element, does not take container arg ***
     function renderPropertyBlock(propKey, propData, allDetails) {
         const propBlock = document.createElement('div');
         propBlock.className = 'property-detail-block';
@@ -189,6 +184,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                  const subsectionTitle = document.createElement('h4');
                  subsection.appendChild(subsectionTitle); // Title content added via CSS ::before
 
+                 // Render content based on type
                  if (Array.isArray(detailContent) && detailKey !== 'equations') { // List of strings
                      const ul = document.createElement('ul');
                      detailContent.forEach(item => { const li = document.createElement('li'); li.innerHTML = item; ul.appendChild(li); });
@@ -236,8 +232,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                  if(subsection.children.length > 1) propBlock.appendChild(subsection);
              }
         }
-        // Return the fully constructed property block element
-        return propBlock;
+        return propBlock; // Return the constructed block
     } // --- End renderPropertyBlock ---
 
 
@@ -252,7 +247,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const elementRect = targetElement.getBoundingClientRect();
                 const absoluteElementTop = elementRect.top + window.pageYOffset;
                 // Try scrolling slightly above the element's center
-                const offset = window.innerHeight * 0.25; // Adjust offset as needed (e.g., 0.33 for third)
+                const offset = window.innerHeight * 0.25; // Adjust offset as needed
                 const scrollToPosition = absoluteElementTop - offset;
                 window.scrollTo({ top: scrollToPosition, behavior: 'smooth' });
             }
