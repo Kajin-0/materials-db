@@ -34,13 +34,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // --- Construct file path ---
     // Replace spaces with underscores AND convert to lowercase
-    const safeMaterialName = materialName.replace(/ /g, '_').toLowerCase(); // <--- CHANGE HERE
+    const safeMaterialName = materialName.replace(/ /g, '_').toLowerCase();
     const detailFilePath = `./details/${safeMaterialName}_details.json`;
 
-    console.log(`[Section Detail] Loading section '${sectionKey}' for material '${materialName}' from '${detailFilePath}'`); // Log the actual path being fetched
+    console.log(`[Section Detail] Loading section '${sectionKey}' for material '${materialName}' from '${detailFilePath}'`);
 
     // --- Fetch and Process Data ---
-    // ... rest of the fetch logic ...
     try {
         const response = await fetch(detailFilePath);
         if (!response.ok) {
@@ -62,11 +61,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         // --- Populate the page ---
         const sectionDisplayName = sectionData.displayName || sectionKey.split('.').pop().replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()); // Fallback formatting
-        if (sectionDisplayNameEl) sectionDisplayNameEl.textContent = sectionDisplayName;
+        if (sectionDisplayNameEl) sectionDisplayNameEl.textContent = sectionDisplayName; // Title is plain text
         document.title = `${sectionDisplayName} - ${materialName}`;
 
         if (sectionData.introduction && sectionIntroEl) {
-            sectionIntroEl.textContent = sectionData.introduction;
+            sectionIntroEl.innerHTML = sectionData.introduction; // Use innerHTML for intro in case it has formatting
             sectionIntroEl.style.display = 'block';
         } else if (sectionIntroEl) {
             sectionIntroEl.style.display = 'none';
@@ -80,16 +79,16 @@ document.addEventListener("DOMContentLoaded", async () => {
             Object.entries(sectionData.properties).forEach(([propKey, propData]) => {
                 const propBlock = document.createElement('div');
                 propBlock.className = 'property-detail-block';
-                propBlock.id = `prop_${sectionKey.replace(/\./g, '_')}_${propKey}`; // Create a unique ID
+                propBlock.id = `prop_${sectionKey.replace(/\./g, '_')}_${propKey}`;
 
                 const propTitle = document.createElement('h3');
-                propTitle.textContent = propData.displayName || propKey.replace(/_/g, ' '); // Fallback formatting
+                propTitle.innerHTML = propData.displayName || propKey.replace(/_/g, ' '); // Use innerHTML for display name
                 propBlock.appendChild(propTitle);
 
                 if (propData.summary) {
                     const summaryEl = document.createElement('div');
                     summaryEl.className = 'summary';
-                    summaryEl.textContent = propData.summary;
+                    summaryEl.innerHTML = propData.summary; // Use innerHTML for summary
                     propBlock.appendChild(summaryEl);
                 }
 
@@ -97,61 +96,61 @@ document.addEventListener("DOMContentLoaded", async () => {
                 if (propData.details && typeof propData.details === 'object') {
                     for (const [detailKey, detailContent] of Object.entries(propData.details)) {
                         const subsection = document.createElement('div');
-                        subsection.className = `detail-subsection ${detailKey}`; // e.g., detail-subsection notes
+                        subsection.className = `detail-subsection ${detailKey}`;
 
                         const subsectionTitle = document.createElement('h4');
-                        subsectionTitle.textContent = detailKey.charAt(0).toUpperCase() + detailKey.slice(1); // Capitalize
+                        subsectionTitle.textContent = detailKey.charAt(0).toUpperCase() + detailKey.slice(1); // Title is plain text
                         subsection.appendChild(subsectionTitle);
 
-                        // Handle different detail types
+                        // Handle different detail types - USE innerHTML where HTML is expected
                         if (detailKey === 'notes' && Array.isArray(detailContent)) {
                             const ul = document.createElement('ul');
                             detailContent.forEach(note => {
                                 const li = document.createElement('li');
-                                li.textContent = note;
+                                li.innerHTML = note; // USE innerHTML
                                 ul.appendChild(li);
                             });
                             subsection.appendChild(ul);
                         } else if (detailKey === 'equations' && Array.isArray(detailContent)) {
-                            detailContent.forEach(eq => {
+                             detailContent.forEach(eq => {
                                 const eqBlock = document.createElement('div');
                                 eqBlock.className = 'equation-block';
 
                                 if (eq.name) {
                                     const nameEl = document.createElement('span');
                                     nameEl.className = 'eq-name';
-                                    nameEl.textContent = eq.name;
+                                    nameEl.textContent = eq.name; // Eq Name likely plain text
                                     eqBlock.appendChild(nameEl);
                                 }
                                 if (eq.description) {
                                      const descEl = document.createElement('p');
                                      descEl.className = 'eq-desc';
-                                     descEl.textContent = eq.description;
+                                     descEl.innerHTML = eq.description; // USE innerHTML for description
                                      eqBlock.appendChild(descEl);
                                 }
                                 // Prefer HTML formula, then plain, then LaTeX placeholder
                                 if (eq.formula_html) {
                                     const formulaEl = document.createElement('div');
-                                    formulaEl.className = 'eq-formula-html'; // Use a different class if desired
-                                    formulaEl.innerHTML = eq.formula_html; // Use innerHTML to render HTML tags
+                                    formulaEl.className = 'eq-formula-html';
+                                    formulaEl.innerHTML = eq.formula_html; // USE innerHTML
                                     eqBlock.appendChild(formulaEl);
                                 } else if (eq.formula_plain) {
-                                    const formulaEl = document.createElement('div');
-                                    formulaEl.className = 'eq-formula-plain';
-                                    formulaEl.textContent = eq.formula_plain;
-                                    eqBlock.appendChild(formulaEl);
-                                } else if (eq.formula_latex) {
-                                    const formulaEl = document.createElement('div');
-                                    formulaEl.className = 'eq-formula-latex';
-                                    formulaEl.textContent = `[LaTeX Placeholder: ${eq.formula_latex}]`; // Placeholder
-                                    eqBlock.appendChild(formulaEl);
-                                }
+                                     const formulaEl = document.createElement('div');
+                                     formulaEl.className = 'eq-formula-plain';
+                                     formulaEl.textContent = eq.formula_plain;
+                                     eqBlock.appendChild(formulaEl);
+                                 } else if (eq.formula_latex) {
+                                     const formulaEl = document.createElement('div');
+                                     formulaEl.className = 'eq-formula-latex';
+                                     formulaEl.textContent = `[LaTeX Placeholder: ${eq.formula_latex}]`;
+                                     eqBlock.appendChild(formulaEl);
+                                 }
                                 if(eq.units){
                                      const unitsEl = document.createElement('div');
                                      unitsEl.style.fontSize = '0.9em';
                                      unitsEl.style.color = '#555';
                                      unitsEl.style.marginBottom = '0.5rem';
-                                     unitsEl.textContent = `Units: ${eq.units}`;
+                                     unitsEl.innerHTML = `Units: ${eq.units}`; // USE innerHTML
                                      eqBlock.appendChild(unitsEl);
                                 }
                                 if (eq.variables && Array.isArray(eq.variables)) {
@@ -161,18 +160,17 @@ document.addEventListener("DOMContentLoaded", async () => {
                                     const varsUl = document.createElement('ul');
                                     eq.variables.forEach(v => {
                                         const li = document.createElement('li');
-                                        // Use innerHTML for symbol and description in case they contain HTML
-                                        li.innerHTML = `<strong>${v.symbol}:</strong> ${v.description}`;
+                                        li.innerHTML = `<strong>${v.symbol}:</strong> ${v.description}`; // USE innerHTML
                                         varsUl.appendChild(li);
                                     });
                                     varsDiv.appendChild(varsUl);
                                     eqBlock.appendChild(varsDiv);
                                 }
                                 if (eq.ref && materialDetails.references && materialDetails.references[eq.ref]) {
-                                    collectedRefs.add(eq.ref); // Add ref key to set
+                                    collectedRefs.add(eq.ref);
                                     const refEl = document.createElement('div');
                                     refEl.className = 'eq-ref';
-                                    refEl.innerHTML = `Ref: <a href="#" class="ref-link" data-ref-key="${eq.ref}">${eq.ref}</a>`;
+                                    refEl.innerHTML = `Ref: <a href="#" class="ref-link" data-ref-key="${eq.ref}">${eq.ref}</a>`; // USE innerHTML
                                     eqBlock.appendChild(refEl);
                                 }
                                 subsection.appendChild(eqBlock);
@@ -182,7 +180,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                                 const ul = document.createElement('ul');
                                 detailContent.techniques.forEach(tech => {
                                     const li = document.createElement('li');
-                                    li.textContent = tech;
+                                    li.innerHTML = tech; // USE innerHTML
                                     ul.appendChild(li);
                                 });
                                 subsection.appendChild(ul);
@@ -190,14 +188,14 @@ document.addEventListener("DOMContentLoaded", async () => {
                             if(detailContent.notes && Array.isArray(detailContent.notes)){
                                 detailContent.notes.forEach(note => {
                                     const p = document.createElement('p');
-                                    p.textContent = note;
-                                    p.style.fontSize = '0.9em'; // Smaller notes
+                                    p.innerHTML = note; // USE innerHTML
+                                    p.style.fontSize = '0.9em';
                                     p.style.color = '#555';
                                     subsection.appendChild(p);
                                 });
-                            } else if (typeof detailContent === 'string') { // Handle simple string case too
+                            } else if (typeof detailContent === 'string') { // Handle simple string case
                                 const p = document.createElement('p');
-                                p.textContent = detailContent;
+                                p.innerHTML = detailContent; // USE innerHTML
                                 subsection.appendChild(p);
                             }
 
@@ -205,20 +203,19 @@ document.addEventListener("DOMContentLoaded", async () => {
                               const ul = document.createElement('ul');
                               detailContent.forEach(sig => {
                                   const li = document.createElement('li');
-                                  li.textContent = sig;
+                                  li.innerHTML = sig; // USE innerHTML
                                   ul.appendChild(li);
                               });
                               subsection.appendChild(ul);
                         }
-                         else if (typeof detailContent === 'string') { // Handle other simple string details
+                         else if (typeof detailContent === 'string') { // Handle other simple strings
                             const p = document.createElement('p');
-                            p.textContent = detailContent;
+                            p.innerHTML = detailContent; // USE innerHTML
                             subsection.appendChild(p);
                         } else {
                             console.warn(`Unhandled detail type '${detailKey}' for property '${propKey}'`);
                         }
 
-                        // Only append subsection if it contains more than just the title
                         if(subsection.children.length > 1) {
                            propBlock.appendChild(subsection);
                         }
@@ -230,21 +227,22 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             // --- Populate References ---
             if (collectedRefs.size > 0 && referencesListEl && materialDetails.references) {
-                 referencesListEl.innerHTML = ''; // Clear any loading/error
+                 referencesListEl.innerHTML = ''; // Clear
                  collectedRefs.forEach(refKey => {
                      const refData = materialDetails.references[refKey];
                      if(refData){
                          const li = document.createElement('li');
-                         li.id = `ref-${refKey}`; // ID for potential linking
-                         let linkHtml = refData.text;
+                         li.id = `ref-${refKey}`;
+                         let linkHtml = refData.text; // Assume ref text might need entities
                          if(refData.doi){
                              linkHtml += ` <a href="https://doi.org/${refData.doi}" target="_blank" title="View via DOI">[DOI]</a>`;
                          }
+                         // Use innerHTML for the reference text itself
                          li.innerHTML = `<strong>[${refKey}]</strong> ${linkHtml}`;
                          referencesListEl.appendChild(li);
                      }
                  });
-                 referencesSectionEl.style.display = 'block'; // Show the section
+                 referencesSectionEl.style.display = 'block'; // Show
 
                  // Add smooth scroll for internal reference links
                  propertiesContainerEl.addEventListener('click', (e) => {
@@ -254,7 +252,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                          const targetElement = document.getElementById(targetId);
                          if (targetElement) {
                              targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                             // Optional: Highlight the reference briefly
+                             targetElement.style.transition = 'background-color 0.5s ease';
                              targetElement.style.backgroundColor = '#ffff99';
                              setTimeout(() => { targetElement.style.backgroundColor = ''; }, 1500);
                          }
@@ -266,7 +264,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
 
         } else {
-             // Handle case where section is found but has no properties block
              if (propertiesContainerEl) propertiesContainerEl.innerHTML = '<p>No specific properties detailed for this section yet.</p>';
         }
 
