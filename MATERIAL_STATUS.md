@@ -27,8 +27,8 @@ Unchecked items `[ ]` are missing a matching key in `material_details.json`.
 - [x] Mercury Cadmium Telluride
 - [x] Nextel 720 Fiber
 - [x] Niobium Titanium (NbTi) Wire
-- [ ] Oxide-Oxide Ceramic Composite (Ox/Ox)
-- [ ] PEEK Carbon Fiber Composite
+- [x] Oxide-Oxide Ceramic Composite (Ox/Ox)
+- [x] PEEK Carbon Fiber Composite
 - [ ] PTFE Glass Fiber Composite
 - [ ] Polyethylene Neutron Shielding
 - [x] Reinforced Carbon–Carbon (RCC)
