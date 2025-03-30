@@ -1,0 +1,244 @@
+{
+  "materialName": "Mercury Cadmium Telluride",
+  "references": {
+    "Hansen_1982": {
+      "text": "Hansen, G. L., Schmit, J. L., & Casselman, T. N. (1982). Energy gap versus alloy composition and temperature in Hg₁₋ₓCdₓTe. Journal of Applied Physics, 53(10), 7099-7101.",
+      "doi": "10.1063/1.330018"
+    },
+    "Rogalski_IR": {
+      "text": "Rogalski, A. (2019). Infrared Detectors (2nd ed.). CRC Press.",
+      "doi": "10.1201/9780429501918"
+    },
+    "Norton_2002": {
+       "text": "Norton, P. R. (2002). HgCdTe infrared detectors. Opto-Electronics Review, 10(3), 159-174."
+    }
+  },
+  "electrical_properties": {
+    "displayName": "Electrical Properties",
+    "introduction": "Electrical characteristics are fundamental to HgCdTe's operation as an infrared detector, governing spectral response, sensitivity, and operating temperature requirements. The tunable bandgap is its defining feature.",
+    "properties": {
+      "band_gap": {
+        "displayName": "Bandgap (Eg)",
+        "summary": "Direct, Tunable (0 - 1.5 eV)",
+        "details": {
+          "notes": [
+            "Fundamental property defining the energy required to excite an electron from the valence band to the conduction band.",
+            "Direct bandgap allows for efficient photon absorption and emission near the band edge.",
+            "Tunable by adjusting the Cadmium mole fraction (x) in Hg₁₋ₓCdₓTe.",
+            "Crucially determines the long-wavelength cutoff (λc) of the detector's spectral response.",
+            "Strongly temperature-dependent, narrowing significantly as temperature increases."
+          ],
+          "equations": [
+            {
+              "name": "Hansen Eg(x,T) Empirical Relation",
+              "description": "Widely used empirical fit for bandgap energy as a function of Cd mole fraction (x) and temperature (T in Kelvin). Valid for x < 0.6, T > 4.2K.",
+              "formula_latex": "E_g(x, T) = -0.302 + 1.93x + 5.35 \\times 10^{-4} T (1 - 2x) - 0.810x^2 + 0.832x^3",
+              "formula_plain": "Eg(x,T) = -0.302 + 1.93*x + 5.35e-4*T*(1 - 2*x) - 0.810*x^2 + 0.832*x^3",
+              "units": "eV",
+              "variables": [
+                  {"symbol": "Eg", "description": "Bandgap Energy"},
+                  {"symbol": "x", "description": "Cadmium mole fraction (dimensionless, 0 to 1)"},
+                  {"symbol": "T", "description": "Temperature (Kelvin)"}
+              ],
+              "ref": "Hansen_1982"
+            },
+            {
+              "name": "Cutoff Wavelength Relation",
+              "description": "Directly relates the bandgap energy to the longest wavelength of light the material can absorb.",
+              "formula_latex": "\\lambda_c = \\frac{hc}{E_g} \\approx \\frac{1.2398}{E_g \\text{ [eV]}}",
+              "formula_plain": "λc (μm) ≈ 1.24 / Eg (eV)",
+              "units": "μm",
+               "variables": [
+                  {"symbol": "λc", "description": "Cutoff Wavelength"},
+                  {"symbol": "h", "description": "Planck's constant"},
+                  {"symbol": "c", "description": "Speed of light"},
+                  {"symbol": "Eg", "description": "Bandgap Energy (in eV for approx. formula)"}
+              ],
+              "ref": null
+            }
+          ],
+          "measurement": {
+             "techniques": ["Fourier Transform Infrared (FTIR) Spectroscopy", "Photoluminescence (PL) Spectroscopy"],
+             "notes": [
+                "FTIR transmission/absorption spectra clearly show the absorption edge, directly related to λc and Eg.",
+                "PL peak emission energy corresponds closely to Eg, providing a non-contact method for composition (x) estimation.",
+                "Temperature control is critical during measurement due to strong Eg(T) dependence."
+              ]
+          },
+          "significance": [
+            "Primary determinant of the detector's spectral operating range (SWIR, MWIR, LWIR).",
+            "Impacts intrinsic carrier concentration (ni) and thus dark current.",
+            "Required input for device modeling and performance simulation."
+          ]
+        }
+      },
+      "electron_mobility": {
+        "displayName": "Electron Mobility (μ<0xE2><0x82><0x91>)",
+        "summary": "High (>10⁴ cm²/Vs @ 77K)",
+        "details": {
+          "notes": [
+            "Measure of how quickly electrons move through the material under an electric field.",
+            "HgCdTe exhibits high electron mobility, especially at low temperatures (77K) and low doping.",
+            "Key scattering mechanisms limiting mobility: Polar optical phonon scattering (dominant at higher T), ionized impurity scattering (dominant at low T, high doping), alloy scattering (due to random Hg/Cd placement).",
+            "Mobility decreases with increasing temperature, doping concentration, and often with increasing Cd fraction (x) due to alloy scattering.",
+            "Hole mobility (μ<0xE2><0x82><0x95>) is significantly lower (~100-600 cm²/Vs)."
+          ],
+          "measurement": {
+             "techniques": ["Hall Effect Measurement"],
+             "notes": [
+                "Typically performed using Van der Pauw geometry or Hall bar structures.",
+                "Requires applying a magnetic field perpendicular to the current flow.",
+                "Low-temperature measurements (e.g., 77K) are common to characterize intrinsic properties and minimize phonon scattering.",
+                "Results provide both mobility and carrier concentration/type."
+              ]
+          },
+          "significance": [
+            "Affects detector speed (transit time limitations in high-frequency operation).",
+            "Influences diffusion length (L = sqrt(Dτ) where D = μkT/q), impacting collection efficiency.",
+            "Contributes to diffusion limited dark current (propto ni²/N * sqrt(μ/τ)).",
+            "Important parameter for transistor modeling if used in active devices (less common)."
+          ]
+        }
+      },
+      "carrier_concentration": {
+        "displayName": "Carrier Concentration (n, p, n<0xE1><0xB5><0xA2>)",
+        "summary": "Tunable doping (n/p), low n<0xE1><0xB5><0xA2> at 77K",
+        "details": {
+          "notes": [
+            "Intrinsic carrier concentration (ni) is highly sensitive to bandgap (Eg) and temperature: ni ∝ T^(3/2) * exp(-Eg / 2kT).",
+            "For narrow gap HgCdTe (e.g., x=0.2 LWIR), ni is high at 300K (~10¹⁶ cm⁻³) but drops dramatically at 77K (~10¹³ cm⁻³), necessitating cryogenic operation to reduce dark current.",
+            "Extrinsic concentration controlled by doping: n-type (In, I), p-type (As, Au, Hg Vacancies).",
+            "Achieving low, stable p-type doping can be challenging due to native Hg vacancies acting as acceptors.",
+            "Typical detector doping levels: ~10¹⁴ - 10¹⁶ cm⁻³."
+          ],
+          "measurement": {
+             "techniques": ["Hall Effect Measurement", "Capacitance-Voltage (C-V) Profiling", "Electrochemical Capacitance-Voltage (ECV)"],
+             "notes": [
+                "Hall effect provides bulk average carrier concentration and type.",
+                "C-V on Schottky diodes or MIS structures can profile doping near the surface.",
+                "ECV provides depth profiling but is destructive."
+              ]
+          },
+          "significance": [
+            "Directly impacts dark current mechanisms (diffusion, G-R, tunneling).",
+            "Determines junction properties (depletion width, capacitance) in photodiodes.",
+            "Affects material resistivity and optical absorption (free carrier absorption)."
+          ]
+        }
+      },
+      "hole_mobility": {
+        "displayName": "Hole Mobility (μ<0xE2><0x82><0x95>)",
+        "summary": "Low (100-600 cm²/Vs @ 77K)",
+         "details": {
+          "notes": ["Significantly lower than electron mobility due to larger effective mass of holes.", "Similar scattering mechanisms apply as for electrons.", "Less critical for majority carrier devices but impacts minority carrier diffusion/collection."],
+          "measurement": ["Hall Effect Measurement (often requires careful analysis in mixed conduction regimes or specific sample design)."],
+          "significance": ["Affects diffusion length and collection efficiency of minority carriers (holes in n-type, electrons in p-type).", "Impacts bipolar transport properties."]
+         }
+      },
+       "dielectric_constant": {
+        "displayName": "Dielectric Constant (ε<0xE1><0xB5><0xA3>)",
+        "summary": "High (~15-20)",
+        "details": {
+          "notes": ["Static relative permittivity. High value influences junction capacitance.", "Slight composition and temperature dependence."],
+          "measurement": ["Capacitance measurements on MIS structures or parallel plate capacitors."],
+          "significance": ["Determines junction capacitance (Cd ∝ ε).", "Affects electric field distribution within devices.", "Important for modeling device speed (RC time constant)."]
+         }
+      },
+       "resistivity": {
+        "displayName": "Resistivity (ρ)",
+        "summary": "Highly Variable (Depends on x, T, doping)",
+        "details": {
+          "notes": ["ρ = 1 / (q * (n*μe + p*μh)).", "Strongly dependent on carrier concentration and mobility.", "Can range from semi-metallic (x=0) to highly resistive depending on conditions."],
+          "measurement": ["Four-Point Probe", "Hall Effect (calculable from n, p, μ)", "Direct I-V measurement on defined structures."],
+          "significance": ["Affects series resistance in devices.", "Indicator of doping level and material quality."]
+         }
+      },
+      "breakdown_field": {
+        "displayName": "Breakdown Field",
+        "summary": "Low (~10³-10⁴ V/cm)",
+        "details": {
+          "notes": ["Maximum electric field before significant avalanche multiplication or Zener tunneling occurs.", "Lower in narrow-gap semiconductors.", "Limits operating bias for APDs and reverse bias for photodiodes.", "Tunneling currents can become dominant at high fields, especially in narrow gap / highly doped material."],
+          "measurement": ["Reverse bias I-V measurements on diode structures."],
+          "significance": ["Defines maximum operating voltage/field.", "Crucial for Avalanche Photodiode (APD) design.", "Impacts dark current mechanisms at high bias."]
+         }
+      }
+      // Add bandgap_equation, common_dopants details here if desired, though partially covered above.
+    }
+  },
+  "optical_properties": {
+    "displayName": "Optical Properties",
+    "introduction": "Optical characteristics define how HgCdTe interacts with light, enabling its use as an infrared detector. Key properties include spectral range, absorption, and refractive index.",
+    "properties": {
+      "spectral_range": {
+        "displayName": "Spectral Range",
+        "summary": "SWIR, MWIR, LWIR (0.8 to >30 µm)",
+         "details": { "notes": ["Defined by the tunable bandgap Eg(x).", "SWIR: x ~ 0.5-0.7", "MWIR: x ~ 0.25-0.4", "LWIR: x ~ 0.18-0.22", "VLWIR: x < 0.18"], "significance": ["Determines the application space (thermal imaging, gas sensing, astronomy)."] }
+      },
+      "cutoff_wavelength": {
+          "displayName": "Cutoff Wavelength (λc)",
+          "summary": "Tunable (0.8 to >30 µm)",
+           "details": { "notes": ["Wavelength at which absorption drops sharply, defined by λc ≈ 1.24 / Eg(eV).", "Primary specification for detector material."], "measurement": ["FTIR transmission spectrum (typically defined at 50% transmission point)."], "significance": ["Sets the long-wavelength limit of the detector's sensitivity."] }
+      },
+      "refractive_index": {
+          "displayName": "Refractive Index (n)",
+          "summary": "High (~3.4-4.0)",
+           "details": { "notes": ["High index requires anti-reflection (AR) coatings for efficient light coupling (~30% reflection loss per surface without AR).", "Dispersion exists (index varies with wavelength)."], "measurement": ["Ellipsometry", "FTIR reflectance/transmission analysis."], "significance": ["Needed for designing AR coatings.", "Affects optical cavity effects within the detector structure."] }
+      },
+      "absorption_coefficient": {
+          "displayName": "Absorption Coefficient (α)",
+          "summary": "High (>10⁴ cm⁻¹ near band edge)",
+           "details": { "notes": ["Strong absorption due to direct bandgap allows efficient photon capture in relatively thin layers (few µm).", "α depends strongly on photon energy relative to Eg."], "measurement": ["Calculated from transmission/reflectance spectra."], "significance": ["Determines required detector thickness for high quantum efficiency.", "Affects optimal device design."] }
+      },
+      "quantum_efficiency": {
+          "displayName": "Quantum Efficiency (QE or η)",
+          "summary": "High (>70-80% achievable)",
+           "details": { "notes": ["Ratio of collected charge carriers to incident photons.", "Internal QE can be very high (>90%).", "External QE limited by reflection losses (needs AR coating) and collection efficiency (diffusion length, surface recombination)."], "measurement": ["Measured using calibrated light sources and reference detectors, determining spectral response R(λ), then QE = R(λ) * hc / (qλ)."], "significance": ["Fundamental measure of detector sensitivity."] }
+      },
+      "responsivity": {
+          "displayName": "Responsivity (R)",
+          "summary": "High (~1-10 A/W @ 77K)",
+           "details": { "notes": ["Ratio of output photocurrent to incident optical power (R = Iph / Pinc).", "R = QE * qλ / hc.", "Higher at longer wavelengths for a given QE."], "measurement": ["Measured using calibrated blackbody source or monochromatic source and calibrated power meter."], "significance": ["Direct measure of signal output for a given input power."] }
+      },
+      "noise_equivalent_power": {
+          "displayName": "Noise Equivalent Power (NEP)",
+          "summary": "Low (~10⁻¹¹ - 10⁻¹³ W/√Hz cooled)",
+           "details": { "notes": ["Incident optical power required to produce a signal-to-noise ratio of 1 in a 1 Hz bandwidth.", "NEP = Inoise / R, where Inoise is the total noise current.", "Lower NEP indicates better sensitivity."], "measurement": ["Calculated from measured noise current spectral density and responsivity."], "significance": ["Defines the minimum detectable optical power."] }
+      }
+      // ... Add photoluminescence_peak_nm, optical_loss details ...
+    }
+  },
+  "thermal_properties": {
+    "displayName": "Thermal Properties",
+    "introduction": "Thermal characteristics influence operating temperature requirements, cooling needs, and thermal stability.",
+    "properties": {
+       "operating_temperature": {
+         "displayName": "Operating Temperature",
+         "summary": "Typically 77K (LN2), higher possible for MWIR/SWIR",
+          "details": { "notes": ["Cryogenic cooling drastically reduces thermally generated dark current (ni reduction).", "LWIR detectors almost always require 77K or lower.", "MWIR/SWIR can operate at higher temps (e.g., 150-200K or even near RT for SWIR) with acceptable performance, enabling smaller/cheaper TEC cooling."], "significance": ["Dictates cooling system requirements (LN2 dewar, Stirling cooler, TEC), impacting system size, weight, power (SWaP), and cost."] }
+       },
+       "thermal_conductivity": {
+         "displayName": "Thermal Conductivity (k)",
+         "summary": "Low (~1-5 W/mK)",
+          "details": { "notes": ["Poor thermal conductor compared to Si or metals.", "Can lead to localized heating in high power devices (lasers) or challenges in heat sinking focal plane arrays."], "measurement": ["Laser flash method or other standard techniques."], "significance": ["Impacts heat dissipation from focal plane arrays.", "Affects thermal stability and potential for thermal gradients."] }
+       },
+       "thermal_expansion": {
+         "displayName": "Thermal Expansion (CTE)",
+         "summary": "Moderate (~4.5-5.5 ppm/°C)",
+          "details": { "notes": ["Coefficient of Thermal Expansion (CTE).", "Mismatch between HgCdTe CTE and Silicon ROIC CTE (~2.6 ppm/°C) is a major challenge for large format focal plane arrays.", "Indium bump interconnects accommodate some stress, but CTE mismatch limits array size and reliability through thermal cycling."], "measurement": ["Dilatometry."], "significance": ["Critical for mechanical design and reliability of hybrid focal plane arrays (detector bonded to readout circuit)."] }
+       }
+      // ... Add specific_heat, melting_point, thermal_shock_resistance details ...
+    }
+  },
+  "mechanical_properties": {
+    "displayName": "Mechanical Properties",
+    "introduction": "HgCdTe is a relatively soft and brittle semiconductor, requiring careful handling during processing and integration.",
+    "properties": {
+       "density": { "displayName": "Density (ρ)", "summary": "High (~5.8-8.1 g/cm³)" },
+       "hardness": { "displayName": "Hardness", "summary": "Very Low (Mohs ~2-3)" },
+       "fracture_toughness": { "displayName": "Fracture Toughness (K<0xE2><0x82><0x91><0xE1><0xB5><0x9C>)", "summary": "Very Low (<0.5 MPa√m)" },
+       "youngs_modulus": { "displayName": "Young's Modulus (E)", "summary": "Low (~40-50 GPa)" }
+      // ... Add more detail if needed ...
+    }
+  }
+  // ... Add placeholders for other sections: safety, identification, growth, processing, applications, etc. ...
+}
