@@ -13,8 +13,8 @@ Unchecked items `[ ]` are missing a matching key in `material_details.json`.
 - [x] G-10/FR-4 Epoxy Glass Laminate
 - [x] Gadolinium Gallium Garnet (GGG)
 - [x] Gallium Arsenide
-- [ ] Graphene Oxide Paper
-- [ ] Graphene Polymer Composite
+- [x] Graphene Oxide Paper
+- [x] Graphene Polymer Composite
 - [ ] Hafnium Carbide Matrix Composite
 - [ ] Indium Foil
 - [x] Indium Gallium Arsenide
