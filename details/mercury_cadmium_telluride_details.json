@@ -25,89 +25,13 @@
     "displayName": "Identification & Structure",
     "introduction": "Basic identification parameters and crystallographic information for HgCdTe.",
     "properties": {
-        "cas_number": {
-            "displayName": "CAS Number",
-            "summary": "30784-21-9 (Generic)",
-            "details": {
-                "notes": ["This CAS number represents the generic HgCdTe alloy. Specific compositions might have different identifiers or no specific CAS number."]
-            }
-        },
-        "class": {
-            "displayName": "Material Class",
-            "summary": "II-VI Compound Semiconductor Alloy",
-             "details": {
-                "notes": ["Alloy formed between Mercury Telluride (HgTe, a semimetal) and Cadmium Telluride (CdTe, a semiconductor).", "Belongs to the II-VI group based on periodic table columns of constituents (Group 12: Hg, Cd; Group 16: Te)."]
-             }
-        },
-        "crystal_structure": {
-            "displayName": "Crystal Structure",
-            "summary": "Zinc Blende (FCC)",
-             "details": {
-                "notes": ["Adopts the Zinc Blende structure, typical for many III-V and II-VI semiconductors.", "Characterized by two interpenetrating Face-Centered Cubic (FCC) sublattices, one for cations (Hg/Cd mix) and one for anions (Te).", "Lack of inversion symmetry."]
-             }
-        },
-        "space_group": {
-            "displayName": "Space Group",
-            "summary": "F-43m (No. 216)",
-            "details": {
-                "key_characteristics": ["Non-centrosymmetric cubic space group associated with the Zinc Blende structure type."],
-                "measurement_characterization": {
-                    "techniques": ["X-Ray Diffraction (XRD) - Single crystal or powder diffraction."]
-                 }
-            }
-        },
-        "lattice_constant": {
-            "displayName": "Lattice Constant (a)",
-            "summary": "Approx. 6.461 - 6.481 Å (at RT, near linear with x)",
-             "details": {
-                 "key_characteristics": [
-                    "Varies nearly linearly with Cadmium mole fraction (x) according to Vegard's law.",
-                    "Lattice constant of HgTe: ~6.461 Å",
-                    "Lattice constant of CdTe: ~6.481 Å",
-                    "Small difference enables growth on lattice-matched substrates like CdZnTe."
-                  ],
-                 "equations": [
-                    {
-                      "name": "Vegard's Law Approximation",
-                      "description": "Linear interpolation for lattice constant (a) based on composition (x).",
-                      "formula_html": "a(x) ≈ a<sub>HgTe</sub>(1-x) + a<sub>CdTe</sub>x",
-                      "formula_plain": "a(x) approx a_HgTe*(1-x) + a_CdTe*x",
-                      "units": "Å",
-                      "variables": [
-                         {"symbol": "a(x)", "description": "Lattice constant of Hg<sub>1-x</sub>Cd<sub>x</sub>Te"},
-                         {"symbol": "a<sub>HgTe</sub>", "description": "Lattice constant of HgTe (~6.461 Å)"},
-                         {"symbol": "a<sub>CdTe</sub>", "description": "Lattice constant of CdTe (~6.481 Å)"},
-                         {"symbol": "x", "description": "Cd mole fraction"}
-                      ],
-                      "ref": null
-                    }
-                  ],
-                  "measurement_characterization": {
-                    "techniques": ["High-Resolution X-Ray Diffraction (HRXRD)"],
-                    "considerations": ["Precise measurement allows determination of alloy composition (x)."]
-                  },
-                  "device_relevance": ["Crucial for selecting lattice-matched substrates (e.g., CdZnTe) to minimize misfit dislocations during epitaxial growth.", "Strain engineering in lattice-mismatched growth influences band structure."]
-             }
-        },
-        "phase_diagram_notes": {
-            "displayName": "Phase Diagram Notes",
-            "summary": "Pseudo-binary; Narrow liquidus-solidus gap; Requires Hg overpressure",
-             "details": {
-                "key_characteristics": [
-                    "The HgTe-CdTe system forms a pseudo-binary phase diagram with complete solid solubility.",
-                    "Features a narrow separation between the liquidus and solidus lines, complicating uniform bulk crystal growth (susceptible to segregation).",
-                    "High vapor pressure of Hg necessitates growth and high-temperature annealing under controlled Hg partial pressure to prevent decomposition and control V<sub>Hg</sub> concentration."
-                 ],
-                 "significance": ["Influences choice of crystal growth techniques (Epitaxy generally preferred over bulk for uniformity).", "Dictates critical process control requirements (temperature, pressure)."]
-             }
-        },
-        "appearance": {
-            "displayName": "Appearance",
-            "summary": "Dark gray / black solid with metallic luster",
-            "details": {
-                "notes": ["Appearance can vary slightly depending on surface preparation (polished vs as-grown) and composition.", "Thin films on transparent substrates can show interference colors."]
-            }
-        }
+        "cas_number": { "displayName": "CAS Number", "summary": "30784-21-9 (Generic)" },
+        "class": { "displayName": "Material Class", "summary": "II-VI Compound Semiconductor Alloy" },
+        "crystal_structure": { "displayName": "Crystal Structure", "summary": "Zinc Blende (FCC)" },
+        "space_group": { "displayName": "Space Group", "summary": "F-43m (No. 216)" },
+        "lattice_constant": { "displayName": "Lattice Constant (a)", "summary": "Approx. 6.461 - 6.481 Å (at RT, near linear with x)" },
+        "phase_diagram_notes": { "displayName": "Phase Diagram Notes", "summary": "Pseudo-binary; Narrow liquidus-solidus gap; Requires Hg overpressure" },
+        "appearance": { "displayName": "Appearance", "summary": "Dark gray / black solid with metallic luster" }
     }
   },
   "electrical_properties": {
@@ -118,44 +42,22 @@
         "displayName": "Bandgap Type",
         "summary": "Direct, Tunable",
         "details": {
-          "key_characteristics": [
-             "Direct gap enables efficient absorption/emission near E_g.",
-             "Tunability via Cd mole fraction (x) allows targeting specific IR bands (SWIR/MWIR/LWIR)."
-          ],
-          "device_relevance": [
-            "Facilitates high quantum efficiency.",
-            "Enables broad spectral range coverage with a single material system."
-          ]
+          "key_characteristics": ["Direct gap enables efficient absorption/emission near E_g.", "Tunability via Cd mole fraction (x) allows targeting specific IR bands (SWIR/MWIR/LWIR)."],
+          "device_relevance": ["Facilitates high quantum efficiency.", "Enables broad spectral range coverage with a single material system."]
         }
       },
       "band_gap": {
         "displayName": "Bandgap (E_g)",
         "summary": "Tunable (0 - 1.5 eV via x)",
         "details": {
-          "key_characteristics": [
-            "Determines absorption cutoff wavelength (λ<sub>c</sub>) and intrinsic carrier concentration (n<sub>i</sub>).",
-            "Strong temperature dependence: Narrows significantly as temperature increases.",
-            "Composition (x) dependence is primary tuning mechanism (See Equations)."
-          ],
-          "measurement_characterization": {
-             "techniques": [
-                 "FTIR Spectroscopy: Determines absorption edge (λ<sub>c</sub>, often 50% transmission point).",
-                 "Photoluminescence (PL): Peak emission energy relates directly to E_g; useful for non-contact composition mapping."
-              ],
-             "considerations": [
-                "Accurate temperature control during measurement is essential due to strong E_g(T) dependence."
-              ]
-          },
-          "device_relevance": [
-            "Defines detector spectral response range.",
-            "Governs intrinsic carrier concentration (n<sub>i</sub>), impacting dark current.",
-            "Primary parameter verified after growth to confirm composition."
-          ]
+          "key_characteristics": ["Determines absorption cutoff wavelength (λ<sub>c</sub>) and intrinsic carrier concentration (n<sub>i</sub>).", "Strong temperature dependence: Narrows significantly as temperature increases.", "Composition (x) dependence is primary tuning mechanism (See Equations)."],
+          "measurement_characterization": { "techniques": ["FTIR Spectroscopy (Absorption edge)", "Photoluminescence (PL) Spectroscopy (Peak energy)"], "considerations": ["Accurate temperature control during measurement is essential due to strong E_g(T) dependence."] },
+          "device_relevance": ["Defines spectral operating range.", "Governs intrinsic carrier concentration (n<sub>i</sub>), impacting dark current.", "Primary parameter verified after growth to confirm composition."]
         }
       },
        "bandgap_equation": {
-         "displayName": "Bandgap Equations",
-         "summary": "Empirical relations for E_g(x,T) and λ_c(x,T)",
+         "displayName": "Bandgap Equation",
+         "summary": "Empirical relation for E_g(x,T)",
          "details": {
            "equations": [
             {
@@ -164,150 +66,53 @@
               "formula_html": "E<sub>g</sub>(x, T) = -0.302 + 1.93x + 5.35 × 10<sup>-4</sup> T (1 - 2x) - 0.810x<sup>2</sup> + 0.832x<sup>3</sup>",
               "formula_plain": "Eg(x,T) = -0.302 + 1.93*x + 5.35e-4*T*(1 - 2*x) - 0.810*x^2 + 0.832*x^3",
               "units": "eV",
-              "variables": [
-                  {"symbol": "E<sub>g</sub>", "description": "Bandgap Energy"},
-                  {"symbol": "x", "description": "Cd mole fraction (0-1)"},
-                  {"symbol": "T", "description": "Temperature (K)"}
-              ],
-              "ref": "Hansen_1982"
-            },
-            {
-              "name": "Cutoff Wavelength from E_g(x,T)",
-              "description": "Calculates cutoff wavelength (μm) directly from the Hansen relation. Accurate determination of x and T is crucial.",
-              "formula_html": "λ<sub>c</sub>(x, T) ≈ 1.2398 / E<sub>g</sub>(x, T) <br>= 1.2398 / [-0.302 + 1.93x + 5.35 × 10<sup>-4</sup> T (1 - 2x) - 0.810x<sup>2</sup> + 0.832x<sup>3</sup>]",
-              "formula_plain": "λc(x,T) (μm) ≈ 1.24 / (-0.302 + 1.93*x + 5.35e-4*T*(1-2*x) - 0.810*x^2 + 0.832*x^3)",
-              "units": "μm",
-               "variables": [
-                  {"symbol": "λ<sub>c</sub>", "description": "Cutoff Wavelength"},
-                  {"symbol": "E<sub>g</sub>(x, T)", "description": "Bandgap Energy (eV, from Hansen Eq.)"},
-                  {"symbol": "x", "description": "Cd mole fraction (0-1)"},
-                  {"symbol": "T", "description": "Temperature (K)"}
-              ],
+              "variables": [ {"symbol": "E<sub>g</sub>", "description": "Bandgap Energy"}, {"symbol": "x", "description": "Cd mole fraction (0-1)"}, {"symbol": "T", "description": "Temperature (K)"} ],
               "ref": "Hansen_1982"
             }
+            // --- Cutoff Wavelength Equation MOVED to Optical Properties ---
            ],
-           "significance": ["Allows prediction of spectral response based on material composition and operating temperature."]
+           "significance": ["Allows calculation of E_g for device modeling and prediction of optical properties."]
          }
        },
       "common_dopants": {
          "displayName": "Common Dopants",
          "summary": "n-type: In, I; p-type: As, Au, V<sub>Hg</sub>",
          "details": {
-           "doping_methods": [
-              "In-situ during epitaxy (MBE, MOCVD) preferred for abrupt profiles.",
-              "Ion Implantation followed by activation anneal.",
-              "Native V<sub>Hg</sub> acceptors controlled via stoichiometry anneal (Hg overpressure, T, time)."
-            ],
-           "key_characteristics": [
-            "n-type: Group III (In) on cation site, Group VII (I) on anion site.",
-            "p-type: Group V (As) on anion site, Group IB (Au) on cation site, Hg Vacancies (V<sub>Hg</sub>).",
-            "V<sub>Hg</sub> concentration highly sensitive to annealing conditions.",
-            "Typical active levels: 10¹⁴ - 10¹⁶ cm⁻³."
-           ],
-           "device_relevance": ["Enables p-n junction formation.", "Controls conductivity and carrier type.", "Impacts lifetime & dark current."]
+           "doping_methods": ["In-situ during epitaxy (MBE, MOCVD) preferred.", "Ion Implantation + activation anneal.", "Native V<sub>Hg</sub> acceptors controlled via stoichiometry anneal."],
+           "key_characteristics": ["n: Group III (In) or VII (I).", "p: Group V (As), IB (Au), or Hg Vacancies (V<sub>Hg</sub>).", "V<sub>Hg</sub> control via anneal (Hg overpressure, T, time) is crucial.", "Typical active levels: 10¹⁴ - 10¹⁶ cm⁻³."],
+           "device_relevance": ["Enables p-n junctions.", "Controls conductivity type/level.", "Impacts lifetime & dark current."]
          }
        },
       "carrier_concentration": {
         "displayName": "Carrier Concentration (n, p, n_i)",
         "summary": "Low n_i at 77K; Extrinsic control via doping (10¹⁴-10¹⁶ cm⁻³ typical)",
         "details": {
-          "key_characteristics": [
-            "Intrinsic concentration (n<sub>i</sub>) is highly sensitive to E<sub>g</sub> & T (See Equations). Requires cryo-cooling for LWIR.",
-            "Extrinsic concentration set by net active dopant density (N<sub>D</sub> - N<sub>A</sub> or N<sub>A</sub> - N<sub>D</sub>)."
-          ],
+          "key_characteristics": ["Intrinsic n<sub>i</sub> highly sensitive to E<sub>g</sub> & T. Requires cryo-cooling for LWIR.", "Extrinsic concentration set by net active dopant density."],
           "equations": [
-             {
-              "name": "Intrinsic Carrier Conc. (n_i) Empirical Relation",
-              "description": "Approximate fit for n<sub>i</sub> (cm⁻³) vs. composition (x) and temperature (T [K]).",
-              "formula_html": "n<sub>i</sub>(x,T) ≈ (5.585 - 3.82x + 1.753 × 10<sup>-3</sup>T - 1.364 × 10<sup>-3</sup>xT) × 10<sup>14</sup> × E<sub>g</sub><sup>0.75</sup> T^{1.5} exp(-E<sub>g</sub> / 2kT)",
-              "formula_plain": "ni(x,T) ≈ (5.585 - 3.82*x + 1.753e-3*T - 1.364e-3*x*T) * 1e14 * Eg^0.75 * T^1.5 * exp(-Eg / (2*k*T))",
-              "units": "cm⁻³",
-              "variables": [
-                  {"symbol": "n<sub>i</sub>", "description": "Intrinsic carrier concentration"},
-                  {"symbol": "E<sub>g</sub>", "description": "Bandgap Energy (eV, use Hansen Eq.)"},
-                  {"symbol": "x", "description": "Cd mole fraction (0-1)"},
-                  {"symbol": "T", "description": "Temperature (K)"},
-                  {"symbol": "k", "description": "Boltzmann constant (8.617e-5 eV/K)"}
-              ],
-               "ref": "Rogalski_IR"
-            },
-             {
-              "name": "Carrier Conc. from Hall Coefficient (Single Carrier)",
-              "description": "Relates measured Hall coefficient (R<sub>H</sub>) to concentration for dominant carrier type.",
-              "formula_html": "n = -r<sub>H</sub> / (q R<sub>H</sub>)   or   p = r<sub>H</sub> / (q R<sub>H</sub>)",
-              "formula_plain": "n = -r_H / (q * R_H)   OR   p = r_H / (q * R_H)",
-              "units": "cm⁻³",
-              "variables": [
-                  {"symbol": "n, p", "description": "Electron/Hole concentration"},
-                  {"symbol": "R<sub>H</sub>", "description": "Hall coefficient (cm³/C)"},
-                  {"symbol": "q", "description": "Elementary charge (1.602e-19 C)"},
-                  {"symbol": "r<sub>H</sub>", "description": "Hall scattering factor (≈ 1)"}
-              ],
-              "ref": "Schroder_Semicon"
-            }
+             { "name": "Intrinsic Carrier Conc. (n_i) Empirical Relation", "description": "Approximate fit for n<sub>i</sub> (cm⁻³) vs. x and T [K].", "formula_html": "n<sub>i</sub>(x,T) ≈ (5.585 - 3.82x + 1.753 × 10<sup>-3</sup>T - 1.364 × 10<sup>-3</sup>xT) × 10<sup>14</sup> × E<sub>g</sub><sup>0.75</sup> T<sup>1.5</sup> exp(-E<sub>g</sub> / 2kT)", "formula_plain": "ni(x,T) approx (5.585 - ...) * 1e14 * Eg^0.75 * T^1.5 * exp(-Eg / (2*k*T))", "units": "cm⁻³", "variables": [ {"symbol": "n<sub>i</sub>", "description": "Intrinsic concentration"}, {"symbol": "E<sub>g</sub>", "description": "Bandgap (eV)"}, {"symbol": "x", "description": "Cd fraction"}, {"symbol": "T", "description": "Temp (K)"}, {"symbol": "k", "description": "Boltzmann const."} ], "ref": "Rogalski_IR" },
+             { "name": "Carrier Conc. from Hall (Single Carrier)", "description": "Relates Hall coefficient (R<sub>H</sub>) to concentration.", "formula_html": "n = -r<sub>H</sub> / (q R<sub>H</sub>)   or   p = r<sub>H</sub> / (q R<sub>H</sub>)", "formula_plain": "n = -r_H / (q R_H) OR p = r_H / (q R_H)", "units": "cm⁻³", "variables": [ {"symbol": "n, p", "description": "Electron/Hole concentration"}, {"symbol": "R<sub>H</sub>", "description": "Hall coefficient (cm³/C)"}, {"symbol": "q", "description": "Elem. charge"}, {"symbol": "r<sub>H</sub>", "description": "Hall factor (≈ 1)"} ], "ref": "Schroder_Semicon" }
           ],
-          "measurement_characterization": {
-             "techniques": ["Hall Effect (Van der Pauw)", "C-V Profiling (Schottky/MIS)", "ECV Profiling"],
-             "considerations": [
-                "Hall provides bulk average & type; Requires low T for n<sub>i</sub>.",
-                "C-V profiles near surface/junction.",
-                "ECV is destructive but provides depth profile.",
-                "Mixed conduction requires careful analysis."
-              ]
-          },
-          "device_relevance": [
-            "Major factor in dark current levels.",
-            "Determines junction depletion width & capacitance.",
-            "Influences resistivity, free carrier absorption, lifetime."
-          ]
+          "measurement_characterization": { "techniques": ["Hall Effect (Van der Pauw)", "C-V Profiling", "ECV"], "considerations": ["Hall: Bulk average, needs low T for n<sub>i</sub>.", "C-V: Near surface.", "ECV: Destructive profile.", "Mixed conduction needs care."] },
+          "device_relevance": ["Major factor in dark current.", "Defines junction characteristics.", "Influences ρ, free carrier absorption, τ."]
         }
       },
       "electron_mobility": {
         "displayName": "Electron Mobility (μ<sub>e</sub>)",
         "summary": "High (>10⁴ cm²/Vs @ 77K); Sensitive to T, x, Doping, Defects",
         "details": {
-          "key_characteristics": [
-            "Governs electron drift velocity.",
-            "Limited by: Polar optical phonons (dominant high T), Ionized impurities (dominant low T, high doping), Alloy scattering (depends on x), Defect scattering.",
-            "Decreases with increasing T, doping (N<sub>A</sub>, N<sub>D</sub>), and usually x.",
-            "Small effective mass m*<sub>e</sub>(x) contributes to high mobility."
-          ],
-           "equations": [
-             {
-              "name": "Mobility from Hall Measurement",
-              "description": "Calculates Hall mobility (μ<sub>H</sub> = r<sub>H</sub>μ<sub>drift</sub>) from R<sub>H</sub> and resistivity (ρ).",
-              "formula_html": "μ<sub>H</sub> = |R<sub>H</sub>| / ρ",
-              "formula_plain": "μ_H = |R_H| / ρ",
-              "units": "cm²/Vs",
-              "variables": [
-                  {"symbol": "μ<sub>H</sub>", "description": "Hall mobility"},
-                  {"symbol": "R<sub>H</sub>", "description": "Hall coefficient (cm³/C)"},
-                  {"symbol": "ρ", "description": "Resistivity (Ω·cm)"}
-              ],
-              "ref": "Schroder_Semicon"
-             }
-           ],
-          "measurement_characterization": {
-             "techniques": ["Hall Effect Measurement"],
-             "considerations": ["Low temperature (77K) standard for comparison.", "Sample geometry (Van der Pauw vs Hall bar) matters."]
-          },
-          "device_relevance": [
-            "Impacts device speed/frequency response.",
-            "Influences diffusion length (L<sub>e</sub> ∝ √μ<sub>e</sub>τ<sub>e</sub>) → Collection efficiency.",
-            "Affects diffusion dark current magnitude."
-          ]
+          "key_characteristics": ["Governs electron drift velocity.", "Limited by: Polar optical phonons (high T), Ionized impurities (low T, high doping), Alloy scattering (depends on x), Defect scattering.", "Decreases with increasing T, doping, and usually x.", "Small effective mass m*<sub>e</sub>(x) contributes to high mobility."],
+           "equations": [ { "name": "Mobility from Hall Measurement", "description": "Calculates Hall mobility (μ<sub>H</sub> = r<sub>H</sub>μ<sub>drift</sub>) from R<sub>H</sub> and resistivity (ρ).", "formula_html": "μ<sub>H</sub> = |R<sub>H</sub>| / ρ", "units": "cm²/Vs", "variables": [ {"symbol": "μ<sub>H</sub>", "description": "Hall mobility"}, {"symbol": "R<sub>H</sub>", "description": "Hall coefficient (cm³/C)"}, {"symbol": "ρ", "description": "Resistivity (Ω·cm)"} ], "ref": "Schroder_Semicon" } ],
+          "measurement_characterization": { "techniques": ["Hall Effect Measurement"], "considerations": ["Low temp (77K) standard.", "Geometry matters."] },
+          "device_relevance": ["Impacts device speed.", "Influences diffusion length (L<sub>e</sub> ∝ √μ<sub>e</sub>τ<sub>e</sub>) → Collection efficiency.", "Affects diffusion dark current."]
         }
       },
       "hole_mobility": {
         "displayName": "Hole Mobility (μ<sub>h</sub>)",
         "summary": "Low (100-600 cm²/Vs @ 77K)",
          "details": {
-          "key_characteristics": ["Significantly lower than μ<sub>e</sub> due to larger hole effective mass (m*<sub>h</sub>)."],
-          "measurement_characterization": {
-            "techniques": ["Hall Effect Measurement"],
-            "considerations": ["Requires careful analysis, especially in p-type or mixed conduction."]
-          },
-          "device_relevance": ["Affects minority carrier diffusion length (L<sub>h</sub>).", "Influences bipolar transport (less critical for typical photodiode operation)."]
+          "key_characteristics": ["Lower than μ<sub>e</sub> due to larger hole effective mass (m*<sub>h</sub>)."],
+          "measurement_characterization": { "techniques": ["Hall Effect"], "considerations": ["Requires careful analysis."] },
+          "device_relevance": ["Affects minority carrier diffusion length (L<sub>h</sub>).", "Influences bipolar transport."]
          }
       },
        "dielectric_constant": {
@@ -315,73 +120,125 @@
         "summary": "High (~15-20); Static relative permittivity",
         "details": {
           "key_characteristics": ["Slight composition (x) and temperature dependence."],
-          "measurement_characterization": {
-            "techniques": ["C-V measurements on MIS structures."]
-          },
-          "device_relevance": ["Determines junction capacitance.", "Needed for device modeling (RC time constant, electric field calculations)."]
+          "measurement_characterization": { "techniques": ["C-V measurements on MIS structures."] },
+          "device_relevance": ["Determines junction capacitance.", "Needed for device modeling (RC time constant, fields)."]
          }
       },
        "resistivity": {
         "displayName": "Resistivity (ρ)",
         "summary": "Highly Variable; ρ = 1 / (q(nμ<sub>e</sub> + pμ<sub>h</sub>))",
         "details": {
-           "key_characteristics": ["Strongly dependent on doping, temperature, and composition (via n<sub>i</sub> and mobilities)."],
-           "equations": [
-             {
-                "name": "Resistivity Definition",
-                "description": "Fundamental relation between resistivity, concentrations, and mobilities.",
-                "formula_html": "ρ = 1 / σ = 1 / (q (n μ<sub>e</sub> + p μ<sub>h</sub>))",
-                "formula_plain": "ρ = 1 / σ = 1 / (q * (n*μe + p*μh))",
-                "units": "Ω·cm",
-                "variables": [
-                    {"symbol": "ρ", "description": "Resistivity"},
-                    {"symbol": "σ", "description": "Conductivity (S/cm)"},
-                    {"symbol": "q", "description": "Elementary charge"},
-                    {"symbol": "n, p", "description": "Electron/Hole concentration"},
-                    {"symbol": "μ<sub>e</sub>, μ<sub>h</sub>", "description": "Electron/Hole drift mobility"}
-                 ],
-                "ref": "Schroder_Semicon"
-             }
-           ],
-          "measurement_characterization": {
-             "techniques": ["Four-Point Probe", "Spreading Resistance Profiling (SRP)", "Calculated from Hall data."],
-             "considerations": ["Contact resistance can affect 2-point measurements."]
-          },
-          "device_relevance": ["Impacts device series resistance.", "Indicator of doping levels/uniformity."]
+           "key_characteristics": ["Strongly dependent on doping, T, x (via n<sub>i</sub>, μ)."],
+           "equations": [ { "name": "Resistivity Definition", "description": "Fundamental relation.", "formula_html": "ρ = 1 / σ = 1 / (q (n μ<sub>e</sub> + p μ<sub>h</sub>))", "units": "Ω·cm", "variables": [ {"symbol": "ρ", "description": "Resistivity"}, {"symbol": "σ", "description": "Conductivity"}, {"symbol": "q", "description": "Charge"}, {"symbol": "n, p", "description": "Concentrations"}, {"symbol": "μ<sub>e,h</sub>", "description": "Mobilities"} ], "ref": "Schroder_Semicon" } ],
+          "measurement_characterization": { "techniques": ["Four-Point Probe", "SRP", "From Hall data."], "considerations": ["Contacts affect 2-point method."] },
+          "device_relevance": ["Impacts device series resistance.", "Indicator of doping/uniformity."]
          }
       },
       "breakdown_field": {
         "displayName": "Breakdown Field (E_br)",
         "summary": "Low (~10³-10⁴ V/cm); Limits reverse bias",
         "details": {
-          "key_characteristics": [
-            "Field initiating significant avalanche or tunneling current.",
-            "Lower in narrow-gap (low x) HgCdTe.",
-            "Mechanisms: Avalanche multiplication, Band-to-Band Tunneling (BTBT), Trap-Assisted Tunneling (TAT)."
-          ],
-          "measurement_characterization": {
-            "techniques": ["Reverse bias I-V curve analysis on diode structures."]
-           },
-          "device_relevance": [
-             "Sets maximum reverse bias voltage.",
-             "Critical for APD gain limits.",
-             "Dominant tunneling currents limit performance in narrow-gap devices at low T / high bias."
-          ]
+          "key_characteristics": ["Field initiating avalanche or tunneling.", "Lower in narrow-gap (low x) HgCdTe.", "Mechanisms: Avalanche, BTBT, TAT."],
+          "measurement_characterization": { "techniques": ["Reverse bias I-V curve analysis."] },
+          "device_relevance": [ "Sets max reverse bias.", "Critical for APD gain limits.", "Tunneling often limits performance before avalanche."]
          }
       }
     }
   },
   "optical_properties": {
     "displayName": "Optical Properties",
-    "introduction": "Optical characteristics define how HgCdTe interacts with light, enabling its use as an infrared detector.",
+    "introduction": "Optical characteristics define how HgCdTe interacts with light, enabling its use as an infrared detector. Key properties include spectral range, absorption, and refractive index.",
     "properties": {
-      "spectral_range": { "displayName": "Spectral Range", "summary": "SWIR, MWIR, LWIR (0.8 to >30 μm)" },
-      "cutoff_wavelength": { "displayName": "Cutoff Wavelength (λ<sub>c</sub>)", "summary": "Tunable (0.8 to >30 μm)" },
-      "refractive_index": { "displayName": "Refractive Index (n)", "summary": "High (~3.4-4.0)" },
-      "absorption_coefficient": { "displayName": "Absorption Coefficient (α)", "summary": "High (>10⁴ cm⁻¹ near band edge)" },
-      "quantum_efficiency": { "displayName": "Quantum Efficiency (QE or η)", "summary": "High (>70-80% achievable)" },
-      "responsivity": { "displayName": "Responsivity (R)", "summary": "High (~1-10 A/W @ 77K)" },
-      "noise_equivalent_power": { "displayName": "Noise Equivalent Power (NEP)", "summary": "Low (~10⁻¹¹ - 10⁻¹³ W/√Hz cooled)" }
+      "spectral_range": {
+        "displayName": "Spectral Range",
+        "summary": "SWIR, MWIR, LWIR (0.8 to >30 μm)",
+         "details": {
+           "key_characteristics": ["Operation range defined by tunable bandgap E_g(x).", "SWIR: x ~ 0.5-0.7", "MWIR: x ~ 0.25-0.4", "LWIR: x ~ 0.18-0.22", "VLWIR: x < 0.18"],
+           "device_relevance": ["Determines application space (thermal imaging, gas sensing, astronomy).", "Requires precise composition control for targeted wavelength."]
+         }
+      },
+      "cutoff_wavelength": {
+          "displayName": "Cutoff Wavelength (λ<sub>c</sub>)",
+          "summary": "Tunable (0.8 to >30 μm)",
+           "details": {
+             "key_characteristics": ["Wavelength where photon energy equals bandgap (E_g), defining the long-wavelength absorption edge.", "Primary specification parameter for IR detector material."],
+             "equations": [
+                {
+                  "name": "Cutoff Wavelength from E_g(x,T)",
+                  "description": "Calculates cutoff wavelength (μm) by substituting the Hansen E_g(x,T) relation into λ<sub>c</sub> ≈ 1.24 / E_g. Accurate determination of x and T is crucial.",
+                  "formula_html": "λ<sub>c</sub>(x, T) ≈ 1.2398 / E<sub>g</sub>(x, T) <br>= 1.2398 / [-0.302 + 1.93x + 5.35 × 10<sup>-4</sup> T (1 - 2x) - 0.810x<sup>2</sup> + 0.832x<sup>3</sup>]",
+                  "formula_plain": "λc(x,T) (μm) ≈ 1.24 / (-0.302 + 1.93*x + 5.35e-4*T*(1-2*x) - 0.810*x^2 + 0.832*x^3)",
+                  "units": "μm",
+                   "variables": [
+                      {"symbol": "λ<sub>c</sub>", "description": "Cutoff Wavelength"},
+                      {"symbol": "E<sub>g</sub>(x, T)", "description": "Bandgap Energy (eV, from Hansen Eq.)"},
+                      {"symbol": "x", "description": "Cd mole fraction (0-1)"},
+                      {"symbol": "T", "description": "Temperature (K)"}
+                  ],
+                  "ref": "Hansen_1982"
+                }
+             ],
+             "measurement_characterization": {
+                 "techniques": ["FTIR Transmission Spectroscopy"],
+                 "considerations": ["Typically defined as wavelength where transmission drops to 50% of maximum.", "Measurement temperature must match operating temperature due to E_g(T)."]
+             },
+             "device_relevance": ["Directly sets the long-wavelength limit of detector sensitivity."]
+           }
+      },
+      "refractive_index": {
+          "displayName": "Refractive Index (n)",
+          "summary": "High (~3.4-4.0)",
+           "details": {
+             "key_characteristics": ["High refractive index leads to significant Fresnel reflection (~30%) at air interface.", "Exhibits dispersion (varies with wavelength).", "Slight dependence on composition (x) and temperature."],
+             "measurement_characterization": { "techniques": ["Ellipsometry", "FTIR Reflectance/Transmission analysis."] },
+             "device_relevance": ["Requires Anti-Reflection (AR) coatings for efficient light coupling into detector.", "Important for optical modeling (interference effects, waveguide design)."]
+           }
+      },
+      "absorption_coefficient": {
+          "displayName": "Absorption Coefficient (α)",
+          "summary": "High (>10⁴ cm⁻¹ near band edge)",
+           "details": {
+             "key_characteristics": ["Strong absorption above the bandgap energy (E > E_g) due to direct bandgap.", "α increases sharply with photon energy.", "Allows high photon absorption efficiency in thin layers (few μm)."],
+             "measurement_characterization": { "techniques": ["Calculated from Transmission/Reflectance spectra."] },
+             "device_relevance": ["Determines the required detector active layer thickness.", "High α enables high internal quantum efficiency."]
+           }
+      },
+      "quantum_efficiency": {
+          "displayName": "Quantum Efficiency (QE or η)",
+          "summary": "High (>70-80% achievable with AR coating)",
+           "details": {
+             "key_characteristics": ["Ratio of collected charge carriers to incident photons.", "Internal QE (IQE) can be very high (>90%) due to efficient absorption and collection.", "External QE (EQE) is limited by reflection loss and IQE.", "Affected by surface recombination and bulk carrier lifetime/diffusion length."],
+             "equations": [
+                {"name": "QE from Responsivity", "description": "Relates QE to measured spectral responsivity R(λ).", "formula_html": "η(λ) = R(λ) \\frac{hc}{qλ}", "formula_plain": "QE(λ) = R(λ) * hc / (q*λ)", "units": "Dimensionless or %", "variables": [{"symbol":"η", "description":"Quantum Efficiency"}, {"symbol":"R(λ)", "description":"Responsivity (A/W)"}, {"symbol":"h, c, q", "description":"Constants"}, {"symbol":"λ", "description":"Wavelength"}], "ref": null}
+             ],
+             "measurement_characterization": { "techniques": ["Spectral response measurement using calibrated sources and reference detectors."] },
+             "device_relevance": ["Fundamental measure of detector sensitivity.", "Maximizing QE requires AR coatings and good material quality (long lifetime, low surface recombination)."]
+           }
+      },
+      "responsivity": {
+          "displayName": "Responsivity (R)",
+          "summary": "High (~1-10 A/W @ 77K)",
+           "details": {
+             "key_characteristics": ["Ratio of output photocurrent (I<sub>ph</sub>) to incident optical power (P<sub>inc</sub>).", "Directly proportional to QE and wavelength."],
+             "equations": [
+                 {"name": "Responsivity from QE", "description": "Relates Responsivity to Quantum Efficiency.", "formula_html": "R(λ) = η(λ) \\frac{qλ}{hc}", "formula_plain": "R(λ) = QE(λ) * q*λ / (hc)", "units": "A/W", "variables": [{"symbol":"R(λ)", "description":"Responsivity"}, {"symbol":"η(λ)", "description":"Quantum Efficiency"}, {"symbol":"q, h, c", "description":"Constants"}, {"symbol":"λ", "description":"Wavelength"}], "ref": null}
+             ],
+             "measurement_characterization": { "techniques": ["Direct measurement using calibrated optical source (blackbody or monochromatic) and power meter."] },
+             "device_relevance": ["Determines the electrical signal generated for a given optical input power."]
+           }
+      },
+      "noise_equivalent_power": {
+          "displayName": "Noise Equivalent Power (NEP)",
+          "summary": "Low (~10⁻¹¹ - 10⁻¹³ W/√Hz cooled)",
+           "details": {
+             "key_characteristics": ["Incident optical power producing Signal-to-Noise Ratio (SNR) = 1 in 1 Hz bandwidth.", "Lower NEP signifies better sensitivity.", "Limited by detector noise sources."],
+             "equations": [
+                 {"name": "NEP Definition", "description": "Relates NEP to total noise current spectral density (i<sub>n</sub>) and responsivity (R).", "formula_html": "NEP = i<sub>n</sub> / R", "formula_plain": "NEP = i_n / R", "units": "W/√Hz", "variables": [{"symbol":"NEP", "description":"Noise Equivalent Power"}, {"symbol":"i<sub>n</sub>", "description":"Noise current spectral density (A/√Hz)"}, {"symbol":"R", "description":"Responsivity (A/W)"}], "ref": null}
+             ],
+             "measurement_characterization": { "techniques": ["Measure noise current spectrum (using spectrum analyzer) and responsivity."] },
+             "device_relevance": ["Fundamental metric defining the minimum detectable power.", "Closely related to Specific Detectivity (D* = √(Area * Bandwidth) / NEP)."]
+           }
+      }
     }
   },
   "thermal_properties": {
