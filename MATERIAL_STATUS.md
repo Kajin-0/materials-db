@@ -44,7 +44,7 @@ Unchecked items `[ ]` are missing a matching key in `material_details.json`.
 - [x] Vacuum Multilayer Insulation (MLI)
 - [x] Yttria-Stabilized Zirconia (YSZ)
 - [x] ZBLAN Fluoride Glass
-- [ ] Zirconia Toughened Alumina (ZTA)
+- [x] Zirconia Toughened Alumina (ZTA)
 - [x] Zirconium Diboride (ZrB₂)
 
 ---
