@@ -2990,5 +2990,112 @@
       "high density", "non-hygroscopic", "single crystal", "lead", "toxic",
       "industry:physics", "industry:research"
     ]
+  },
+  "Maraging Steel": {
+    "name": "Maraging Steel",
+    "formula": "Fe-Ni-Co-Mo-Ti Alloy",
+    "synonyms": [ "Maraging", "Vascomax", "C200", "C250", "C300", "C350" ],
+    "category": "Alloy",
+    "constituent_elements": ["Fe", "Ni", "Co", "Mo", "Ti", "Al"],
+    "description": "A class of ultra-high-strength steels known for their exceptional strength, toughness, and dimensional stability during aging (hardening). Unlike conventional steels hardened by carbon, maraging steels have very low carbon content and achieve their properties through the precipitation of intermetallic compounds (e.g., Ni₃Ti, Ni₃Mo) in a soft iron-nickel martensite matrix during heat treatment (aging). Widely used in aerospace, tooling, and high-performance structural applications.",
+    "wiki_link": "https://en.wikipedia.org/wiki/Maraging_steel",
+    "safety": {
+      "toxicity": "Low in solid form. Machining dust may contain Nickel and Cobalt, requiring appropriate ventilation and potentially respiratory protection depending on exposure levels.",
+      "handling": "Standard steel handling procedures. Parts can be heavy."
+    },
+    "identification": {
+      "cas_number": "N/A (Alloy class)",
+      "class": "Ultra-High Strength Steel (Low Carbon, Precipitation Hardening)",
+      "crystal_structure": "Matrix: Body-Centered Cubic (BCC) Martensite (soft). Precipitates: Various intermetallics (e.g., Ni₃(Ti,Mo), Fe₂Mo).",
+      "material_standard": {"notes": "Often designated by nominal yield strength in ksi (e.g., C250, C300, C350). AMS, MIL specifications exist."},
+      "phase_diagram_notes": "Complex Fe-Ni based multi-component system. Properties achieved via solution annealing followed by aging (maraging) treatment."
+    },
+    "advanced_fabrication_insights": {
+        "process_control": "Typically produced via Vacuum Induction Melting (VIM) followed by Vacuum Arc Remelting (VAR) or Electroslag Remelting (ESR) for high purity and homogeneity.",
+        "heat_treatment": "CRITICAL: 1. Solution Annealing (~820°C) to form austenite and dissolve alloying elements. 2. Air cool to form soft BCC martensite. 3. Aging/Maraging (~480-500°C for ~3-6 hours) to precipitate hardening phases. Minimal distortion during aging.",
+        "common_defects_impact": "Inclusions, segregation can reduce toughness and fatigue life. Improper heat treatment results in suboptimal strength/toughness.",
+        "weldability": "Good weldability in the annealed condition using matching filler metals. Requires post-weld heat treatment (solution anneal + age).",
+        "machinability": "Easily machined in the soft annealed condition. Becomes much harder after aging, requiring slower speeds and appropriate tooling."
+    },
+    "growth_fabrication_properties": {
+        "common_growth_methods": "VIM/VAR/ESR melting and casting, followed by forging, rolling, or extrusion.",
+        "source_materials_purity": "High purity iron, nickel, cobalt, molybdenum, titanium, aluminum.",
+        "preferred_substrates_orientations": "N/A (Bulk alloy).",
+        "typical_growth_parameters": "Controlled melting/remelting practices and hot/cold working procedures.",
+        "passivation_methods": "Generally requires protective coating (e.g., cadmium plating, paint) for corrosion protection, although has better atmospheric corrosion resistance than low alloy steels."
+    },
+    "post_growth_processing": {
+        "annealing": "Solution annealing is the first step of heat treatment. Aging is the final hardening step.",
+        "lapping_polishing": "Standard metallographic preparation or finishing for specific components.",
+        "etching": "Can be etched using standard steel etchants (e.g., Nital, Picral) for metallography.",
+        "grinding_milling": "Best done in annealed condition. Finish grinding possible after aging with care."
+    },
+     "device_integration_characterization": {
+        "device_architectures": "Aerospace structural components (landing gear, engine shafts, rocket motor casings), high-strength fasteners, tooling (injection molds, die casting dies), sporting equipment (golf club faces, fencing blades).",
+        "readout_integration": "N/A",
+        "ar_coatings": "N/A",
+        "packaging_cooling": "Generally operated near ambient temperature, though retains strength well up to ~350-400°C.",
+        "key_characterization_techniques": ["Tensile Testing (Yield Strength, UTS, Elongation)", "Hardness Testing (Rockwell C)", "Fracture Toughness Testing (K<small>IC</small>)", "Charpy Impact Testing", "Fatigue Testing", "Stress Corrosion Cracking Susceptibility Testing", "Metallography (microstructure)"]
+    },
+    "electrical_properties": {
+      "bandgap_type": "N/A (Metal)",
+      "band_gap": {"value": "0", "unit": "eV"},
+      "resistivity": {"value": "~45-60", "unit": "µΩ·cm", "notes": "Relatively high for steel."},
+      "conductivity_electrical": {"value": "~3-4 %IACS"},
+      "magnetic_properties": {"notes": "Ferromagnetic."}
+    },
+    "optical_properties": {
+      "spectral_range": "Opaque", "notes": "Metallic appearance."
+    },
+    "thermal_properties": {
+      "operating_temperature": {"value": "Up to ~350-400", "unit": "°C", "notes": "Starts to overage and lose strength significantly above this range."},
+      "thermal_conductivity": {"value": "Low (~12-25)", "unit": "W/(m·K)", "notes": "Relatively low for a steel alloy."},
+      "specific_heat": {"value": "~0.46", "unit": "J/(g·K)"},
+      "melting_point": {"value": "~1410-1450", "unit": "°C"},
+      "thermal_expansion": {"value": "~10-11.5 x 10⁻⁶", "unit": "/°C", "notes": "Similar to other steels."}
+    },
+     "mechanical_properties": {
+         "density": {"value": "~8.0-8.1", "unit": "g/cm³"},
+         "youngs_modulus": {"value": "~180-190", "unit": "GPa"},
+         "yield_strength": {"value": "Very High (1700-2400+ MPa / 250-350+ ksi)", "notes": "Depends on grade (e.g., C250, C300, C350)."},
+         "tensile_strength": {"value": "Very High (1800-2500+ MPa / 260-360+ ksi)"},
+         "elongation_at_break": {"value": "~5-15%", "notes": "Moderate ductility."},
+         "hardness_rockwell": {"value": "HRC 50-58", "notes": "In aged condition."},
+         "fracture_toughness": {"value": "Good to Excellent (60-130+ MPa·m⁰·⁵)", "notes": "Exceptional toughness for its strength level."}
+     },
+     "device_applications": {
+         "key_applications": ["Aircraft and Aerospace Components (Landing gear, actuators, shafts, engine components)", "Rocket Motor Cases", "Tooling (Molds, dies, punches)", "High-Strength Fasteners", "Ordnance Components", "High-Performance Sporting Equipment"]
+     },
+     "chemical_properties": {
+         "stability_oxidation": "Requires protective coating for long-term exposure, especially in humid or corrosive environments.",
+         "corrosion_resistance": {"notes": "Better than low alloy steels but susceptible to rusting and pitting. Stress corrosion cracking can be a concern in certain environments (e.g., chloride-containing) under high stress."},
+         "acid_resistance": "Attacked by most acids.",
+         "base_resistance": "Generally good."
+     },
+     "comparison_alternatives": {
+         "notes": "Alternative High-Strength Materials:",
+         "vs_High_Strength_Low_Alloy_HSLA_Steels": "Maraging: Much higher strength and toughness combination, better dimensional stability during heat treat, higher cost, requires more complex heat treatment. HSLA: Lower cost, easier processing, lower strength/toughness.",
+         "vs_Quenched_Tempered_Alloy_Steels_4340": "Maraging: Higher strength potential (esp. >300ksi grades), significantly better toughness at equivalent strength, much better dimensional stability during hardening (aging vs quench/temper), better weldability, higher cost. Q&T Steels: Lower cost, well-established technology.",
+         "vs_Titanium_Alloys_Ti-6Al-4V": "Maraging: Higher strength potential, higher stiffness, higher density, generally lower cost. Ti Alloys: Excellent strength-to-weight ratio, excellent corrosion resistance, higher operating temperature capability.",
+         "vs_Precipitation_Hardening_PH_Stainless_Steels": "Maraging: Higher strength and toughness potential. PH Stainless: Better inherent corrosion resistance, simpler heat treatment sometimes possible."
+     },
+     "references_further_reading": {
+         "notes": "Key Resources:",
+         "asm_handbook_vol1": "ASM Handbook, Volume 1: Properties and Selection - Irons, Steels, and High-Performance Alloys.",
+         "specialty_metals_data": "Technical datasheets from suppliers like Carpenter Technology, ATI Metals.",
+         "wikipedia": "https://en.wikipedia.org/wiki/Maraging_steel"
+     },
+     "vendor_info": {
+        "notes": "Example Vendors (Placeholder):",
+        "vendor_1": "Company A - www.example-vendor-a.com",
+        "vendor_2": "Company B - www.example-vendor-b.com",
+        "vendor_3": "Company C - www.example-vendor-c.com"
+     },
+    "tags": [
+      "alloy", "steel", "high strength", "ultra high strength", "toughness",
+      "aerospace", "tooling", "dimensional stability", "precipitation hardening",
+      "low carbon", "industry:aerospace", "industry:tooling", "industry:defense",
+      "metal", "ferromagnetic"
+    ]
   }
 }
