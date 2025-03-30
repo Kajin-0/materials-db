@@ -23,7 +23,7 @@ Unchecked items `[ ]` are missing a matching key in `material_details.json`.
 - [x] LYSO:Ce Scintillator
 - [x] Lead Tungstate
 - [x] Lithium Niobate
-- [ ] Maraging Steel
+- [x] Maraging Steel
 - [x] Mercury Cadmium Telluride
 - [ ] Nextel 720 Fiber
 - [x] Niobium Titanium (NbTi) Wire
