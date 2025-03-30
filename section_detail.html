@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="style.css"> <!-- Link to main style.css if needed -->
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
     <style>
-        /* Clean, professional styling (Based on Claude's output) */
+        /* Clean, professional styling - Adjusted */
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             line-height: 1.5;
@@ -34,240 +34,107 @@
             text-decoration: none;
             font-size: 0.9rem;
         }
-        .back-link:hover {
-            text-decoration: underline;
-        }
-        .back-link::before {
-            content: "←";
-            margin-right: 0.4rem;
-        }
+        .back-link:hover { text-decoration: underline; }
+        .back-link::before { content: "←"; margin-right: 0.4rem; }
 
         /* Section header */
         .section-title-bar {
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid #e0e0e0;
+            margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid #e0e0e0;
         }
         .section-title-bar h1 {
-            margin: 0 0 0.25rem 0;
-            font-size: 1.75rem;
-            color: #2c3e50;
-            font-weight: 600;
+            margin: 0 0 0.25rem 0; font-size: 1.75rem; color: #2c3e50; font-weight: 600;
         }
-        .section-title-bar .material-context {
-            color: #555;
-            font-size: 1rem;
-        }
+        .section-title-bar .material-context { color: #555; font-size: 1rem; }
 
         /* Introduction */
         .section-introduction {
-            margin-bottom: 2rem;
-            padding: 1.25rem;
-            background-color: #f1f7fe;
-            border-left: 4px solid #2980b9;
-            border-radius: 4px;
-            font-size: 1rem;
-            line-height: 1.6;
+            margin-bottom: 2rem; padding: 1.25rem; background-color: #f1f7fe;
+            border-left: 4px solid #2980b9; border-radius: 4px; font-size: 1rem; line-height: 1.6;
         }
 
         /* Property blocks */
         .property-detail-block {
-            margin-bottom: 2rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 1px solid #eee;
+            margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid #eee;
         }
-        .property-detail-block:last-child {
-            border-bottom: none;
-        }
+        .property-detail-block:last-child { border-bottom: none; }
         .property-detail-block h3 {
-            font-size: 1.4rem;
-            color: #2c3e50;
-            margin: 0 0 0.5rem 0;
-            font-weight: 600;
+            font-size: 1.4rem; color: #2c3e50; margin: 0 0 0.5rem 0; font-weight: 600;
         }
         .property-detail-block .summary {
-            color: #555;
-            margin-bottom: 1.25rem;
-            padding-left: 0.75rem;
-            border-left: 3px solid #ddd;
-            line-height: 1.6;
+            color: #555; margin-bottom: 1.25rem; padding-left: 0.75rem;
+            border-left: 3px solid #ddd; line-height: 1.6;
         }
 
         /* Subsections */
-        .detail-subsection {
-            margin: 1.25rem 0 1.25rem 0.5rem; /* Added left margin */
-        }
-        .detail-subsection h4 { /* Will be replaced by ::before */
-            font-size: 0; /* Hide original H4 text */
-            margin: 0 0 0.75rem 0;
-            padding-bottom: 0.3rem;
-            border-bottom: 1px solid #eee;
-        }
-        /* Use ::before for styled titles */
-        .detail-subsection h4::before {
-            font-size: 1.1rem; /* Restore font size */
-            font-weight: 600; /* Bolder subsection titles */
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-            display: block;
-        }
+        .detail-subsection { margin: 1.25rem 0 1.25rem 0.5rem; }
+        .detail-subsection h4 { font-size: 0; margin: 0 0 0.75rem 0; padding-bottom: 0.3rem; border-bottom: 1px solid #eee; }
+        .detail-subsection h4::before { font-size: 1.1rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; display: block; }
         .detail-subsection.key_characteristics h4::before { content: "Key Characteristics"; color: #2980b9; }
         .detail-subsection.measurement_characterization h4::before { content: "Measurement & Characterization"; color: #8e44ad; }
         .detail-subsection.device_relevance h4::before { content: "Device Relevance / Impact"; color: #27ae60; }
-        .detail-subsection.doping_methods h4::before { content: "Doping Methods"; color: #c0392b; } /* Example color */
+        .detail-subsection.doping_methods h4::before { content: "Doping Methods"; color: #c0392b; }
         .detail-subsection.equations h4::before { content: "Equations"; color: #d35400; }
-        .detail-subsection.significance h4::before { content: "Significance"; color: #27ae60; } /* Re-use color */
-        .detail-subsection.techniques h4::before { content: "Techniques"; color: #8e44ad; } /* Re-use color */
-        .detail-subsection.considerations h4::before { content: "Considerations"; color: #8e44ad; } /* Re-use color */
+        .detail-subsection.significance h4::before { content: "Significance"; color: #27ae60; }
+        .detail-subsection.techniques h4::before { content: "Techniques"; color: #8e44ad; }
+        .detail-subsection.considerations h4::before { content: "Considerations"; color: #8e44ad; }
 
-
-        .detail-subsection ul {
-            padding-left: 1.5rem;
-            margin: 0.5rem 0 1rem 0;
-            list-style: none; /* Remove default bullets */
-        }
-        .detail-subsection li {
-             margin-bottom: 0.6rem; /* More space between list items */
-             line-height: 1.6;
-             position: relative;
-             padding-left: 1.2rem; /* Space for custom bullet */
-         }
-        .detail-subsection li::before { /* Custom bullet */
-              content: "\2023"; /* Triangle bullet */
-              color: #555; /* Subdued bullet color */
-              font-weight: normal;
-              display: inline-block;
-              position: absolute;
-              left: 0;
-              width: 1em;
-         }
-        .detail-subsection p {
-             margin-bottom: 0.5rem;
-             line-height: 1.6;
-             margin-left: 0.5rem; /* Indent paragraphs within subsection */
-        }
-        /* Styling for considerations */
-        .detail-subsection.measurement_characterization .considerations li::before {
-             content: "\25B8"; /* Right-pointing small triangle */
-             color: #8e44ad;
-        }
-         .detail-subsection.measurement_characterization .considerations li,
-         .detail-subsection.measurement_characterization .considerations p {
-             font-size: 0.9rem;
-             color: #444;
-         }
-
+        .detail-subsection ul { padding-left: 1.5rem; margin: 0.5rem 0 1rem 0; list-style: none; }
+        .detail-subsection li { margin-bottom: 0.6rem; line-height: 1.6; position: relative; padding-left: 1.2rem; }
+        .detail-subsection li::before { content: "\2023"; color: #555; font-weight: normal; display: inline-block; position: absolute; left: 0; width: 1em; }
+        .detail-subsection p { margin-bottom: 0.5rem; line-height: 1.6; margin-left: 0.5rem; }
+        .detail-subsection.measurement_characterization .considerations li::before { content: "\25B8"; color: #8e44ad; }
+        .detail-subsection.measurement_characterization .considerations li,
+        .detail-subsection.measurement_characterization .considerations p { font-size: 0.9rem; color: #444; }
 
         /* Equation blocks */
-        .equation-block {
-            background-color: #f8f9fa;
-            padding: 1.25rem;
-            border-radius: 6px;
-            margin: 1rem 0; /* Consistent margin */
-            border: 1px solid #e9ecef;
-        }
-        .equation-block .eq-name {
-            font-weight: 600;
-            color: #2980b9;
-            margin-bottom: 0.75rem;
-            display: block;
-            font-size: 1rem; /* Slightly smaller name */
-        }
-        .equation-block .eq-desc {
-            color: #555;
-            margin-bottom: 1rem;
-            font-size: 0.9rem; /* Smaller desc */
-        }
+        .equation-block { background-color: #f8f9fa; padding: 1.25rem; border-radius: 6px; margin: 1rem 0; border: 1px solid #e9ecef; }
+        .equation-block .eq-name { font-weight: 600; color: #2980b9; margin-bottom: 0.75rem; display: block; font-size: 1rem; }
+        .equation-block .eq-desc { color: #555; margin-bottom: 1rem; font-size: 0.9rem; }
         .equation-block .eq-formula-html,
         .equation-block .eq-formula-plain {
-            font-family: 'Consolas', 'Menlo', 'Monaco', monospace;
-            background-color: #eef2f7; /* Slightly different background */
-            padding: 0.75rem;
-            border-radius: 4px;
-            font-size: 1.1rem; /* Slightly larger formula */
-            overflow-x: auto;
-            color: #1d2c3f;
-            margin: 0.75rem 0;
-            text-align: center; /* **** RE-CENTERED EQUATION **** */
-            display: block; /* Needed for centering */
+            font-family: 'Consolas', 'Menlo', 'Monaco', monospace; background-color: #eef2f7;
+            padding: 0.75rem; border-radius: 4px; font-size: 1.05rem; overflow-x: auto;
+            color: #1d2c3f; margin: 0.75rem 0;
+            text-align: left; /* **** NOT CENTERED **** */
+            display: block;
         }
-        .equation-block .eq-units {
-            font-size: 0.85rem; /* Smaller units */
-            color: #555;
-            text-align: right;
-            margin-bottom: 0.75rem;
-        }
-        .equation-block .eq-vars strong {
-            color: #333;
-        }
-        .equation-block .eq-vars ul {
-            padding-left: 1rem;
-            list-style: none;
-            margin-top: 0.5rem;
-        }
-        .equation-block .eq-vars li {
-            font-size: 0.9rem;
-            margin-bottom: 0.4rem;
-        }
-        .equation-block .eq-ref {
-            font-size: 0.85rem;
-            color: #777;
-            text-align: right;
-            margin-top: 0.75rem;
-        }
-        .equation-block .eq-ref a {
-            color: #0066cc; text-decoration: none;
-        }
-        .equation-block .eq-ref a:hover {
-            text-decoration: underline;
-        }
+        .equation-block .eq-units { font-size: 0.85rem; color: #555; text-align: right; margin-bottom: 0.75rem; }
+        .equation-block .eq-vars strong { color: #333; }
+        .equation-block .eq-vars ul { padding-left: 1rem; list-style: none; margin-top: 0.5rem;}
+        .equation-block .eq-vars li { font-size: 0.9rem; margin-bottom: 0.4rem; }
+        .equation-block .eq-ref { font-size: 0.85rem; color: #777; text-align: right; margin-top: 0.75rem; }
+        .equation-block .eq-ref a { color: #0066cc; text-decoration: none; }
+        .equation-block .eq-ref a:hover { text-decoration: underline; }
 
         /* References section */
-        #references-section {
-            margin-top: 2.5rem;
-            padding-top: 1.25rem;
-            border-top: 1px solid #e0e0e0;
-        }
-        #references-section h4 {
-            font-size: 1.15rem;
-            color: #2c3e50;
-            margin: 0 0 1rem 0;
-        }
-        #references-list {
-            list-style: none; padding-left: 0; font-size: 0.9rem;
-        }
+        #references-section { margin-top: 2.5rem; padding-top: 1.25rem; border-top: 1px solid #e0e0e0; }
+        #references-section h4 { font-size: 1.15rem; color: #2c3e50; margin: 0 0 1rem 0; }
+        #references-list { list-style: none; padding-left: 0; font-size: 0.9rem; }
         #references-list li {
-            margin-bottom: 0.75rem; padding-left: 1.5rem; position: relative;
+             margin-bottom: 0.75rem;
+             padding-left: 0; /* Remove padding */
+             /* position: relative; */ /* REMOVED */
+             list-style-position: outside;
+             text-indent: -1.5rem; /* Apply negative indent */
+             margin-left: 1.5rem; /* Apply positive margin */
         }
         #references-list li strong {
-            position: absolute; left: 0; color: #555; font-weight: 600;
-        }
-        #references-list li:target {
-            background-color: #fffde7; padding: 0.5rem; border-radius: 4px; transition: background-color 0.3s ease;
-        }
-        .ref-link {
-            color: #0066cc; text-decoration: none;
-        }
-        .ref-link:hover {
-            text-decoration: underline;
-        }
+             /* position: absolute; */ /* REMOVED */
+             /* left: 0; */ /* REMOVED */
+             color: #555;
+             font-weight: 600;
+             margin-right: 0.5em; /* Space after key */
+         }
+        #references-list li:target { background-color: #fffde7; padding: 0.5rem; border-radius: 4px; transition: background-color 0.3s ease; margin-left: 0; text-indent: 0; padding-left: 0.5rem; /* Adjust target style */ }
+        .ref-link { color: #0066cc; text-decoration: none; }
+        .ref-link:hover { text-decoration: underline; }
 
         /* Error message */
-        .error-message {
-            color: #c0392b; background-color: #fbeae5; padding: 1rem;
-            border-radius: 4px; border: 1px solid #e74c3c; margin: 1rem 0;
-        }
-
-        /* Loading indicator */
-        .loading { opacity: 0.7; }
+        .error-message { color: #c0392b; background-color: #fbeae5; padding: 1rem; border-radius: 4px; border: 1px solid #e74c3c; margin: 1rem 0; }
 
         /* Simple responsive adjustments */
         @media (max-width: 768px) {
             .section-detail-container { margin: 1rem; padding: 1.5rem; }
-            .section-title-bar h1 { font-size: 1.5rem; }
-            .property-detail-block h3 { font-size: 1.25rem; }
-            .detail-subsection h4::before { font-size: 1rem; }
-            .equation-block .eq-formula-html, .equation-block .eq-formula-plain { font-size: 1rem; }
         }
     </style>
 </head>
