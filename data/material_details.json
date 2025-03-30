@@ -3097,5 +3097,107 @@
       "low carbon", "industry:aerospace", "industry:tooling", "industry:defense",
       "metal", "ferromagnetic"
     ]
+  },
+  "Nextel 720 Fiber": {
+    "name": "Nextel 720 Fiber",
+    "formula": "~85% Al₂O₃ - 15% SiO₂",
+    "synonyms": [ "3M Nextel 720", "Alumina-Silica Fiber", "Continuous Ceramic Fiber" ],
+    "category": "Ceramic Fiber",
+    "constituent_elements": ["Al", "O", "Si"],
+    "description": "A continuous polycrystalline ceramic oxide fiber, composed primarily of alpha-alumina and mullite phases. It exhibits excellent tensile strength and modulus retention at very high temperatures (up to 1200°C+), good creep resistance, low thermal conductivity, chemical stability, and electrical resistivity. Used primarily as reinforcement in Ceramic Matrix Composites (CMCs) and Polymer Matrix Composites (PMCs) for high-temperature structural applications in aerospace and industrial markets.",
+    "wiki_link": "https://multimedia.3m.com/mws/media/151591O/3m-nextel-ceramic-fibers-and-textiles.pdf",
+    "safety": {
+      "toxicity": "Low in continuous fiber form. Handling can generate airborne fragments; avoid inhalation. Skin irritation possible.",
+      "handling": "Handle fibers/fabrics with gloves. Use respiratory protection if cutting or handling generates significant dust/fragments. Avoid sharp bends which can damage fibers."
+    },
+    "identification": {
+      "class": "Continuous Polycrystalline Oxide Ceramic Fiber",
+      "crystal_structure": "Polycrystalline: Alpha-Alumina (α-Al₂O₃) and Mullite (3Al₂O₃·2SiO₂).",
+      "appearance": {"notes": "White, continuous filament yarn or woven fabric."},
+      "filament_diameter": {"value": "~12", "unit": "µm"}
+    },
+    "advanced_fabrication_insights": {
+        "process_control": "Produced via a sol-gel process, where precursor solution is extruded into fibers, dried, and fired at high temperature to form the final polycrystalline structure.",
+        "common_defects_impact": "Fiber breakage, surface flaws, variations in diameter or composition. Affect tensile strength, composite performance, and handleability.",
+        "surface_sizing": "Often supplied with organic sizing to improve handleability and compatibility with specific matrix materials (resins, precursors). Sizing is typically burned off during composite processing.",
+        "weave_architecture": "Available as continuous yarn or woven into various fabric styles (plain, satin, harness) which influences composite properties and formability."
+    },
+    "growth_fabrication_properties": {
+        "common_growth_methods": "Sol-Gel extrusion and firing.",
+        "source_materials_purity": "High purity aluminum and silicon precursors.",
+        "preferred_substrates_orientations": "N/A (Fiber material).",
+        "typical_growth_parameters": "Controlled extrusion, drying, and high-temperature firing schedules.",
+        "passivation_methods": "Fiber itself is relatively stable oxide."
+    },
+    "post_growth_processing": {
+        "annealing": "Firing during production is the primary heat treatment.",
+        "lapping_polishing": "N/A.",
+        "etching": "Resistant.",
+        "grinding_milling": "N/A (Supplied as yarn or fabric, can be cut)."
+    },
+     "device_integration_characterization": {
+        "device_architectures": "Reinforcement in CMCs (e.g., Oxide/Oxide composites) and PMCs (e.g., high-temp polyimides) for aerospace components (exhaust structures, heat shields, engine parts), furnace linings, seals, gaskets.",
+        "readout_integration": "N/A",
+        "ar_coatings": "N/A",
+        "packaging_cooling": "Designed for high-temperature operation.",
+        "key_characterization_techniques": ["Single Filament Tensile Testing (Strength, Modulus - at RT and high temp)", "Creep Testing (at high temp)", "Thermal Conductivity Measurement", "Electrical Resistivity Measurement", "Microstructural Analysis (SEM, XRD - grain size, phase content)"]
+    },
+    "electrical_properties": {
+      "bandgap_type": "Insulator (Oxide mixture)",
+      "band_gap": {"value": "Wide (similar to Al₂O₃)", "unit": "eV"},
+      "resistivity": {"value": "Very High (> 10¹⁴ Ω·cm at RT)", "notes": "Excellent electrical insulator, maintains high resistivity at elevated temperatures."},
+      "dielectric_constant": {"value": "~6-8", "notes": "Relatively low."},
+      "dielectric_strength": {"notes": "High."}
+    },
+    "optical_properties": {
+      "spectral_range": "Opaque white.",
+      "refractive_index": {"notes": "Effective index around 1.6-1.7."}
+    },
+    "thermal_properties": {
+      "operating_temperature": {"value": "Continuous use up to ~1200-1350", "unit": "°C", "notes": "Excellent strength retention at high temperatures. Short term exposure higher possible."},
+      "thermal_conductivity": {"value": "Low (~2-5)", "unit": "W/(m·K)", "notes": "Good thermal insulator."},
+      "specific_heat": {"value": "~0.8-1.0", "unit": "J/(g·K)"},
+      "melting_point": {"value": "~1800-2000", "unit": "°C", "notes": "Degrades/melts above this range."},
+      "thermal_expansion": {"value": "Low (~6-7 x 10⁻⁶ /°C)"}
+    },
+     "mechanical_properties": {
+         "density": {"value": "~3.0-3.1", "unit": "g/cm³"},
+         "youngs_modulus": {"value": "~250-270", "unit": "GPa", "notes": "High specific stiffness."},
+         "tensile_strength": {"value": "~2.8-3.1", "unit": "GPa", "notes": "High specific strength."},
+         "elongation_at_break": {"value": "~1.1-1.3%", "notes": "Brittle fiber behavior."},
+         "creep_resistance": {"notes": "Significantly better creep resistance than Nextel 610 (pure Alumina)."}
+     },
+     "device_applications": {
+         "key_applications": ["Reinforcement for Ceramic Matrix Composites (CMCs), especially Oxide/Oxide CMCs", "Reinforcement for high-temperature Polymer Matrix Composites (PMCs)", "High-Temperature Insulation (sewn blankets, etc.)", "Furnace components (conveyor belts, curtains)", "High-Temperature Seals and Gaskets", "Metal Matrix Composite (MMC) reinforcement (limited)"]
+     },
+     "chemical_properties": {
+         "stability_oxidation": "Excellent, stable oxide fiber.",
+         "chemical_inertness": "Good resistance to many chemicals, including acids and alkalis at moderate temperatures.",
+         "water_solubility": "Insoluble."
+     },
+     "comparison_alternatives": {
+         "notes": "Alternative High-Temperature Fibers:",
+         "vs_Nextel_610": "Nextel 720: Better high-temperature strength retention (>1000°C), much better creep resistance due to mullite phase. Nextel 610 (α-Al₂O₃): Slightly higher RT strength/modulus, lower creep resistance.",
+         "vs_Silicon_Carbide_SiC_Fibers": "Nextel 720: Oxide (stable in oxidizing atm), electrically insulating, lower thermal conductivity. SiC Fibers (e.g., Nicalon, Tyranno): Higher strength/modulus potential, semiconductor, higher thermal conductivity, susceptible to oxidation without coatings.",
+         "vs_Carbon_Fibers": "Nextel 720: Stable in oxidizing atm at high temp, electrically insulating. Carbon Fibers: Highest specific strength/stiffness at RT, require protection from oxidation above ~400-500°C, electrically conductive.",
+         "vs_Quartz_Silica_Fibers": "Nextel 720: Much higher operating temperature, higher strength/modulus. Quartz/Silica: Lower cost, lower operating temperature (soften/devitrify >1000°C)."
+     },
+     "references_further_reading": {
+         "notes": "Key Resources:",
+         "3m_nextel_data": "3M Nextel Ceramic Fibers Technical Datasheets and Brochures.",
+         "book_cmc": "Chapters on oxide fibers and Oxide/Oxide CMCs in Ceramic Matrix Composite handbooks.",
+         "journal_jacers_composites": "Articles in Journal of the American Ceramic Society, Composites Science and Technology, etc."
+     },
+     "vendor_info": {
+        "notes": "Example Vendors (Placeholder):",
+        "vendor_1": "Company A - www.example-vendor-a.com",
+        "vendor_2": "Company B - www.example-vendor-b.com",
+        "vendor_3": "Company C - www.example-vendor-c.com"
+     },
+    "tags": [
+      "ceramic fiber", "reinforcement", "composite", "high temperature", "aerospace",
+      "oxide", "alumina", "silica", "insulator", "creep resistant", "CMC",
+      "industry:aerospace", "industry:thermal", "industry:defense"
+    ]
   }
 }
