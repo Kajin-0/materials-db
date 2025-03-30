@@ -15,7 +15,7 @@ Unchecked items `[ ]` are missing a matching key in `material_details.json`.
 - [x] Gallium Arsenide
 - [x] Graphene Oxide Paper
 - [x] Graphene Polymer Composite
-- [ ] Hafnium Carbide Matrix Composite
+- [x] Hafnium Carbide Matrix Composite
 - [ ] Indium Foil
 - [x] Indium Gallium Arsenide
 - [x] Kapton Polyimide Film
