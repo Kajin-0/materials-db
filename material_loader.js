@@ -11,7 +11,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     const mainContainer = document.getElementById('material-content-container');
     const headerNameElement = document.getElementById("material-name");
     const periodicTableSection = document.getElementById('section-periodic-table'); // Get table section early
-    const periodicTableContainer = document.getElementById('periodic-table-main'); // Get the table itself
+    // --- CORRECTED: Get the outer wrapper which now holds the grid ---
+    const periodicTableWrapper = document.querySelector('.periodic-table-wrapper'); // Use querySelector for class
+    // const periodicTableContainer = document.getElementById('periodic-table-main'); // OLD - REMOVED
+    // --- END CORRECTION ---
     const tooltipElement = document.getElementById('pt-tooltip'); // Get the tooltip div
 
     // --- Error Display Function ---
@@ -46,15 +49,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     console.log("[Detail Page] Attempting to load DETAILED view for:", materialName);
 
-    // --- Basic Validation ---
-    if (!materialName) {
-        displayError("No material specified in the URL.");
+    // --- Basic Validation (CORRECTED check) ---
+    if (!mainContainer || !periodicTableSection || !periodicTableWrapper || !tooltipElement) {
+        displayError("Essential page element(s) missing (#material-content-container, #section-periodic-table, .periodic-table-wrapper, or #pt-tooltip)."); // Updated error message
         return;
     }
-    if (!mainContainer || !periodicTableSection || !periodicTableContainer || !tooltipElement) { // Check for new elements
-        displayError("Essential page element(s) missing (#material-content-container, #section-periodic-table, #periodic-table-main, or #pt-tooltip).");
-        return;
-    }
+    // --- END CORRECTION ---
+
     if (typeof window.periodicTableData === 'undefined') {
          console.warn("[Detail Page] periodic_table_data.js might not be loaded yet or is missing.");
     }
@@ -100,7 +101,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
         }
 
-        // Ensure periodic table is visible (it might have been hidden by a previous error)
+        // Ensure periodic table section is visible (it might have been hidden by a previous error)
         periodicTableSection.style.display = ''; // Reset display style
 
         mainContainer.innerHTML = ''; // Clear potential loading messages
@@ -114,9 +115,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
 
-    // --- Custom Tooltip Event Listeners (Attached to table container) ---
-    if (periodicTableContainer && tooltipElement) {
-        periodicTableContainer.addEventListener('mouseover', (event) => {
+    // --- Custom Tooltip Event Listeners (CORRECTED: Attached to table wrapper) ---
+    if (periodicTableWrapper && tooltipElement) { // Check wrapper
+        periodicTableWrapper.addEventListener('mouseover', (event) => { // Attach to wrapper
             const targetElement = event.target.closest('.pt-element'); // Find the hovered element
             if (targetElement && targetElement.dataset.tooltipContent) {
                 const tooltipContent = targetElement.dataset.tooltipContent;
@@ -128,20 +129,20 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
         });
 
-        periodicTableContainer.addEventListener('mousemove', (event) => {
+        periodicTableWrapper.addEventListener('mousemove', (event) => { // Attach to wrapper
             // Update position as mouse moves
              if (tooltipElement.style.display === 'block') {
                  positionTooltip(event, tooltipElement);
              }
         });
 
-        periodicTableContainer.addEventListener('mouseout', (event) => {
+        periodicTableWrapper.addEventListener('mouseout', (event) => { // Attach to wrapper
              const targetElement = event.target.closest('.pt-element');
              // Check if the related target (where the mouse moved to) is still within the *same* element or the tooltip itself
              if (targetElement && !targetElement.contains(event.relatedTarget) && event.relatedTarget !== tooltipElement) {
                  tooltipElement.style.display = 'none';
                  tooltipElement.innerHTML = ''; // Clear content
-             } else if (!periodicTableContainer.contains(event.relatedTarget) && event.relatedTarget !== tooltipElement) {
+             } else if (!periodicTableWrapper.contains(event.relatedTarget) && event.relatedTarget !== tooltipElement) { // Check wrapper boundary
                  // Also hide if moving completely out of the table container boundary, unless moving to the tooltip
                  tooltipElement.style.display = 'none';
                  tooltipElement.innerHTML = '';
@@ -155,10 +156,10 @@ document.addEventListener("DOMContentLoaded", async () => {
          tooltipElement.addEventListener('mouseout', (event) => {
              // Determine if the mouse is leaving the tooltip to go to something other than the element it came from
              const relatedTarget = event.relatedTarget;
-             // Check if relatedTarget is null or outside the periodic table container entirely
+             // Check if relatedTarget is null or outside the periodic table wrapper entirely
              const currentElement = document.querySelector('.pt-element:hover'); // Might be null if moving fast
 
-             if (!relatedTarget || (!periodicTableContainer.contains(relatedTarget) && relatedTarget !== tooltipElement)) {
+             if (!relatedTarget || (!periodicTableWrapper.contains(relatedTarget) && relatedTarget !== tooltipElement)) { // Check wrapper boundary
                 tooltipElement.style.display = 'none';
                 tooltipElement.innerHTML = '';
              }
@@ -174,8 +175,9 @@ document.addEventListener("DOMContentLoaded", async () => {
          });
 
     } else {
-        console.warn("Periodic table container or tooltip element not found, tooltips disabled.");
+        console.warn("Periodic table wrapper or tooltip element not found, tooltips disabled."); // Updated warning
     }
+    // --- END CORRECTION ---
 
 }); // End DOMContentLoaded
 
@@ -293,7 +295,9 @@ function enhancePeriodicTable(material, tooltipElement) {
     }
 
     console.log("[Detail Page] Elements determined for highlighting:", elementsToHighlight);
-    const allPtElements = document.querySelectorAll('.periodic-table-container .pt-element');
+    // --- CORRECTED: Select elements within the wrapper ---
+    const allPtElements = document.querySelectorAll('.periodic-table-wrapper .pt-element');
+    // --- END CORRECTION ---
 
     if (!window.periodicTableData) {
         console.warn("[Detail Page] Periodic table data (window.periodicTableData) is not available. Cannot enhance table.");
