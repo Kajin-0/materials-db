@@ -36,7 +36,7 @@ Unchecked items `[ ]` are missing a matching key in `material_details.json`.
 - [x] Silica Aerogel
 - [x] Silicon
 - [x] Silicon Carbide Fiber Reinforced Composite
-- [ ] Silicon Nitride Reinforced Silicon Carbide
+- [x] Silicon Nitride Reinforced Silicon Carbide
 - [ ] TUFROC
 - [ ] Tantalum Hafnium Carbide
 - [ ] Thulium-doped YAG (Tm:YAG)
