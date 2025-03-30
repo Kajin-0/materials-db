@@ -41,7 +41,7 @@ Unchecked items `[ ]` are missing a matching key in `material_details.json`.
 - [x] Tantalum Hafnium Carbide
 - [x] Thulium-doped YAG (Tm:YAG)
 - [x] Ultra-High Molecular Weight Polyethylene (UHMWPE)
-- [ ] Vacuum Multilayer Insulation (MLI)
+- [x] Vacuum Multilayer Insulation (MLI)
 - [x] Yttria-Stabilized Zirconia (YSZ)
 - [x] ZBLAN Fluoride Glass
 - [ ] Zirconia Toughened Alumina (ZTA)
