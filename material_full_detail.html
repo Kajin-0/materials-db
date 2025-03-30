@@ -6,13 +6,7 @@
     <title>Material Detail</title> <!-- Title will be set dynamically -->
     <link rel="stylesheet" href="style.css"> <!-- Link to main style.css if needed -->
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
-
-    <!-- KaTeX Links -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css" integrity="sha384-wcIxkf4k55gOgNhzwqzGIW9FVXhIp9ro5ydJqzIeUgqc7StWMyINtxCqISwGd2eB" crossorigin="anonymous">
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js" integrity="sha384-hIoBPJpTUs74ddyc4bFZSM1TVlQDA60VBbJS0oA934VSz82sBx1ECzMLSRLFHeA5" crossorigin="anonymous"></script>
-    <!-- KaTeX auto-render extension NOT NEEDED with explicit rendering -->
-    <!-- <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouWR/NxFqLBCJFqomxJ/2jxSSZKGXWaTQVifUCHuRUEp" crossorigin="anonymous"></script> -->
-
+    <!-- KaTeX links REMOVED -->
     <style>
         /* Paste the CSS from the previous response here */
         /* (Including reference fix and equation centering) */
@@ -58,15 +52,15 @@
         .equation-block .eq-name { font-weight: 600; color: #2980b9; margin-bottom: 0.75rem; display: block; font-size: 1rem; }
         .equation-block .eq-desc { color: #555; margin-bottom: 1rem; font-size: 0.9rem; }
         /* Combined styling for formula containers */
-        .equation-block .eq-formula-container {
+        .equation-block .eq-formula-container, /* Use a single class */
+        .equation-block .eq-formula-html,
+        .equation-block .eq-formula-plain {
             font-family: 'Consolas', 'Menlo', 'Monaco', monospace; background-color: #eef2f7;
             padding: 0.75rem; border-radius: 4px; font-size: 1.1rem; overflow-x: auto;
-            color: #1d2c3f; margin: 0.75rem 0; text-align: center; display: block;
+            color: #1d2c3f; margin: 0.75rem 0;
+            text-align: center; /* Centered Equation */
+            display: block;
         }
-        /* KaTeX specific display adjustments */
-        .katex-display { text-align: center !important; margin: 0.5em 0 !important; } /* Adjust KaTeX block margin */
-        .katex { font-size: 1.1em !important; } /* Adjust KaTeX font size */
-
         .equation-block .eq-units { font-size: 0.85rem; color: #555; text-align: right; margin-bottom: 0.75rem; }
         .equation-block .eq-vars strong { color: #333; }
         .equation-block .eq-vars ul { padding-left: 1rem; list-style: none; margin-top: 0.5rem;}
@@ -123,9 +117,7 @@
             <ul id="references-list"></ul>
         </div>
     </div>
-    <!-- Explicitly call KaTeX render *after* main JS loader runs -->
+    <!-- KaTeX script REMOVED -->
     <script src="full_detail_loader.js"></script>
-    <!-- KaTeX auto-render call (alternative/backup - place after loader) -->
-    <!-- <script> document.addEventListener("DOMContentLoaded", function() { renderMathInElement(document.body); }); </script> -->
 </body>
 </html>
