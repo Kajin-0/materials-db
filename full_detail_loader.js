@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             else { throw new Error(`HTTP error ${response.status} fetching ${detailFilePath}`); }
         }
 
-        const materialDetails = await response.json(); // This line would fail if JSON was invalid
+        const materialDetails = await response.json(); // This assumes JSON is valid now
         const sectionDataMap = new Map();
 
         // --- Process References ---
@@ -151,7 +151,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         } else {
              displayError(error.message || "An unknown error occurred loading material details.");
         }
-        console.error(error);
+        console.error("Error during initial data load:", error);
     }
 
     // --- Helper Function to Render a Single Property Block ---
@@ -323,7 +323,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         return propBlock;
     }
 
-    // Function to handle reference link clicks (for smooth scroll and highlight)
+    // Function to handle reference link clicks
     function handleRefLinkClick(event) {
         const link = event.target.closest('a.ref-link[data-ref-key]');
         if (link) {
@@ -357,12 +357,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-    // --- Initialize 3D Viewer Function (DEBUGGED and SIMPLIFIED) ---
+    // --- Initialize 3D Viewer Function (DEBUGGING VERSION) ---
     function initialize3DViewer(viewerElementId, controlsElementId, vizData, allMaterialDetails) {
         console.log("--- Initializing 3D Viewer ---");
         console.log("Viewer Element ID:", viewerElementId);
         console.log("Controls Element ID:", controlsElementId);
-        console.log("Visualization Data:", vizData);
+        // console.log("Visualization Data:", vizData); // Keep this concise for now
 
         const viewerElement = document.getElementById(viewerElementId);
         const controlsElement = document.getElementById(controlsElementId);
@@ -374,9 +374,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         viewerElement.innerHTML = ''; // Clear loading message
         controlsElement.innerHTML = ''; // Clear loading message
 
-        // --- Populate Controls HTML ---
-        // (Keep the HTML structure from the previous version, it's generally fine)
-         controlsElement.innerHTML = `
+        // --- Populate Controls HTML (Same as before) ---
+        controlsElement.innerHTML = `
             <h4>Controls</h4>
             <div class="control-group" id="${controlsElementId}-composition-group">
                 <label class="control-title" for="${controlsElementId}-composition">Composition (${vizData.composition.variable_element} fraction 'x')</label>
@@ -420,7 +419,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             </div>
         `;
 
-        // Hide composition slider if fixed composition
         if (vizData.composition.min_x === vizData.composition.max_x) {
            const compGroup = document.getElementById(`${controlsElementId}-composition-group`);
            if(compGroup) compGroup.style.display = 'none';
@@ -436,59 +434,47 @@ document.addEventListener("DOMContentLoaded", async () => {
                 antialias: true,
                 hoverable: true
             });
-            console.log("3Dmol viewer created successfully.");
-            // DEBUG: Add a simple sphere to test rendering
-            // viewer.addSphere({ center: {x:0, y:0, z:0}, radius: 1.0, color: 'red' });
-            // viewer.render();
-            // viewer.zoomTo();
+            console.log("3Dmol viewer created.");
         } catch (e) {
             console.error("Error creating 3Dmol viewer:", e);
             displayViewerError("Failed to create 3D viewer instance.");
             return;
         }
 
-
         // --- State and Constants ---
         let cellShown = false;
-        let currentViewStyle = "ballAndStick";
+        let currentViewStyle = "ballAndStick"; // Default style
         let currentSupercell = 1;
         let currentComposition = vizData.composition.initial_x;
         const atomInfo = vizData.atom_info;
-        const atomColors = {};
-        const atomRadii = {}; // Primarily for manual spacefill if needed
+        const atomColors = {}; // Map for colorscheme { ELEM: color }
+        const atomRadii = {}; // Map for custom radii { ELEM: radius }
 
-        // Info Panel elements
+        // Info Panel & Legend Elements
         const latticeInfoEl = document.getElementById(`${controlsElementId}-lattice-info`);
         const compositionInfoEl = document.getElementById(`${controlsElementId}-composition-info`);
         const legendEl = document.getElementById(`${controlsElementId}-legend`);
         const compValueEl = document.getElementById(`${controlsElementId}-composition-value`);
 
-        // Populate Legend & Atom Data Map
         legendEl.innerHTML = '';
         Object.entries(atomInfo).forEach(([symbol, info]) => {
-            atomColors[symbol] = info.color || '#CCCCCC';
-            atomRadii[symbol] = info.radius || 1.0;
+            atomColors[symbol.toUpperCase()] = info.color || '#CCCCCC'; // Use uppercase symbol for map keys
+            atomRadii[symbol.toUpperCase()] = info.radius || 1.0;
             const legendItem = document.createElement('div');
             legendItem.className = 'legend';
-            legendItem.innerHTML = `<div class="legend-color" style="background-color:${atomColors[symbol]};"></div><div>${symbol}</div>`;
+            legendItem.innerHTML = `<div class="legend-color" style="background-color:${atomColors[symbol.toUpperCase()]};"></div><div>${symbol}</div>`;
             legendEl.appendChild(legendItem);
         });
         console.log("Atom Colors Map:", atomColors);
 
-
-        // --- Structure Generation ---
+        // --- Structure Generation (Simplified - No changes needed here if PDB was the issue) ---
         function getLatticeConstant(compositionRatio) {
-            // Simplified - assumes structure defined in JSON is correct type
              if (vizData.structure_type === 'zincblende_alloy' && vizData.lattice_constants.HgTe && vizData.lattice_constants.CdTe) {
                  return vizData.lattice_constants.HgTe * (1 - compositionRatio) + vizData.lattice_constants.CdTe * compositionRatio;
-             } else if (vizData.lattice_constants.a) {
-                 return vizData.lattice_constants.a;
-             }
+             } else if (vizData.lattice_constants.a) { return vizData.lattice_constants.a; }
              console.warn("Cannot determine lattice constant."); return 6.0;
         }
-
         function generateAtomArray(compositionRatio, cellSize) {
-            console.log(`Generating atoms: x=${compositionRatio}, cell=${cellSize}x${cellSize}x${cellSize}`);
             const latticeConstant = getLatticeConstant(compositionRatio);
             let atoms = [];
             const anion = Object.keys(atomInfo).find(key => atomInfo[key].role === 'anion');
@@ -496,117 +482,94 @@ document.addEventListener("DOMContentLoaded", async () => {
             const cation_subst = Object.keys(atomInfo).find(key => atomInfo[key].role === 'cation_subst');
 
             if (vizData.structure_type === 'zincblende_alloy') {
-                 if (!anion || !cation_host || !cation_subst) {
-                     console.error("Atom roles missing for zincblende_alloy"); return null;
-                 }
+                 if (!anion || !cation_host || !cation_subst) { console.error("Atom roles missing for zincblende_alloy"); return null; }
                 const cationPositions = [[0, 0, 0], [0, 0.5, 0.5], [0.5, 0, 0.5], [0.5, 0.5, 0]];
                 const anionPositions = [[0.25, 0.25, 0.25], [0.25, 0.75, 0.75], [0.75, 0.25, 0.75], [0.75, 0.75, 0.25]];
+                for (let i = 0; i < cellSize; i++) { for (let j = 0; j < cellSize; j++) { for (let k = 0; k < cellSize; k++) {
+                    cationPositions.forEach(pos => {
+                        let elemType = Math.random() < compositionRatio ? cation_subst : cation_host;
+                        atoms.push({ elem: elemType, x: (pos[0] + i) * latticeConstant, y: (pos[1] + j) * latticeConstant, z: (pos[2] + k) * latticeConstant });
+                    });
+                    anionPositions.forEach(pos => {
+                        atoms.push({ elem: anion, x: (pos[0] + i) * latticeConstant, y: (pos[1] + j) * latticeConstant, z: (pos[2] + k) * latticeConstant });
+                    });
+                }}}
+            } else { console.error("Unsupported structure_type:", vizData.structure_type); return null; }
 
-                for (let i = 0; i < cellSize; i++) {
-                    for (let j = 0; j < cellSize; j++) {
-                        for (let k = 0; k < cellSize; k++) {
-                            cationPositions.forEach(pos => {
-                                let elemType = Math.random() < compositionRatio ? cation_subst : cation_host;
-                                atoms.push({
-                                    elem: elemType,
-                                    x: (pos[0] + i) * latticeConstant,
-                                    y: (pos[1] + j) * latticeConstant,
-                                    z: (pos[2] + k) * latticeConstant
-                                    // Removed clickable/callback here, will set on model later
-                                });
-                            });
-                             anionPositions.forEach(pos => {
-                                atoms.push({
-                                    elem: anion,
-                                    x: (pos[0] + i) * latticeConstant,
-                                    y: (pos[1] + j) * latticeConstant,
-                                    z: (pos[2] + k) * latticeConstant
-                                });
-                            });
-                        }
-                    }
-                }
-            }
-            // ADD OTHER structure_type GENERATORS HERE
-            else {
-                console.error("Unsupported structure_type:", vizData.structure_type);
-                displayViewerError(`Unsupported structure type: ${vizData.structure_type}`);
-                return null;
-            }
-
-            // Update Info Panel
             if(latticeInfoEl) latticeInfoEl.textContent = `Lattice: a ≈ ${latticeConstant.toFixed(3)} Å`;
             if(compositionInfoEl && vizData.composition.formula_template && vizData.composition.min_x !== vizData.composition.max_x) {
                  compositionInfoEl.innerHTML = `Composition: ${vizData.composition.formula_template.replace('{x}', compositionRatio.toFixed(2)).replace('{1-x}', (1 - compositionRatio).toFixed(2))}`;
             } else if (compositionInfoEl && vizData.composition.formula_template) {
                  compositionInfoEl.innerHTML = `Formula: ${vizData.composition.formula_template.replace(/{1-x}/g,'').replace(/{x}/g,'')}`;
-            } else if (compositionInfoEl) {
-                 compositionInfoEl.textContent = `Composition: x = ${compositionRatio.toFixed(2)}`;
-            }
+            } else if (compositionInfoEl) { compositionInfoEl.textContent = `Composition: x = ${compositionRatio.toFixed(2)}`; }
 
-            console.log(`Generated ${atoms.length} atoms.`);
             return atoms;
         }
 
-        // --- PDB Conversion ---
-        // Corrected PDB formatting function
-        function atomsToPDB(atoms) {
+        // --- PDB Conversion (Same robust version) ---
+         function atomsToPDB(atoms) {
             let pdb = "";
             atoms.forEach((atom, index) => {
-                // PDB requires specific column alignment. Use padStart/padEnd carefully.
                 const serial = (index + 1).toString().padStart(5);
-                // Atom name: Left-aligned, max 4 chars. Element usually right-aligned in last 2 chars.
-                let atomName = atom.elem.substring(0, 2).padEnd(4); // Use first 2 letters, left align
+                let elementSymbol = atom.elem.substring(0, 2).toUpperCase(); // Ensure uppercase for PDB standard
+                let atomName = elementSymbol.padEnd(4); // Common practice: use element symbol left-aligned
                 const resName = "MOL";
                 const chainID = "A";
-                const resSeq = "1".padStart(4); // Residue sequence number
+                const resSeq = "1".padStart(4);
                 const iCode = " ";
                 const x = atom.x.toFixed(3).padStart(8);
                 const y = atom.y.toFixed(3).padStart(8);
                 const z = atom.z.toFixed(3).padStart(8);
                 const occupancy = "1.00".padStart(6);
                 const tempFactor = "0.00".padStart(6);
-                // Element symbol: Right-aligned in columns 77-78
-                const element = atom.elem.substring(0, 2).padStart(2);
+                const elementPDB = elementSymbol.padStart(2); // Right align in cols 77-78
 
-                pdb += `ATOM  ${serial} ${atomName} ${resName} ${chainID}${resSeq}${iCode}   ${x}${y}${z}${occupancy}${tempFactor}          ${element}  \n`;
+                // Standard PDB ATOM record columns
+                pdb += "ATOM  " +     // Record name (cols 1-6)
+                       serial +        // Atom serial number (cols 7-11)
+                       " " +           // Blank (col 12)
+                       atomName +      // Atom name (cols 13-16)
+                       " " +           // Alt loc indicator (col 17)
+                       resName +       // Residue name (cols 18-20)
+                       " " +           // Blank (col 21)
+                       chainID +       // Chain ID (col 22)
+                       resSeq +        // Residue sequence number (cols 23-26)
+                       iCode +         // Code for insertion of residues (col 27)
+                       "   " +         // Blank (cols 28-30)
+                       x +             // X coordinate (cols 31-38)
+                       y +             // Y coordinate (cols 39-46)
+                       z +             // Z coordinate (cols 47-54)
+                       occupancy +     // Occupancy (cols 55-60)
+                       tempFactor +    // Temp Factor (cols 61-66)
+                       "          " + // Blank (cols 67-76)
+                       elementPDB +    // Element symbol (cols 77-78)
+                       "  \n";         // Charge (cols 79-80) + Newline
             });
-            // Add CONECT records (Optional but recommended for 3Dmol bonding)
              pdb += generatePDBConnectivity(atoms);
              pdb += "END\n";
-            // console.log("Generated PDB:\n", pdb); // DEBUG: Log PDB
+            // console.log("--- PDB DATA START ---\n" + pdb + "--- PDB DATA END ---"); // Log generated PDB for debugging
             return pdb;
         }
-
-        // Helper for CONECT records (basic nearest neighbor)
-        function generatePDBConnectivity(atoms) {
+         function generatePDBConnectivity(atoms) { /* ... (keep previous robust version) ... */
              let conectRecords = "";
              const bondCutoffSq = (vizData.bond_cutoff || 3.0) ** 2;
-             const maxConnect = 4; // Max bonds per CONECT line
+             const maxConnect = 4;
 
              for (let i = 0; i < atoms.length; i++) {
                  let bonds = [];
                  for (let j = 0; j < atoms.length; j++) {
                      if (i === j) continue;
-
-                     // Basic bonding check (could add role checks here if needed)
                      const dx = atoms[i].x - atoms[j].x;
                      const dy = atoms[i].y - atoms[j].y;
                      const dz = atoms[i].z - atoms[j].z;
                      const distSq = dx * dx + dy * dy + dz * dz;
-
-                     if (distSq > 0.01 && distSq < bondCutoffSq) {
-                         bonds.push(j + 1); // Add serial number of bonded atom
-                     }
+                     if (distSq > 0.01 && distSq < bondCutoffSq) { bonds.push(j + 1); }
                  }
-
                  if (bonds.length > 0) {
                      for (let k = 0; k < bonds.length; k += maxConnect) {
                          conectRecords += `CONECT${(i + 1).toString().padStart(5)}`;
                          const slice = bonds.slice(k, k + maxConnect);
-                         slice.forEach(bondSerial => {
-                             conectRecords += bondSerial.toString().padStart(5);
-                         });
+                         slice.forEach(bondSerial => { conectRecords += bondSerial.toString().padStart(5); });
                          conectRecords += "\n";
                      }
                  }
@@ -618,146 +581,136 @@ document.addEventListener("DOMContentLoaded", async () => {
          function displayViewerError(message) {
              viewerElement.innerHTML = `<p class="error-message" style="padding: 20px; text-align: center;">${message}</p>`;
          }
-
-         function drawUnitCellShape(cellSize) {
-            try {
-                 viewer.removeShape({id: 'unit_cell_shape'}); // Remove previous if exists
+         function drawUnitCellShape(cellSize) { /* ... (keep previous version using addUnitCell) ... */
+             try {
+                 viewer.removeShape({id: 'unit_cell_shape'});
                  const currentLatConst = getLatticeConstant(currentComposition);
                  const cellLength = currentLatConst * cellSize;
-                 console.log(`Drawing unit cell: size=${cellSize}, length=${cellLength}`);
                  viewer.addUnitCell({
-                     box: {a: cellLength, b: cellLength, c: cellLength, alpha: 90, beta: 90, gamma: 90}, // Assumes cubic
-                     origin: {x:0, y:0, z:0},
-                     color: "#555555",
-                     lineWidth: 1.5
-                 }, "unit_cell_shape"); // Assign ID
+                     box: {a: cellLength, b: cellLength, c: cellLength, alpha: 90, beta: 90, gamma: 90},
+                     origin: {x:0, y:0, z:0}, color: "#555555", lineWidth: 1.5
+                 }, "unit_cell_shape");
                  viewer.render();
-            } catch(e) {
-                 console.error("Error drawing unit cell:", e);
-            }
+             } catch(e) { console.error("Error drawing unit cell:", e); }
          }
 
-        // --- Main Render Function ---
+        // --- RENDER STRUCTURE (SIMPLIFIED FOR DEBUGGING) ---
         function renderStructure() {
             console.log(`--- Rendering Structure: Style=${currentViewStyle}, Supercell=${currentSupercell}, Comp=${currentComposition.toFixed(2)} ---`);
             try {
                 viewer.removeAllModels(); // Clear previous models
-                 viewer.removeShape({id: 'unit_cell_shape'}); // Clear old cell shape explicitly
+                viewer.removeShape({id: 'unit_cell_shape'}); // Clear old cell shape
 
                 const atoms = generateAtomArray(currentComposition, currentSupercell);
-                if (!atoms) {
-                    console.error("Atom generation failed, cannot render.");
-                    return;
-                }
+                if (!atoms) { console.error("Atom generation failed."); return; }
 
                 const pdbData = atomsToPDB(atoms);
-                 if (!pdbData || pdbData.length === 0) {
-                     console.error("PDB data generation failed.");
+                 if (!pdbData || pdbData.trim() === "END" || pdbData.trim() === "") { // Check if PDB is essentially empty
+                     console.error("PDB data generation resulted in empty or minimal string.");
                      displayViewerError("Failed to generate structure data (PDB).");
                      return;
                  }
 
-                viewer.addModel(pdbData, "pdb");
-                console.log("Model added from PDB data.");
+                 // *** STEP 1: Just add the model ***
+                 viewer.addModel(pdbData, "pdb");
+                 console.log("Model added from PDB data.");
 
-                // Apply styles based on current selection
-                if (currentViewStyle === "stick") {
-                    viewer.setStyle({}, { stick: { radius: 0.12, colorscheme: { prop: 'elem', map: atomColors } } });
-                } else if (currentViewStyle === "ballAndStick") {
-                    viewer.setStyle({}, { sphere: { scale: 0.35, colorscheme: { prop: 'elem', map: atomColors } } });
-                    viewer.addStyle({}, { stick: { radius: 0.1, colorscheme: { prop: 'elem', map: atomColors } } });
-                } else if (currentViewStyle === "spacefill") {
-                     // Use vdW radii implicitly by not specifying radius/scale, or use custom radii map
-                     viewer.setStyle({}, { sphere: { colorscheme: { prop: 'elem', map: atomColors } } });
-                     // viewer.setStyle({}, {sphere: {colorscheme: {prop:'elem', map: atomColors}, radii: atomRadii}}); // If using custom radii
-                }
-                 console.log(`Style applied: ${currentViewStyle}`);
+                // *** STEP 2: Add basic default style (lines) ***
+                 // If Step 1 works, uncomment this block. If this breaks, the PDB might still have issues 3Dmol can't style.
+                 // try {
+                 //    viewer.setStyle({}, { line: {} }); // Simplest possible style
+                 //    console.log("Applied basic line style.");
+                 // } catch (styleError) {
+                 //    console.error("Error applying basic line style:", styleError);
+                 //    displayViewerError("Error applying basic style.");
+                 //    return; // Stop if basic style fails
+                 // }
 
-                // Re-draw cell if enabled
+
+                 // *** STEP 3: Add the desired style (comment out Step 2 first) ***
+                 // If Step 2 works, comment it out and uncomment this block.
+                 // This tests the specific style definition and colorscheme.
+                 /*
+                 try {
+                    if (currentViewStyle === "stick") {
+                        viewer.setStyle({}, { stick: { radius: 0.12, colorscheme: { prop: 'elem', map: atomColors } } });
+                    } else if (currentViewStyle === "ballAndStick") {
+                        // Note: 3Dmol applies styles additively unless you clear them.
+                        // setStyle replaces, addStyle adds. Let's use setStyle for clarity.
+                         viewer.setStyle({}, {
+                             sphere: { scale: 0.35, colorscheme: { prop: 'elem', map: atomColors } },
+                             stick: { radius: 0.1, colorscheme: { prop: 'elem', map: atomColors } }
+                         });
+                    } else if (currentViewStyle === "spacefill") {
+                         viewer.setStyle({}, { sphere: { colorscheme: { prop: 'elem', map: atomColors } } });
+                         // Or using custom radii: viewer.setStyle({}, { sphere: { colorscheme: { prop: 'elem', map: atomColors }, radii: atomRadii } });
+                    }
+                    console.log(`Applied ${currentViewStyle} style.`);
+                 } catch (styleError) {
+                    console.error(`Error applying ${currentViewStyle} style:`, styleError);
+                    displayViewerError(`Error applying ${currentViewStyle} style.`);
+                    // Fallback to basic line style if complex style fails?
+                    // viewer.setStyle({}, { line: {} });
+                    // return;
+                 }
+                 */
+
+
+                // Re-draw cell if enabled (do this AFTER styling)
                 if (cellShown) {
                     drawUnitCellShape(currentSupercell);
                 }
 
-                 // Make atoms clickable AFTER adding the model and styles
+                // Set clickable AFTER model and styles
                  viewer.setClickable({}, true, (atom, vwr) => {
-                     // Simple hover effect or info display on click
-                     console.log("Clicked atom data:", atom);
-                     vwr.addLabel(`Atom ${atom.serial}: ${atom.elem}`, { position: { x: atom.x, y: atom.y, z: atom.z }, backgroundColor: 'lightgray', backgroundOpacity: 0.8 });
-                     setTimeout(() => vwr.removeAllLabels(), 1500); // Remove label after 1.5s
+                     console.log("Clicked atom data:", atom); // Log atom data provided by 3Dmol
+                     vwr.addLabel(`Atom ${atom.serial}: ${atom.elem}`, { position: { x: atom.x, y: atom.y, z: atom.z }, backgroundColor: 'lightyellow', backgroundOpacity: 0.8, borderColor: 'black', borderWidth: 0.2, fontSize: 10 });
+                     setTimeout(() => vwr.removeAllLabels(), 1500); // Simple label removal
                  });
+
 
                 viewer.zoomTo();
                 viewer.render();
                 console.log("Structure rendered and zoomed.");
 
             } catch (e) {
-                console.error("Error during renderStructure:", e);
+                console.error("!!! Error during renderStructure:", e);
                 displayViewerError("An error occurred while rendering the structure.");
             }
-        }
+        } // --- END RENDER STRUCTURE ---
 
 
-        // --- Event Listeners Setup ---
-        function setupButtonListener(idSuffix, callback) {
+        // --- Event Listeners Setup (Mostly unchanged) ---
+        function setupButtonListener(idSuffix, callback) { /* ... same ... */
              const button = document.getElementById(`${controlsElementId}-${idSuffix}`);
-             if(button) {
-                button.addEventListener("click", callback);
-             } else { console.warn(`Button ${controlsElementId}-${idSuffix} not found.`); }
+             if(button) { button.addEventListener("click", callback); } else { console.warn(`Button ${controlsElementId}-${idSuffix} not found.`); }
         }
-         function updateActiveButtons(groupSelector, activeButton) {
+         function updateActiveButtons(groupSelector, activeButton) { /* ... same ... */
              controlsElement.querySelectorAll(groupSelector).forEach(btn => btn.classList.remove('active'));
              if (activeButton) activeButton.classList.add('active');
          }
-
-        // Composition Slider
+        // Comp Slider
         const compSlider = document.getElementById(`${controlsElementId}-composition`);
-        if (compSlider) {
-             compSlider.addEventListener("input", function() {
-                 currentComposition = parseFloat(this.value);
-                 if(compValueEl) compValueEl.textContent = `x = ${currentComposition.toFixed(2)}`;
-                 // Optional: Debounce slider updates if rendering is slow
-                 // clearTimeout(renderTimeout);
-                 // renderTimeout = setTimeout(renderStructure, 50);
-                 renderStructure(); // Render immediately for now
-             });
-             // let renderTimeout;
-        }
-
-        // Style Buttons
+        if (compSlider) { compSlider.addEventListener("input", function() { currentComposition = parseFloat(this.value); if(compValueEl) compValueEl.textContent = `x = ${currentComposition.toFixed(2)}`; renderStructure(); }); }
+        // Style Btns
         setupButtonListener("btn-stick", function() { currentViewStyle = "stick"; updateActiveButtons(`#${controlsElementId} .control-group:nth-child(2) button`, this); renderStructure(); });
         setupButtonListener("btn-ball-stick", function() { currentViewStyle = "ballAndStick"; updateActiveButtons(`#${controlsElementId} .control-group:nth-child(2) button`, this); renderStructure(); });
         setupButtonListener("btn-spacefill", function() { currentViewStyle = "spacefill"; updateActiveButtons(`#${controlsElementId} .control-group:nth-child(2) button`, this); renderStructure(); });
-
-        // Cell Buttons
-        setupButtonListener("btn-show-cell", () => { if (!cellShown) { cellShown = true; drawUnitCellShape(currentSupercell); } });
+        // Cell Btns
+        setupButtonListener("btn-show-cell", () => { if (!cellShown) { cellShown = true; drawUnitCellShape(currentSupercell); } }); // Just draw, render happens if style changes etc.
         setupButtonListener("btn-hide-cell", () => { if (cellShown) { cellShown = false; viewer.removeShape({id: 'unit_cell_shape'}); viewer.render(); } });
-
-        // Supercell Buttons
-        (vizData.supercell_options || [1]).forEach(size => {
-             setupButtonListener(`btn-${size}x${size}x${size}`, function() {
-                 currentSupercell = size;
-                 updateActiveButtons(`#${controlsElementId} .control-group:nth-child(4) button`, this);
-                 renderStructure();
-             });
-         });
-
-        // Action Buttons
+        // Supercell Btns
+        (vizData.supercell_options || [1]).forEach(size => { setupButtonListener(`btn-${size}x${size}x${size}`, function() { currentSupercell = size; updateActiveButtons(`#${controlsElementId} .control-group:nth-child(4) button`, this); renderStructure(); }); });
+        // Action Btns
         setupButtonListener("btn-spin", () => viewer.spin(true));
         setupButtonListener("btn-stop", () => viewer.spin(false));
-        setupButtonListener("btn-screenshot", function() {
-             let imageData = viewer.pngURI();
-             let link = document.createElement('a');
-             const safeMaterialName = allMaterialDetails.materialName.replace(/ /g, '_').toLowerCase();
-             let compString = (vizData.composition.min_x !== vizData.composition.max_x) ? `_x${currentComposition.toFixed(2)}` : "";
-             link.download = `${safeMaterialName}_${vizData.structure_type}${compString}_${currentSupercell}x${currentSupercell}x${currentSupercell}.png`;
-             link.href = imageData;
-             document.body.appendChild(link); link.click(); document.body.removeChild(link);
+        setupButtonListener("btn-screenshot", function() { /* ... same ... */
+             let imageData = viewer.pngURI(); let link = document.createElement('a'); const safeMaterialName = allMaterialDetails.materialName.replace(/ /g, '_').toLowerCase(); let compString = (vizData.composition.min_x !== vizData.composition.max_x) ? `_x${currentComposition.toFixed(2)}` : ""; link.download = `${safeMaterialName}_${vizData.structure_type}${compString}_${currentSupercell}x${currentSupercell}x${currentSupercell}.png`; link.href = imageData; document.body.appendChild(link); link.click(); document.body.removeChild(link);
         });
 
         // --- Initial Render ---
         renderStructure();
 
     } // --- END initialize3DViewer FUNCTION ---
-
 
 }); // End DOMContentLoaded
