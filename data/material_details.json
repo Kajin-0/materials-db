@@ -3404,5 +3404,115 @@
       "aerospace", "medical implant", "automotive", "industry:aerospace", "industry:medical",
       "industry:automotive", "industry:oilgas", "polymer matrix composite"
     ]
+  },
+  "PTFE Glass Fiber Composite": {
+    "name": "PTFE Glass Fiber Composite",
+    "formula": "PTFE/Glass Fiber",
+    "synonyms": [ "Glass Filled PTFE", "Reinforced PTFE", "GFR PTFE", "PTFE/Glass", "Rulon (some grades)", "Teflon Glass Composite" ],
+    "category": "Composite",
+    "constituent_elements": ["C", "F", "Si", "O", "Al", "Ca"],
+    "description": "A composite material consisting of Polytetrafluoroethylene (PTFE) polymer matrix reinforced with glass fibers (typically short/milled fibers or woven fabric). This combination enhances the mechanical properties of PTFE, such as creep resistance, stiffness, and wear resistance, while largely retaining PTFE's characteristic properties like excellent chemical inertness, wide service temperature range, low friction coefficient, and good dielectric properties. Commonly used for seals, gaskets, bearings, bushings, valve seats, and PCB substrates for high-frequency applications.",
+    "wiki_link": "https://en.wikipedia.org/wiki/Polytetrafluoroethylene#Fillers_and_reinforcement",
+    "safety": {
+      "toxicity": "Low for the finished composite at normal temperatures. PTFE decomposition fumes above ~350°C are toxic (polymer fume fever). Machining generates glass fiber dust, requiring respiratory protection.",
+      "handling": "Handle parts normally. Avoid overheating during machining."
+    },
+    "identification": {
+      "class": "Glass Fiber Reinforced Fluoropolymer Composite",
+      "crystal_structure": "Fiber: Amorphous Glass. Matrix: Semi-crystalline PTFE.",
+      "appearance": {"notes": "Typically white or off-white solid material."},
+      "filler_content": {"notes": "Commonly 15-40% glass fiber by weight."}
+    },
+    "advanced_fabrication_insights": {
+        "process_control": "Fabricated by blending PTFE powder with glass fibers, followed by compression molding and sintering above PTFE's melting point (~327°C), or by laminating woven glass fabric pre-impregnated with PTFE dispersion.",
+        "common_defects_impact": "Poor fiber dispersion, voids from sintering, poor fiber/matrix wetting. Affect mechanical properties, wear resistance, and dielectric consistency.",
+        "interface_engineering": "Interfacial adhesion between inert PTFE and glass fibers can be weak. Surface treatment of fibers is less common than in other composites.",
+        "sintering_cycle": "Crucial for achieving proper density and matrix properties. Controlled heating and cooling rates are needed to manage crystallinity and minimize stress."
+    },
+    "growth_fabrication_properties": {
+        "common_growth_methods": "Compression Molding & Sintering (for bulk shapes/stock), Paste Extrusion (for rods/tubes), Skiving (for films from molded billets), Lamination (for PCB substrates).",
+        "source_materials_purity": "PTFE resin powder (various grades), Glass fibers (E-glass typical, milled or chopped).",
+        "preferred_substrates_orientations": "N/A (Bulk composite). Fiber orientation can be random (molded) or defined (woven fabric).",
+        "typical_growth_parameters": "Molding pressure, Sintering temperature (~360-380°C), cooling rate.",
+        "passivation_methods": "PTFE matrix provides excellent chemical protection."
+    },
+    "post_growth_processing": {
+        "annealing": "Stress relief annealing sometimes performed after machining.",
+        "lapping_polishing": "Machinable, surface finish can be smooth.",
+        "etching": "PTFE surface often requires chemical etching (e.g., sodium naphthalene complex) to enable bonding with adhesives.",
+        "grinding_milling": "Machinable with sharp tooling. Generates potentially abrasive dust."
+    },
+     "device_integration_characterization": {
+        "device_architectures": "Seals (lip seals, O-rings, V-rings), Gaskets, Bearings and Bushings, Valve Seats and Components, Piston Rings, Insulators, High-Frequency PCB Substrates, Cable Insulation.",
+        "readout_integration": "N/A (passive component), or as PCB substrate.",
+        "ar_coatings": "N/A",
+        "packaging_cooling": "Suitable for wide temperature range and chemically aggressive environments.",
+        "key_characterization_techniques": ["Mechanical Testing (Tensile Strength/Modulus, Compressive Strength, Creep Resistance)", "Tribological Testing (Coefficient of Friction, Wear Rate)", "Dielectric Constant (Dk) & Dissipation Factor (Df) vs. Frequency", "Thermal Expansion Measurement", "Density Measurement", "Hardness Testing (Shore D)"]
+    },
+    "electrical_properties": {
+      "bandgap_type": "Insulator",
+      "resistivity": {"value": "Very High (> 10¹⁵ Ω·cm)", "notes": "Excellent electrical insulator."},
+      "dielectric_constant": {"value": "~2.2 - 3.0", "notes": "Dk slightly higher than neat PTFE (~2.1) due to glass fibers (~4-7). Relatively stable with frequency."},
+      "dissipation_factor": {"value": "Very Low (~0.001 - 0.005)", "notes": "Df slightly higher than neat PTFE (<0.0002) but still very low. Excellent for high-frequency applications."},
+      "dielectric_strength": {"value": "High (~15-40 kV/mm)", "notes": "Depends on thickness and porosity."}
+    },
+    "optical_properties": {
+      "spectral_range": "Opaque white/off-white."
+    },
+    "thermal_properties": {
+      "operating_temperature": {"value": "Cryogenic up to ~260", "unit": "°C", "notes": "Upper limit determined by PTFE matrix stability."},
+      "thermal_conductivity": {"value": "Low (~0.3 - 0.6)", "unit": "W/(m·K)", "notes": "Slightly higher than neat PTFE (~0.25 W/mK) due to glass fibers."},
+      "specific_heat": {"value": "~0.9-1.1", "unit": "J/(g·K)"},
+      "melting_point": {"value": "~327", "unit": "°C", "notes": "Melting point of PTFE matrix."},
+      "thermal_expansion": {"value": "Relatively High (~50-120 x 10⁻⁶ /°C)", "notes": "Lower than neat PTFE (~100-150) due to constraining effect of glass fibers, but still high for engineering materials. Anisotropic if fibers are oriented."}
+    },
+     "mechanical_properties": {
+         "density": {"value": "~2.1 - 2.3", "unit": "g/cm³", "notes": "PTFE density ~2.15 g/cm³, Glass ~2.5 g/cm³."},
+         "youngs_modulus": {"value": "~1.0 - 2.5", "unit": "GPa", "notes": "Significantly higher than neat PTFE (~0.5 GPa)."},
+         "tensile_strength": {"value": "~15 - 35", "unit": "MPa", "notes": "Higher than neat PTFE (~10-25 MPa)."},
+         "compressive_strength": {"notes": "Improved significantly over neat PTFE."},
+         "hardness_shore_d": {"value": "~55-70", "notes": "Harder than neat PTFE (~D50-D60)."},
+         "coefficient_of_friction": {"value": "Low (~0.1 - 0.2)", "notes": "Slightly higher than neat PTFE (~0.05-0.1) but still very low."},
+         "creep_resistance": {"notes": "Significantly improved compared to unfilled PTFE, which exhibits substantial creep under load."},
+         "wear_resistance": {"notes": "Significantly improved compared to unfilled PTFE."}
+     },
+     "device_applications": {
+         "key_applications": ["Dynamic Seals (Lip seals, Piston rings)", "Static Seals & Gaskets (Chemical processing, High temp)", "Low-Friction Bearings and Bushings", "Valve Seats and Linings", "Electrical Insulators", "High-Frequency/Microwave PCB Substrates", "Wire and Cable Insulation (high temp/chemical resistant)"]
+     },
+     "chemical_properties": {
+         "stability_oxidation": "Excellent.",
+         "solvent_resistance": "Excellent resistance to nearly all chemicals and solvents.",
+         "acid_resistance": "Excellent.",
+         "base_resistance": "Excellent.",
+         "chemical_inertness": {"notes": "One of the most chemically inert plastics."},
+         "water_absorption": {"value": "Extremely Low (<0.01%)"}
+     },
+     "comparison_alternatives": {
+         "notes": "Alternative Filled PTFE / Seal Materials:",
+         "vs_Unfilled_PTFE": "Glass/PTFE: Higher strength, stiffness, creep resistance, wear resistance; Lower elongation, slightly higher friction, slightly higher dielectric loss. Unfilled PTFE: Lower cost, better elongation/conformability, lowest friction, best dielectric properties.",
+         "vs_Carbon_Filled_PTFE": "Glass/PTFE: Better electrical insulation, white color. Carbon/PTFE: Improved thermal conductivity, electrically conductive (ESD), black color, better wear resistance in some cases.",
+         "vs_Bronze_Filled_PTFE": "Glass/PTFE: Better chemical resistance (esp. acids/bases), better electrical insulation. Bronze/PTFE: Higher thermal conductivity, higher strength/wear resistance, lower creep, poorer chemical resistance.",
+         "vs_PEEK": "Glass/PTFE: Lower friction, better chemical inertness, wider temperature range (esp. low temp), lower strength/stiffness. PEEK: Much higher strength/stiffness, better wear resistance at high PV limits, higher operating temperature potential.",
+         "vs_UHMWPE": "Glass/PTFE: Higher operating temperature, better chemical resistance, lower friction (generally), higher stiffness. UHMWPE: Excellent abrasion resistance, higher impact toughness, lower cost, lower temperature limit."
+     },
+     "references_further_reading": {
+         "notes": "Key Resources:",
+         "dupont_teflon_data": "DuPont Teflon (Chemours) technical information.",
+         "parker_seal_handbook": "Parker O-Ring Handbook or similar seal design guides.",
+         "ptfe_composite_reviews": "Review articles or book chapters on filled PTFE materials.",
+         "wikipedia_ptfe": "https://en.wikipedia.org/wiki/Polytetrafluoroethylene"
+     },
+     "vendor_info": {
+        "notes": "Example Vendors (Placeholder):",
+        "vendor_1": "Company A - www.example-vendor-a.com",
+        "vendor_2": "Company B - www.example-vendor-b.com",
+        "vendor_3": "Company C - www.example-vendor-c.com"
+     },
+    "tags": [
+      "composite", "polymer matrix composite", "ptfe", "teflon", "glass fiber",
+      "low friction", "chemical resistant", "seal", "gasket", "bearing",
+      "electrical insulator", "high frequency", "pcb substrate", "wear resistant",
+      "creep resistant", "industry:chemical", "industry:electronics", "industry:mechanical"
+    ]
   }
 }
