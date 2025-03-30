@@ -15,7 +15,7 @@
         .back-link::before { content: "←"; margin-right: 0.4rem; }
         .material-title-bar { margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid #e0e0e0; }
         .material-title-bar h1 { margin: 0 0 0.25rem 0; font-size: 2rem; color: #1a1a1a; font-weight: 600; }
-        html { scroll-behavior: smooth; } /* Enable smooth scrolling for TOC links */
+        html { scroll-behavior: smooth; /* Enable smooth scrolling for TOC links */ }
 
         /* Table of Contents */
         #toc { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 6px; padding: 1rem 1.5rem; margin-bottom: 2.5rem; }
@@ -122,9 +122,9 @@
             transition: background-color 0.3s ease-out;
             border-radius: 4px;
             /* Adjust padding/margin ONLY for the target state */
-            margin-left: 0; /* Remove indent margin */
-            padding-left: 0.5rem; /* Add some left padding */
-            text-indent: 0; /* Reset indent */
+            margin-left: 0 !important; /* Remove indent margin */
+            padding-left: 0.5rem !important; /* Add some left padding */
+            text-indent: 0 !important; /* Reset indent */
             padding-top: 0.3rem;
             padding-bottom: 0.3rem;
             margin-right: -0.5rem; /* Compensate container padding if needed */
@@ -143,19 +143,23 @@
             border-radius: 6px;
             overflow: hidden; /* Contain elements */
             background-color: #fdfdfd;
+            /* Use CSS Variable for height */
+            height: var(--viewer-height, 450px);
         }
 
         .crystal-viewer-container {
             display: flex;
             flex-direction: column; /* Default: controls below */
-            min-height: 400px; /* Ensure minimum height */
+             height: 100%; /* Fill wrapper height */
         }
 
         .viewer-area {
             flex-grow: 1; /* Take available space */
             position: relative; /* For potential overlays if needed */
             background-color: white; /* Match viewer background */
-            min-height: 300px; /* Minimum drawing area height */
+            min-height: 250px; /* Minimum drawing area height */
+            height: 70%; /* Default proportion if stacked */
+            overflow: hidden; /* Hide potential overflow from 3dmol canvas */
         }
 
         .viewer-controls {
@@ -165,6 +169,8 @@
             border-top: 1px solid #e0e0e0;
             overflow-y: auto; /* Scroll if controls get too long */
             box-sizing: border-box;
+            height: 30%; /* Default proportion if stacked */
+            flex-shrink: 0;
         }
         .viewer-controls h4 {
              margin-top: 0;
@@ -309,23 +315,25 @@
             .detail-content-section h2 { font-size: 1.5rem; }
             .property-detail-block h3 { font-size: 1.25rem; }
             .detail-subsection h4::before { font-size: 1rem; }
-            /* Ensure viewer controls stack on small screens */
-            .crystal-viewer-container { flex-direction: column; }
-            .viewer-controls { width: 100%; border-left: none; border-top: 1px solid #e0e0e0; max-height: none; }
-            .viewer-area { border-right: none; }
+            /* Adjust viewer wrapper height for stacking */
+            .crystal-viewer-wrapper { height: auto; min-height: 550px; } /* Allow more vertical space when stacked */
+            .crystal-viewer-container { flex-direction: column; height: 100%; }
+            .viewer-area { height: 60%; min-height: 300px; border-right: none; } /* Adjust proportions */
+            .viewer-controls { width: 100%; height: 40%; border-left: none; border-top: 1px solid #e0e0e0; max-height: none; }
          }
 
          /* Controls beside viewer on wider screens */
          @media (min-width: 769px) { /* Apply side-by-side layout */
+             .crystal-viewer-wrapper { height: var(--viewer-height, 450px); } /* Use variable from JS */
              .crystal-viewer-container {
                  flex-direction: row; /* Side-by-side */
-                 /* Use height from JSON data if available, or set a default */
-                 height: var(--viewer-height, 450px); /* Default height, can be overridden */
+                 height: 100%;
              }
              .viewer-area {
                  border-right: 1px solid #e0e0e0;
                  border-bottom: none;
                  height: 100%; /* Fill the container height */
+                 width: calc(100% - 280px); /* Calculate width */
              }
              .viewer-controls {
                  width: 280px; /* Fixed width for controls */
@@ -379,7 +387,6 @@
                  <div class="properties-container" id="section-mechanical_properties-properties"></div>
              </section>
             <!-- Add more section placeholders here if needed, following the pattern -->
-            <!-- e.g., <section id="section-safety_info" ...></section> -->
         </main>
         <div id="references-section" style="display: none;">
             <h4>References Cited</h4>
