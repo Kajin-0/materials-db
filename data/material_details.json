@@ -3299,5 +3299,110 @@
       "aerospace", "jet engine", "oxidation resistant", "lightweight", "thermal insulation",
       "industry:aerospace", "industry:energy", "industry:thermal", "ceramic"
     ]
+  },
+  "PEEK Carbon Fiber Composite": {
+    "name": "PEEK Carbon Fiber Composite",
+    "formula": "PEEK/CF",
+    "synonyms": [ "Carbon Fiber Reinforced PEEK", "CF/PEEK", "PEEK Composite", "CFR PEEK", "PEEK-HTA", "AS4/PEEK" ],
+    "category": "Composite",
+    "constituent_elements": ["C", "H", "O"],
+    "description": "A high-performance thermoplastic composite consisting of Polyether Ether Ketone (PEEK) polymer matrix reinforced with carbon fibers (typically continuous fibers in woven or unidirectional forms). This combination leverages the excellent thermal stability (high Tg and melting point), chemical resistance, wear resistance, and inherent flame retardancy of PEEK with the exceptional strength, stiffness, and low density of carbon fibers. Widely used in demanding structural applications in aerospace, automotive, medical, and industrial sectors.",
+    "wiki_link": "https://en.wikipedia.org/wiki/Polyether_ether_ketone#Composites",
+    "safety": {
+      "toxicity": "Low for the cured composite. Machining generates carbon fiber dust and PEEK particulates, requiring respiratory protection and ventilation.",
+      "handling": "Handle parts normally. Carbon fiber dust can be electrically conductive and cause short circuits in equipment if not controlled."
+    },
+    "identification": {
+      "class": "Continuous Carbon Fiber Reinforced Thermoplastic Composite",
+      "crystal_structure": "Fiber: Graphitic Carbon. Matrix: Semi-crystalline PEEK.",
+      "appearance": {"notes": "Typically black or dark gray solid material."},
+      "fiber_volume_fraction": {"notes": "Typically ~50-65% for structural applications."}
+    },
+    "advanced_fabrication_insights": {
+        "process_control": "Fabricated using thermoplastic processing techniques. Key methods include: Compression molding of prepreg tapes/fabrics, Automated Fiber Placement (AFP) or Automated Tape Laying (ATL), filament winding, extrusion, injection molding (with short fibers). Requires high processing temperatures (~360-400°C).",
+        "common_defects_impact": "Voids, fiber waviness, poor fiber/matrix interface bonding, matrix degradation due to improper processing temps/times. Affect mechanical properties (strength, fatigue life), dimensional stability.",
+        "interface_engineering": "Interface strength between the relatively inert PEEK matrix and carbon fibers is crucial for performance. Fiber surface treatments or matrix modifications can be used to improve adhesion.",
+        "crystallinity_control": "Cooling rate during processing affects the degree of crystallinity of the PEEK matrix, which influences mechanical properties (stiffness, toughness) and solvent resistance."
+    },
+    "growth_fabrication_properties": {
+        "common_growth_methods": "Compression Molding, Autoclave Consolidation, AFP/ATL, Filament Winding, Injection Molding (short fiber).",
+        "source_materials_purity": "PEEK polymer resin (various grades), Carbon Fibers (e.g., AS4, IM7, PAN-based). Often supplied as pre-impregnated tapes or fabrics (prepregs).",
+        "preferred_substrates_orientations": "N/A (Bulk composite). Fiber orientation determined by layup/winding.",
+        "typical_growth_parameters": "High processing temperatures (360-400°C) and pressures. Controlled cooling rates.",
+        "passivation_methods": "PEEK matrix provides good environmental protection."
+    },
+    "post_growth_processing": {
+        "annealing": "Can be annealed below melting point to increase crystallinity and improve certain properties (e.g., stiffness, wear resistance), often at the expense of toughness.",
+        "lapping_polishing": "Machinable, requires appropriate tooling for composites.",
+        "etching": "PEEK is resistant to many etchants.",
+        "grinding_milling": "Machinable with sharp carbide or diamond tooling. Control dust generation."
+    },
+     "device_integration_characterization": {
+        "device_architectures": "Aerospace structural components (brackets, ribs, spars, clips), automotive parts (gears, bearings), medical implants (spinal cages, trauma plates - requires biocompatible PEEK grades), industrial components (wear parts, pump components).",
+        "readout_integration": "N/A",
+        "ar_coatings": "N/A",
+        "packaging_cooling": "Suitable for applications requiring high service temperatures and chemical resistance.",
+        "key_characterization_techniques": ["Mechanical Testing (Tensile/Compressive/Flexural Strength & Modulus, ILSS, Impact Toughness - often at various temps)", "Dynamic Mechanical Analysis (DMA - Tg, storage modulus)", "Differential Scanning Calorimetry (DSC - Tg, Tm, crystallinity)", "Microscopy (SEM, Optical - void content, fiber dispersion/alignment)", "Chemical Resistance Testing", "Tribological Testing (Wear, Friction)"]
+    },
+    "electrical_properties": {
+      "bandgap_type": "PEEK: Insulator. Carbon Fiber: Conductor/Semimetal.",
+      "resistivity": {"value": "Variable (Low to Moderate)", "unit": "Ω·cm", "notes": "Electrically conductive due to carbon fibers, dependent on fiber type, volume fraction, and connectivity. Useful for ESD and EMI shielding applications."},
+      "conductivity_electrical": {"notes": "Electrically conductive, anisotropic based on fiber orientation."},
+      "dielectric_constant": {"value": "~4-6", "notes": "Higher than neat PEEK (~3.2), influenced by fiber content."}
+    },
+    "optical_properties": {
+      "spectral_range": "Opaque black."
+    },
+    "thermal_properties": {
+      "operating_temperature": {"value": "Continuous use up to ~240-260", "unit": "°C", "notes": "Limited by the Glass Transition Temperature (Tg) of PEEK (~143°C, but usable above Tg depending on load/crystallinity). Short term use much higher possible."},
+      "thermal_conductivity": {"value": "Moderate (~1-15+ W/(m·K))", "notes": "Significantly higher than neat PEEK (~0.25 W/mK) due to conductive carbon fibers. Highly anisotropic; much higher along fiber direction."},
+      "specific_heat": {"value": "~1.0-1.3", "unit": "J/(g·K)"},
+      "melting_point": {"value": "~343", "unit": "°C", "notes": "Melting point of PEEK matrix."},
+      "glass_transition_temp_tg": {"value": "~143", "unit": "°C", "notes": "Tg of PEEK matrix."},
+      "thermal_expansion": {"value": "Very Low (In-plane: ~0-5 x 10⁻⁶ /°C), Higher (Through-plane: ~30-50 x 10⁻⁶ /°C)", "notes": "Highly anisotropic. Near-zero CTE possible along fiber direction."}
+    },
+     "mechanical_properties": {
+         "density": {"value": "~1.5-1.6", "unit": "g/cm³", "notes": "Relatively lightweight. PEEK density ~1.3 g/cm³, CF density ~1.8 g/cm³."},
+         "youngs_modulus": {"value": "Very High (Along fibers: 100-200+ GPa)", "notes": "Excellent specific stiffness (modulus/density). Highly anisotropic."},
+         "tensile_strength": {"value": "Very High (Along fibers: 1000-2500+ MPa)", "notes": "Excellent specific strength. Highly anisotropic."},
+         "compressive_strength": {"notes": "Good, but often lower than tensile strength."},
+         "fracture_toughness": {"value": "Good", "notes": "Significantly tougher than thermoset composites (like CF/Epoxy), due to ductile PEEK matrix."}
+     },
+     "device_applications": {
+         "key_applications": ["Aerospace primary & secondary structures", "Automotive powertrain and structural components", "Medical implants (orthopedic, spinal)", "Oil & Gas downhole tools and components", "Industrial machinery parts (gears, bearings, seals)", "Semiconductor handling equipment"]
+     },
+     "chemical_properties": {
+         "stability_oxidation": "Good up to PEEK's thermal limits.",
+         "solvent_resistance": "Excellent resistance to a wide range of organic solvents, acids, bases, and hydrolysis.",
+         "acid_resistance": "Good, except for strong oxidizing acids (e.g., concentrated Sulfuric/Nitric).",
+         "base_resistance": "Excellent.",
+         "radiation_resistance": "Good resistance to gamma and electron beam radiation.",
+         "uv_resistance": "Fair; may require UV protective coatings for long-term outdoor exposure."
+     },
+     "comparison_alternatives": {
+         "notes": "Alternative High-Performance Composites:",
+         "vs_Carbon_Fiber_Epoxy": "PEEK/CF: Higher toughness, higher operating temperature (matrix limited), excellent chemical resistance, thermoplastic (potential for welding/reforming), higher processing temperature, higher matrix cost. Epoxy/CF: Higher stiffness/strength potential (matrix dominated failure less likely), lower processing temp, lower cost matrix, thermoset (no welding/reforming).",
+         "vs_Titanium_Alloys": "PEEK/CF: Lower density (~1/3), comparable specific strength/stiffness, better fatigue performance, better chemical resistance (in some cases), electrically conductive (can be pro/con). Ti Alloys: Higher operating temperature, isotropic properties, well-established design data, ductile failure.",
+         "vs_High_Strength_Aluminum": "PEEK/CF: Higher specific strength/stiffness, higher operating temperature, better fatigue and chemical resistance, higher cost. Al Alloys: Lower cost, isotropic, easier machining, well-established."
+     },
+     "references_further_reading": {
+         "notes": "Key Resources:",
+         "book_thermoplastic_composites": "Books dedicated to Thermoplastic Matrix Composites.",
+         "victrex_solvay_data": "Technical datasheets from PEEK suppliers (e.g., Victrex, Solvay) and prepreggers (e.g., Toray, Hexcel, Teijin).",
+         "journal_composites_a_b": "Composites Part A / Part B journal articles.",
+         "wikipedia_peek": "https://en.wikipedia.org/wiki/Polyether_ether_ketone"
+     },
+     "vendor_info": {
+        "notes": "Example Vendors (Placeholder):",
+        "vendor_1": "Company A - www.example-vendor-a.com",
+        "vendor_2": "Company B - www.example-vendor-b.com",
+        "vendor_3": "Company C - www.example-vendor-c.com"
+     },
+    "tags": [
+      "composite", "thermoplastic composite", "carbon fiber", "peek", "high strength",
+      "high stiffness", "lightweight", "chemical resistant", "high temperature", "conductive",
+      "aerospace", "medical implant", "automotive", "industry:aerospace", "industry:medical",
+      "industry:automotive", "industry:oilgas", "polymer matrix composite"
+    ]
   }
 }
