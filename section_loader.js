@@ -33,13 +33,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (materialContextEl) materialContextEl.textContent = `for ${materialName}`;
 
     // --- Construct file path ---
-    // Replace spaces with underscores for the filename convention we chose
-    const safeMaterialName = materialName.replace(/ /g, '_');
+    // Replace spaces with underscores AND convert to lowercase
+    const safeMaterialName = materialName.replace(/ /g, '_').toLowerCase(); // <--- CHANGE HERE
     const detailFilePath = `./details/${safeMaterialName}_details.json`;
 
-    console.log(`[Section Detail] Loading section '${sectionKey}' for material '${materialName}' from '${detailFilePath}'`);
+    console.log(`[Section Detail] Loading section '${sectionKey}' for material '${materialName}' from '${detailFilePath}'`); // Log the actual path being fetched
 
     // --- Fetch and Process Data ---
+    // ... rest of the fetch logic ...
     try {
         const response = await fetch(detailFilePath);
         if (!response.ok) {
