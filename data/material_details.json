@@ -3514,5 +3514,115 @@
       "electrical insulator", "high frequency", "pcb substrate", "wear resistant",
       "creep resistant", "industry:chemical", "industry:electronics", "industry:mechanical"
     ]
+  },
+  "Polyethylene Neutron Shielding": {
+    "name": "Polyethylene Neutron Shielding",
+    "formula": "(C₂H₄)n / (+ Boron optional)",
+    "synonyms": [ "PE Neutron Shield", "HDPE Shielding", "Borated Polyethylene", "Neutron Attenuating Polyethylene" ],
+    "category": "Polymer",
+    "constituent_elements": ["C", "H", "B", "O"],
+    "description": "A type of polyethylene, typically High-Density Polyethylene (HDPE), used for neutron radiation shielding. Its effectiveness stems from the high concentration of hydrogen atoms, which efficiently moderate (slow down) fast neutrons through elastic scattering. Often compounded with boron compounds (like boron carbide or boron oxide, creating 'Borated Polyethylene') to absorb the thermalized neutrons via the Boron-10 isotope's high absorption cross-section. Available in sheets, blocks, rods, and machinable grades.",
+    "wiki_link": "https://en.wikipedia.org/wiki/Neutron_moderator#Materials_used",
+    "safety": {
+      "toxicity": "Low (Polyethylene and Boron compounds generally low toxicity in solid form).",
+      "handling": "Handle large sheets/blocks appropriately. Machining generates plastic shavings/dust; standard workshop ventilation recommended."
+    },
+    "identification": {
+      "class": "Polymer (Thermoplastic), Radiation Shielding Material",
+      "crystal_structure": "Semi-crystalline (Polyethylene matrix)",
+      "appearance": {"notes": "Typically white/natural (HDPE) or sometimes colored. Borated PE can be slightly off-white or colored."},
+      "boron_content": {"notes": "For Borated PE, typically 1-10% Boron by weight (often 5%). Higher Boron content increases thermal neutron absorption but can reduce mechanical properties slightly."}
+    },
+    "advanced_fabrication_insights": {
+        "process_control": "Produced by standard polyethylene processing methods like extrusion or compression molding. For borated grades, uniform dispersion of the boron compound within the PE matrix during compounding is critical for consistent shielding performance.",
+        "common_defects_impact": "Voids, poor boron dispersion, inconsistent density. Can lead to radiation streaming paths or reduced shielding effectiveness.",
+        "material_grades": {"notes": "Available in various HDPE grades (molecular weight affects mechanical properties) and different boron loadings."},
+        "machinability": "Readily machinable using standard woodworking or plastic machining tools."
+    },
+    "growth_fabrication_properties": {
+        "common_growth_methods": "Compounding (PE resin + optional Boron compound), followed by Compression Molding (sheets/blocks) or Extrusion (rods/profiles).",
+        "source_materials_purity": "HDPE resin pellets/powder, Boron Carbide (B₄C) powder or other boron compounds.",
+        "preferred_substrates_orientations": "N/A (Bulk material).",
+        "typical_growth_parameters": "Standard thermoplastic processing temperatures (~150-250°C) and pressures.",
+        "passivation_methods": "Surface is stable polyethylene."
+    },
+    "post_growth_processing": {
+        "annealing": "Sometimes annealed for stress relief after machining.",
+        "lapping_polishing": "Can be smoothed but not typically polished.",
+        "etching": "Resistant to most etchants.",
+        "grinding_milling": "Easily machined."
+    },
+     "device_integration_characterization": {
+        "device_architectures": "Shielding walls, doors, containers, linings for radiation environments (nuclear reactors, particle accelerators, medical facilities, transport casks).",
+        "readout_integration": "N/A (Passive shielding material).",
+        "ar_coatings": "N/A",
+        "packaging_cooling": "Stable in typical ambient conditions.",
+        "key_characterization_techniques": ["Neutron Attenuation Testing", "Density Measurement", "Boron Content Analysis (for borated grades, e.g., titration, ICP)", "Mechanical Testing (Tensile Strength, Impact Resistance)", "Differential Scanning Calorimetry (DSC - melting point, crystallinity)"]
+    },
+    "electrical_properties": {
+      "bandgap_type": "Insulator",
+      "resistivity": {"value": "Very High (> 10¹⁴ Ω·cm)", "notes": "Excellent electrical insulator."},
+      "dielectric_constant": {"value": "~2.3-2.4", "notes": "Low Dk."},
+      "dissipation_factor": {"value": "Very Low (<0.0005)"},
+      "dielectric_strength": {"value": "High"}
+    },
+    "optical_properties": {
+      "spectral_range": "Opaque or translucent white/natural."
+    },
+    "thermal_properties": {
+      "operating_temperature": {"value": "~ -50 to +80", "unit": "°C", "notes": "Typical continuous use range for HDPE. Becomes brittle at very low temperatures, softens near melting point."},
+      "thermal_conductivity": {"value": "Low (~0.4-0.5)", "unit": "W/(m·K)", "notes": "Good thermal insulator."},
+      "specific_heat": {"value": "~1.8-2.0", "unit": "J/(g·K)"},
+      "melting_point": {"value": "~125-135", "unit": "°C", "notes": "Melting range for HDPE."},
+      "thermal_expansion": {"value": "High (~100-200 x 10⁻⁶ /°C)", "notes": "Very high CTE requires consideration in design."}
+    },
+     "mechanical_properties": {
+         "density": {"value": "~0.94-0.97", "unit": "g/cm³", "notes": "Slightly higher for borated grades."},
+         "youngs_modulus": {"value": "~0.8-1.5", "unit": "GPa", "notes": "Relatively low stiffness."},
+         "tensile_strength": {"value": "~20-35", "unit": "MPa"},
+         "hardness_shore_d": {"value": "~60-70"},
+         "impact_strength": {"notes": "Good impact resistance, especially compared to more brittle shielding materials."},
+         "ductility": {"notes": "Good ductility and toughness."}
+     },
+     "device_applications": {
+         "key_applications": ["Neutron Shielding in Nuclear Power Plants", "Shielding for Particle Accelerators and Research Reactors", "Medical Radiation Therapy Room Shielding", "Shipping Casks for Radioactive Materials", "Neutron detection instrument components", "Industrial Neutron Radiography Shielding"]
+     },
+     "chemical_properties": {
+         "stability_oxidation": "Good stability in air at operating temperatures.",
+         "solvent_resistance": "Excellent resistance to water, acids, bases, and many organic solvents at room temperature. Susceptible to swelling/attack by some hydrocarbons.",
+         "acid_resistance": "Excellent.",
+         "base_resistance": "Excellent.",
+         "water_absorption": {"value": "Very Low (<0.01%)"}
+     },
+     "neutron_shielding": {
+        "moderation": {"notes": "High hydrogen content provides excellent moderation (slowing) of fast neutrons."},
+        "absorption": {"notes": "Borated grades provide effective absorption of thermal neutrons via ¹⁰B(n,α)⁷Li reaction."}
+     },
+     "comparison_alternatives": {
+         "notes": "Alternative Neutron Shielding Materials:",
+         "vs_Water": "Polyethylene: Solid, easier to handle/contain, higher hydrogen density (slightly better moderator per unit volume). Water: Cheap, transparent, can incorporate soluble boron compounds, requires containment.",
+         "vs_Concrete": "Polyethylene: Much lighter, more effective moderator per unit mass, easier to machine/modify. Concrete: Cheaper for large volumes, provides structural support, also shields gamma rays effectively, very heavy.",
+         "vs_Lead": "Polyethylene: Excellent neutron moderator/absorber (borated). Lead: Excellent gamma shield, poor neutron shield.",
+         "vs_Boron_Carbide_B4C": "Polyethylene (Borated): Easier/cheaper fabrication of large shapes, also moderates. B₄C: Very high boron density (excellent absorber), requires high-temp processing, often used as powder/tiles within other structures.",
+         "vs_Lithium_Polyethylene": "Standard (Borated) PE: Uses stable Boron-10. Li-PE: Uses Lithium-6 for neutron absorption, can offer high absorption density, potentially higher cost / availability issues with enriched Li."
+     },
+     "references_further_reading": {
+         "notes": "Key Resources:",
+         "shielding_handbooks": "Radiation Shielding handbooks (e.g., NCRP reports, IAEA publications).",
+         "vendor_datasheets": "Technical datasheets from suppliers of neutron shielding polyethylene (e.g., Shieldwerx, MarShield, ES Composites).",
+         "wikipedia_neutron_mod": "https://en.wikipedia.org/wiki/Neutron_moderator"
+     },
+     "vendor_info": {
+        "notes": "Example Vendors (Placeholder):",
+        "vendor_1": "Company A - www.example-vendor-a.com",
+        "vendor_2": "Company B - www.example-vendor-b.com",
+        "vendor_3": "Company C - www.example-vendor-c.com"
+     },
+    "tags": [
+      "polymer", "neutron shielding", "radiation shielding", "polyethylene", "hdpe",
+      "borated polyethylene", "neutron moderator", "neutron absorber", "nuclear",
+      "medical shielding", "lightweight shielding", "industry:nuclear", "industry:medical",
+      "industry:research"
+    ]
   }
 }
