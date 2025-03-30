@@ -130,11 +130,12 @@
         .detail-subsection.key_characteristics h4::before { content: "Key Characteristics"; color: #2980b9; }
         .detail-subsection.measurement_characterization h4::before { content: "Measurement & Characterization"; color: #8e44ad; }
         .detail-subsection.device_relevance h4::before { content: "Device Relevance / Impact"; color: #27ae60; }
-        .detail-subsection.doping_methods h4::before { content: "Doping Methods"; color: #c0392b; }
+        .detail-subsection.doping_methods h4::before { content: "Doping Methods"; color: #c0392b; } /* Example color */
         .detail-subsection.equations h4::before { content: "Equations"; color: #d35400; }
-        .detail-subsection.significance h4::before { content: "Significance"; color: #27ae60; }
-        .detail-subsection.techniques h4::before { content: "Techniques"; color: #8e44ad; }
-        .detail-subsection.considerations h4::before { content: "Considerations"; color: #8e44ad; }
+        .detail-subsection.significance h4::before { content: "Significance"; color: #27ae60; } /* Re-use color */
+        .detail-subsection.techniques h4::before { content: "Techniques"; color: #8e44ad; } /* Re-use color */
+        .detail-subsection.considerations h4::before { content: "Considerations"; color: #8e44ad; } /* Re-use color */
+
 
         .detail-subsection ul { padding-left: 1.5rem; margin: 0.5rem 0 1rem 0; list-style: none; }
         .detail-subsection li { margin-bottom: 0.6rem; line-height: 1.6; position: relative; padding-left: 1.2rem; }
@@ -143,6 +144,7 @@
         .detail-subsection.measurement_characterization .considerations li::before { content: "\25B8"; color: #8e44ad; }
         .detail-subsection.measurement_characterization .considerations li,
         .detail-subsection.measurement_characterization .considerations p { font-size: 0.9rem; color: #444; }
+
 
         /* Equation blocks */
         .equation-block { background-color: #f8f9fa; padding: 1.25rem; border-radius: 6px; margin: 1rem 0; border: 1px solid #e9ecef; }
@@ -171,17 +173,15 @@
         #references-list li {
              margin-bottom: 0.75rem;
              padding-left: 0; /* Remove padding */
-             /* position: relative; */ /* REMOVED */
              list-style-position: outside;
              text-indent: -1.5rem; /* Apply negative indent */
              margin-left: 1.5rem; /* Apply positive margin */
         }
         #references-list li strong {
-             /* position: absolute; */ /* REMOVED */
-             /* left: 0; */ /* REMOVED */
+             /* Removed absolute positioning */
              color: #555; font-weight: 600; margin-right: 0.5em; /* Space after key */
          }
-        #references-list li:target { background-color: #fffde7; padding: 0.5rem; border-radius: 4px; transition: background-color 0.3s ease; margin-left: 0; text-indent: 0; padding-left: 0.5rem; }
+        #references-list li:target { background-color: #fffde7; padding: 0.5rem 0.5rem 0.5rem 1.5rem; border-radius: 4px; transition: background-color 0.3s ease; margin-left: 0; text-indent: 0; /* Reset indent on target */ }
         .ref-link { color: #0066cc; text-decoration: none; }
         .ref-link:hover { text-decoration: underline; }
 
@@ -194,7 +194,7 @@
         /* Simple responsive adjustments */
         @media (max-width: 768px) {
             .full-detail-container { margin: 1rem; padding: 1.5rem; }
-            #toc ul { columns: 1; -webkit-columns: 1; -moz-columns: 1; } /* Single column TOC on small screens */
+            #toc ul { columns: 1; -webkit-columns: 1; -moz-columns: 1; } /* Single column TOC */
             .detail-content-section h2 { font-size: 1.5rem; }
             .property-detail-block h3 { font-size: 1.25rem; }
             .detail-subsection h4::before { font-size: 1rem; }
@@ -208,14 +208,12 @@
         <!-- Material Title Area -->
         <div class="material-title-bar">
             <h1 id="material-name">Loading Material...</h1>
-            <!-- Maybe add formula/category here later -->
         </div>
 
         <!-- Table of Contents -->
         <nav id="toc">
             <h2>Contents</h2>
             <ul id="toc-list">
-                <!-- TOC links generated dynamically -->
                 <li><a href="#section-placeholder">Loading...</a></li>
             </ul>
         </nav>
@@ -235,23 +233,24 @@
                  <div class="properties-container" id="section-electrical_properties-properties"></div>
             </section>
 
-            <!-- Add more section placeholders as needed -->
-             <section id="section-optical_properties" class="detail-content-section" style="display: none;">
+            <section id="section-optical_properties" class="detail-content-section" style="display: none;">
                  <h2 id="section-optical_properties-title">Optical Properties</h2>
                  <p class="section-introduction" id="section-optical_properties-intro"></p>
                  <div class="properties-container" id="section-optical_properties-properties"></div>
             </section>
+
              <section id="section-thermal_properties" class="detail-content-section" style="display: none;">
                  <h2 id="section-thermal_properties-title">Thermal Properties</h2>
                  <p class="section-introduction" id="section-thermal_properties-intro"></p>
                  <div class="properties-container" id="section-thermal_properties-properties"></div>
             </section>
+
              <section id="section-mechanical_properties" class="detail-content-section" style="display: none;">
                  <h2 id="section-mechanical_properties-title">Mechanical Properties</h2>
                  <p class="section-introduction" id="section-mechanical_properties-intro"></p>
                  <div class="properties-container" id="section-mechanical_properties-properties"></div>
             </section>
-            <!-- ... etc for all sections defined in the JSON -->
+            <!-- Add more section placeholders here matching keys in JSON -->
 
         </main>
 
