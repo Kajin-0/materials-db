@@ -4022,5 +4022,110 @@
       "ceramic", "dense", "hard", "hypersonic", "propulsion", "research",
       "high melting point", "industry:aerospace", "industry:defense", "industry:research"
     ]
+  },
+  "Thulium-doped YAG (Tm:YAG)": {
+    "name": "Thulium-doped YAG (Tm:YAG)",
+    "formula": "Tm:Y₃Al₅O₁₂",
+    "synonyms": [ "Tm:YAG", "Thulium YAG", "Thulium Aluminum Garnet" ],
+    "category": "Laser Crystal",
+    "constituent_elements": ["Tm", "Y", "Al", "O"],
+    "description": "A solid-state laser gain medium consisting of Yttrium Aluminum Garnet (YAG) crystal doped with Trivalent Thulium ions (Tm³⁺). It is known for efficient lasing in the eye-safe near-infrared region around 2 µm (specifically ~1.9-2.1 µm). Tm:YAG lasers benefit from strong absorption bands suitable for diode pumping (~785 nm) and a quasi-three-level energy scheme. Used in medical lasers (surgery, lithotripsy), remote sensing (LIDAR), and materials processing.",
+    "wiki_link": "https://en.wikipedia.org/wiki/YAG_laser#Varieties",
+    "safety": {
+      "toxicity": "Low in solid crystal form.",
+      "handling": "Standard optical component handling. Can be brittle."
+    },
+    "identification": {
+      "cas_number": "N/A (Doped crystal)",
+      "class": "Doped Synthetic Garnet Crystal / Laser Gain Medium",
+      "crystal_structure": "Cubic (Garnet structure, Ia3d space group) - YAG host.",
+      "lattice_constant": {"value": "~12.01", "unit": "Å", "notes": "Slightly affected by Tm doping concentration."},
+      "doping_concentration": {"notes": "Typically 2-8 atm.% Tm replacing Y."}
+    },
+    "advanced_fabrication_insights": {
+        "stoichiometry_control": "Requires precise control of Tm doping concentration during crystal growth for optimal laser performance (balancing absorption, gain, and concentration quenching).",
+        "common_defects_impact": "Inclusions, dislocations, color centers, concentration gradients. Affect optical quality, scattering losses, laser efficiency, and beam quality.",
+        "surface_preparation": "Requires high-quality optical polishing and anti-reflection (AR) coatings for low loss laser operation.",
+        "method_specific_notes": "Primarily grown by Czochralski (CZ) method. Control of growth atmosphere and thermal gradients is crucial for defect minimization."
+    },
+    "growth_fabrication_properties": {
+        "common_growth_methods": "Czochralski (CZ) method.",
+        "source_materials_purity": "High purity oxides: Y₂O₃, Al₂O₃, Tm₂O₃ (>4N or 5N).",
+        "preferred_substrates_orientations": "N/A (Bulk crystal growth). Laser rods/slabs cut along specific crystallographic directions (e.g., <111>).",
+        "typical_growth_parameters": "Melting point of YAG ~1970°C. Requires iridium crucibles, controlled atmosphere, slow pull/rotation rates.",
+        "passivation_methods": "Surface requires AR coating for laser applications."
+    },
+    "post_growth_processing": {
+        "annealing": "Often annealed after growth to relieve stress and potentially remove some color centers.",
+        "lapping_polishing": "High precision optical grinding, lapping, and polishing to achieve high flatness, parallelism, and low surface roughness.",
+        "etching": "Resistant.",
+        "grinding_milling": "Diamond tooling used for shaping into rods, slabs, or discs."
+    },
+     "device_integration_characterization": {
+        "device_architectures": "Laser gain medium in solid-state lasers (rods, slabs, discs, fibers).",
+        "readout_integration": "N/A",
+        "ar_coatings": "Essential for laser cavity operation (AR coated at pump and laser wavelengths).",
+        "packaging_cooling": "Requires mounting within a laser cavity and often active cooling (water, TEC) depending on pump power and laser output.",
+        "key_characterization_techniques": ["Absorption Spectrum", "Emission Spectrum", "Fluorescence Lifetime Measurement", "Laser Performance Testing (Slope efficiency, threshold, beam quality)", "Optical Quality Assessment (Interferometry, scattering measurement)", "Doping Concentration Measurement"]
+    },
+    "electrical_properties": {
+      "bandgap_type": "Insulator (YAG host)",
+      "band_gap": {"value": "~6.5", "unit": "eV", "notes": "Host bandgap."}
+    },
+    "optical_properties": {
+      "spectral_range": "Transparent host (YAG) from UV to mid-IR (~0.3-5 µm). Specific absorption/emission bands due to Tm³⁺.",
+      "absorption_bands": {"value": "~780-800 nm", "notes": "Strong absorption band suitable for AlGaAs diode pumping (⁴H₆ → ³H₄ transition). Other weaker bands exist."},
+      "emission_peak": {"value": "~1.9 - 2.1 µm", "notes": "Laser emission range (³F₄ → ³H₆ transition). Exact wavelength tunable and depends on operating conditions."},
+      "fluorescence_lifetime": {"value": "~8-12", "unit": "ms", "notes": "Upper state lifetime (³F₄ level). Long lifetime allows for efficient energy storage (Q-switching)."},
+      "stimulated_emission_cross_section": {"notes": "Relatively low compared to Nd:YAG, requires careful cavity design."},
+      "refractive_index": {"value": "~1.81-1.82", "notes": "At laser wavelength (YAG host)."},
+      "quantum_efficiency": {"notes": "Cross-relaxation process (³H₄ + ³H₆ → ³F₄ + ³F₄) can lead to quantum efficiency approaching 2 (one pump photon excites two Tm ions to upper laser level), enabling high laser efficiency."}
+    },
+    "thermal_properties": {
+      "operating_temperature": {"value": "Typically Room Temperature operation with cooling.", "notes": "Performance affected by temperature (thermal lensing, lifetime changes)."},
+      "thermal_conductivity": {"value": "~11-13", "unit": "W/(m·K)", "notes": "Good thermal conductivity for a laser host (YAG property)."},
+      "specific_heat": {"value": "~0.59", "unit": "J/(g·K)", "notes": "YAG host."},
+      "melting_point": {"value": "~1970", "unit": "°C", "notes": "YAG host."},
+      "thermal_expansion": {"value": "~7.5-8.2 x 10⁻⁶", "unit": "/°C", "notes": "YAG host."}
+    },
+     "mechanical_properties": {
+         "density": {"value": "~4.56", "unit": "g/cm³", "notes": "YAG host, slightly increased by Tm doping."},
+         "youngs_modulus": {"value": "~280", "unit": "GPa", "notes": "YAG host."},
+         "hardness_mohs": {"value": "8.0-8.5", "notes": "Hard and durable (YAG property)."},
+         "fracture_toughness": {"value": "~1.2-2.0", "unit": "MPa·m⁰·⁵", "notes": "Brittle (YAG property)."}
+     },
+     "device_applications": {
+         "key_applications": ["Medical Lasers (Surgery - tissue ablation/coagulation, Urology - lithotripsy, Ophthalmology)", "Atmospheric Sensing / LIDAR (Water vapor absorption lines near 1.9 µm)", "Materials Processing (Plastics welding/cutting)", "Mid-IR Source Pumping (e.g., pumping Ho:YAG or OPOs)", "Military Applications (Range finding - eye-safe wavelength)"]
+     },
+     "chemical_properties": {
+         "stability_oxidation": "Highly stable oxide crystal.",
+         "chemical_inertness": "Very stable and resistant to chemical attack.",
+         "water_solubility": "Insoluble."
+     },
+     "comparison_alternatives": {
+         "notes": "Alternative ~2 µm Laser Gain Media:",
+         "vs_Holmium_doped_YAG_Ho:YAG": "Tm:YAG: Can be directly diode-pumped (~785nm), longer upper state lifetime, broader emission bandwidth. Ho:YAG: Often requires Tm co-doping for pumping (or direct 1.9µm pumping), narrower linewidth, higher emission cross-section.",
+         "vs_Tm_doped_Fiber": "Tm:YAG: Higher peak power potential (bulk crystal), better for Q-switching. Tm Fiber: Higher average power scaling potential, excellent beam quality, more compact/flexible systems, different wavelength tuning possible.",
+         "vs_Tm_doped_other_hosts_LuAG_YLF": "Tm:YAG: Mature host material (good thermal/mechanical properties), well-established growth. Other Hosts: May offer different spectroscopic properties (wavelengths, bandwidths, lifetimes) or slightly better thermal performance (LuAG), but potentially higher cost or growth challenges."
+     },
+     "references_further_reading": {
+         "notes": "Key Literature Resources:",
+         "book_koechner": "Koechner, W. 'Solid-State Laser Engineering'.",
+         "review_laser_photon_rev": "Review articles on 2µm lasers in journals like 'Laser & Photonics Reviews', 'Optics Express', 'Applied Physics B'.",
+         "paper_fan_byer": "Fan, T.Y., Huber, G., Byer, R.L., Mitzscherlich, P. 'Spectroscopy and Diode Laser-Pumped Operation of Tm,Ho:YAG.' (IEEE Journal of Quantum Electronics, 1988 - seminal work on co-doped systems).",
+         "wikipedia_yag": "https://en.wikipedia.org/wiki/YAG_laser"
+     },
+     "vendor_info": {
+        "notes": "Example Vendors (Placeholder):",
+        "vendor_1": "Company A - www.example-vendor-a.com",
+        "vendor_2": "Company B - www.example-vendor-b.com",
+        "vendor_3": "Company C - www.example-vendor-c.com"
+     },
+    "tags": [
+      "laser crystal", "solid-state laser", "infrared", "eye-safe laser", "2 micron",
+      "diode pumped", "garnet", "yag", "thulium", "medical laser", "lidar",
+      "industry:lasers", "industry:medical", "industry:photonics", "industry:defense",
+      "single crystal", "crystal"
+    ]
   }
 }
