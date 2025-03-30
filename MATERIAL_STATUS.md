@@ -25,7 +25,7 @@ Unchecked items `[ ]` are missing a matching key in `material_details.json`.
 - [x] Lithium Niobate
 - [x] Maraging Steel
 - [x] Mercury Cadmium Telluride
-- [ ] Nextel 720 Fiber
+- [x] Nextel 720 Fiber
 - [x] Niobium Titanium (NbTi) Wire
 - [ ] Oxide-Oxide Ceramic Composite (Ox/Ox)
 - [ ] PEEK Carbon Fiber Composite
