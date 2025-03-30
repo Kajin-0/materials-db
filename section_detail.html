@@ -5,123 +5,238 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Title will be set dynamically -->
     <title>Section Detail</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css"> <!-- Link to your main stylesheet -->
     <!-- Optional: Placeholder favicon -->
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+
+    <!-- ********** ADDED STYLES for section_detail.html ********** -->
     <style>
-        /* Add some specific styles for this page if needed */
-        .section-detail-container {
-            max-width: 960px;
-            margin: 1rem auto;
-            padding: 1.5rem;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        body {
+            background-color: #f9f9f9; /* Slightly softer background */
         }
+
+        .section-detail-container {
+            max-width: 1000px; /* Slightly wider */
+            margin: 1.5rem auto; /* More space top/bottom */
+            padding: 2rem; /* More internal padding */
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0; /* Softer border */
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05); /* Softer shadow */
+        }
+
+        /* --- Header Bar --- */
         .section-title-bar {
-            border-bottom: 2px solid #e9ecef;
-            padding-bottom: 0.8rem;
-            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #ddd; /* Lighter border */
+            padding-bottom: 1rem;
+            margin-bottom: 2rem; /* More space below header */
         }
         .section-title-bar h1 {
             margin: 0;
-            font-size: 1.8rem;
-            color: #0056b3;
+            font-size: 2rem; /* Larger section title */
+            color: #2c3e50; /* Dark blue-grey */
+            margin-bottom: 0.25rem;
         }
         .section-title-bar .material-context {
-            font-size: 1rem;
-            color: #6c757d;
-            margin-top: 0.25rem;
+            font-size: 1.1rem; /* Larger context font */
+            color: #555;
         }
+
+        /* --- Back Link Specific Styling --- */
+        .section-detail-container > .back-link { /* Target only the top back link */
+             display: inline-block;
+             margin-bottom: 1.5rem;
+             font-size: 0.95rem;
+             color: #007bff;
+             text-decoration: none;
+        }
+         .section-detail-container > .back-link:hover {
+             text-decoration: underline;
+         }
+
+
+        /* --- Introduction Block --- */
         .section-introduction {
             font-size: 1.05rem;
-            line-height: 1.6;
-            margin-bottom: 2rem;
-            padding: 1rem;
-            background-color: #f8f9fa;
-            border-left: 4px solid #007bff;
-            border-radius: 4px;
+            line-height: 1.7;
+            margin-bottom: 2.5rem; /* More space */
+            padding: 1.25rem 1.5rem; /* More padding */
+            background-color: #eef2f7; /* Light blue background */
+            border-left: 5px solid #4a90e2; /* Accent color */
+            border-radius: 5px;
         }
+
+        /* --- Property Block Styling --- */
         .property-detail-block {
-            margin-bottom: 2.5rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 1px solid #eee;
+            margin-bottom: 3rem; /* Increased spacing between properties */
+            padding-bottom: 2rem;
+            border-bottom: 1px solid #e8e8e8; /* Lighter separator */
         }
          .property-detail-block:last-child {
             border-bottom: none;
             margin-bottom: 0;
          }
+
+        /* Property Name (H3) */
         .property-detail-block h3 {
-            font-size: 1.4rem;
-            color: #343a40;
-            margin-top: 0;
+            font-size: 1.6rem; /* Larger property name */
+            color: #333;
             margin-bottom: 0.5rem;
+            font-weight: 600; /* Bolder */
         }
+
+        /* Property Summary */
         .property-detail-block .summary {
-             font-style: italic;
-             color: #495057;
-             margin-bottom: 1.2rem;
-             font-size: 1rem;
+             font-style: normal; /* Removed italics */
+             color: #444;
+             margin-bottom: 1.5rem; /* More space below summary */
+             font-size: 1.05rem;
+             padding-left: 1rem;
+             border-left: 3px solid #bdc3c7; /* Subtle indicator bar */
+             line-height: 1.6; /* Ensure good line height */
         }
+
+        /* --- Subsection Styling --- */
         .detail-subsection {
-            margin-top: 1rem;
-            margin-bottom: 1rem;
+            margin-top: 1.5rem; /* More space above subsection */
+            margin-bottom: 1.5rem;
         }
         .detail-subsection h4 {
-            font-size: 1.1rem;
-            color: #4a5568;
-            margin-bottom: 0.5rem;
-            border-bottom: 1px dotted #ccc;
-            padding-bottom: 0.2rem;
+            font-size: 1.2rem; /* Larger subsection titles */
+            color: #16a085; /* Distinctive color (teal) */
+            margin-bottom: 0.8rem; /* More space below title */
+            padding-bottom: 0.4rem;
+            border-bottom: 1px solid #e0e0e0; /* Match container border */
+            font-weight: 500; /* Slightly less bold than H3 */
         }
+
+        /* Lists within subsections */
         .detail-subsection ul {
-            list-style: disc;
-            padding-left: 1.5rem;
+            list-style: disc; /* Keep standard bullets */
+            padding-left: 1.8rem; /* Slightly more indent */
             margin-top: 0.5rem;
             margin-bottom: 1rem;
+            color: #333; /* Darker list text */
         }
         .detail-subsection li, .detail-subsection p {
-            margin-bottom: 0.5rem;
-            line-height: 1.6;
+            margin-bottom: 0.6rem; /* Slightly more space between items */
+            line-height: 1.65;
         }
+        .detail-subsection p { /* Paragraphs within subsections (like measurement notes) */
+             color: #444;
+        }
+
+
+        /* --- Equation Block Styling --- */
         .equation-block {
-            background-color: #f0f2f5;
-            padding: 1rem;
-            border-radius: 5px;
-            margin-bottom: 1rem;
-            border: 1px solid #dfe1e5;
+            background-color: #f8f9fa; /* Light gray background */
+            padding: 1.5rem; /* More padding */
+            border-radius: 6px;
+            margin-bottom: 1.5rem;
+            border: 1px solid #e9ecef;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04); /* Subtle shadow */
         }
+        /* Equation Name */
         .equation-block .eq-name {
              font-weight: 600;
              display: block;
-             margin-bottom: 0.5rem;
+             margin-bottom: 1rem; /* More space */
+             font-size: 1.1rem; /* Slightly larger */
+             color: #2980b9; /* Blue for equation name */
         }
-        .equation-block .eq-formula-plain,
-        .equation-block .eq-formula-latex { /* Placeholder */
-            font-family: 'Consolas', monospace;
-            font-size: 1.1rem;
-            margin-bottom: 0.5rem;
-            word-wrap: break-word;
-        }
+        /* Equation Description */
         .equation-block .eq-desc {
-             font-size: 0.9rem;
+             font-size: 0.95rem;
              color: #555;
-             margin-bottom: 0.7rem;
+             margin-bottom: 1.2rem; /* More space */
+             line-height: 1.6;
         }
-        .equation-block .eq-vars ul { padding-left: 1rem; }
-        .equation-block .eq-vars li { font-size: 0.9rem; }
-        .equation-block .eq-ref { font-size: 0.85rem; margin-top: 0.5rem; }
+        /* Equation Formulas */
+        .equation-block .eq-formula-html,
+        .equation-block .eq-formula-plain {
+            font-family: 'Consolas', 'Menlo', 'Monaco', monospace;
+            font-size: 1.2rem; /* Larger font */
+            margin-bottom: 1.2rem; /* More space below formula */
+            word-wrap: break-word;
+            text-align: center; /* Center the formula */
+            display: block; /* Ensure it takes full width for centering */
+            padding: 0.8rem 0; /* Vertical padding around formula */
+            color: #1d2c3f; /* Darker color for formula */
+        }
+         /* Equation Units */
+        .equation-block .eq-units { /* Added a class for potential styling */
+            font-size: 0.95em;
+            color: #555;
+            margin-bottom: 1rem; /* More space */
+            text-align: right; /* Align units right */
+            display: block; /* Ensure it takes width */
+        }
+        /* Equation Variables */
+        .equation-block .eq-vars strong { color: #333; }
+        .equation-block .eq-vars ul { padding-left: 1rem; list-style: none; margin-top: 0.5rem; }
+        .equation-block .eq-vars li {
+            font-size: 0.95rem;
+            margin-bottom: 0.4rem;
+        }
+        /* Equation Reference */
+        .equation-block .eq-ref {
+            font-size: 0.9rem;
+            margin-top: 1rem; /* More space above ref */
+            text-align: right;
+            color: #777;
+        }
+
+        /* --- References Section --- */
+        #references-section {
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #ddd;
+        }
+        #references-section h4 {
+             font-size: 1.3rem; /* Larger */
+             color: #2c3e50; /* Match header */
+             margin-bottom: 1rem;
+        }
+        #references-list {
+            list-style: none;
+            padding-left: 0;
+            font-size: 0.95rem; /* Slightly larger */
+            line-height: 1.7;
+        }
+         #references-list li {
+             margin-bottom: 0.7rem;
+             padding-left: 1.5rem; /* Indent reference text */
+             position: relative;
+         }
+          #references-list li strong { /* Style the [RefKey] */
+             position: absolute;
+             left: 0;
+             top: 0;
+             font-weight: 600;
+             color: #555;
+         }
+         /* Highlight reference on link click */
+         #references-list li:target { /* Use :target pseudo-class */
+            background-color: #ffffcc;
+            /* Transition needs to be on the element itself, not just the target state */
+            transition: background-color 0.5s ease;
+         }
+         /* Add a style to remove highlight after a delay (optional, needs JS or complex CSS) */
+
+
         .ref-link { text-decoration: none; color: #007bff; }
         .ref-link:hover { text-decoration: underline; }
 
-        .error-message { color: red; font-weight: bold; }
+        .error-message { color: #c0392b; font-weight: bold; background-color: #fbeae5; padding: 1rem; border-radius: 4px; border: 1px solid #e74c3c;}
+
     </style>
+    <!-- ********** END ADDED STYLES ********** -->
+
 </head>
 <body>
     <div class="section-detail-container">
-        <!-- Back Link (Optional but Recommended) -->
-        <!-- Consider adding a dynamic back link later -->
-        <a href="index.html" class="back-link" style="margin-bottom: 1.5rem; display: block;">← Back to Materials List</a>
+        <!-- Back Link -->
+        <a href="index.html" class="back-link">← Back to Materials List</a>
 
         <div class="section-title-bar">
             <h1 id="section-display-name">Loading Section...</h1>
@@ -134,50 +249,21 @@
 
             <!-- Property details will be loaded here -->
             <div id="properties-container">
-                <!-- Example structure (will be generated dynamically) -->
-                <!--
-                <div class="property-detail-block" id="prop_electrical_properties.band_gap">
-                    <h3>Bandgap (Eg)</h3>
-                    <div class="summary">Direct, Tunable (0 - 1.5 eV)</div>
-                    <div class="detail-subsection notes">
-                        <h4>Notes</h4>
-                        <ul><li>Note 1</li><li>Note 2</li></ul>
-                    </div>
-                    <div class="detail-subsection equations">
-                        <h4>Equations</h4>
-                        <div class="equation-block">
-                             <span class="eq-name">Eq Name</span>
-                             <div class="eq-desc">Desc...</div>
-                             <div class="eq-formula-plain">Eg = ...</div>
-                             <div class="eq-vars"><ul><li>Eg: Bandgap</li></ul></div>
-                             <div class="eq-ref">Ref: ...</div>
-                        </div>
-                    </div>
-                    <div class="detail-subsection measurement">
-                        <h4>Measurement Techniques</h4>
-                        <ul><li>Technique 1</li></ul>
-                        <p>Notes about measurement...</p>
-                    </div>
-                     <div class="detail-subsection significance">
-                        <h4>Significance</h4>
-                        <ul><li>Point 1</li></ul>
-                    </div>
-                </div>
-                 -->
+                <!-- Content generated dynamically by section_loader.js -->
             </div>
         </div>
 
         <!-- References section -->
-        <div id="references-section" style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #eee;">
+        <div id="references-section" style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #eee; display: none;"> <!-- Initially hidden -->
             <h4>References Cited</h4>
             <ul id="references-list" style="list-style: none; padding-left: 0; font-size: 0.9rem;">
-                <!-- References will be loaded here -->
+                <!-- References will be loaded here by section_loader.js -->
             </ul>
         </div>
 
     </div>
 
-    <!-- Load the new JS file -->
+    <!-- Load the JS file -->
     <script src="section_loader.js"></script>
 </body>
 </html>
