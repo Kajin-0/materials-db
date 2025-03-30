@@ -119,7 +119,7 @@
         "summary": "Low n_i at 77K; Extrinsic control via doping (10¹⁴-10¹⁶ cm⁻³ typical)",
         "details": {
           "key_characteristics": [
-            "Intrinsic n<sub>i</sub> highly sensitive to E<sub>g</sub> & T (See Equations). Requires cryo-cooling for LWIR.",
+            "Intrinsic concentration (n<sub>i</sub>) is highly sensitive to E<sub>g</sub> & T (See Equations). Requires cryo-cooling for LWIR.",
             "Extrinsic concentration set by net active dopant density (N<sub>D</sub> - N<sub>A</sub> or N<sub>A</sub> - N<sub>D</sub>)."
           ],
           "equations": [
@@ -176,7 +176,7 @@
           "key_characteristics": [
             "Governs electron drift velocity.",
             "Limited by: Polar optical phonons (dominant high T), Ionized impurities (dominant low T, high doping), Alloy scattering (depends on x), Defect scattering.",
-            "Decreases with increasing T, doping, and usually x.",
+            "Decreases with increasing T, doping (N<sub>A</sub>, N<sub>D</sub>), and usually x.",
             "Small effective mass m*<sub>e</sub>(x) contributes to high mobility."
           ],
            "equations": [
@@ -280,7 +280,7 @@
   },
   "optical_properties": {
     "displayName": "Optical Properties",
-    "introduction": "Optical characteristics define how HgCdTe interacts with light, enabling its use as an infrared detector. Key properties include spectral range, absorption, and refractive index.",
+    "introduction": "Optical characteristics define how HgCdTe interacts with light, enabling its use as an infrared detector.",
     "properties": {
       "spectral_range": { "displayName": "Spectral Range", "summary": "SWIR, MWIR, LWIR (0.8 to >30 μm)" },
       "cutoff_wavelength": { "displayName": "Cutoff Wavelength (λ<sub>c</sub>)", "summary": "Tunable (0.8 to >30 μm)" },
