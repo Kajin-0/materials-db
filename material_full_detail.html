@@ -15,20 +15,19 @@
         .back-link::before { content: "←"; margin-right: 0.4rem; }
         .material-title-bar { margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid #e0e0e0; }
         .material-title-bar h1 { margin: 0 0 0.25rem 0; font-size: 2rem; color: #1a1a1a; font-weight: 600; }
-        html { scroll-behavior: smooth; /* Enable smooth scrolling for TOC links */ }
+        html { scroll-behavior: smooth; }
 
         /* Table of Contents */
         #toc { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 6px; padding: 1rem 1.5rem; margin-bottom: 2.5rem; }
         #toc h2 { margin-top: 0; margin-bottom: 1rem; font-size: 1.2rem; color: #495057; border-bottom: 1px solid #ddd; padding-bottom: 0.5rem; }
         #toc ul { list-style: none; padding: 0; margin: 0; columns: 2; -webkit-columns: 2; -moz-columns: 2; column-gap: 2rem;}
-        #toc li { margin-bottom: 0.5rem; break-inside: avoid-column; /* Prevent items breaking across columns */ }
-        #toc a { text-decoration: none; color: #0066cc; font-size: 0.95rem; display: block; /* Make entire area clickable */ }
+        #toc li { margin-bottom: 0.5rem; break-inside: avoid-column; }
+        #toc a { text-decoration: none; color: #0066cc; font-size: 0.95rem; display: block; }
         #toc a:hover { text-decoration: underline; color: #004080; }
 
         /* Main Content Sections */
         .detail-content-section { margin-bottom: 2.5rem; padding-top: 1rem; }
-        /* Target sections by ID for scroll margin */
-        .detail-content-section[id] { scroll-margin-top: 20px; /* Adjust as needed for sticky headers etc. */ }
+        .detail-content-section[id] { scroll-margin-top: 20px; }
         .detail-content-section h2 { font-size: 1.75rem; color: #2c3e50; font-weight: 600; margin-top: 0; margin-bottom: 1.5rem; padding-bottom: 0.75rem; border-bottom: 1px solid #ccc; }
         .section-introduction { margin-bottom: 2rem; padding: 1.25rem; background-color: #f1f7fe; border-left: 4px solid #2980b9; border-radius: 4px; font-size: 1rem; line-height: 1.6; color: #333; }
         .section-introduction p:first-child { margin-top: 0; }
@@ -44,31 +43,23 @@
 
         /* Detail Subsections */
         .detail-subsection { margin: 1.25rem 0 1.25rem 0.5rem; }
-        .detail-subsection h4 { font-size: 0; /* Hide text node */ margin: 0 0 0.75rem 0; padding-bottom: 0.3rem; border-bottom: 1px solid #eee; position: relative; }
-        .detail-subsection h4::before { /* Use pseudo-element for title */
-            font-size: 1.1rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
-            display: block; content: attr(data-title); /* Default title from attribute if needed */
-        }
-        /* Specific Subsection Titles & Colors */
-        .detail-subsection.key_characteristics h4::before { content: "Key Characteristics"; color: #17a2b8; } /* Teal */
-        .detail-subsection.notes h4::before { content: "Notes"; color: #6c757d; } /* Gray */
-        .detail-subsection.measurement_characterization h4::before { content: "Measurement & Characterization"; color: #6f42c1; } /* Indigo */
+        .detail-subsection h4 { font-size: 0; margin: 0 0 0.75rem 0; padding-bottom: 0.3rem; border-bottom: 1px solid #eee; position: relative; }
+        .detail-subsection h4::before { font-size: 1.1rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; display: block; content: attr(data-title); }
+        .detail-subsection.key_characteristics h4::before { content: "Key Characteristics"; color: #17a2b8; }
+        .detail-subsection.notes h4::before { content: "Notes"; color: #6c757d; }
+        .detail-subsection.measurement_characterization h4::before { content: "Measurement & Characterization"; color: #6f42c1; }
         .detail-subsection.techniques h4::before { content: "Techniques"; color: #6f42c1; }
         .detail-subsection.considerations h4::before { content: "Considerations"; color: #6f42c1; }
-        .detail-subsection.device_relevance h4::before { content: "Device Relevance / Impact"; color: #28a745; } /* Green */
+        .detail-subsection.device_relevance h4::before { content: "Device Relevance / Impact"; color: #28a745; }
         .detail-subsection.significance h4::before { content: "Significance"; color: #28a745; }
-        .detail-subsection.doping_methods h4::before { content: "Doping Methods"; color: #dc3545; } /* Red */
-        .detail-subsection.equations h4::before { content: "Equations"; color: #fd7e14; } /* Orange */
-
-        /* Lists within Subsections */
+        .detail-subsection.doping_methods h4::before { content: "Doping Methods"; color: #dc3545; }
+        .detail-subsection.equations h4::before { content: "Equations"; color: #fd7e14; }
         .detail-subsection ul { padding-left: 1.5rem; margin: 0.5rem 0 1rem 0; list-style: none; }
         .detail-subsection li { margin-bottom: 0.6rem; line-height: 1.6; position: relative; padding-left: 1.2rem; }
-        .detail-subsection li::before { content: "\2023"; /* Bullet */ color: #555; font-weight: normal; display: inline-block; position: absolute; left: 0; width: 1em; }
-        .detail-subsection p { margin-bottom: 0.5rem; line-height: 1.6; margin-left: 0.5rem; } /* Paragraphs within subsections */
-
-        /* Specific list styling */
+        .detail-subsection li::before { content: "\2023"; color: #555; font-weight: normal; display: inline-block; position: absolute; left: 0; width: 1em; }
+        .detail-subsection p { margin-bottom: 0.5rem; line-height: 1.6; margin-left: 0.5rem; }
         .detail-subsection.measurement_characterization .considerations ul { margin-top: 0.25rem; }
-        .detail-subsection.measurement_characterization .considerations li::before { content: "\25B8"; /* Right-pointing triangle */ color: #6f42c1; }
+        .detail-subsection.measurement_characterization .considerations li::before { content: "\25B8"; color: #6f42c1; }
         .detail-subsection.measurement_characterization .considerations li,
         .detail-subsection.measurement_characterization .considerations p { font-size: 0.9rem; color: #444; }
 
@@ -76,16 +67,7 @@
         .equation-block { background-color: #f8f9fa; padding: 1rem 1.25rem; border-radius: 6px; margin: 1rem 0; border: 1px solid #e9ecef; position: relative; }
         .equation-block .eq-name { font-weight: 600; color: #0056b3; margin-bottom: 0.75rem; display: block; font-size: 1rem; }
         .equation-block .eq-desc { color: #555; margin-bottom: 1rem; font-size: 0.9rem; line-height: 1.5; }
-        /* Formula Containers */
-        .equation-block .eq-formula-container,
-        .equation-block .eq-formula-html,
-        .equation-block .eq-formula-plain {
-            font-family: 'Consolas', 'Menlo', 'Monaco', monospace; background-color: #eef2f7;
-            padding: 0.75rem 1rem; border-radius: 4px; font-size: 1.1rem; overflow-x: auto;
-            color: #1d2c3f; margin: 0.75rem 0;
-            text-align: center; /* Centered Equation */
-            display: block; line-height: 1.4;
-        }
+        .equation-block .eq-formula-container, .equation-block .eq-formula-html, .equation-block .eq-formula-plain { font-family: 'Consolas', 'Menlo', 'Monaco', monospace; background-color: #eef2f7; padding: 0.75rem 1rem; border-radius: 4px; font-size: 1.1rem; overflow-x: auto; color: #1d2c3f; margin: 0.75rem 0; text-align: center; display: block; line-height: 1.4; }
         .equation-block .eq-units { font-size: 0.85rem; color: #555; text-align: right; margin-bottom: 0.75rem; margin-top: -0.5rem; }
         .equation-block .eq-vars { margin-top: 1rem; }
         .equation-block .eq-vars strong { color: #333; font-size: 0.9rem; }
@@ -100,150 +82,48 @@
         #references-section { margin-top: 2.5rem; padding-top: 1.25rem; border-top: 1px solid #e0e0e0; }
         #references-section h4 { font-size: 1.15rem; color: #2c3e50; margin: 0 0 1rem 0; }
         #references-list { list-style: none; padding-left: 0; font-size: 0.9rem; line-height: 1.5; }
-        #references-list li {
-            margin-bottom: 0.75rem;
-            padding-left: 0; /* Remove padding */
-            list-style-position: outside;
-            text-indent: -2.5em; /* Apply negative indent based on longest key expected e.g., [RefKey] */
-            margin-left: 2.5em; /* Apply positive margin to match indent */
-            position: relative; /* Needed for target pseudo element if used */
-        }
-        #references-list li strong {
-            color: #555;
-            font-weight: 600;
-            margin-right: 0.5em; /* Space after key */
-        }
+        #references-list li { margin-bottom: 0.75rem; padding-left: 0; list-style-position: outside; text-indent: -2.5em; margin-left: 2.5em; position: relative; }
+        #references-list li strong { color: #555; font-weight: 600; margin-right: 0.5em; }
         #references-list li a { color: #0066cc; text-decoration: none; }
         #references-list li a:hover { text-decoration: underline; }
-        /* Highlighting for clicked/targeted reference */
-        #references-list li:target,
-        #references-list li.highlight-ref {
-            background-color: #fff9c4; /* Light yellow */
-            transition: background-color 0.3s ease-out;
-            border-radius: 4px;
-            /* Adjust padding/margin ONLY for the target state */
-            margin-left: 0 !important; /* Remove indent margin */
-            padding-left: 0.5rem !important; /* Add some left padding */
-            text-indent: 0 !important; /* Reset indent */
-            padding-top: 0.3rem;
-            padding-bottom: 0.3rem;
-            margin-right: -0.5rem; /* Compensate container padding if needed */
-             outline: 1px dashed #fbc02d; /* Optional outline */
-        }
+        #references-list li:target, #references-list li.highlight-ref { background-color: #fff9c4; transition: background-color 0.3s ease-out; border-radius: 4px; margin-left: 0 !important; padding-left: 0.5rem !important; text-indent: 0 !important; padding-top: 0.3rem; padding-bottom: 0.3rem; margin-right: -0.5rem; outline: 1px dashed #fbc02d; }
 
         /* Error Message Style */
         .error-message { color: #c0392b; background-color: #fbeae5; padding: 1rem; border-radius: 4px; border: 1px solid #e74c3c; margin: 1rem 0; }
 
-
-        /* --- Styles for 3D Viewer (Adjusted for Three.js) --- */
-        .crystal-viewer-wrapper {
-            margin-top: 1.5rem;
-            margin-bottom: 1rem;
-            border: 1px solid #e0e0e0;
-            border-radius: 6px;
-            overflow: hidden; /* Contain elements */
-            background-color: #fdfdfd;
-            height: var(--viewer-height, 450px); /* Use CSS Variable for height */
-            position: relative;
-        }
-
-        .crystal-viewer-container {
-            display: flex;
-            flex-direction: column; /* Default: controls below */
-            height: 100%; /* Fill wrapper height */
-        }
-
-        .viewer-area {
-            flex-grow: 1; /* Take available space */
-            position: relative;
-            background-color: white; /* Match Three.js background */
-            min-height: 250px; /* Minimum drawing area height */
-            height: 70%; /* Default proportion if stacked */
-            overflow: hidden; /* Important for Three.js canvas */
-        }
-        /* Style the canvas itself */
-        .viewer-area canvas {
-            display: block; /* Remove extra space below canvas */
-            width: 100% !important; /* Override Three.js inline style */
-            height: 100% !important; /* Override Three.js inline style */
-        }
-
-
-        .viewer-controls {
-            width: 100%; /* Full width in column layout */
-            padding: 15px;
-            background-color: #f8f9fa;
-            border-top: 1px solid #e0e0e0;
-            overflow-y: auto; /* Scroll if controls get too long */
-            box-sizing: border-box;
-            height: 30%; /* Default proportion if stacked */
-            flex-shrink: 0;
-        }
-        .viewer-controls h4 {
-             margin-top: 0; margin-bottom: 15px; font-size: 1.1rem;
-             color: #343a40; border-bottom: 1px solid #dee2e6; padding-bottom: 8px;
-        }
-
-        /* Control Groups, Titles, Buttons, Slider */
+        /* --- Styles for 3D Viewer (Adjusted for Three.js + CSS2D) --- */
+        .crystal-viewer-wrapper { margin-top: 1.5rem; margin-bottom: 1rem; border: 1px solid #e0e0e0; border-radius: 6px; overflow: hidden; background-color: #fdfdfd; height: var(--viewer-height, 450px); position: relative; }
+        .crystal-viewer-container { display: flex; flex-direction: column; height: 100%; }
+        .viewer-area { flex-grow: 1; position: relative; background-color: white; min-height: 250px; height: 70%; overflow: hidden; }
+        .viewer-area canvas { display: block; width: 100% !important; height: 100% !important; }
+        /* Container for CSS2D Labels - MUST overlay the WebGL canvas */
+        .css2d-renderer-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; overflow: hidden; z-index: 1; }
+        /* CSS2D Label Styling */
+        .atom-label { color: #000; background-color: rgba(255, 255, 255, 0.75); padding: 1px 4px; border-radius: 3px; font-size: 11px; font-weight: bold; font-family: Arial, sans-serif; }
+        .viewer-controls { width: 100%; padding: 15px; background-color: #f8f9fa; border-top: 1px solid #e0e0e0; overflow-y: auto; box-sizing: border-box; height: 30%; flex-shrink: 0; }
+        .viewer-controls h4 { margin-top: 0; margin-bottom: 15px; font-size: 1.1rem; color: #343a40; border-bottom: 1px solid #dee2e6; padding-bottom: 8px; }
         .control-group { margin-bottom: 15px; }
         .control-group:last-child { margin-bottom: 5px; }
         .control-title { display: block; font-weight: 600; margin-bottom: 8px; font-size: 0.9rem; color: #495057; }
         label.control-title { margin-bottom: 5px; }
-        .viewer-controls button {
-            padding: 5px 10px; margin: 3px 4px 3px 0; cursor: pointer; background-color: #e9ecef;
-            border: 1px solid #ced4da; border-radius: 4px; transition: background-color 0.2s, border-color 0.2s;
-            font-size: 0.85rem; color: #495057;
-        }
+        .viewer-controls button { padding: 5px 10px; margin: 3px 4px 3px 0; cursor: pointer; background-color: #e9ecef; border: 1px solid #ced4da; border-radius: 4px; transition: background-color 0.2s, border-color 0.2s; font-size: 0.85rem; color: #495057; }
         .viewer-controls button:hover { background-color: #dee2e6; border-color: #adb5bd; }
         .viewer-controls button.active { background-color: #007bff; border-color: #0056b3; color: white; font-weight: 500; }
-        .slider {
-            width: 100%; height: 6px; -webkit-appearance: none; appearance: none; background: #ced4da;
-            outline: none; border-radius: 3px; cursor: pointer; margin-bottom: 5px;
-        }
-        .slider::-webkit-slider-thumb {
-            -webkit-appearance: none; appearance: none; width: 16px; height: 16px; border-radius: 50%;
-            background: #007bff; cursor: pointer; border: 2px solid white; box-shadow: 0 0 2px rgba(0,0,0,0.3);
-        }
-        .slider::-moz-range-thumb { /* Firefox */
-             width: 16px; height: 16px; border-radius: 50%; background: #007bff; cursor: pointer;
-             border: 2px solid white; box-shadow: 0 0 2px rgba(0,0,0,0.3);
-        }
-        [id$='-composition-value'] { font-size: 0.85rem; color: #6c757d; text-align: right; margin-top: 2px; min-height: 1.2em; }
-
-        /* Info Panel, Legend */
-        .viewer-controls .info-panel {
-             background-color: #ffffff; padding: 10px 12px; border-radius: 4px; font-size: 0.85rem;
-             border: 1px solid #dee2e6; box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
-         }
-         .viewer-controls .info-panel h5 { margin-top: 0; margin-bottom: 8px; font-size: 0.95rem; color: #343a40; padding-bottom: 5px; border-bottom: 1px solid #eee; }
-         .viewer-controls .info-panel div { margin-bottom: 4px; line-height: 1.4; }
-         .viewer-controls .info-panel hr { border: none; border-top: 1px solid #eee; margin: 8px 0; }
+        .slider { width: 100%; height: 6px; -webkit-appearance: none; appearance: none; background: #ced4da; outline: none; border-radius: 3px; cursor: pointer; margin-bottom: 5px; }
+        .slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 16px; height: 16px; border-radius: 50%; background: #007bff; cursor: pointer; border: 2px solid white; box-shadow: 0 0 2px rgba(0,0,0,0.3); }
+        .slider::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: #007bff; cursor: pointer; border: 2px solid white; box-shadow: 0 0 2px rgba(0,0,0,0.3); }
+        [id$='-cdValue'] { /* More specific selector */ font-size: 0.85rem; color: #6c757d; text-align: right; margin-top: 2px; min-height: 1.2em; margin-left: 5px; display: inline-block; }
+        .viewer-controls .info-panel { background-color: #ffffff; padding: 10px 12px; border-radius: 4px; font-size: 0.85rem; border: 1px solid #dee2e6; box-shadow: inset 0 1px 3px rgba(0,0,0,0.05); }
+        .viewer-controls .info-panel h5 { margin-top: 0; margin-bottom: 8px; font-size: 0.95rem; color: #343a40; padding-bottom: 5px; border-bottom: 1px solid #eee; }
+        .viewer-controls .info-panel div { margin-bottom: 4px; line-height: 1.4; }
+        .viewer-controls .info-panel hr { border: none; border-top: 1px solid #eee; margin: 8px 0; }
         .legend { display: flex; align-items: center; margin-bottom: 5px; font-size: 0.85rem; }
-        .legend-color {
-            width: 12px; height: 12px; margin-right: 6px; border-radius: 50%;
-            border: 1px solid rgba(0, 0, 0, 0.1); display: inline-block; vertical-align: middle; flex-shrink: 0;
-        }
-         .legend div:last-child { display: inline-block; vertical-align: middle; }
+        .legend-color { width: 12px; height: 12px; margin-right: 6px; border-radius: 50%; border: 1px solid rgba(0, 0, 0, 0.1); display: inline-block; vertical-align: middle; flex-shrink: 0; }
+        .legend div:last-child { display: inline-block; vertical-align: middle; }
 
-         /* Responsive Layout */
-         @media (max-width: 768px) {
-            .full-detail-container { margin: 1rem; padding: 1.5rem; }
-            #toc ul { columns: 1; -webkit-columns: 1; -moz-columns: 1; }
-            .detail-content-section h2 { font-size: 1.5rem; }
-            .property-detail-block h3 { font-size: 1.25rem; }
-            .detail-subsection h4::before { font-size: 1rem; }
-            .crystal-viewer-wrapper { height: auto; min-height: 550px; }
-            .crystal-viewer-container { flex-direction: column; height: 100%; }
-            .viewer-area { height: 60%; min-height: 300px; border-right: none; }
-            .viewer-controls { width: 100%; height: 40%; border-left: none; border-top: 1px solid #e0e0e0; max-height: none; }
-         }
-
-         @media (min-width: 769px) {
-             .crystal-viewer-wrapper { height: var(--viewer-height, 450px); }
-             .crystal-viewer-container { flex-direction: row; height: 100%; }
-             .viewer-area { border-right: 1px solid #e0e0e0; border-bottom: none; height: 100%; width: calc(100% - 280px); }
-             .viewer-controls { width: 280px; flex-shrink: 0; border-top: none; border-left: 1px solid #e0e0e0; height: 100%; overflow-y: auto; }
-         }
+        /* Responsive Layout */
+         @media (max-width: 768px) { .full-detail-container { margin: 1rem; padding: 1.5rem; } #toc ul { columns: 1; -webkit-columns: 1; -moz-columns: 1; } .detail-content-section h2 { font-size: 1.5rem; } .property-detail-block h3 { font-size: 1.25rem; } .detail-subsection h4::before { font-size: 1rem; } .crystal-viewer-wrapper { height: auto; min-height: 550px; } .crystal-viewer-container { flex-direction: column; height: 100%; } .viewer-area { height: 60%; min-height: 300px; border-right: none; } .viewer-controls { width: 100%; height: 40%; border-left: none; border-top: 1px solid #e0e0e0; max-height: none; } }
+         @media (min-width: 769px) { .crystal-viewer-wrapper { height: var(--viewer-height, 450px); } .crystal-viewer-container { flex-direction: row; height: 100%; } .viewer-area { border-right: 1px solid #e0e0e0; border-bottom: none; height: 100%; width: calc(100% - 280px); } .viewer-controls { width: 280px; flex-shrink: 0; border-top: none; border-left: 1px solid #e0e0e0; height: 100%; overflow-y: auto; } }
     </style>
 </head>
 <body>
@@ -260,30 +140,29 @@
             </ul>
         </nav>
         <main id="main-content">
-            <!-- Section Placeholders - JS will populate these -->
-            <!-- Ensure IDs match keys in the JSON detail file -->
+            <!-- Section Placeholders -->
             <section id="section-identification" class="detail-content-section" style="display: none;">
-                 <h2 id="section-identification-title">Identification & Structure</h2> <!-- Provide default title -->
+                 <h2 id="section-identification-title">Identification & Structure</h2>
                  <p class="section-introduction" id="section-identification-intro"></p>
                  <div class="properties-container" id="section-identification-properties"></div>
             </section>
             <section id="section-electrical_properties" class="detail-content-section" style="display: none;">
-                 <h2 id="section-electrical_properties-title">Electrical Properties</h2> <!-- Default title -->
+                 <h2 id="section-electrical_properties-title">Electrical Properties</h2>
                  <p class="section-introduction" id="section-electrical_properties-intro"></p>
                  <div class="properties-container" id="section-electrical_properties-properties"></div>
             </section>
             <section id="section-optical_properties" class="detail-content-section" style="display: none;">
-                 <h2 id="section-optical_properties-title">Optical Properties</h2> <!-- Default title -->
+                 <h2 id="section-optical_properties-title">Optical Properties</h2>
                  <p class="section-introduction" id="section-optical_properties-intro"></p>
                  <div class="properties-container" id="section-optical_properties-properties"></div>
             </section>
              <section id="section-thermal_properties" class="detail-content-section" style="display: none;">
-                 <h2 id="section-thermal_properties-title">Thermal Properties</h2> <!-- Default title -->
+                 <h2 id="section-thermal_properties-title">Thermal Properties</h2>
                  <p class="section-introduction" id="section-thermal_properties-intro"></p>
                  <div class="properties-container" id="section-thermal_properties-properties"></div>
              </section>
              <section id="section-mechanical_properties" class="detail-content-section" style="display: none;">
-                 <h2 id="section-mechanical_properties-title">Mechanical Properties</h2> <!-- Default title -->
+                 <h2 id="section-mechanical_properties-title">Mechanical Properties</h2>
                  <p class="section-introduction" id="section-mechanical_properties-intro"></p>
                  <div class="properties-container" id="section-mechanical_properties-properties"></div>
              </section>
@@ -342,7 +221,7 @@
                 <p class="section-introduction" id="section-vendor_info-intro"></p>
                 <div class="properties-container" id="section-vendor_info-properties"></div>
              </section>
-             <!-- Add more section placeholders here if needed, following the pattern -->
+             <!-- Add more section placeholders here if needed -->
         </main>
         <div id="references-section" style="display: none;">
             <h4>References Cited</h4>
@@ -352,9 +231,11 @@
         </div>
     </div>
 
-    <!-- Load Three.js libraries -->
+    <!-- Load Three.js libraries *** BEFORE *** full_detail_loader.js -->
+    <!-- Make sure these paths are correct and accessible -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r133/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.133.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.133.0/examples/js/renderers/CSS2DRenderer.js"></script>
 
     <!-- Load your custom loader script -->
     <script src="full_detail_loader.js"></script>
