@@ -587,8 +587,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         function updateScene() {
             console.log(`[Three.js updateScene] Style=${currentViewStyle}, Supercell=${currentSupercell}, CellShown=${cellShown}`);
             if (!scene || !crystalGroup) { console.error("[Three.js updateScene] Scene or crystalGroup not initialized."); return; }
-            disposeMeshes(crystalGroup); // Dispose old meshes geometries first
-            // No need to remove/re-add crystalGroup if disposeMeshes properly removes children
+            disposeMeshes(crystalGroup); // Clear previous meshes geometries first
+            // while(crystalGroup.children.length > 0){ crystalGroup.remove(crystalGroup.children[0]); } // Ensure group is empty - Handled by disposeMeshes now
 
             if (!currentAtoms || currentAtoms.length === 0) { console.warn("[Three.js updateScene] No atom data to render."); return; }
             console.log(`[Three.js updateScene] Rendering ${currentAtoms.length} atoms.`);
@@ -606,7 +606,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     radius = 0.05;
                     // Don't set allGeometriesValid to false here, just use the default radius
                 }
-                // Dispose old geometry if it exists before creating new one
+                // Dispose old sphere geometry before creating new one
                 if (sphereGeometries[upperSymbol]) { sphereGeometries[upperSymbol].dispose(); }
                 try {
                      sphereGeometries[upperSymbol] = new THREE.SphereGeometry(radius, sphereDetail, sphereDetail);
@@ -622,7 +622,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
              // --- Add Atoms (Spheres) ---
              let spheresAdded = 0;
-             currentAtoms.forEach((atom, index) => {
+             currentAtoms.forEach((atom, index) => { // Add index for debugging
                  const symbol = atom.element.toUpperCase();
                  const geometry = sphereGeometries[symbol];
                  const material = materials[symbol] || defaultMaterial;
@@ -638,34 +638,47 @@ document.addEventListener("DOMContentLoaded", async () => {
                  spheresAdded++;
              });
              console.log(`[Three.js updateScene] Added ${spheresAdded} spheres.`);
+             let spheresInGroup = crystalGroup.children.filter(c => c.isMesh && c.geometry.type === "SphereGeometry").length;
+             console.log(`[Three.js updateScene] Spheres actually in group: ${spheresInGroup}`); // Verify spheres are added
 
             // --- Add Bonds (Sticks) ---
              let bondsAdded = 0;
              let potentialBondsChecked = 0;
             if (currentViewStyle === 'stick' || currentViewStyle === 'ballAndStick') {
+                console.log(`[Three.js Bond Check] Using latticeConstant: ${latticeConstant?.toFixed(4)}`);
+                console.log(`[Three.js Bond Check] Using stickRadius: ${stickRadius}`);
+
                 const bondCutoffSq = (latticeConstant * bondCutoffFactor) * (latticeConstant * bondCutoffFactor);
-                 console.log(`[Three.js Bond Check] bondCutoffSq: ${bondCutoffSq.toFixed(3)} (using latticeConstant: ${latticeConstant.toFixed(3)})`);
-                if (isNaN(bondCutoffSq) || bondCutoffSq <= 0) { console.error(`[Three.js Bond Check] Invalid bondCutoffSq: ${bondCutoffSq}`); }
-                else {
+                console.log(`[Three.js Bond Check] bondCutoffSq: ${bondCutoffSq?.toFixed(3)}`);
+
+                if (isNaN(bondCutoffSq) || bondCutoffSq <= 0) {
+                    console.error(`[Three.js Bond Check] Invalid bondCutoffSq: ${bondCutoffSq}. Skipping bond creation.`);
+                } else {
                     const yAxis = new THREE.Vector3(0, 1, 0);
                     for (let i = 0; i < currentAtoms.length; i++) {
                         for (let j = i + 1; j < currentAtoms.length; j++) {
                             const atom1 = currentAtoms[i];
                             const atom2 = currentAtoms[j];
-                             if (!atom1 || !atom2 || !atom1.position || !atom2.position || typeof atom1.element !== 'string' || typeof atom2.element !== 'string' || isNaN(atom1.position.x) || isNaN(atom2.position.x)) { continue; } // Basic sanity check
+                             if (!atom1 || !atom2 || !atom1.position || !atom2.position || !atom1.element || !atom2.element || isNaN(atom1.position.x) || isNaN(atom2.position.x)) continue;
 
                             const distSq = atom1.position.distanceToSquared(atom2.position);
                             potentialBondsChecked++;
 
                             if (distSq > 1e-6 && distSq < bondCutoffSq) {
-                                const role1 = atomInfo[atom1.element]?.role ?? 'unknown';
-                                const role2 = atomInfo[atom2.element]?.role ?? 'unknown';
+                                 const role1 = atomInfo[atom1.element]?.role ?? 'unknown';
+                                 const role2 = atomInfo[atom2.element]?.role ?? 'unknown';
+                                 const distance = Math.sqrt(distSq);
 
-                                if ((role1.includes('cation') && role2 === 'anion') || (role1 === 'anion' && role2.includes('cation'))) {
-                                    const distance = Math.sqrt(distSq);
-                                    // console.log(`[Three.js Bond Check] Creating bond: ${atom1.element} to ${atom2.element}, Dist: ${distance.toFixed(3)}`); // Less verbose
+                                 // console.log(`[Bond Check ${i}-${j}] Dist: ${distance.toFixed(3)} (<${Math.sqrt(bondCutoffSq).toFixed(3)}?), Atom1: ${atom1.element}(${role1}), Atom2: ${atom2.element}(${role2})`); // Less verbose
 
-                                    // Use CLONE of the reusable stick geometry
+                                 const rolesMatch = (role1.includes('cation') && role2 === 'anion') || (role1 === 'anion' && role2.includes('cation'));
+                                 // console.log(`[Bond Check ${i}-${j}] Roles match for bonding? ${rolesMatch}`); // Less verbose
+
+                                if (rolesMatch) {
+                                     if (isNaN(distance) || distance <= 1e-3) { console.error(`[Bond Check ${i}-${j}] Invalid calculated distance: ${distance}`); continue; }
+                                    // console.log(`[Bond Check ${i}-${j}] CREATING BOND`); // Less verbose
+
+                                    // Use CLONE of the reusable stick geometry's GEOMETRY, but reuse the MATERIAL
                                     const stickMesh = new THREE.Mesh(stickGeometry.clone(), bondMaterial); // Clone geometry
 
                                     stickMesh.position.copy(atom1.position).add(atom2.position).multiplyScalar(0.5);
@@ -677,18 +690,19 @@ document.addEventListener("DOMContentLoaded", async () => {
                                          if (direction.y < 0) { quaternion.setFromAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI); }
                                     }
                                     stickMesh.quaternion.copy(quaternion);
-                                    stickMesh.scale.y = distance; // Scale only the length
+                                    stickMesh.scale.set(1, distance, 1); // Scale only Y (length)
+
+                                     // console.log(`[Bond Check ${i}-${j}] Stick Pos: (${stickMesh.position.x.toFixed(2)}, ${stickMesh.position.y.toFixed(2)}, ${stickMesh.position.z.toFixed(2)}), ScaleY: ${stickMesh.scale.y.toFixed(3)}`); // Less verbose
 
                                     crystalGroup.add(stickMesh);
                                     bondsAdded++;
-                                }
-                            }
-                        }
-                    }
+                                } // End role check
+                            } // End distance check
+                        } // End inner loop (j)
+                    } // End outer loop (i)
                     console.log(`[Three.js updateScene] Checked ${potentialBondsChecked} potential bonds, added ${bondsAdded} bonds.`);
-                }
+                } // End else (bondCutoffSq is valid)
             } // End if need bonds
-
 
             // --- Add Unit Cell Outline ---
             if (cellShown) { drawUnitCellOutline(); }
@@ -704,32 +718,30 @@ document.addEventListener("DOMContentLoaded", async () => {
              if (controls) {
                  controls.minDistance = latticeConstant * 0.5;
                  controls.maxDistance = latticeConstant * Math.max(currentSupercell * 5, 10);
-                 controls.target.set(0, 0, 0);
-                 // **** IMPORTANT: Reset controls after potential target/distance changes ****
+                 controls.target.set(0, 0, 0); // Re-center target explicitly
                  controls.update();
              }
 
             console.log(`[Three.js updateScene] Scene update finished. CrystalGroup children: ${crystalGroup.children.length}`);
-            if (crystalGroup.children.length === 0) { console.warn("[Three.js updateScene] No objects were added to the crystal group."); }
+            let sticksInGroup = crystalGroup.children.filter(c => c.isMesh && c.geometry.type === "CylinderGeometry").length;
+             console.log(`[Three.js updateScene] Spheres in group: ${spheresInGroup}, Sticks in group: ${sticksInGroup}`); // Verify sticks were added
+            if (crystalGroup.children.length === 0) { console.warn("[Three.js updateScene] No objects were added."); }
             else { if (renderer && scene && camera) { renderer.render(scene, camera); console.log("[Three.js updateScene] Manual render requested."); } }
 
         } // --- End updateScene ---
+
 
         // --- Draw Unit Cell Outline ---
         function drawUnitCellOutline() {
             let existingLines = crystalGroup.getObjectByName("unitCellLines");
             if (existingLines) { if (existingLines.geometry) existingLines.geometry.dispose(); crystalGroup.remove(existingLines); }
 
-            // Calculate corners based on the centered origin
-             const halfX = currentSupercell * latticeConstant / 2.0;
-             const halfY = currentSupercell * latticeConstant / 2.0;
-             const halfZ = currentSupercell * latticeConstant / 2.0;
-
+            const halfSize = (currentSupercell * latticeConstant) / 2.0;
              const vertices = [
-                 new THREE.Vector3(-halfX, -halfY, -halfZ), new THREE.Vector3( halfX, -halfY, -halfZ), // 0, 1
-                 new THREE.Vector3( halfX,  halfY, -halfZ), new THREE.Vector3(-halfX,  halfY, -halfZ), // 2, 3
-                 new THREE.Vector3(-halfX, -halfY,  halfZ), new THREE.Vector3( halfX, -halfY,  halfZ), // 4, 5
-                 new THREE.Vector3( halfX,  halfY,  halfZ), new THREE.Vector3(-halfX,  halfY,  halfZ)  // 6, 7
+                 new THREE.Vector3(-halfSize, -halfSize, -halfSize), new THREE.Vector3( halfSize, -halfSize, -halfSize),
+                 new THREE.Vector3( halfSize,  halfSize, -halfSize), new THREE.Vector3(-halfSize,  halfSize, -halfSize),
+                 new THREE.Vector3(-halfSize, -halfSize,  halfSize), new THREE.Vector3( halfSize, -halfSize,  halfSize),
+                 new THREE.Vector3( halfSize,  halfSize,  halfSize), new THREE.Vector3(-halfSize,  halfSize,  halfSize)
              ];
             const edges = [ 0, 1, 1, 2, 2, 3, 3, 0, 4, 5, 5, 6, 6, 7, 7, 4, 0, 4, 1, 5, 2, 6, 3, 7 ];
             const lineGeometry = new THREE.BufferGeometry(); const positions = [];
@@ -737,24 +749,14 @@ document.addEventListener("DOMContentLoaded", async () => {
             lineGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
             const cellLines = new THREE.LineSegments(lineGeometry, cellMaterial); cellLines.name = "unitCellLines";
             crystalGroup.add(cellLines);
-            // console.log("[Three.js] Drew unit cell outline."); // Less verbose
+             // console.log("[Three.js] Drew unit cell outline."); // Less verbose
         }
 
 
         // --- UI and Controls ---
         function setupControls() {
              controlsContainer.innerHTML = ''; // Clear loading message
-            // Build Control HTML Dynamically (same as before)
              let controlsHTML = `<h4>Controls</h4>`;
-             if (vizData.composition.min_x !== vizData.composition.max_x) { controlsHTML += `<div class="control-group" id="${controlsElementId}-composition-group">...</div>`; } // Placeholder
-             controlsHTML += `<div class="control-group viz-controls">...</div>`; // Placeholder
-             controlsHTML += `<div class="control-group cell-controls">...</div>`; // Placeholder
-             controlsHTML += `<div class="control-group supercell-controls">...</div>`; // Placeholder
-             controlsHTML += `<div class="control-group">...<div class="info-panel">...</div></div>`; // Placeholder
-             controlsHTML += `<div class="control-group action-controls">...</div>`; // Placeholder
-
-            // Re-generate the actual HTML
-             controlsHTML = `<h4>Controls</h4>`;
              if (vizData.composition.min_x !== vizData.composition.max_x) {
                  controlsHTML += `
                     <div class="control-group" id="${controlsElementId}-composition-group">
@@ -781,7 +783,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <div class="control-group supercell-controls">
                    <div class="control-title">Supercell</div>
                    ${(vizData.supercell_options || [1]).map(size =>
-                       // **** Set initial supercell size for button activation ****
                        `<button data-size="${size}" id="${controlsElementId}-btn-${size}x${size}x${size}" class="${size === currentSupercell ? 'active' : ''}">${size}×${size}×${size}</button>`
                     ).join('')}
                </div>`;
@@ -804,20 +805,18 @@ document.addEventListener("DOMContentLoaded", async () => {
                     <button id="${controlsElementId}-btn-stop">Stop</button>
                     <button id="${controlsElementId}-btn-screenshot">Screenshot (PNG)</button>
                  </div>`;
-
-
             controlsContainer.innerHTML = controlsHTML;
 
-            // --- Add Event Listeners (same as before) ---
+            // Add Event Listeners
             const compSlider = document.getElementById(`${controlsElementId}-composition`);
-            if (compSlider) { /* ... listener as before ... */
+            if (compSlider) {
                  compSlider.addEventListener('input', () => {
                     currentComposition = parseFloat(compSlider.value);
                     document.getElementById(`${controlsElementId}-composition-value`).textContent = `x = ${currentComposition.toFixed(2)}`;
                     generateAtomData(currentComposition, currentSupercell); updateScene();
                 });
             }
-             controlsContainer.querySelectorAll('.viz-controls button').forEach(button => { /* ... listener as before ... */
+             controlsContainer.querySelectorAll('.viz-controls button').forEach(button => {
                  button.addEventListener('click', function() {
                      if (currentViewStyle !== this.dataset.style) {
                          currentViewStyle = this.dataset.style; updateActiveButtons(this, '.viz-controls'); updateScene(); populateLegend();
@@ -828,7 +827,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             const hideCellBtn = document.getElementById(`${controlsElementId}-btn-hide-cell`);
              if (showCellBtn) showCellBtn.addEventListener('click', function() { if (!cellShown) { cellShown = true; updateActiveButtons(this, '.cell-controls'); updateScene(); } });
              if (hideCellBtn) hideCellBtn.addEventListener('click', function() { if (cellShown) { cellShown = false; updateActiveButtons(this, '.cell-controls'); updateScene(); } });
-             controlsContainer.querySelectorAll('.supercell-controls button').forEach(button => { /* ... listener as before ... */
+             controlsContainer.querySelectorAll('.supercell-controls button').forEach(button => {
                  button.addEventListener('click', function() {
                      const newSize = parseInt(this.dataset.size);
                      if (currentSupercell !== newSize) {
@@ -844,19 +843,32 @@ document.addEventListener("DOMContentLoaded", async () => {
             const screenshotBtn = document.getElementById(`${controlsElementId}-btn-screenshot`);
              if (spinBtn) spinBtn.addEventListener('click', () => { if (!isSpinning && controls) { isSpinning = true; controls.autoRotate = true; controls.autoRotateSpeed = 1.0; console.log("[Three.js Controls] Spin enabled."); } });
              if(stopBtn) stopBtn.addEventListener('click', () => { if (isSpinning && controls) { isSpinning = false; controls.autoRotate = false; console.log("[Three.js Controls] Spin disabled."); } });
-             if(screenshotBtn) screenshotBtn.addEventListener('click', () => { /* ... screenshot logic as before ... */ });
+             if(screenshotBtn) screenshotBtn.addEventListener('click', () => { /* ... screenshot logic ... */
+                if (!renderer || !scene || !camera) { console.error("Screenshot failed: Renderer, scene, or camera not initialized."); return; }
+                 try {
+                     renderer.render(scene, camera); // Ensure latest frame
+                     const imageData = renderer.domElement.toDataURL('image/png');
+                     const link = document.createElement('a');
+                     const safeMaterialName = (allMaterialDetails?.materialName || 'material').replace(/ /g, '_').toLowerCase();
+                     let compString = (vizData?.composition?.min_x !== vizData?.composition?.max_x) ? `_x${currentComposition.toFixed(2)}` : "";
+                     link.download = `${safeMaterialName}_${structureType}${compString}_${currentSupercell}x${currentSupercell}x${currentSupercell}_${currentViewStyle}.png`;
+                     link.href = imageData; document.body.appendChild(link); link.click(); document.body.removeChild(link);
+                     console.log("[Three.js Controls] Screenshot captured.");
+                 } catch (e) {
+                     console.error("Screenshot failed:", e);
+                     if (e.name === 'SecurityError') { alert("Could not capture screenshot due to security restrictions (cross-origin data)."); }
+                     else { alert("Could not capture screenshot. Check console."); }
+                 }
+             });
 
 
-            // --- Initial Setup ---
-            updateInfoPanel(currentComposition);
-            populateLegend();
-            // **** ACTIVATE buttons based on initial state ****
+            // Initial UI Setup
+            updateInfoPanel(currentComposition); populateLegend();
             updateActiveButtons(controlsContainer.querySelector(`.viz-controls button[data-style="${currentViewStyle}"]`), '.viz-controls');
             updateActiveButtons(controlsContainer.querySelector(`.cell-controls button[id$="${cellShown ? 'show' : 'hide'}-cell"]`), '.cell-controls');
             updateActiveButtons(controlsContainer.querySelector(`.supercell-controls button[data-size="${currentSupercell}"]`), '.supercell-controls');
-            console.log("[Three.js] Controls setup complete.");
-        } // --- End setupControls ---
-
+             console.log("[Three.js] Controls setup complete.");
+        }
 
         // --- Info Panel & Legend ---
         function updateInfoPanel(compositionRatio) {
@@ -864,22 +876,17 @@ document.addEventListener("DOMContentLoaded", async () => {
              const compositionInfoEl = document.getElementById(`${controlsElementId}-composition-info`);
              if(latticeInfoEl) latticeInfoEl.textContent = `Lattice: a ≈ ${latticeConstant.toFixed(3)} Å`;
              if(compositionInfoEl && vizData.composition?.formula_template) {
-                const isVariable = vizData.composition.min_x !== vizData.composition.max_x;
-                 const formula = isVariable
-                     ? vizData.composition.formula_template.replace('{x}', compositionRatio.toFixed(2)).replace('{1-x}', (1 - compositionRatio).toFixed(2))
-                     : vizData.composition.formula_template.replace(/{1-x}/g,'').replace(/{x}/g,'');
+                 const isVariable = vizData.composition.min_x !== vizData.composition.max_x;
+                 const formula = isVariable ? vizData.composition.formula_template.replace('{x}', compositionRatio.toFixed(2)).replace('{1-x}', (1 - compositionRatio).toFixed(2)) : vizData.composition.formula_template.replace(/{1-x}/g,'').replace(/{x}/g,'');
                  compositionInfoEl.innerHTML = `${isVariable ? 'Composition' : 'Formula'}: ${formula}`;
-             } else if (compositionInfoEl) {
-                 compositionInfoEl.textContent = `Composition: x = ${compositionRatio.toFixed(2)}`;
-             }
+             } else if (compositionInfoEl) { compositionInfoEl.textContent = `Composition: x = ${compositionRatio.toFixed(2)}`; }
         }
         function populateLegend() {
             const legendEl = document.getElementById(`${controlsElementId}-legend`);
             if (!legendEl || !atomInfo) return;
             legendEl.innerHTML = '';
             Object.entries(atomInfo).forEach(([symbol, info]) => {
-                const upperSymbol = symbol.toUpperCase();
-                const color = materials[upperSymbol]?.color.getStyle() || '#cccccc';
+                const upperSymbol = symbol.toUpperCase(); const color = materials[upperSymbol]?.color.getStyle() || '#cccccc';
                 const legendItem = document.createElement('div'); legendItem.className = 'legend';
                 legendItem.innerHTML = `<div class="legend-color" style="background-color:${color};"></div><div>${symbol} (${info.role || 'N/A'})</div>`;
                 legendEl.appendChild(legendItem);
@@ -890,7 +897,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                  legendEl.appendChild(bondLegendItem);
              }
         }
-
 
         // --- Helper to update active button states ---
          function updateActiveButtons(clickedButton, buttonGroupSelector) {
@@ -929,7 +935,7 @@ document.addEventListener("DOMContentLoaded", async () => {
              if(stickGeometry) stickGeometry.dispose(); // Dispose the template geometry
              Object.values(materials).forEach(mat => { if(mat) mat.dispose(); });
              if(bondMaterial) bondMaterial.dispose(); if(cellMaterial) cellMaterial.dispose(); if(defaultMaterial) defaultMaterial.dispose();
-             if (renderer) { renderer.dispose(); if (renderer.domElement && renderer.domElement.parentNode) { viewerContainer.removeChild(renderer.domElement); } renderer = null; }
+             if (renderer) { renderer.dispose(); if (renderer.domElement && renderer.domElement.parentNode === viewerContainer) { viewerContainer.removeChild(renderer.domElement); } renderer = null; }
              scene = null; camera = null; controls = null; crystalGroup = null; currentAtoms = [];
              console.log("[Three.js] Cleanup complete.");
         }
