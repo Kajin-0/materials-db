@@ -135,7 +135,7 @@
         .error-message { color: #c0392b; background-color: #fbeae5; padding: 1rem; border-radius: 4px; border: 1px solid #e74c3c; margin: 1rem 0; }
 
 
-        /* --- Styles for 3Dmol.js Viewer --- */
+        /* --- Styles for 3D Viewer (Adjusted for Three.js) --- */
         .crystal-viewer-wrapper {
             margin-top: 1.5rem;
             margin-bottom: 1rem;
@@ -143,24 +143,31 @@
             border-radius: 6px;
             overflow: hidden; /* Contain elements */
             background-color: #fdfdfd;
-            /* Use CSS Variable for height */
-            height: var(--viewer-height, 450px);
+            height: var(--viewer-height, 450px); /* Use CSS Variable for height */
+            position: relative;
         }
 
         .crystal-viewer-container {
             display: flex;
             flex-direction: column; /* Default: controls below */
-             height: 100%; /* Fill wrapper height */
+            height: 100%; /* Fill wrapper height */
         }
 
         .viewer-area {
             flex-grow: 1; /* Take available space */
-            position: relative; /* For potential overlays if needed */
-            background-color: white; /* Match viewer background */
+            position: relative;
+            background-color: white; /* Match Three.js background */
             min-height: 250px; /* Minimum drawing area height */
             height: 70%; /* Default proportion if stacked */
-            overflow: hidden; /* Hide potential overflow from 3dmol canvas */
+            overflow: hidden; /* Important for Three.js canvas */
         }
+        /* Style the canvas itself */
+        .viewer-area canvas {
+            display: block; /* Remove extra space below canvas */
+            width: 100% !important; /* Override Three.js inline style */
+            height: 100% !important; /* Override Three.js inline style */
+        }
+
 
         .viewer-controls {
             width: 100%; /* Full width in column layout */
@@ -173,140 +180,50 @@
             flex-shrink: 0;
         }
         .viewer-controls h4 {
-             margin-top: 0;
-             margin-bottom: 15px;
-             font-size: 1.1rem;
-             color: #343a40;
-             border-bottom: 1px solid #dee2e6;
-             padding-bottom: 8px;
+             margin-top: 0; margin-bottom: 15px; font-size: 1.1rem;
+             color: #343a40; border-bottom: 1px solid #dee2e6; padding-bottom: 8px;
         }
 
-
-        .control-group {
-            margin-bottom: 15px;
-        }
-        .control-group:last-child {
-             margin-bottom: 5px;
-        }
-
-        .control-title {
-            display: block; /* Ensure it's on its own line */
-            font-weight: 600;
-            margin-bottom: 8px;
-            font-size: 0.9rem;
-            color: #495057;
-        }
-        label.control-title {
-             margin-bottom: 5px; /* Less space for sliders */
-        }
-
-
+        /* Control Groups, Titles, Buttons, Slider */
+        .control-group { margin-bottom: 15px; }
+        .control-group:last-child { margin-bottom: 5px; }
+        .control-title { display: block; font-weight: 600; margin-bottom: 8px; font-size: 0.9rem; color: #495057; }
+        label.control-title { margin-bottom: 5px; }
         .viewer-controls button {
-            padding: 5px 10px;
-            margin: 3px 4px 3px 0;
-            cursor: pointer;
-            background-color: #e9ecef;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-            transition: background-color 0.2s, border-color 0.2s;
-            font-size: 0.85rem;
-            color: #495057;
+            padding: 5px 10px; margin: 3px 4px 3px 0; cursor: pointer; background-color: #e9ecef;
+            border: 1px solid #ced4da; border-radius: 4px; transition: background-color 0.2s, border-color 0.2s;
+            font-size: 0.85rem; color: #495057;
         }
-
-        .viewer-controls button:hover {
-            background-color: #dee2e6;
-            border-color: #adb5bd;
-        }
-
-        .viewer-controls button.active {
-            background-color: #007bff; /* Use a primary color */
-            border-color: #0056b3;
-            color: white;
-            font-weight: 500; /* Normal weight for active */
-        }
-
+        .viewer-controls button:hover { background-color: #dee2e6; border-color: #adb5bd; }
+        .viewer-controls button.active { background-color: #007bff; border-color: #0056b3; color: white; font-weight: 500; }
         .slider {
-            width: 100%;
-            height: 6px;
-            -webkit-appearance: none;
-            appearance: none;
-            background: #ced4da;
-            outline: none;
-            border-radius: 3px;
-            cursor: pointer;
-             margin-bottom: 5px;
+            width: 100%; height: 6px; -webkit-appearance: none; appearance: none; background: #ced4da;
+            outline: none; border-radius: 3px; cursor: pointer; margin-bottom: 5px;
         }
-
         .slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: #007bff;
-            cursor: pointer;
-             border: 2px solid white;
-             box-shadow: 0 0 2px rgba(0,0,0,0.3);
+            -webkit-appearance: none; appearance: none; width: 16px; height: 16px; border-radius: 50%;
+            background: #007bff; cursor: pointer; border: 2px solid white; box-shadow: 0 0 2px rgba(0,0,0,0.3);
         }
         .slider::-moz-range-thumb { /* Firefox */
-             width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: #007bff;
-            cursor: pointer;
-             border: 2px solid white;
-             box-shadow: 0 0 2px rgba(0,0,0,0.3);
+             width: 16px; height: 16px; border-radius: 50%; background: #007bff; cursor: pointer;
+             border: 2px solid white; box-shadow: 0 0 2px rgba(0,0,0,0.3);
         }
+        [id$='-composition-value'] { font-size: 0.85rem; color: #6c757d; text-align: right; margin-top: 2px; min-height: 1.2em; }
 
-        [id$='-composition-value'] { /* Target ID ending with -composition-value */
-            font-size: 0.85rem;
-            color: #6c757d;
-            text-align: right;
-            margin-top: 2px;
-            min-height: 1.2em; /* Reserve space */
-        }
-
-        /* Info Panel within controls */
+        /* Info Panel, Legend */
         .viewer-controls .info-panel {
-             background-color: #ffffff;
-             padding: 10px 12px;
-             border-radius: 4px;
-             font-size: 0.85rem;
-             border: 1px solid #dee2e6;
-             box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+             background-color: #ffffff; padding: 10px 12px; border-radius: 4px; font-size: 0.85rem;
+             border: 1px solid #dee2e6; box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
          }
-         .viewer-controls .info-panel h5 {
-             margin-top: 0; margin-bottom: 8px; font-size: 0.95rem; color: #343a40; padding-bottom: 5px; border-bottom: 1px solid #eee;
-         }
-         .viewer-controls .info-panel div {
-             margin-bottom: 4px;
-             line-height: 1.4;
-         }
-         .viewer-controls .info-panel hr {
-             border: none; border-top: 1px solid #eee; margin: 8px 0;
-         }
-
-        .legend {
-            display: flex;
-            align-items: center;
-            margin-bottom: 5px;
-            font-size: 0.85rem;
-        }
-
+         .viewer-controls .info-panel h5 { margin-top: 0; margin-bottom: 8px; font-size: 0.95rem; color: #343a40; padding-bottom: 5px; border-bottom: 1px solid #eee; }
+         .viewer-controls .info-panel div { margin-bottom: 4px; line-height: 1.4; }
+         .viewer-controls .info-panel hr { border: none; border-top: 1px solid #eee; margin: 8px 0; }
+        .legend { display: flex; align-items: center; margin-bottom: 5px; font-size: 0.85rem; }
         .legend-color {
-            width: 12px;
-            height: 12px;
-            margin-right: 6px;
-            border-radius: 50%;
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            display: inline-block;
-            vertical-align: middle;
-            flex-shrink: 0; /* Prevent shrinking */
+            width: 12px; height: 12px; margin-right: 6px; border-radius: 50%;
+            border: 1px solid rgba(0, 0, 0, 0.1); display: inline-block; vertical-align: middle; flex-shrink: 0;
         }
-         .legend div:last-child { /* Text label */
-             display: inline-block;
-             vertical-align: middle;
-         }
+         .legend div:last-child { display: inline-block; vertical-align: middle; }
 
          /* Responsive Layout */
          @media (max-width: 768px) {
@@ -315,36 +232,18 @@
             .detail-content-section h2 { font-size: 1.5rem; }
             .property-detail-block h3 { font-size: 1.25rem; }
             .detail-subsection h4::before { font-size: 1rem; }
-            /* Adjust viewer wrapper height for stacking */
-            .crystal-viewer-wrapper { height: auto; min-height: 550px; } /* Allow more vertical space when stacked */
+            .crystal-viewer-wrapper { height: auto; min-height: 550px; }
             .crystal-viewer-container { flex-direction: column; height: 100%; }
-            .viewer-area { height: 60%; min-height: 300px; border-right: none; } /* Adjust proportions */
+            .viewer-area { height: 60%; min-height: 300px; border-right: none; }
             .viewer-controls { width: 100%; height: 40%; border-left: none; border-top: 1px solid #e0e0e0; max-height: none; }
          }
 
-         /* Controls beside viewer on wider screens */
-         @media (min-width: 769px) { /* Apply side-by-side layout */
-             .crystal-viewer-wrapper { height: var(--viewer-height, 450px); } /* Use variable from JS */
-             .crystal-viewer-container {
-                 flex-direction: row; /* Side-by-side */
-                 height: 100%;
-             }
-             .viewer-area {
-                 border-right: 1px solid #e0e0e0;
-                 border-bottom: none;
-                 height: 100%; /* Fill the container height */
-                 width: calc(100% - 280px); /* Calculate width */
-             }
-             .viewer-controls {
-                 width: 280px; /* Fixed width for controls */
-                 flex-shrink: 0; /* Prevent controls from shrinking */
-                 border-top: none;
-                 border-left: 1px solid #e0e0e0;
-                 height: 100%; /* Fill the container height */
-                 overflow-y: auto; /* Allow scrolling within fixed height */
-             }
+         @media (min-width: 769px) {
+             .crystal-viewer-wrapper { height: var(--viewer-height, 450px); }
+             .crystal-viewer-container { flex-direction: row; height: 100%; }
+             .viewer-area { border-right: 1px solid #e0e0e0; border-bottom: none; height: 100%; width: calc(100% - 280px); }
+             .viewer-controls { width: 280px; flex-shrink: 0; border-top: none; border-left: 1px solid #e0e0e0; height: 100%; overflow-y: auto; }
          }
-
     </style>
 </head>
 <body>
@@ -352,6 +251,7 @@
         <a href="index.html" class="back-link">Back to Materials List</a>
         <div class="material-title-bar">
             <h1 id="material-name">Loading Material...</h1>
+            <!-- Material Formula/Context might be added here by JS if needed -->
         </div>
         <nav id="toc">
             <h2>Contents</h2>
@@ -361,32 +261,88 @@
         </nav>
         <main id="main-content">
             <!-- Section Placeholders - JS will populate these -->
+            <!-- Ensure IDs match keys in the JSON detail file -->
             <section id="section-identification" class="detail-content-section" style="display: none;">
-                 <h2 id="section-identification-title"></h2>
+                 <h2 id="section-identification-title">Identification & Structure</h2> <!-- Provide default title -->
                  <p class="section-introduction" id="section-identification-intro"></p>
                  <div class="properties-container" id="section-identification-properties"></div>
             </section>
             <section id="section-electrical_properties" class="detail-content-section" style="display: none;">
-                 <h2 id="section-electrical_properties-title"></h2>
+                 <h2 id="section-electrical_properties-title">Electrical Properties</h2> <!-- Default title -->
                  <p class="section-introduction" id="section-electrical_properties-intro"></p>
                  <div class="properties-container" id="section-electrical_properties-properties"></div>
             </section>
             <section id="section-optical_properties" class="detail-content-section" style="display: none;">
-                 <h2 id="section-optical_properties-title"></h2>
+                 <h2 id="section-optical_properties-title">Optical Properties</h2> <!-- Default title -->
                  <p class="section-introduction" id="section-optical_properties-intro"></p>
                  <div class="properties-container" id="section-optical_properties-properties"></div>
             </section>
              <section id="section-thermal_properties" class="detail-content-section" style="display: none;">
-                 <h2 id="section-thermal_properties-title"></h2>
+                 <h2 id="section-thermal_properties-title">Thermal Properties</h2> <!-- Default title -->
                  <p class="section-introduction" id="section-thermal_properties-intro"></p>
                  <div class="properties-container" id="section-thermal_properties-properties"></div>
              </section>
              <section id="section-mechanical_properties" class="detail-content-section" style="display: none;">
-                 <h2 id="section-mechanical_properties-title"></h2>
+                 <h2 id="section-mechanical_properties-title">Mechanical Properties</h2> <!-- Default title -->
                  <p class="section-introduction" id="section-mechanical_properties-intro"></p>
                  <div class="properties-container" id="section-mechanical_properties-properties"></div>
              </section>
-            <!-- Add more section placeholders here if needed, following the pattern -->
+             <section id="section-advanced_fabrication_insights" class="detail-content-section" style="display: none;">
+                <h2 id="section-advanced_fabrication_insights-title">Advanced Fabrication Insights</h2>
+                <p class="section-introduction" id="section-advanced_fabrication_insights-intro"></p>
+                <div class="properties-container" id="section-advanced_fabrication_insights-properties"></div>
+             </section>
+             <section id="section-growth_fabrication_properties" class="detail-content-section" style="display: none;">
+                <h2 id="section-growth_fabrication_properties-title">Growth & Fabrication Properties</h2>
+                <p class="section-introduction" id="section-growth_fabrication_properties-intro"></p>
+                <div class="properties-container" id="section-growth_fabrication_properties-properties"></div>
+             </section>
+             <section id="section-post_growth_processing" class="detail-content-section" style="display: none;">
+                <h2 id="section-post_growth_processing-title">Post-Growth Processing</h2>
+                <p class="section-introduction" id="section-post_growth_processing-intro"></p>
+                <div class="properties-container" id="section-post_growth_processing-properties"></div>
+             </section>
+             <section id="section-device_integration_characterization" class="detail-content-section" style="display: none;">
+                <h2 id="section-device_integration_characterization-title">Device Integration & Characterization</h2>
+                <p class="section-introduction" id="section-device_integration_characterization-intro"></p>
+                <div class="properties-container" id="section-device_integration_characterization-properties"></div>
+             </section>
+             <section id="section-device_applications" class="detail-content-section" style="display: none;">
+                <h2 id="section-device_applications-title">Device Applications</h2>
+                <p class="section-introduction" id="section-device_applications-intro"></p>
+                <div class="properties-container" id="section-device_applications-properties"></div>
+             </section>
+              <section id="section-chemical_properties" class="detail-content-section" style="display: none;">
+                <h2 id="section-chemical_properties-title">Chemical Properties</h2>
+                <p class="section-introduction" id="section-chemical_properties-intro"></p>
+                <div class="properties-container" id="section-chemical_properties-properties"></div>
+             </section>
+             <section id="section-magnetic_properties" class="detail-content-section" style="display: none;">
+                <h2 id="section-magnetic_properties-title">Magnetic Properties</h2>
+                <p class="section-introduction" id="section-magnetic_properties-intro"></p>
+                <div class="properties-container" id="section-magnetic_properties-properties"></div>
+             </section>
+             <section id="section-safety" class="detail-content-section" style="display: none;">
+                <h2 id="section-safety-title">Safety Information</h2>
+                <p class="section-introduction" id="section-safety-intro"></p>
+                <div class="properties-container" id="section-safety-properties"></div>
+             </section>
+             <section id="section-comparison_alternatives" class="detail-content-section" style="display: none;">
+                <h2 id="section-comparison_alternatives-title">Comparison with Alternatives</h2>
+                <p class="section-introduction" id="section-comparison_alternatives-intro"></p>
+                <div class="properties-container" id="section-comparison_alternatives-properties"></div>
+             </section>
+             <section id="section-references_further_reading" class="detail-content-section" style="display: none;">
+                <h2 id="section-references_further_reading-title">References & Further Reading</h2>
+                <p class="section-introduction" id="section-references_further_reading-intro"></p>
+                <div class="properties-container" id="section-references_further_reading-properties"></div>
+             </section>
+             <section id="section-vendor_info" class="detail-content-section" style="display: none;">
+                <h2 id="section-vendor_info-title">Vendor Information</h2>
+                <p class="section-introduction" id="section-vendor_info-intro"></p>
+                <div class="properties-container" id="section-vendor_info-properties"></div>
+             </section>
+             <!-- Add more section placeholders here if needed, following the pattern -->
         </main>
         <div id="references-section" style="display: none;">
             <h4>References Cited</h4>
@@ -396,8 +352,10 @@
         </div>
     </div>
 
-    <!-- IMPORTANT: Load 3Dmol.js library -->
-    <script src="https://3Dmol.org/build/3Dmol-min.js"></script>
+    <!-- Load Three.js libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r133/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.133.0/examples/js/controls/OrbitControls.js"></script>
+
     <!-- Load your custom loader script -->
     <script src="full_detail_loader.js"></script>
 </body>
