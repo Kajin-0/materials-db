@@ -62,12 +62,16 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (!response.ok) {
              const errorText = await response.text(); // Attempt to read error response body
              console.error(`[Full Detail Loader] Fetch failed: ${response.status}. Response body:`, errorText);
-            if (response.status === 404) { throw new Error(`Details file not found: ${detailFilePath}.`); }
+            if (response.status === 404) { throw new Error(`Details file not found: ${detailFilePath}. Check file name and path.`); }
             else { throw new Error(`HTTP error ${response.status} fetching ${detailFilePath}`); }
         }
 
         console.log("[Full Detail Loader] Fetch successful. Parsing JSON...");
         allMaterialDetails = await response.json(); // Assign to outer scope variable
+        // Basic Validation of fetched JSON
+        if (typeof allMaterialDetails !== 'object' || allMaterialDetails === null) {
+             throw new Error(`Invalid JSON structure in ${detailFilePath}. Expected a top-level object.`);
+        }
         console.log("[Full Detail Loader] JSON parsed successfully.");
         const sectionDataMap = new Map();
 
@@ -94,8 +98,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                 if (excludedKeys.includes(sectionKey)) continue;
                 const sectionData = allMaterialDetails[sectionKey];
                 // Also check if sectionData is an actual object intended to be a section
-                if (typeof sectionData !== 'object' || sectionData === null || !sectionData.displayName) {
-                    console.warn(`[Full Detail Loader] Skipping key '${sectionKey}' as it doesn't appear to be a valid section object with a displayName.`);
+                 if (typeof sectionData !== 'object' || sectionData === null || typeof sectionData.displayName !== 'string') {
+                    console.warn(`[Full Detail Loader] Skipping key '${sectionKey}' as it doesn't appear to be a valid section object with a displayName string.`);
                     continue;
                 }
                 sectionDataMap.set(sectionKey, sectionData);
@@ -204,51 +208,56 @@ document.addEventListener("DOMContentLoaded", async () => {
         // --- Check for Visualization Data and Initialize THREE.JS Viewer ---
         if (propKey === 'crystal_structure' && propData.details && propData.details.visualization_data) {
             const vizData = propData.details.visualization_data;
-            const viewerContainerId = vizData.container_id || `viewer-container-${propKey}-${Date.now()}`;
+            // **** ADD VALIDATION FOR VIZ DATA ****
+            if (!vizData || typeof vizData !== 'object' || !vizData.atom_info || !vizData.composition || !vizData.lattice_constants) {
+                 console.error(`[renderPropertyBlock] Invalid or incomplete visualization_data for '${propKey}'. Skipping viewer initialization.`);
+            } else {
+                const viewerContainerId = vizData.container_id || `viewer-container-${propKey}-${Date.now()}`;
 
-            const viewerWrapper = document.createElement('div');
-            viewerWrapper.className = 'crystal-viewer-wrapper';
-            const viewerHeight = vizData.viewer_height || '450px';
-            viewerWrapper.style.setProperty('--viewer-height', viewerHeight);
+                const viewerWrapper = document.createElement('div');
+                viewerWrapper.className = 'crystal-viewer-wrapper';
+                const viewerHeight = vizData.viewer_height || '450px';
+                viewerWrapper.style.setProperty('--viewer-height', viewerHeight);
 
-            // Create viewer and controls divs
-            viewerWrapper.innerHTML = `
-                <div id="${viewerContainerId}" class="crystal-viewer-container">
-                    <div id="${viewerContainerId}-viewer" class="viewer-area"><p style="padding:20px; color:#888; text-align:center;">Loading 3D Viewer...</p></div>
-                    <div id="${viewerContainerId}-controls" class="viewer-controls"><p style="padding:10px; color:#888;">Loading Controls...</p></div>
-                </div>`;
-            propBlock.appendChild(viewerWrapper);
+                // Create viewer and controls divs
+                viewerWrapper.innerHTML = `
+                    <div id="${viewerContainerId}" class="crystal-viewer-container">
+                        <div id="${viewerContainerId}-viewer" class="viewer-area"><p style="padding:20px; color:#888; text-align:center;">Loading 3D Viewer...</p></div>
+                        <div id="${viewerContainerId}-controls" class="viewer-controls"><p style="padding:10px; color:#888;">Loading Controls...</p></div>
+                    </div>`;
+                propBlock.appendChild(viewerWrapper);
 
-            // Use requestAnimationFrame to ensure elements are in the DOM
-            requestAnimationFrame(() => {
-                 if (typeof THREE === 'undefined' || typeof THREE.OrbitControls === 'undefined') {
-                     console.error("Three.js or OrbitControls library not loaded!");
-                     const viewerArea = document.getElementById(`${viewerContainerId}-viewer`);
-                     if(viewerArea) viewerArea.innerHTML = `<p class="error-message" style="padding: 20px;">Error: Three.js library failed to load.</p>`;
-                     const controlsArea = document.getElementById(`${viewerContainerId}-controls`);
-                     if(controlsArea) controlsArea.innerHTML = '';
-                     return;
-                 }
-                 if (typeof initializeThreeJsViewer === 'function') {
-                    try {
-                        // Call the NEW Three.js initializer
-                        initializeThreeJsViewer(`${viewerContainerId}-viewer`, `${viewerContainerId}-controls`, vizData, allDetails);
-                    }
-                    catch(e) {
-                        console.error("Error initializing Three.js viewer:", e);
-                        const viewerArea = document.getElementById(`${viewerContainerId}-viewer`);
-                        if (viewerArea) viewerArea.innerHTML = `<p class="error-message" style="padding: 20px;">Could not load Three.js viewer. Check console.</p>`;
-                        const controlsArea = document.getElementById(`${viewerContainerId}-controls`);
-                        if(controlsArea) controlsArea.innerHTML = '';
-                    }
-                 } else {
-                     console.error("initializeThreeJsViewer function not found!");
-                     const viewerArea = document.getElementById(`${viewerContainerId}-viewer`);
-                     if(viewerArea) viewerArea.innerHTML = `<p class="error-message" style="padding: 20px;">Error: Viewer init script missing.</p>`;
-                     const controlsArea = document.getElementById(`${viewerContainerId}-controls`);
-                     if(controlsArea) controlsArea.innerHTML = '';
-                 }
-            });
+                // Use requestAnimationFrame to ensure elements are in the DOM
+                requestAnimationFrame(() => {
+                     if (typeof THREE === 'undefined' || typeof THREE.OrbitControls === 'undefined') {
+                         console.error("Three.js or OrbitControls library not loaded!");
+                         const viewerArea = document.getElementById(`${viewerContainerId}-viewer`);
+                         if(viewerArea) viewerArea.innerHTML = `<p class="error-message" style="padding: 20px;">Error: Three.js library failed to load.</p>`;
+                         const controlsArea = document.getElementById(`${viewerContainerId}-controls`);
+                         if(controlsArea) controlsArea.innerHTML = '';
+                         return;
+                     }
+                     if (typeof initializeThreeJsViewer === 'function') {
+                        try {
+                            // Call the NEW Three.js initializer
+                            initializeThreeJsViewer(`${viewerContainerId}-viewer`, `${viewerContainerId}-controls`, vizData, allDetails);
+                        }
+                        catch(e) {
+                            console.error("Error initializing Three.js viewer:", e);
+                            const viewerArea = document.getElementById(`${viewerContainerId}-viewer`);
+                            if (viewerArea) viewerArea.innerHTML = `<p class="error-message" style="padding: 20px;">Could not load Three.js viewer. Check console.</p>`;
+                            const controlsArea = document.getElementById(`${viewerContainerId}-controls`);
+                            if(controlsArea) controlsArea.innerHTML = '';
+                        }
+                     } else {
+                         console.error("initializeThreeJsViewer function not found!");
+                         const viewerArea = document.getElementById(`${viewerContainerId}-viewer`);
+                         if(viewerArea) viewerArea.innerHTML = `<p class="error-message" style="padding: 20px;">Error: Viewer init script missing.</p>`;
+                         const controlsArea = document.getElementById(`${viewerContainerId}-controls`);
+                         if(controlsArea) controlsArea.innerHTML = '';
+                     }
+                });
+            } // End else block (vizData is valid)
         }
         // --- End Visualization Check ---
 
@@ -345,12 +354,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
     // --- ============================================================== ---
-    // ---            *** NEW Three.js Initializer START ***             ---
+    // ---            *** REVISED Three.js Initializer START ***         ---
     // --- ============================================================== ---
     function initializeThreeJsViewer(viewerElementId, controlsElementId, vizData, allMaterialDetails) {
         console.log("--- Initializing Three.js Viewer ---");
-        console.log("Viz Data:", vizData);
-        // console.log("All Material Details:", allMaterialDetails); // Optional: Less verbose logging
+        // console.log("Viz Data:", vizData); // DEBUG: Log vizData if needed
 
         const viewerContainer = document.getElementById(viewerElementId);
         const controlsContainer = document.getElementById(controlsElementId);
@@ -389,24 +397,29 @@ document.addEventListener("DOMContentLoaded", async () => {
              controlsContainer.innerHTML = '';
              return;
         }
-        // Validate required composition fields
         if (!vizData.composition || typeof vizData.composition.min_x === 'undefined' || typeof vizData.composition.max_x === 'undefined') {
              console.error("Three.js viewer requires vizData.composition with min_x and max_x.");
              viewerContainer.innerHTML = `<p class="error-message">Viewer Error: Invalid composition data.</p>`;
              controlsContainer.innerHTML = '';
              return;
         }
+         if (!atomInfo || Object.keys(atomInfo).length < 3) { // Need at least host, subst, anion
+             console.error("Three.js viewer requires at least 3 elements defined in vizData.atom_info with roles.");
+             viewerContainer.innerHTML = `<p class="error-message">Viewer Error: Incomplete atom info data.</p>`;
+             controlsContainer.innerHTML = '';
+             return;
+         }
 
 
         // --- Constants and Setup ---
-        const bondCutoffFactor = 0.45; // Factor of lattice constant for bonding (sqrt(3)/4 is ideal ~0.433)
-        const sphereDetail = 12;
-        const stickDetail = 6;
+        const bondCutoffFactor = 0.45; // Factor of lattice constant for bonding
+        const sphereDetail = 16; // Increased detail slightly
+        const stickDetail = 8;  // Increased detail slightly
         const stickRadius = 0.06;
         const sphereScales = {
-            spacefill: 0.5, // ~ van der waals radius factor
-            ballAndStick: 0.25,
-            stick: 0.08
+            spacefill: 0.55, // Adjusted for potentially better visual packing
+            ballAndStick: 0.28, // Slightly larger balls
+            stick: 0.1         // Slightly larger nodes
         };
 
         // --- Materials ---
@@ -418,53 +431,71 @@ document.addEventListener("DOMContentLoaded", async () => {
                 metalness: 0.4,
                 roughness: 0.6
             });
+             console.log(`[Three.js] Created material for ${symbol.toUpperCase()}: Color ${info.color || '#cccccc'}`); // DEBUG
         });
-        const bondMaterial = new THREE.MeshStandardMaterial({ color: 0x666666, metalness: 0.2, roughness: 0.8 });
-        const cellMaterial = new THREE.LineBasicMaterial({ color: 0x333333 }); // Linewidth property is unreliable
+        const bondMaterial = new THREE.MeshStandardMaterial({ color: 0x555555, metalness: 0.1, roughness: 0.8 }); // Darker bonds
+        const cellMaterial = new THREE.LineBasicMaterial({ color: 0x000000 }); // Black cell lines
 
         // --- Geometries (Reusable) ---
-        const sphereGeometries = {}; // Will be populated based on radii * scale
-        const stickGeometry = new THREE.CylinderGeometry(stickRadius, stickRadius, 1, stickDetail, 1); // Length 1, will be scaled
+        const sphereGeometries = {};
+        // Stick geometry created *once*
+        const stickGeometry = new THREE.CylinderGeometry(stickRadius, stickRadius, 1, stickDetail, 1);
 
         // --- Helper Functions ---
         function disposeMeshes(group) {
             if (!group) return;
+            // console.log(`[Three.js Cleanup] Disposing meshes in group with ${group.children.length} children.`); // DEBUG
             const objectsToRemove = [];
             group.traverse(object => {
+                 // Add object itself to remove later (important to avoid modifying array during traversal)
+                 objectsToRemove.push(object);
+                 // Only dispose geometries we manage dynamically (spheres, sticks, cell lines)
                 if (object.isMesh || object.isLineSegments) {
-                    if (object.geometry) object.geometry.dispose();
-                    // Only dispose material if it's not one of the globally shared ones
-                    if (object.material && !Object.values(materials).includes(object.material) && object.material !== bondMaterial && object.material !== cellMaterial && object.material !== defaultMaterial) {
-                        if (Array.isArray(object.material)) {
-                            object.material.forEach(mat => mat.dispose());
-                        } else {
-                            object.material.dispose();
-                        }
+                    if (object.geometry && (
+                        Object.values(sphereGeometries).includes(object.geometry) || // Is it a sphere geometry we created?
+                        object.geometry === stickGeometry || // Is it the stick geometry? (Don't dispose the reusable one here)
+                        object.name === "unitCellLines"      // Is it the cell line geometry?
+                    )) {
+                        // Only dispose cell lines geometry here, spheres/sticks are managed elsewhere
+                         if (object.name === "unitCellLines") {
+                              object.geometry.dispose();
+                              // console.log(`[Three.js Cleanup] Disposed cell line geometry.`); // DEBUG
+                         }
                     }
+                    // Materials are shared, don't dispose here
                 }
-                 objectsToRemove.push(object); // Add object itself to remove later
             });
              // Remove objects from the group after traversal
+             // console.log(`[Three.js Cleanup] Removing ${objectsToRemove.length} objects from group.`); // DEBUG
              objectsToRemove.forEach(obj => {
-                 if (obj.parent) {
-                     obj.parent.remove(obj);
+                 // Only remove direct children of the target group
+                 if (obj.parent === group) {
+                     group.remove(obj);
                  }
              });
-            // console.log("Disposed group children");
         }
+
 
         // --- Initialize Scene ---
         function initThree() {
+            // Clear previous canvas if any
+            while (viewerContainer.firstChild) {
+                viewerContainer.removeChild(viewerContainer.firstChild);
+            }
+
             scene = new THREE.Scene();
             scene.background = new THREE.Color(0xffffff); // White background
 
             const width = viewerContainer.clientWidth;
             const height = viewerContainer.clientHeight;
+            console.log(`[Three.js Init] Container dimensions: ${width}x${height}`); // DEBUG
 
-            camera = new THREE.PerspectiveCamera(60, width / height, 0.1, 1000);
-            camera.position.set(0, 0, latticeConstant * currentSupercell * 1.8); // Adjust initial distance based on size
+            camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 1000); // Slightly narrower FOV
+            // Start camera further back initially, adjust zoom in updateScene
+            camera.position.set(0, 0, latticeConstant * 3);
+            camera.lookAt(0, 0, 0); // Ensure camera looks at the center
 
-            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true }); // Use alpha for potentially better CSS background integration
             renderer.setSize(width, height);
             renderer.setPixelRatio(window.devicePixelRatio);
             viewerContainer.appendChild(renderer.domElement);
@@ -472,45 +503,82 @@ document.addEventListener("DOMContentLoaded", async () => {
             controls = new THREE.OrbitControls(camera, renderer.domElement);
             controls.enableDamping = true;
             controls.dampingFactor = 0.1;
-            controls.minDistance = latticeConstant * currentSupercell * 0.5;
-            controls.maxDistance = latticeConstant * currentSupercell * 10;
+            // Adjust min/max distance dynamically in updateScene/controls setup
 
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            // Brighter, more directional lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
             scene.add(ambientLight);
-            const directionalLight1 = new THREE.DirectionalLight(0xffffff, 0.8);
-            directionalLight1.position.set(1, 1, 1);
-            scene.add(directionalLight1);
-            const directionalLight2 = new THREE.DirectionalLight(0xffffff, 0.4);
-            directionalLight2.position.set(-1, -1, -0.5);
-            scene.add(directionalLight2);
+            const keyLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            keyLight.position.set(5, 5, 10);
+            scene.add(keyLight);
+             const fillLight = new THREE.DirectionalLight(0xffffff, 0.4);
+            fillLight.position.set(-5, 2, -5);
+            scene.add(fillLight);
+            const backLight = new THREE.DirectionalLight(0xffffff, 0.2);
+            backLight.position.set(0, -5, -2);
+            scene.add(backLight);
+
 
             crystalGroup = new THREE.Group(); // Group to hold all crystal elements
             scene.add(crystalGroup);
 
+            // Add resize listener *once*
+            window.removeEventListener('resize', onWindowResize); // Remove previous if any
             window.addEventListener('resize', onWindowResize, false);
 
-            console.log("Three.js scene initialized.");
+            console.log("[Three.js] Scene initialized.");
+
+            // Add a simple visible cube at origin for debugging if needed
+            // const testGeo = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+            // const testMat = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+            // const testCube = new THREE.Mesh(testGeo, testMat);
+            // scene.add(testCube);
+            // console.log("[Three.js] Added test cube at origin.");
         }
 
         // --- Generate Atom Positions ---
         function generateAtomData(compositionRatio, cellSize) {
             const atoms = [];
-            // Find host and substituent symbols case-insensitively, fallback if needed
-            const cation_host_symbol = Object.keys(atomInfo).find(key => atomInfo[key].role === 'cation_host') || Object.keys(atomInfo)[0] || 'Hg';
-            const cation_subst_symbol = Object.keys(atomInfo).find(key => atomInfo[key].role === 'cation_subst') || Object.keys(atomInfo)[1] || 'Cd';
-            const anion_symbol = Object.keys(atomInfo).find(key => atomInfo[key].role === 'anion') || Object.keys(atomInfo)[2] || 'Te';
+            console.log(`[Three.js generateAtomData] Input compositionRatio: ${compositionRatio}, cellSize: ${cellSize}`); // DEBUG
 
-            const a_host = latticeConstantsSource[cation_host_symbol] || 6.46;
-            const a_subst = latticeConstantsSource[cation_subst_symbol] || 6.48;
-            latticeConstant = a_host * (1 - compositionRatio) + a_subst * compositionRatio; // Update global latticeConstant
+             // Find host and substituent symbols case-insensitively, fallback if needed
+            const cation_host_symbol = Object.keys(atomInfo).find(key => atomInfo[key].role === 'cation_host') || Object.keys(atomInfo)[0];
+            const cation_subst_symbol = Object.keys(atomInfo).find(key => atomInfo[key].role === 'cation_subst') || Object.keys(atomInfo)[1];
+            const anion_symbol = Object.keys(atomInfo).find(key => atomInfo[key].role === 'anion') || Object.keys(atomInfo)[2];
 
-            const supercellTotalSize = new THREE.Vector3(cellSize * latticeConstant, cellSize * latticeConstant, cellSize * latticeConstant);
-            // Adjust center calculation to be based on 0,0,0 origin of the supercell before centering
-            const supercellCenter = new THREE.Vector3(
-                (cellSize -1) * latticeConstant / 2,
-                (cellSize -1) * latticeConstant / 2,
-                (cellSize -1) * latticeConstant / 2
-            );
+            if (!cation_host_symbol || !cation_subst_symbol || !anion_symbol) {
+                 console.error("[Three.js generateAtomData] Could not determine atom roles from atomInfo:", atomInfo);
+                 return [];
+            }
+            console.log(`[Three.js generateAtomData] Roles: Host=${cation_host_symbol}, Subst=${cation_subst_symbol}, Anion=${anion_symbol}`); // DEBUG
+
+            const a_host = Number(latticeConstantsSource[cation_host_symbol] || 6.46);
+            const a_subst = Number(latticeConstantsSource[cation_subst_symbol] || 6.48);
+             if (isNaN(a_host) || isNaN(a_subst)) {
+                 console.error("[Three.js generateAtomData] Invalid lattice constants:", latticeConstantsSource);
+                 return [];
+             }
+             // Ensure compositionRatio is a number
+             const ratio = Number(compositionRatio);
+             if (isNaN(ratio)) {
+                  console.error(`[Three.js generateAtomData] Invalid compositionRatio: ${compositionRatio}`);
+                  return [];
+             }
+
+            latticeConstant = a_host * (1 - ratio) + a_subst * ratio; // Update global latticeConstant
+             if (isNaN(latticeConstant) || latticeConstant <= 0) {
+                 console.error(`[Three.js generateAtomData] Invalid calculated lattice constant: ${latticeConstant}`);
+                 return [];
+             }
+             console.log(`[Three.js generateAtomData] Calculated lattice constant: ${latticeConstant}`); // DEBUG
+
+            // Center calculation: Offset needed to move the corner (0,0,0) of the supercell to the center
+            const centerOffset = new THREE.Vector3(
+                 (cellSize - 1) * latticeConstant / 2,
+                 (cellSize - 1) * latticeConstant / 2,
+                 (cellSize - 1) * latticeConstant / 2
+             );
+             // console.log(`[Three.js generateAtomData] Center offset:`, centerOffset); // DEBUG
 
             // Zincblende basis in fractional coordinates
             const baseAnion = [[0.00, 0.00, 0.00], [0.00, 0.50, 0.50], [0.50, 0.00, 0.50], [0.50, 0.50, 0.00]];
@@ -519,79 +587,104 @@ document.addEventListener("DOMContentLoaded", async () => {
             for (let i = 0; i < cellSize; i++) {
                 for (let j = 0; j < cellSize; j++) {
                     for (let k = 0; k < cellSize; k++) {
-                        const cellOffset = new THREE.Vector3(i * latticeConstant, j * latticeConstant, k * latticeConstant);
+                        const cellOrigin = new THREE.Vector3(i * latticeConstant, j * latticeConstant, k * latticeConstant);
 
                         // Anions (e.g., Te)
                         baseAnion.forEach(pos => {
                             const atomPos = new THREE.Vector3(pos[0], pos[1], pos[2])
                                 .multiplyScalar(latticeConstant)
-                                .add(cellOffset)
-                                .sub(supercellCenter);
+                                .add(cellOrigin)
+                                .sub(centerOffset); // Apply centering offset
                             atoms.push({ element: anion_symbol.toUpperCase(), position: atomPos });
                         });
 
                         // Cations (e.g., Hg/Cd) - Random Substitution
                         baseCation.forEach(pos => {
-                            const elemType = Math.random() < compositionRatio ? cation_subst_symbol : cation_host_symbol;
+                            const elemType = Math.random() < ratio ? cation_subst_symbol : cation_host_symbol;
                             const atomPos = new THREE.Vector3(pos[0], pos[1], pos[2])
                                 .multiplyScalar(latticeConstant)
-                                .add(cellOffset)
-                                .sub(supercellCenter);
+                                .add(cellOrigin)
+                                .sub(centerOffset); // Apply centering offset
                             atoms.push({ element: elemType.toUpperCase(), position: atomPos });
                         });
                     }
                 }
             }
-            console.log(`Generated ${atoms.length} atoms for ${cellSize}x${cellSize}x${cellSize} cell, composition x=${compositionRatio.toFixed(2)}, lattice a=${latticeConstant.toFixed(3)}`);
+            console.log(`[Three.js] Generated ${atoms.length} atoms for ${cellSize}x${cellSize}x${cellSize} cell, composition x=${ratio.toFixed(2)}, lattice a=${latticeConstant.toFixed(3)}`);
             currentAtoms = atoms; // Update state
-            updateInfoPanel(compositionRatio); // Update UI
+            updateInfoPanel(ratio); // Update UI
             return atoms;
         }
 
         // --- Create/Update Scene Content ---
         function updateScene() {
-            console.log(`Updating scene: Style=${currentViewStyle}, Supercell=${currentSupercell}, CellShown=${cellShown}`);
+            console.log(`[Three.js updateScene] Style=${currentViewStyle}, Supercell=${currentSupercell}, CellShown=${cellShown}`);
+            if (!scene || !crystalGroup) {
+                console.error("[Three.js updateScene] Scene or crystalGroup not initialized.");
+                return;
+            }
             // --- 1. Clear existing crystal objects ---
-            disposeMeshes(crystalGroup); // Dispose old meshes/geometries
-            // No need to remove/re-add crystalGroup, just clear its children
-            while(crystalGroup.children.length > 0){
+            disposeMeshes(crystalGroup); // Dispose old geometries associated with the group's children
+            while(crystalGroup.children.length > 0){ // Remove children from the group
                 crystalGroup.remove(crystalGroup.children[0]);
             }
+            console.log(`[Three.js updateScene] Cleared crystalGroup children. Count now: ${crystalGroup.children.length}`); // DEBUG
 
 
             if (!currentAtoms || currentAtoms.length === 0) {
-                 console.warn("No atom data to render."); return;
+                 console.warn("[Three.js updateScene] No atom data to render."); return;
             }
+             console.log(`[Three.js updateScene] Rendering ${currentAtoms.length} atoms.`); // DEBUG
 
-            // --- 2. Prepare Geometries based on current style ---
+            // --- 2. Prepare Sphere Geometries based on current style ---
             const currentSphereScale = sphereScales[currentViewStyle] || sphereScales.ballAndStick;
+            console.log(`[Three.js updateScene] Current sphere scale factor: ${currentSphereScale}`); // DEBUG
             Object.keys(atomInfo).forEach(symbol => {
                 const upperSymbol = symbol.toUpperCase();
-                const radius = (atomInfo[symbol]?.radius || 1.0) * currentSphereScale;
-                // Dispose old geometry if it exists before creating new one
-                if (sphereGeometries[upperSymbol]) {
-                    sphereGeometries[upperSymbol].dispose();
+                // Use a default radius if not specified
+                const baseRadius = atomInfo[symbol]?.radius ?? 1.0;
+                const radius = baseRadius * currentSphereScale;
+                if (radius <= 0) {
+                     console.warn(`[Three.js updateScene] Calculated zero or negative radius for ${upperSymbol}. Using small default.`);
+                     radius = 0.01; // Use a tiny radius instead of zero
                 }
+                 // Check if geometry exists and dispose *if different radius* - Optimization TBD
+                 // Simple disposal for now:
+                 if (sphereGeometries[upperSymbol]) {
+                    sphereGeometries[upperSymbol].dispose();
+                 }
                 sphereGeometries[upperSymbol] = new THREE.SphereGeometry(radius, sphereDetail, sphereDetail);
+                // console.log(`[Three.js updateScene] Created sphere geometry for ${upperSymbol} with radius ${radius}`); // DEBUG
             });
 
              // --- 3. Add Atoms (Spheres) ---
+             let spheresAdded = 0;
              currentAtoms.forEach(atom => {
                  const symbol = atom.element.toUpperCase();
                  const geometry = sphereGeometries[symbol];
                  const material = materials[symbol] || defaultMaterial;
                  if (!geometry) {
-                     console.warn(`No sphere geometry found for element ${symbol}`);
+                     console.warn(`[Three.js updateScene] No sphere geometry found for element ${symbol}, skipping atom.`);
                      return;
+                 }
+                 if (!material) {
+                     console.warn(`[Three.js updateScene] No material found for element ${symbol}, using default.`);
                  }
                  const sphere = new THREE.Mesh(geometry, material);
                  sphere.position.copy(atom.position);
                  crystalGroup.add(sphere);
+                 spheresAdded++;
              });
+             console.log(`[Three.js updateScene] Added ${spheresAdded} spheres to crystalGroup.`); // DEBUG
 
-            // --- 4. Add Bonds (Sticks) - only for stick/ballAndStick ---
+            // --- 4. Add Bonds (Sticks) ---
+             let bondsAdded = 0;
             if (currentViewStyle === 'stick' || currentViewStyle === 'ballAndStick') {
                 const bondCutoffSq = (latticeConstant * bondCutoffFactor) * (latticeConstant * bondCutoffFactor);
+                 if (isNaN(bondCutoffSq) || bondCutoffSq <= 0) {
+                      console.error(`[Three.js updateScene] Invalid bondCutoffSq: ${bondCutoffSq}`);
+                      return; // Prevent infinite loop or errors
+                 }
                 const yAxis = new THREE.Vector3(0, 1, 0); // Helper for orientation
 
                 for (let i = 0; i < currentAtoms.length; i++) {
@@ -601,87 +694,96 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                         const distSq = atom1.position.distanceToSquared(atom2.position);
 
-                        if (distSq > 1e-6 && distSq < bondCutoffSq) { // Add small epsilon check
-                            // Get roles safely, default to empty string if symbol or role not found
-                            const role1 = atomInfo[atom1.element]?.role ?? '';
-                            const role2 = atomInfo[atom2.element]?.role ?? '';
+                        if (distSq > 1e-6 && distSq < bondCutoffSq) { // Check distance range
+                            // Get roles safely
+                            const role1 = atomInfo[atom1.element]?.role ?? 'unknown';
+                            const role2 = atomInfo[atom2.element]?.role ?? 'unknown';
 
                             // Bond only between cation and anion
                             if ((role1.includes('cation') && role2 === 'anion') || (role1 === 'anion' && role2.includes('cation'))) {
                                 const distance = Math.sqrt(distSq);
-                                const stick = new THREE.Mesh(stickGeometry, bondMaterial);
+                                // Clone geometry, reuse material
+                                const stick = new THREE.Mesh(stickGeometry.clone(), bondMaterial);
 
                                 // Position and Orient
                                 stick.position.copy(atom1.position).add(atom2.position).multiplyScalar(0.5);
                                 const direction = new THREE.Vector3().subVectors(atom2.position, atom1.position).normalize();
-                                // Avoid issues if direction is parallel to yAxis
                                 const quaternion = new THREE.Quaternion();
-                                if (Math.abs(direction.y) < 0.9999) { // Use default axis if not aligned
-                                     quaternion.setFromUnitVectors(yAxis, direction);
-                                } else { // Handle case where direction is along y-axis
-                                    // No rotation needed or rotate 180 deg if pointing down
-                                    if (direction.y < 0) {
-                                        quaternion.setFromAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI);
-                                    }
+                                // Handle potential alignment with the default 'up' vector (0,1,0)
+                                if (Math.abs(direction.y) < 1.0 - 1e-6) {
+                                    quaternion.setFromUnitVectors(yAxis, direction);
+                                } else {
+                                     // If aligned with Y, check direction
+                                     if (direction.y < 0) { // Pointing down Y
+                                         quaternion.setFromAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI); // Rotate 180 deg around X
+                                     }
+                                     // If pointing up Y, quaternion remains identity (no rotation needed)
                                 }
                                 stick.quaternion.copy(quaternion);
                                 stick.scale.y = distance; // Scale length
 
                                 crystalGroup.add(stick);
+                                bondsAdded++;
                             }
                         }
                     }
                 }
-            }
+                 console.log(`[Three.js updateScene] Added ${bondsAdded} bonds to crystalGroup.`); // DEBUG
+            } // End if need bonds
+
 
              // --- 5. Add Unit Cell Outline ---
             if (cellShown) {
                  drawUnitCellOutline();
+            } else {
+                 // Ensure previous cell lines are removed if cellShown becomes false
+                 let cellLines = crystalGroup.getObjectByName("unitCellLines");
+                 if (cellLines) {
+                     if (cellLines.geometry) cellLines.geometry.dispose();
+                     crystalGroup.remove(cellLines);
+                     // console.log("[Three.js updateScene] Removed existing cell lines."); // DEBUG
+                 }
             }
 
-             // --- 6. Add Labels (Placeholder - Not fully implemented) ---
+             // --- 6. Add Labels (Placeholder) ---
              if (labelsShown) {
-                 // Placeholder: Add simple sprites or text elements here if needed
-                 console.log("Label rendering not implemented yet.");
+                 console.log("[Three.js updateScene] Label rendering not implemented.");
              }
 
-             // --- 7. Adjust camera/controls if supercell changed significantly ---
-            // Check if controls exist before adjusting
+             // --- 7. Adjust camera/controls ---
              if (controls) {
-                 controls.minDistance = latticeConstant * currentSupercell * 0.5;
+                 controls.minDistance = latticeConstant * 0.5; // Allow closer zoom
                  controls.maxDistance = latticeConstant * currentSupercell * 10;
-                 // Optional: Call controls.reset() or adjust camera position if needed
-                 // camera.position.z = latticeConstant * currentSupercell * 1.8; // Example adjustment
+                 // Set target to center of the scene
+                 controls.target.set(0, 0, 0);
                  controls.update(); // Apply changes
+                  console.log(`[Three.js updateScene] Updated controls: minD=${controls.minDistance.toFixed(2)}, maxD=${controls.maxDistance.toFixed(2)}, target=0,0,0`); // DEBUG
+             } else {
+                  console.warn("[Three.js updateScene] Controls not available for update.");
              }
 
-
-             console.log("Scene update complete.");
-        }
+             console.log(`[Three.js updateScene] Scene update complete. CrystalGroup children: ${crystalGroup.children.length}`); // DEBUG
+        } // --- End updateScene ---
 
 
         // --- Draw Unit Cell Outline ---
         function drawUnitCellOutline() {
-            const cellDimension = latticeConstant * currentSupercell;
-            const minCorner = new THREE.Vector3(
-                -(currentSupercell -1) * latticeConstant / 2 - latticeConstant / 2,
-                -(currentSupercell -1) * latticeConstant / 2 - latticeConstant / 2,
-                -(currentSupercell -1) * latticeConstant / 2 - latticeConstant / 2
-            );
-             const maxCorner = minCorner.clone().add(new THREE.Vector3(cellDimension, cellDimension, cellDimension));
+            // Remove existing lines first
+            let existingLines = crystalGroup.getObjectByName("unitCellLines");
+            if (existingLines) {
+                if (existingLines.geometry) existingLines.geometry.dispose();
+                crystalGroup.remove(existingLines);
+            }
 
+            const halfSize = (currentSupercell * latticeConstant) / 2.0;
 
-            // Define vertices relative to the *centered* supercell origin
+             // Vertices are relative to the center (0,0,0)
              const vertices = [
-                new THREE.Vector3(minCorner.x, minCorner.y, minCorner.z), // 0: ---
-                new THREE.Vector3(maxCorner.x, minCorner.y, minCorner.z), // 1: +--
-                new THREE.Vector3(maxCorner.x, maxCorner.y, minCorner.z), // 2: ++-
-                new THREE.Vector3(minCorner.x, maxCorner.y, minCorner.z), // 3: -+-
-                new THREE.Vector3(minCorner.x, minCorner.y, maxCorner.z), // 4: --+
-                new THREE.Vector3(maxCorner.x, minCorner.y, maxCorner.z), // 5: +-+
-                new THREE.Vector3(maxCorner.x, maxCorner.y, maxCorner.z), // 6: +++
-                new THREE.Vector3(minCorner.x, maxCorner.y, maxCorner.z)  // 7: -++
-            ];
+                 new THREE.Vector3(-halfSize, -halfSize, -halfSize), new THREE.Vector3( halfSize, -halfSize, -halfSize),
+                 new THREE.Vector3( halfSize,  halfSize, -halfSize), new THREE.Vector3(-halfSize,  halfSize, -halfSize),
+                 new THREE.Vector3(-halfSize, -halfSize,  halfSize), new THREE.Vector3( halfSize, -halfSize,  halfSize),
+                 new THREE.Vector3( halfSize,  halfSize,  halfSize), new THREE.Vector3(-halfSize,  halfSize,  halfSize)
+             ];
 
             const edges = [
                 0, 1, 1, 2, 2, 3, 3, 0, // Bottom face
@@ -689,24 +791,18 @@ document.addEventListener("DOMContentLoaded", async () => {
                 0, 4, 1, 5, 2, 6, 3, 7  // Vertical edges
             ];
 
-            // Check if cellLines object already exists and dispose geometry if it does
-            let cellLines = crystalGroup.getObjectByName("unitCellLines");
-            if (cellLines) {
-                if(cellLines.geometry) cellLines.geometry.dispose();
-                crystalGroup.remove(cellLines);
-            }
-
             const lineGeometry = new THREE.BufferGeometry();
             const positions = [];
             edges.forEach(index => {
-                positions.push(vertices[index].x, vertices[index].y, vertices[index].z);
+                const vert = vertices[index];
+                positions.push(vert.x, vert.y, vert.z);
             });
             lineGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
 
-            cellLines = new THREE.LineSegments(lineGeometry, cellMaterial);
+            const cellLines = new THREE.LineSegments(lineGeometry, cellMaterial);
             cellLines.name = "unitCellLines"; // Name it for easy removal
             crystalGroup.add(cellLines); // Add to the crystal group
-            // console.log("Drew unit cell outline."); // Less verbose logging
+            console.log("[Three.js] Drew unit cell outline."); // DEBUG
         }
 
 
@@ -800,6 +896,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                         currentViewStyle = this.dataset.style;
                         updateActiveButtons(this, '.viz-controls');
                         updateScene(); // Redraw with new style
+                        populateLegend(); // Update legend (show/hide bonds)
                     }
                 });
             });
@@ -828,12 +925,14 @@ document.addEventListener("DOMContentLoaded", async () => {
                          currentSupercell = newSize;
                          updateActiveButtons(this, '.supercell-controls');
                          // Regenerate atoms for new supercell size and update scene
+                         console.log(`[Three.js Controls] Supercell changed to ${newSize}. Regenerating...`); // DEBUG
                          generateAtomData(currentComposition, currentSupercell);
                          updateScene();
                          // Adjust camera zoom slightly based on supercell size
                          if (camera && controls) {
                             camera.position.setLength(latticeConstant * currentSupercell * 1.8); // Maintain relative distance
-                            controls.update();
+                             controls.target.set(0,0,0); // Ensure target is reset
+                             controls.update();
                          }
                      }
                  });
@@ -849,12 +948,14 @@ document.addEventListener("DOMContentLoaded", async () => {
                      isSpinning = true;
                      controls.autoRotate = true;
                      controls.autoRotateSpeed = 1.0; // Adjust speed as needed
+                      console.log("[Three.js Controls] Spin enabled."); // DEBUG
                  }
              });
              if(stopBtn) stopBtn.addEventListener('click', () => {
                   if (isSpinning && controls) {
                      isSpinning = false;
                      controls.autoRotate = false;
+                      console.log("[Three.js Controls] Spin disabled."); // DEBUG
                   }
              });
              if(screenshotBtn) screenshotBtn.addEventListener('click', () => {
@@ -867,16 +968,16 @@ document.addEventListener("DOMContentLoaded", async () => {
                      renderer.render(scene, camera);
                      const imageData = renderer.domElement.toDataURL('image/png');
                      const link = document.createElement('a');
-                     const safeMaterialName = (allMaterialDetails.materialName || 'material').replace(/ /g, '_').toLowerCase();
-                     let compString = (vizData.composition.min_x !== vizData.composition.max_x) ? `_x${currentComposition.toFixed(2)}` : "";
+                     const safeMaterialName = (allMaterialDetails?.materialName || 'material').replace(/ /g, '_').toLowerCase();
+                     let compString = (vizData?.composition?.min_x !== vizData?.composition?.max_x) ? `_x${currentComposition.toFixed(2)}` : "";
                      link.download = `${safeMaterialName}_${structureType}${compString}_${currentSupercell}x${currentSupercell}x${currentSupercell}_${currentViewStyle}.png`;
                      link.href = imageData;
                      document.body.appendChild(link); // Required for Firefox
                      link.click();
                      document.body.removeChild(link); // Clean up
+                     console.log("[Three.js Controls] Screenshot captured."); // DEBUG
                  } catch (e) {
                      console.error("Screenshot failed:", e);
-                     // Provide more specific feedback if possible (e.g., tainted canvas)
                      if (e.name === 'SecurityError') {
                          alert("Could not capture screenshot due to security restrictions (cross-origin data). Try serving files from a local web server.");
                      } else {
@@ -895,6 +996,7 @@ document.addEventListener("DOMContentLoaded", async () => {
              updateActiveButtons(controlsContainer.querySelector(`.cell-controls button[id$="${cellShown ? 'show' : 'hide'}-cell"]`), '.cell-controls');
              updateActiveButtons(controlsContainer.querySelector(`.supercell-controls button[data-size="${currentSupercell}"]`), '.supercell-controls');
 
+            console.log("[Three.js] Controls setup complete."); // DEBUG
         } // --- End setupControls ---
 
         // --- Info Panel & Legend ---
@@ -904,17 +1006,18 @@ document.addEventListener("DOMContentLoaded", async () => {
 
              if(latticeInfoEl) latticeInfoEl.textContent = `Lattice: a ≈ ${latticeConstant.toFixed(3)} Å`; // Uses calculated latticeConstant
 
-             if(compositionInfoEl && vizData.composition.formula_template && vizData.composition.min_x !== vizData.composition.max_x) {
+             if(compositionInfoEl && vizData.composition?.formula_template && vizData.composition?.min_x !== vizData.composition?.max_x) {
                 const formula = vizData.composition.formula_template
                                   .replace('{x}', compositionRatio.toFixed(2))
                                   .replace('{1-x}', (1 - compositionRatio).toFixed(2));
                 compositionInfoEl.innerHTML = `Composition: ${formula}`; // Use innerHTML for subscript
-            } else if (compositionInfoEl && vizData.composition.formula_template) {
+            } else if (compositionInfoEl && vizData.composition?.formula_template) {
                 const formula = vizData.composition.formula_template.replace(/{1-x}/g,'').replace(/{x}/g,'');
                 compositionInfoEl.innerHTML = `Formula: ${formula}`;
             } else if (compositionInfoEl) {
                  compositionInfoEl.textContent = `Composition: x = ${compositionRatio.toFixed(2)}`;
             }
+            // console.log("[Three.js] Info panel updated."); // DEBUG
         }
 
         function populateLegend() {
@@ -926,7 +1029,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const color = materials[upperSymbol]?.color.getStyle() || '#cccccc';
                 const legendItem = document.createElement('div');
                 legendItem.className = 'legend';
-                legendItem.innerHTML = `<div class="legend-color" style="background-color:${color};"></div><div>${symbol}</div>`;
+                legendItem.innerHTML = `<div class="legend-color" style="background-color:${color};"></div><div>${symbol} (${info.role || 'N/A'})</div>`; // Add role info
                 legendEl.appendChild(legendItem);
             });
              // Add bond legend item only if relevant styles are selected
@@ -936,6 +1039,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                  bondLegendItem.innerHTML = `<div class="legend-color" style="background-color:${bondMaterial.color.getStyle()};"></div><div>Bonds</div>`;
                  legendEl.appendChild(bondLegendItem);
              }
+             // console.log("[Three.js] Legend populated."); // DEBUG
         }
 
 
@@ -958,46 +1062,55 @@ document.addEventListener("DOMContentLoaded", async () => {
             camera.aspect = width / height;
             camera.updateProjectionMatrix();
             renderer.setSize(width, height);
+            // console.log(`[Three.js] Resized renderer to ${width}x${height}`); // DEBUG
         }
 
         // --- Animation Loop ---
         function animate() {
             // Only continue loop if renderer exists (allows cleanup)
-            if (!renderer) return;
+            if (!renderer) {
+                // console.log("[Three.js Animate] Renderer disposed, stopping loop."); // DEBUG
+                return;
+            }
             animationFrameId = requestAnimationFrame(animate);
             if (controls) controls.update(); // Required if enableDamping is true
             renderer.render(scene, camera);
         }
 
-        // --- Cleanup Function (Important for SPA/dynamic content) ---
+        // --- Cleanup Function ---
         function cleanup() {
-             console.log("Cleaning up Three.js viewer...");
+             console.log("[Three.js] Cleaning up viewer resources...");
              window.removeEventListener('resize', onWindowResize);
              if (animationFrameId) cancelAnimationFrame(animationFrameId);
              animationFrameId = null;
-             disposeMeshes(crystalGroup); // Dispose geometries/materials in the group
-             if(scene) scene.remove(crystalGroup);
 
-             // Dispose sphere geometries map
-             Object.values(sphereGeometries).forEach(geom => geom.dispose());
-             stickGeometry.dispose(); // Dispose shared stick geometry
+             // Dispose geometries and materials associated with crystalGroup children
+             disposeMeshes(crystalGroup);
+             if(scene && crystalGroup) scene.remove(crystalGroup); // Remove group from scene
 
-              // Dispose shared materials
-             Object.values(materials).forEach(mat => mat.dispose());
-             bondMaterial.dispose();
-             cellMaterial.dispose();
-             defaultMaterial.dispose();
+             // Dispose shared reusable geometries
+             Object.values(sphereGeometries).forEach(geom => { if(geom) geom.dispose(); });
+             if(stickGeometry) stickGeometry.dispose(); // Dispose the one reusable stick geometry
+
+             // Dispose shared materials
+             Object.values(materials).forEach(mat => { if(mat) mat.dispose(); });
+             if(bondMaterial) bondMaterial.dispose();
+             if(cellMaterial) cellMaterial.dispose();
+             if(defaultMaterial) defaultMaterial.dispose();
 
              if (renderer) {
-                renderer.dispose(); // Release WebGL context
-                 if (renderer.domElement && renderer.domElement.parentNode) {
-                     renderer.domElement.parentNode.removeChild(renderer.domElement); // Remove canvas
+                 // Dispose WebGL context and resources
+                 renderer.dispose();
+                 // Remove canvas from DOM
+                 if (renderer.domElement && renderer.domElement.parentNode === viewerContainer) {
+                      viewerContainer.removeChild(renderer.domElement);
                  }
-                renderer = null; // Clear reference
+                 renderer = null; // Clear reference
              }
-              // Clear other references
+              // Clear other main references
              scene = null; camera = null; controls = null; crystalGroup = null;
              currentAtoms = [];
+             console.log("[Three.js] Cleanup complete.");
         }
 
         // --- === Main Execution Flow === ---
@@ -1010,26 +1123,31 @@ document.addEventListener("DOMContentLoaded", async () => {
             updateScene(); // Perform initial render
             animate(); // Start animation loop
 
-            // Add a listener to the parent container to detect when it's removed from DOM (experimental)
-            // This might be useful if the section containing the viewer is dynamically removed.
-            // A more robust solution might involve a MutationObserver or explicit cleanup calls.
+            // Setup cleanup using MutationObserver (more robust than relying on event listeners)
              const observer = new MutationObserver((mutationsList, observerInstance) => {
                  for(let mutation of mutationsList) {
                      if (mutation.removedNodes) {
                          mutation.removedNodes.forEach(node => {
-                             if (node === viewerContainer.closest('.crystal-viewer-wrapper') || node === viewerContainer) {
-                                 console.log("Viewer container removed from DOM, initiating cleanup.");
+                             // Check if the viewer container itself or its direct wrapper was removed
+                             if (node === viewerContainer || node === viewerContainer.closest('.crystal-viewer-wrapper')) {
+                                 console.log("[Three.js Observer] Viewer container removed from DOM, initiating cleanup.");
                                  cleanup();
                                  observerInstance.disconnect(); // Stop observing
-                                 return;
+                                 return; // Exit loops
                              }
                          });
                      }
                  }
              });
-             // Start observing the parent of the wrapper, or body if necessary
-             const observeTarget = viewerContainer.closest('.property-detail-block') || document.body;
-             observer.observe(observeTarget, { childList: true, subtree: true });
+
+             // Observe the parent of the viewer wrapper for child removal
+             const observeTarget = viewerContainer.closest('.crystal-viewer-wrapper')?.parentNode;
+             if (observeTarget) {
+                observer.observe(observeTarget, { childList: true });
+                console.log("[Three.js Observer] Observing parent node for viewer removal.");
+             } else {
+                 console.warn("[Three.js Observer] Could not find parent of viewer wrapper to observe for cleanup.");
+             }
 
 
         } catch(error) {
@@ -1041,7 +1159,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     } // --- End initializeThreeJsViewer ---
     // --- ============================================================ ---
-    // ---            *** NEW Three.js Initializer END ***             ---
+    // ---            *** REVISED Three.js Initializer END ***           ---
     // --- ============================================================ ---
 
 }); // End DOMContentLoaded
