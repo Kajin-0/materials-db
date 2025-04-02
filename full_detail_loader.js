@@ -48,11 +48,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // --- Construct file path ---
     const safeMaterialName = materialName.replace(/ /g, '_').toLowerCase();
-    const detailFilePath = `./details/${safeMaterialName}_details.json`;
+    // **** ADJUSTED: Assume details JSON is in the SAME directory for simplicity ****
+    // If it's still in ./details/, change this path back
+    const detailFilePath = `./${safeMaterialName}_details.json`;
+    // const detailFilePath = `./details/${safeMaterialName}_details.json`; // Original path
     console.log(`[Full Detail Loader] Constructed file path: '${detailFilePath}'`);
 
     // --- Fetch and Process Data ---
     console.log("[Full Detail Loader] Starting fetch operation...");
+    let allMaterialDetails; // Define outside try block
     try {
         const response = await fetch(detailFilePath);
         console.log(`[Full Detail Loader] Fetch response status: ${response.status} ${response.statusText}`); // Log fetch status
@@ -65,7 +69,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         console.log("[Full Detail Loader] Fetch successful. Parsing JSON...");
-        const materialDetails = await response.json(); // Attempt to parse JSON
+        allMaterialDetails = await response.json(); // Assign to outer scope variable
         console.log("[Full Detail Loader] JSON parsed successfully.");
         const sectionDataMap = new Map();
 
@@ -74,11 +78,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         const collectedRefs = new Set();
         const processRefs = (data) => {
              if (typeof data === 'object' && data !== null) {
-                 if (data.ref && materialDetails.references && materialDetails.references[data.ref]) { collectedRefs.add(data.ref); }
+                 if (data.ref && allMaterialDetails.references && allMaterialDetails.references[data.ref]) { collectedRefs.add(data.ref); }
                  Object.values(data).forEach(value => { if (typeof value === 'object' || Array.isArray(value)) { processRefs(value); } });
              } else if (Array.isArray(data)) { data.forEach(processRefs); }
         };
-        processRefs(materialDetails);
+        processRefs(allMaterialDetails);
         console.log(`[Full Detail Loader] References processed. Found ${collectedRefs.size} unique refs.`);
 
         // --- Build Table of Contents & Store Section Data ---
@@ -86,9 +90,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (tocListEl && mainContentEl) {
             tocListEl.innerHTML = '';
             let sectionCount = 0;
-            for (const sectionKey in materialDetails) {
+            for (const sectionKey in allMaterialDetails) {
                 if (sectionKey === 'materialName' || sectionKey === 'references') continue;
-                const sectionData = materialDetails[sectionKey];
+                const sectionData = allMaterialDetails[sectionKey];
                 if (typeof sectionData !== 'object' || sectionData === null) continue;
                 sectionDataMap.set(sectionKey, sectionData);
                 sectionCount++;
@@ -120,7 +124,7 @@ document.addEventListener("DOMContentLoaded", async () => {
              if (propertiesContainerEl && sectionData.properties && typeof sectionData.properties === 'object') {
                  propertiesContainerEl.innerHTML = '';
                  Object.entries(sectionData.properties).forEach(([propKey, propData]) => {
-                     const propertyBlockElement = renderPropertyBlock(propKey, propData, materialDetails, propertiesContainerEl);
+                     const propertyBlockElement = renderPropertyBlock(propKey, propData, allMaterialDetails, propertiesContainerEl);
                      if (propertyBlockElement) { propertiesContainerEl.appendChild(propertyBlockElement); }
                  });
                  propertiesContainerEl.style.display = 'block';
@@ -132,10 +136,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         // --- Populate References ---
         console.log("[Full Detail Loader] Populating references section...");
-        if (collectedRefs.size > 0 && referencesListEl && materialDetails.references) {
+        if (collectedRefs.size > 0 && referencesListEl && allMaterialDetails.references) {
              referencesListEl.innerHTML = ''; const sortedRefs = Array.from(collectedRefs).sort();
              sortedRefs.forEach(refKey => {
-                 const refData = materialDetails.references[refKey];
+                 const refData = allMaterialDetails.references[refKey];
                  if(refData){
                      const li = document.createElement('li'); li.id = `ref-${refKey}`; let linkHtml = refData.text;
                      if(refData.doi){ linkHtml += ` <a href="https://doi.org/${refData.doi}" target="_blank" rel="noopener noreferrer" title="View via DOI">[DOI]</a>`; }
@@ -157,46 +161,155 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // --- Helper Function to Render a Single Property Block ---
     function renderPropertyBlock(propKey, propData, allDetails, parentContainer) {
-        // ... (Keep the existing renderPropertyBlock code - no changes needed here) ...
-        const propBlock = document.createElement('div'); propBlock.className = 'property-detail-block'; propBlock.id = `prop-${propKey}`;
-        const propTitle = document.createElement('h3'); propTitle.innerHTML = propData.displayName || propKey.replace(/_/g, ' '); propBlock.appendChild(propTitle);
-        if (propData.summary) { const summaryEl = document.createElement('div'); summaryEl.className = 'summary'; summaryEl.innerHTML = propData.summary; propBlock.appendChild(summaryEl); }
+        const propBlock = document.createElement('div');
+        propBlock.className = 'property-detail-block';
+        propBlock.id = `prop-${propKey}`; // Use simple propKey for ID
+
+        const propTitle = document.createElement('h3');
+        propTitle.innerHTML = propData.displayName || propKey.replace(/_/g, ' ');
+        propBlock.appendChild(propTitle);
+
+        if (propData.summary) {
+            const summaryEl = document.createElement('div');
+            summaryEl.className = 'summary';
+            summaryEl.innerHTML = propData.summary;
+            propBlock.appendChild(summaryEl);
+        }
+
+        // --- *** Check for Visualization Data and Initialize THREE.JS Viewer *** ---
         if (propKey === 'crystal_structure' && propData.details && propData.details.visualization_data) {
-            const vizData = propData.details.visualization_data; const viewerContainerId = vizData.container_id || `viewer-container-${propKey}-${Date.now()}`;
-            const viewerWrapper = document.createElement('div'); viewerWrapper.className = 'crystal-viewer-wrapper'; const viewerHeight = vizData.viewer_height || '450px'; viewerWrapper.style.setProperty('--viewer-height', viewerHeight);
+            const vizData = propData.details.visualization_data;
+            const viewerContainerId = vizData.container_id || `viewer-container-${propKey}-${Date.now()}`;
+
+            const viewerWrapper = document.createElement('div');
+            viewerWrapper.className = 'crystal-viewer-wrapper';
+            const viewerHeight = vizData.viewer_height || '450px';
+            viewerWrapper.style.setProperty('--viewer-height', viewerHeight);
+
+            // Create viewer and controls divs
             viewerWrapper.innerHTML = `
                 <div id="${viewerContainerId}" class="crystal-viewer-container">
                     <div id="${viewerContainerId}-viewer" class="viewer-area"><p style="padding:20px; color:#888; text-align:center;">Loading 3D Viewer...</p></div>
                     <div id="${viewerContainerId}-controls" class="viewer-controls"><p style="padding:10px; color:#888;">Loading Controls...</p></div>
                 </div>`;
             propBlock.appendChild(viewerWrapper);
+
+            // Use requestAnimationFrame to ensure elements are in the DOM
             requestAnimationFrame(() => {
-                 if (typeof $3Dmol === 'undefined') {
-                     console.error("3Dmol.js library not loaded!"); const viewerArea = document.getElementById(`${viewerContainerId}-viewer`); if(viewerArea) viewerArea.innerHTML = `<p class="error-message" style="padding: 20px;">Error: 3Dmol.js library failed to load.</p>`; const controlsArea = document.getElementById(`${viewerContainerId}-controls`); if(controlsArea) controlsArea.innerHTML = ''; return;
+                 if (typeof THREE === 'undefined' || typeof THREE.OrbitControls === 'undefined') {
+                     console.error("Three.js or OrbitControls library not loaded!");
+                     const viewerArea = document.getElementById(`${viewerContainerId}-viewer`);
+                     if(viewerArea) viewerArea.innerHTML = `<p class="error-message" style="padding: 20px;">Error: Three.js library failed to load.</p>`;
+                     const controlsArea = document.getElementById(`${viewerContainerId}-controls`);
+                     if(controlsArea) controlsArea.innerHTML = '';
+                     return;
                  }
-                 if (typeof initialize3DViewer === 'function') {
-                    try { initialize3DViewer(`${viewerContainerId}-viewer`, `${viewerContainerId}-controls`, vizData, allDetails); }
-                    catch(e) { console.error("Error initializing 3D viewer:", e); const viewerArea = document.getElementById(`${viewerContainerId}-viewer`); if (viewerArea) viewerArea.innerHTML = `<p class="error-message" style="padding: 20px;">Could not load viewer. Check console.</p>`; const controlsArea = document.getElementById(`${viewerContainerId}-controls`); if(controlsArea) controlsArea.innerHTML = ''; }
-                 } else { console.error("initialize3DViewer function not found!"); const viewerArea = document.getElementById(`${viewerContainerId}-viewer`); if(viewerArea) viewerArea.innerHTML = `<p class="error-message" style="padding: 20px;">Error: Viewer init script missing.</p>`; const controlsArea = document.getElementById(`${viewerContainerId}-controls`); if(controlsArea) controlsArea.innerHTML = ''; }
+                 if (typeof initializeThreeJsViewer === 'function') {
+                    try {
+                        // Call the NEW Three.js initializer
+                        initializeThreeJsViewer(`${viewerContainerId}-viewer`, `${viewerContainerId}-controls`, vizData, allDetails);
+                    }
+                    catch(e) {
+                        console.error("Error initializing Three.js viewer:", e);
+                        const viewerArea = document.getElementById(`${viewerContainerId}-viewer`);
+                        if (viewerArea) viewerArea.innerHTML = `<p class="error-message" style="padding: 20px;">Could not load Three.js viewer. Check console.</p>`;
+                        const controlsArea = document.getElementById(`${viewerContainerId}-controls`);
+                        if(controlsArea) controlsArea.innerHTML = '';
+                    }
+                 } else {
+                     console.error("initializeThreeJsViewer function not found!");
+                     const viewerArea = document.getElementById(`${viewerContainerId}-viewer`);
+                     if(viewerArea) viewerArea.innerHTML = `<p class="error-message" style="padding: 20px;">Error: Viewer init script missing.</p>`;
+                     const controlsArea = document.getElementById(`${viewerContainerId}-controls`);
+                     if(controlsArea) controlsArea.innerHTML = '';
+                 }
             });
         }
+        // --- *** End Visualization Check *** ---
+
+
+        // Process other details subsections (notes, equations, etc.)
         if (propData.details && typeof propData.details === 'object') {
-             for (const [detailKey, detailContent] of Object.entries(propData.details)) {
-                 if (detailKey === 'visualization_data') continue; if (!detailContent || (Array.isArray(detailContent) && detailContent.length === 0) || (typeof detailContent === 'object' && !Array.isArray(detailContent) && Object.keys(detailContent).length === 0) ) continue;
-                 const subsection = document.createElement('div'); subsection.className = `detail-subsection ${detailKey.replace(/ /g, '_').toLowerCase()}`; const subsectionTitle = document.createElement('h4'); subsection.appendChild(subsectionTitle);
-                  if (Array.isArray(detailContent) && detailKey !== 'equations') { const ul = document.createElement('ul'); detailContent.forEach(item => { const li = document.createElement('li'); li.innerHTML = item; ul.appendChild(li); }); subsection.appendChild(ul); }
-                  else if (detailKey === 'equations' && Array.isArray(detailContent)) { detailContent.forEach(eq => { const eqBlock = document.createElement('div'); eqBlock.className = 'equation-block'; if (eq.name) { const nameEl = document.createElement('span'); nameEl.className = 'eq-name'; nameEl.textContent = eq.name; eqBlock.appendChild(nameEl); } if (eq.description) { const descEl = document.createElement('p'); descEl.className = 'eq-desc'; descEl.innerHTML = eq.description; eqBlock.appendChild(descEl); } const formulaContainer = document.createElement('div'); formulaContainer.className = 'eq-formula-container'; if (eq.formula_html) { formulaContainer.innerHTML = eq.formula_html; formulaContainer.classList.add('eq-formula-html'); } else if (eq.formula_plain) { formulaContainer.textContent = eq.formula_plain; formulaContainer.classList.add('eq-formula-plain'); } else { formulaContainer.textContent = "[Formula not available]"; formulaContainer.style.cssText = 'font-style: italic; color: #888;'; } eqBlock.appendChild(formulaContainer); if(eq.units){ const unitsEl = document.createElement('div'); unitsEl.className = 'eq-units'; unitsEl.innerHTML = `Units: ${eq.units}`; eqBlock.appendChild(unitsEl); } if (eq.variables && Array.isArray(eq.variables)) { const varsDiv = document.createElement('div'); varsDiv.className = 'eq-vars'; varsDiv.innerHTML = '<strong>Variables:</strong>'; const varsUl = document.createElement('ul'); eq.variables.forEach(v => { const li = document.createElement('li'); li.innerHTML = `<strong>${v.symbol}:</strong> ${v.description}`; varsUl.appendChild(li); }); varsDiv.appendChild(varsUl); eqBlock.appendChild(varsDiv); } if (eq.ref && allDetails.references && allDetails.references[eq.ref]) { const refEl = document.createElement('div'); refEl.className = 'eq-ref'; refEl.innerHTML = `Ref: <a href="#ref-${eq.ref}" class="ref-link" data-ref-key="${eq.ref}">[${eq.ref}]</a>`; eqBlock.appendChild(refEl); } subsection.appendChild(eqBlock); }); }
-                  else if (detailKey === 'measurement_characterization' && typeof detailContent === 'object') { if(detailContent.techniques && Array.isArray(detailContent.techniques) && detailContent.techniques.length > 0){ const techDiv = document.createElement('div'); techDiv.className = "techniques"; const ulTech = document.createElement('ul'); detailContent.techniques.forEach(tech => { const li = document.createElement('li'); li.innerHTML = tech; ulTech.appendChild(li); }); techDiv.appendChild(ulTech); subsection.appendChild(techDiv); } if(detailContent.considerations && Array.isArray(detailContent.considerations) && detailContent.considerations.length > 0){ const considDiv = document.createElement('div'); considDiv.className = "considerations"; if (subsection.querySelector('.techniques')) { const considTitle = document.createElement('p'); considTitle.innerHTML = '<strong>Considerations:</strong>'; considTitle.style.cssText = 'margin-top: 1rem; margin-bottom: 0.25rem;'; considDiv.appendChild(considTitle); } const ulConsid = document.createElement('ul'); detailContent.considerations.forEach(note => { const li = document.createElement('li'); li.innerHTML = note; ulConsid.appendChild(li); }); considDiv.appendChild(ulConsid); subsection.appendChild(considDiv); } }
-                  else if (typeof detailContent === 'string') { const p = document.createElement('p'); p.innerHTML = detailContent; subsection.appendChild(p); }
-                  else { console.warn(`Unhandled detail structure for key '${detailKey}' in property '${propKey}'`, detailContent); const pre = document.createElement('pre'); pre.textContent = JSON.stringify(detailContent, null, 2); pre.style.cssText = 'font-size: 0.8em; background-color: #eee; padding: 5px; border-radius: 3px; overflow-x: auto; margin-left: 0.5rem;'; subsection.appendChild(pre); }
-                 if(subsection.children.length > 1) { propBlock.appendChild(subsection); }
-             }
+            for (const [detailKey, detailContent] of Object.entries(propData.details)) {
+                // Skip visualization data as it's handled above
+                if (detailKey === 'visualization_data') continue;
+                // Skip empty content
+                if (!detailContent || (Array.isArray(detailContent) && detailContent.length === 0) || (typeof detailContent === 'object' && !Array.isArray(detailContent) && Object.keys(detailContent).length === 0) ) continue;
+
+                const subsection = document.createElement('div');
+                subsection.className = `detail-subsection ${detailKey.replace(/ /g, '_').toLowerCase()}`;
+                const subsectionTitle = document.createElement('h4');
+                // Set a data attribute for the CSS pseudo-element if you prefer that styling method
+                subsectionTitle.dataset.title = detailKey.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                subsection.appendChild(subsectionTitle);
+
+                 // Handle different detail types - USE innerHTML where HTML is expected
+                if (Array.isArray(detailContent) && detailKey !== 'equations') {
+                    const ul = document.createElement('ul');
+                    detailContent.forEach(item => { const li = document.createElement('li'); li.innerHTML = item; ul.appendChild(li); });
+                    subsection.appendChild(ul);
+                } else if (detailKey === 'equations' && Array.isArray(detailContent)) {
+                     detailContent.forEach(eq => {
+                        const eqBlock = document.createElement('div');
+                        eqBlock.className = 'equation-block';
+                        if (eq.name) { const nameEl = document.createElement('span'); nameEl.className = 'eq-name'; nameEl.textContent = eq.name; eqBlock.appendChild(nameEl); }
+                        if (eq.description) { const descEl = document.createElement('p'); descEl.className = 'eq-desc'; descEl.innerHTML = eq.description; eqBlock.appendChild(descEl); }
+                        const formulaContainer = document.createElement('div'); formulaContainer.className = 'eq-formula-container';
+                        if (eq.formula_html) { formulaContainer.innerHTML = eq.formula_html; formulaContainer.classList.add('eq-formula-html'); }
+                        else if (eq.formula_plain) { formulaContainer.textContent = eq.formula_plain; formulaContainer.classList.add('eq-formula-plain'); }
+                        else { formulaContainer.textContent = "[Formula not available]"; formulaContainer.style.cssText = 'font-style: italic; color: #888;'; }
+                        eqBlock.appendChild(formulaContainer);
+                        if(eq.units){ const unitsEl = document.createElement('div'); unitsEl.className = 'eq-units'; unitsEl.innerHTML = `Units: ${eq.units}`; eqBlock.appendChild(unitsEl); }
+                        if (eq.variables && Array.isArray(eq.variables)) {
+                            const varsDiv = document.createElement('div'); varsDiv.className = 'eq-vars'; varsDiv.innerHTML = '<strong>Variables:</strong>'; const varsUl = document.createElement('ul');
+                            eq.variables.forEach(v => { const li = document.createElement('li'); li.innerHTML = `<strong>${v.symbol}:</strong> ${v.description}`; varsUl.appendChild(li); });
+                            varsDiv.appendChild(varsUl); eqBlock.appendChild(varsDiv);
+                        }
+                        if (eq.ref && allDetails.references && allDetails.references[eq.ref]) {
+                            const refEl = document.createElement('div'); refEl.className = 'eq-ref';
+                            refEl.innerHTML = `Ref: <a href="#ref-${eq.ref}" class="ref-link" data-ref-key="${eq.ref}">[${eq.ref}]</a>`;
+                            eqBlock.appendChild(refEl);
+                        }
+                        subsection.appendChild(eqBlock);
+                    });
+                } else if (detailKey === 'measurement_characterization' && typeof detailContent === 'object') {
+                     if(detailContent.techniques && Array.isArray(detailContent.techniques) && detailContent.techniques.length > 0){
+                         const techDiv = document.createElement('div'); techDiv.className = "techniques"; const ulTech = document.createElement('ul');
+                         detailContent.techniques.forEach(tech => { const li = document.createElement('li'); li.innerHTML = tech; ulTech.appendChild(li); });
+                         techDiv.appendChild(ulTech); subsection.appendChild(techDiv);
+                     }
+                     if(detailContent.considerations && Array.isArray(detailContent.considerations) && detailContent.considerations.length > 0){
+                         const considDiv = document.createElement('div'); considDiv.className = "considerations";
+                         if (subsection.querySelector('.techniques')) {
+                            const considTitle = document.createElement('p'); considTitle.innerHTML = '<strong>Considerations:</strong>'; considTitle.style.cssText = 'margin-top: 1rem; margin-bottom: 0.25rem;'; considDiv.appendChild(considTitle);
+                         }
+                         const ulConsid = document.createElement('ul');
+                         detailContent.considerations.forEach(note => { const li = document.createElement('li'); li.innerHTML = note; ulConsid.appendChild(li); });
+                         considDiv.appendChild(ulConsid); subsection.appendChild(considDiv);
+                     }
+                } else if (typeof detailContent === 'string') {
+                    const p = document.createElement('p');
+                    p.innerHTML = detailContent;
+                    subsection.appendChild(p);
+                } else {
+                    console.warn(`Unhandled detail structure for key '${detailKey}' in property '${propKey}'`, detailContent);
+                    const pre = document.createElement('pre');
+                    pre.textContent = JSON.stringify(detailContent, null, 2);
+                    pre.style.cssText = 'font-size: 0.8em; background-color: #eee; padding: 5px; border-radius: 3px; overflow-x: auto; margin-left: 0.5rem;';
+                    subsection.appendChild(pre);
+                }
+
+                if(subsection.children.length > 1) { // Only add if content was actually added
+                   propBlock.appendChild(subsection);
+                }
+            }
         }
+
         return propBlock;
     } // --- End renderPropertyBlock ---
 
     // Function to handle reference link clicks
-    function handleRefLinkClick(event) { /* ... same ... */
+    function handleRefLinkClick(event) { /* ... same as before ... */
         const link = event.target.closest('a.ref-link[data-ref-key]');
         if (link) {
             event.preventDefault(); const targetId = `ref-${link.dataset.refKey}`; const targetElement = document.getElementById(targetId);
@@ -205,417 +318,589 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     } // --- End handleRefLinkClick ---
 
-    // --- Initialize 3D Viewer Function (INTEGRATED FROM STANDALONE) ---
-    function initialize3DViewer(viewerElementId, controlsElementId, vizData, allMaterialDetails) {
-        console.log("--- Initializing 3D Viewer (Using Integrated Standalone Logic) ---");
-        console.log("Viewer Element ID:", viewerElementId);
-        console.log("Controls Element ID:", controlsElementId);
 
-        const viewerElement = document.getElementById(viewerElementId);
-        const controlsElement = document.getElementById(controlsElementId);
+    // --- ============================================================== ---
+    // ---            *** NEW Three.js Initializer START ***             ---
+    // --- ============================================================== ---
+    function initializeThreeJsViewer(viewerElementId, controlsElementId, vizData, allMaterialDetails) {
+        console.log("--- Initializing Three.js Viewer ---");
+        console.log("Viz Data:", vizData);
+        console.log("All Material Details:", allMaterialDetails);
 
-        if (!viewerElement || !controlsElement) { console.error("Viewer or controls element not found"); return; }
-        viewerElement.innerHTML = ''; // Clear loading message
-        controlsElement.innerHTML = ''; // Clear loading message
+        const viewerContainer = document.getElementById(viewerElementId);
+        const controlsContainer = document.getElementById(controlsElementId);
 
-        // --- Populate Controls HTML (Adapted IDs) ---
-        controlsElement.innerHTML = `
-            <h4>Controls</h4>
-            <div class="control-group" id="${controlsElementId}-composition-group">
-                <label class="control-title" for="${controlsElementId}-composition">Composition (${vizData.composition.variable_element || 'x'} fraction 'x')</label>
-                <input type="range" id="${controlsElementId}-composition" class="slider"
-                       min="${vizData.composition.min_x}" max="${vizData.composition.max_x}" step="0.05" value="${vizData.composition.initial_x}">
-                <div id="${controlsElementId}-composition-value">x = ${vizData.composition.initial_x.toFixed(2)}</div>
-            </div>
-            <div class="control-group viz-controls">
-                <div class="control-title">Visualization</div>
-                <button data-style="stick" id="${controlsElementId}-btn-stick">Stick</button>
-                <button data-style="ballAndStick" id="${controlsElementId}-btn-ball-stick" class="active">Ball & Stick</button>
-                <button data-style="spacefill" id="${controlsElementId}-btn-spacefill">Spacefill</button>
-            </div>
-            <div class="control-group cell-controls">
-                <div class="control-title">Unit Cell</div>
-                <button id="${controlsElementId}-btn-show-cell">Show Cell</button>
-                <button id="${controlsElementId}-btn-hide-cell" class="active">Hide Cell</button> {/* Default to hidden */}
-            </div>
-             <div class="control-group supercell-controls">
-                <div class="control-title">Supercell</div>
-                ${(vizData.supercell_options || [1]).map(size =>
-                    `<button data-size="${size}" id="${controlsElementId}-btn-${size}x${size}x${size}" class="${size === 1 ? 'active' : ''}">${size}×${size}×${size}</button>`
-                 ).join('')}
-            </div>
-             <div class="control-group">
-                 <div class="control-title">Info</div>
-                 <div class="info-panel">
-                     <h5 id="${controlsElementId}-info-title">${allMaterialDetails.materialName} Structure</h5>
-                     <div id="${controlsElementId}-lattice-info">Lattice: ...</div>
-                     <div id="${controlsElementId}-composition-info">Composition: ...</div>
-                     <div id="${controlsElementId}-spacegroup-info">Space group: ${allMaterialDetails.identification.properties.space_group?.summary || 'N/A'}</div>
-                     <hr>
-                     <div id="${controlsElementId}-legend"></div>
-                 </div>
-             </div>
-            <div class="control-group action-controls">
-                <div class="control-title">Actions</div>
-                <button id="${controlsElementId}-btn-spin">Spin</button>
-                <button id="${controlsElementId}-btn-stop">Stop</button>
-                <button id="${controlsElementId}-btn-screenshot">Screenshot (PNG)</button>
-            </div>
-        `;
-
-        if (vizData.composition.min_x === vizData.composition.max_x) {
-            const compGroup = document.getElementById(`${controlsElementId}-composition-group`); if(compGroup) compGroup.style.display = 'none'; const compInfo = document.getElementById(`${controlsElementId}-composition-info`); if(compInfo) compInfo.style.display = 'none';
+        if (!viewerContainer || !controlsContainer) {
+            console.error("Three.js: Viewer or controls element not found!");
+            if(viewerContainer) viewerContainer.innerHTML = '<p class="error-message">Viewer container not found.</p>';
+            if(controlsContainer) controlsContainer.innerHTML = '<p class="error-message">Controls container not found.</p>';
+            return;
         }
 
-        // --- 3Dmol.js Initialization ---
-        let viewer;
-        try {
-            viewer = $3Dmol.createViewer(viewerElement, {
-                backgroundColor: "white", antialias: true, hoverable: true
-            });
-            console.log("3Dmol viewer created.");
-        } catch (e) { console.error("Error creating 3Dmol viewer:", e); displayViewerError("Failed to create 3D viewer instance."); return; }
+        // --- Basic Three.js Setup ---
+        let scene, camera, renderer, controls, crystalGroup;
+        let animationFrameId; // To cancel animation loop if needed
 
-        // --- State and Constants (Adapted from Standalone) ---
-        const atomInfo = vizData.atom_info; // Get from vizData
-        const latticeConstantsSource = vizData.lattice_constants; // Get from vizData
-
-        // Extract specific lattice constants needed for HgCdTe example
-        const a_HgTe = latticeConstantsSource?.HgTe || 6.46; // Default fallback
-        const a_CdTe = latticeConstantsSource?.CdTe || 6.48; // Default fallback
-
-        const atomColors = {}; // { HG: color, CD: color, TE: color }
-        const atomRadii = {}; // Currently unused but populated
-
-        let latticeConstant = a_HgTe; // Initial lattice constant, will be updated
-        let labelsShown = false;
-        let cellShown = false; // Default to hidden to match button state
-        let atomLabels = []; // Stores label objects
-        let cellShapes = []; // Stores shape objects for cell lines
-        let cellLabel = null; // Stores label object for cell dimension
-        let currentViewStyle = "ballAndStick";
+        // --- State Variables (mirrors 3Dmol version) ---
+        let currentComposition = vizData.composition.initial_x;
         let currentSupercell = 1;
-        let currentAtoms = []; // Stores the currently generated atom data array [{elem,x,y,z,serial}, ...]
+        let currentViewStyle = 'ballAndStick'; // Default style
+        let cellShown = false; // Cell initially hidden
+        let labelsShown = false; // Labels initially hidden (Not implemented yet)
+        let isSpinning = false;
+        let currentAtoms = []; // Holds { element: 'Symbol', position: THREE.Vector3 }
+        let latticeConstant = 6.47; // Will be calculated, default needed
 
-        // --- Info Panel & Legend Elements ---
-        const latticeInfoEl = document.getElementById(`${controlsElementId}-lattice-info`);
-        const compositionInfoEl = document.getElementById(`${controlsElementId}-composition-info`);
-        const legendEl = document.getElementById(`${controlsElementId}-legend`);
-        const compValueEl = document.getElementById(`${controlsElementId}-composition-value`);
+        // --- Data Extraction ---
+        const atomInfo = vizData.atom_info || {};
+        const latticeConstantsSource = vizData.lattice_constants || {};
+        const defaultSupercell = (vizData.supercell_options && vizData.supercell_options.includes(1)) ? 1 : (vizData.supercell_options ? vizData.supercell_options[0] : 1);
+        currentSupercell = defaultSupercell;
 
-        // Populate Legend using vizData.atom_info
-        legendEl.innerHTML = '';
-        if (atomInfo && typeof atomInfo === 'object') {
-            Object.entries(atomInfo).forEach(([symbol, info]) => {
-                const upperSymbol = symbol.toUpperCase();
-                atomColors[upperSymbol] = info.color || '#CCCCCC';
-                atomRadii[upperSymbol] = info.radius || 1.0;
-                const legendItem = document.createElement('div'); legendItem.className = 'legend';
-                legendItem.innerHTML = `<div class="legend-color" style="background-color:${atomColors[upperSymbol]};"></div><div>${symbol}</div>`;
-                legendEl.appendChild(legendItem);
+        const structureType = vizData.structure_type;
+        if (structureType !== 'zincblende_alloy') {
+            console.error("Three.js viewer currently only supports 'zincblende_alloy' structure type.");
+             viewerContainer.innerHTML = `<p class="error-message">Viewer Error: Unsupported structure type '${structureType}'.</p>`;
+             controlsContainer.innerHTML = '';
+             return;
+        }
+
+        // --- Constants and Setup ---
+        const bondCutoffFactor = 0.45; // Factor of lattice constant for bonding (sqrt(3)/4 is ideal ~0.433)
+        const sphereDetail = 12;
+        const stickDetail = 6;
+        const stickRadius = 0.06;
+        const sphereScales = {
+            spacefill: 0.5, // ~ van der waals radius factor
+            ballAndStick: 0.25,
+            stick: 0.08
+        };
+
+        // --- Materials ---
+        const materials = {};
+        const defaultMaterial = new THREE.MeshStandardMaterial({ color: 0xcccccc, metalness: 0.4, roughness: 0.6 });
+        Object.entries(atomInfo).forEach(([symbol, info]) => {
+            materials[symbol.toUpperCase()] = new THREE.MeshStandardMaterial({
+                color: info.color || '#cccccc',
+                metalness: 0.4,
+                roughness: 0.6
             });
-        } else { console.error("vizData.atom_info is missing or not an object!"); }
-        console.log("Atom Colors Map:", atomColors);
+        });
+        const bondMaterial = new THREE.MeshStandardMaterial({ color: 0x666666, metalness: 0.2, roughness: 0.8 });
+        const cellMaterial = new THREE.LineBasicMaterial({ color: 0x333333, linewidth: 1 }); // Linewidth might not work on all platforms
 
+        // --- Geometries (Reusable) ---
+        const sphereGeometries = {}; // Will be populated based on radii * scale
+        const stickGeometry = new THREE.CylinderGeometry(stickRadius, stickRadius, 1, stickDetail, 1); // Length 1, will be scaled
 
-        // --- Structure Generation (Adapted from Standalone) ---
+        // --- Helper Functions ---
+        function disposeMeshes(group) {
+            if (!group) return;
+            group.traverse(object => {
+                if (object.isMesh || object.isLineSegments) {
+                    if (object.geometry) object.geometry.dispose();
+                    if (object.material) {
+                        // Don't dispose shared materials, handled elsewhere if needed
+                        if (Array.isArray(object.material)) {
+                            object.material.forEach(mat => { /* handle disposal if not shared */ });
+                        } else {
+                            /* handle disposal if not shared */
+                        }
+                    }
+                }
+            });
+            // console.log("Disposed group children");
+        }
+
+        // --- Initialize Scene ---
+        function initThree() {
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xffffff); // White background
+
+            const width = viewerContainer.clientWidth;
+            const height = viewerContainer.clientHeight;
+
+            camera = new THREE.PerspectiveCamera(60, width / height, 0.1, 1000);
+            camera.position.set(0, 0, latticeConstant * currentSupercell * 1.8); // Adjust initial distance based on size
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(width, height);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            viewerContainer.appendChild(renderer.domElement);
+
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.1;
+            controls.minDistance = latticeConstant * currentSupercell * 0.5;
+            controls.maxDistance = latticeConstant * currentSupercell * 10;
+
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+            const directionalLight1 = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight1.position.set(1, 1, 1);
+            scene.add(directionalLight1);
+            const directionalLight2 = new THREE.DirectionalLight(0xffffff, 0.4);
+            directionalLight2.position.set(-1, -1, -0.5);
+            scene.add(directionalLight2);
+
+            crystalGroup = new THREE.Group(); // Group to hold all crystal elements
+            scene.add(crystalGroup);
+
+            window.addEventListener('resize', onWindowResize, false);
+
+            console.log("Three.js scene initialized.");
+        }
+
+        // --- Generate Atom Positions ---
         function generateAtomData(compositionRatio, cellSize) {
-            // Use a_HgTe and a_CdTe defined above from vizData
-            const currentLatticeConstant = a_HgTe * (1 - compositionRatio) + a_CdTe * compositionRatio;
-            let atoms = [];
-            // Get roles from vizData
+            const atoms = [];
+            const a_host = latticeConstantsSource[Object.keys(atomInfo).find(key => atomInfo[key].role === 'cation_host')] || 6.46;
+            const a_subst = latticeConstantsSource[Object.keys(atomInfo).find(key => atomInfo[key].role === 'cation_subst')] || 6.48;
+            latticeConstant = a_host * (1 - compositionRatio) + a_subst * compositionRatio; // Update global latticeConstant
+
+            const supercellTotalSize = new THREE.Vector3(cellSize * latticeConstant, cellSize * latticeConstant, cellSize * latticeConstant);
+            const supercellCenter = supercellTotalSize.clone().multiplyScalar(0.5).sub(new THREE.Vector3(latticeConstant/2, latticeConstant/2, latticeConstant/2)); // Center around origin
+
             const anion = Object.keys(atomInfo).find(key => atomInfo[key].role === 'anion');
             const cation_host = Object.keys(atomInfo).find(key => atomInfo[key].role === 'cation_host');
             const cation_subst = Object.keys(atomInfo).find(key => atomInfo[key].role === 'cation_subst');
 
-            if (vizData.structure_type === 'zincblende_alloy') {
-                if (!anion || !cation_host || !cation_subst) { console.error("Atom roles missing for zincblende_alloy"); return []; }
-                const cationPositions = [[0, 0, 0], [0, 0.5, 0.5], [0.5, 0, 0.5], [0.5, 0.5, 0]];
-                const anionPositions = [[0.25, 0.25, 0.25], [0.25, 0.75, 0.75], [0.75, 0.25, 0.75], [0.75, 0.75, 0.25]];
-                for (let i = 0; i < cellSize; i++) { for (let j = 0; j < cellSize; j++) { for (let k = 0; k < cellSize; k++) {
-                    cationPositions.forEach(pos => {
-                        let elemType = Math.random() < compositionRatio ? cation_subst : cation_host;
-                        atoms.push({ elem: elemType.toUpperCase(), // ** Use Uppercase **
-                                     x: (pos[0] + i) * currentLatticeConstant,
-                                     y: (pos[1] + j) * currentLatticeConstant,
-                                     z: (pos[2] + k) * currentLatticeConstant });
-                    });
-                    anionPositions.forEach(pos => {
-                        atoms.push({ elem: anion.toUpperCase(), // ** Use Uppercase **
-                                     x: (pos[0] + i) * currentLatticeConstant,
-                                     y: (pos[1] + j) * currentLatticeConstant,
-                                     z: (pos[2] + k) * currentLatticeConstant });
-                    });
-                }}}
+            if (!anion || !cation_host || !cation_subst) {
+                 console.error("Atom roles missing for zincblende_alloy"); return [];
             }
-            // ADD OTHER STRUCTURE TYPES HERE if needed
-            else { console.error("Unsupported structure_type:", vizData.structure_type); return []; }
 
-            atoms.forEach((atom, index) => atom.serial = index); // Add serial needed by addAtoms
+            // Zincblende basis in fractional coordinates
+            const baseAnion = [[0.00, 0.00, 0.00], [0.00, 0.50, 0.50], [0.50, 0.00, 0.50], [0.50, 0.50, 0.00]];
+            const baseCation = [[0.25, 0.25, 0.25], [0.25, 0.75, 0.75], [0.75, 0.25, 0.75], [0.75, 0.75, 0.25]];
 
-            // Update Info Panel Text
-             latticeConstant = currentLatticeConstant; // Update global latticeConstant for cell drawing
-            if(latticeInfoEl) latticeInfoEl.textContent = `Lattice: a ≈ ${latticeConstant.toFixed(3)} Å`;
-            if(compositionInfoEl && vizData.composition.formula_template && vizData.composition.min_x !== vizData.composition.max_x) { compositionInfoEl.innerHTML = `Composition: ${vizData.composition.formula_template.replace('{x}', compositionRatio.toFixed(2)).replace('{1-x}', (1 - compositionRatio).toFixed(2))}`; }
-            else if (compositionInfoEl && vizData.composition.formula_template) { compositionInfoEl.innerHTML = `Formula: ${vizData.composition.formula_template.replace(/{1-x}/g,'').replace(/{x}/g,'')}`; }
-            else if (compositionInfoEl) { compositionInfoEl.textContent = `Composition: x = ${compositionRatio.toFixed(2)}`; }
+            for (let i = 0; i < cellSize; i++) {
+                for (let j = 0; j < cellSize; j++) {
+                    for (let k = 0; k < cellSize; k++) {
+                        const cellOffset = new THREE.Vector3(i * latticeConstant, j * latticeConstant, k * latticeConstant);
 
-            console.log(`Generated ${atoms.length} atoms.`);
+                        // Anions (e.g., Te)
+                        baseAnion.forEach(pos => {
+                            const atomPos = new THREE.Vector3(pos[0], pos[1], pos[2])
+                                .multiplyScalar(latticeConstant)
+                                .add(cellOffset)
+                                .sub(supercellCenter);
+                            atoms.push({ element: anion.toUpperCase(), position: atomPos });
+                        });
+
+                        // Cations (e.g., Hg/Cd) - Random Substitution
+                        baseCation.forEach(pos => {
+                            const elemType = Math.random() < compositionRatio ? cation_subst : cation_host;
+                            const atomPos = new THREE.Vector3(pos[0], pos[1], pos[2])
+                                .multiplyScalar(latticeConstant)
+                                .add(cellOffset)
+                                .sub(supercellCenter);
+                            atoms.push({ element: elemType.toUpperCase(), position: atomPos });
+                        });
+                    }
+                }
+            }
+            console.log(`Generated ${atoms.length} atoms for ${cellSize}x${cellSize}x${cellSize} cell, composition x=${compositionRatio.toFixed(2)}, lattice a=${latticeConstant.toFixed(3)}`);
+            currentAtoms = atoms; // Update state
+            updateInfoPanel(compositionRatio); // Update UI
             return atoms;
         }
 
+        // --- Create/Update Scene Content ---
+        function updateScene() {
+            console.log(`Updating scene: Style=${currentViewStyle}, Supercell=${currentSupercell}, CellShown=${cellShown}`);
+            // --- 1. Clear existing crystal objects ---
+            disposeMeshes(crystalGroup); // Dispose old meshes/geometries
+            scene.remove(crystalGroup);  // Remove old group from scene
+            crystalGroup = new THREE.Group(); // Create new group
+            scene.add(crystalGroup);     // Add new group to scene
 
-        // --- Viewer Display Functions (Adapted from Standalone) ---
-         function displayViewerError(message) { viewerElement.innerHTML = `<p class="error-message" style="padding: 20px; text-align: center;">${message}</p>`; }
+            if (!currentAtoms || currentAtoms.length === 0) {
+                 console.warn("No atom data to render."); return;
+            }
 
-         // Add Atom Labels (Adapted - Plain JS, uses atomLabels array)
-         function addAtomLabels() {
-            atomLabels.forEach(label => viewer.removeLabel(label)); // Use internal array
-            atomLabels = [];
-            if (!labelsShown || !currentAtoms || currentAtoms.length === 0) return;
-
-            // Simplified label positioning - add near atom
-            currentAtoms.forEach(atom => {
-                // Show labels only for the base cell (0,0,0) for less clutter in supercells
-                if (atom.x < latticeConstant && atom.y < latticeConstant && atom.z < latticeConstant) {
-                    let labelPos = { x: atom.x, y: atom.y, z: atom.z };
-                    let labelText = atom.elem;
-                    let label = viewer.addLabel(labelText, {
-                        position: labelPos,
-                        inFront: true, // Make sure labels are visible
-                        fontSize: 10,
-                        fontColor: '#333',
-                        // background specs from standalone:
-                        // backgroundColor: "rgba(255,255,255,0.7)",
-                        // showBackground: true,
-                        // backgroundOpacity: 0.5
-                    });
-                    atomLabels.push(label); // Store the label object
+            // --- 2. Prepare Geometries based on current style ---
+            const currentSphereScale = sphereScales[currentViewStyle] || sphereScales.ballAndStick;
+            Object.keys(atomInfo).forEach(symbol => {
+                const radius = (atomInfo[symbol].radius || 1.0) * currentSphereScale;
+                // Dispose old geometry if it exists
+                if (sphereGeometries[symbol.toUpperCase()]) {
+                    sphereGeometries[symbol.toUpperCase()].dispose();
                 }
+                sphereGeometries[symbol.toUpperCase()] = new THREE.SphereGeometry(radius, sphereDetail, sphereDetail);
             });
-            console.log(`Added ${atomLabels.length} labels.`);
-         }
 
-         // Draw Unit Cell Outline (Adapted - Plain JS, uses cellShapes array)
-         function drawUnitCellOutline() {
-             cellShapes.forEach(shape => viewer.removeShape(shape)); // Use internal array
-             cellShapes = [];
-             if (cellLabel) { viewer.removeLabel(cellLabel); cellLabel = null; }
-             if (!cellShown) return;
-
-             const cellLength = latticeConstant * currentSupercell;
-             console.log(`Drawing unit cell outline: size=${currentSupercell}, length=${cellLength}`);
-             const vertices = [ [0,0,0],[cellLength,0,0],[0,cellLength,0],[cellLength,cellLength,0], [0,0,cellLength],[cellLength,0,cellLength],[0,cellLength,cellLength],[cellLength,cellLength,cellLength] ];
-             const edges = [ [0,1],[0,2],[1,3],[2,3],[4,5],[4,6],[5,7],[6,7],[0,4],[1,5],[2,6],[3,7] ];
-             edges.forEach(edge => {
-               const start = {x:vertices[edge[0]][0], y:vertices[edge[0]][1], z:vertices[edge[0]][2]};
-               const end = {x:vertices[edge[1]][0], y:vertices[edge[1]][1], z:vertices[edge[1]][2]};
-               // Using cylinder for lines as in standalone
-               let shape = viewer.addCylinder({
-                   start: start, end: end, radius: 0.05, color: "#555555",
-                   dashed: true, dashLength: 0.4, gapLength: 0.2
-                });
-               cellShapes.push(shape); // Store shape object
+             // --- 3. Add Atoms (Spheres) ---
+             currentAtoms.forEach(atom => {
+                 const symbol = atom.element.toUpperCase();
+                 const geometry = sphereGeometries[symbol];
+                 const material = materials[symbol] || defaultMaterial;
+                 if (!geometry) {
+                     console.warn(`No sphere geometry found for element ${symbol}`);
+                     return;
+                 }
+                 const sphere = new THREE.Mesh(geometry, material);
+                 sphere.position.copy(atom.position);
+                 crystalGroup.add(sphere);
              });
 
-             // Add cell dimension label only for 1x1x1 cell
-             if (currentSupercell === 1) {
-               cellLabel = viewer.addLabel(`a ≈ ${latticeConstant.toFixed(3)} Å`, {
-                   position:{x:cellLength/2, y:-0.5 * latticeConstant, z:-0.5 * latticeConstant}, // Adjust position
-                   backgroundColor:"rgba(255,255,255,0.8)", fontColor:"#333333", fontSize:12,
-                   showBackground:true, backgroundOpacity:0.8
-                });
-             }
-             console.log(`Added ${cellShapes.length} cell lines` + (cellLabel ? ' and 1 cell label.' : '.'));
-          }
+            // --- 4. Add Bonds (Sticks) - only for stick/ballAndStick ---
+            if (currentViewStyle === 'stick' || currentViewStyle === 'ballAndStick') {
+                const bondCutoffSq = (latticeConstant * bondCutoffFactor) * (latticeConstant * bondCutoffFactor);
+                const yAxis = new THREE.Vector3(0, 1, 0); // Helper for orientation
 
+                for (let i = 0; i < currentAtoms.length; i++) {
+                    for (let j = i + 1; j < currentAtoms.length; j++) {
+                        const atom1 = currentAtoms[i];
+                        const atom2 = currentAtoms[j];
 
-        // --- Core Rendering Function (Adapted from Standalone) ---
-        function renderCore() {
-            console.log("--- renderCore ---");
-            try {
-                viewer.removeAllModels(); // Clear models
-                viewer.removeAllShapes(); // Clear shapes (like cell lines)
-                atomLabels.forEach(label => viewer.removeLabel(label)); atomLabels = []; // Clear labels
-                if (cellLabel) { viewer.removeLabel(cellLabel); cellLabel = null; }
+                        const distSq = atom1.position.distanceToSquared(atom2.position);
 
-                if (!currentAtoms || currentAtoms.length === 0) {
-                    console.warn("renderCore: No atoms to render.");
-                    viewer.render(); // Render empty scene
-                    return;
+                        if (distSq < bondCutoffSq) {
+                            const role1 = atomInfo[atom1.element]?.role;
+                            const role2 = atomInfo[atom2.element]?.role;
+
+                            // Bond only between cation and anion
+                            if ((role1?.includes('cation') && role2 === 'anion') || (role1 === 'anion' && role2?.includes('cation'))) {
+                                const distance = Math.sqrt(distSq);
+                                const stick = new THREE.Mesh(stickGeometry, bondMaterial);
+
+                                // Position and Orient
+                                stick.position.copy(atom1.position).add(atom2.position).multiplyScalar(0.5);
+                                const direction = new THREE.Vector3().subVectors(atom2.position, atom1.position).normalize();
+                                const quaternion = new THREE.Quaternion().setFromUnitVectors(yAxis, direction);
+                                stick.quaternion.copy(quaternion);
+                                stick.scale.y = distance; // Scale length
+
+                                crystalGroup.add(stick);
+                            }
+                        }
+                    }
                 }
-
-                // Add atoms using addModel/addAtoms (as in standalone)
-                let model = viewer.addModel();
-                model.addAtoms(currentAtoms); // Add the raw atom data
-                console.log("renderCore: Added atoms to model.");
-
-                // Apply styles (using definitions from standalone)
-                let style = {};
-                const baseStickRadius = 0.1;
-                const ballScale = 0.35;
-                const stickModeAtomScale = 0.05; // Very small spheres for stick nodes
-                const colorScheme = { prop: 'elem', map: atomColors }; // Use uppercase map
-
-                switch (currentViewStyle) {
-                  case "stick":
-                    style = {
-                      stick: { radius: baseStickRadius, colorscheme: colorScheme },
-                      sphere: { scale: stickModeAtomScale, colorscheme: colorScheme } // Keep tiny spheres at nodes
-                    }; break;
-                  case "ballAndStick":
-                    style = {
-                      stick: { radius: baseStickRadius, colorscheme: colorScheme },
-                      sphere: { scale: ballScale, colorscheme: colorScheme }
-                    }; break;
-                  case "spacefill":
-                  default: // Fallback to spacefill
-                    style = { sphere: { colorscheme: colorScheme } }; break;
-                }
-                viewer.setStyle({}, style);
-                console.log(`renderCore: Applied style "${currentViewStyle}"`);
-
-                // Re-add cell and labels if needed
-                if (cellShown) drawUnitCellOutline();
-                if (labelsShown) addAtomLabels();
-
-                // Set clickable after adding model and styles
-                viewer.setClickable({}, true, (atom, vwr) => {
-                    console.log("Clicked atom data:", atom); // Log 3Dmol atom object
-                    vwr.removeAllLabels(); // Clear previous click/hover labels
-                    vwr.addLabel(`Atom ${atom.serial + 1}: ${atom.elem}`, { // atom.serial is 0-based index
-                        position: { x: atom.x, y: atom.y, z: atom.z },
-                        backgroundColor: 'lightyellow', backgroundOpacity: 0.8, borderColor: 'black', borderWidth: 0.2, fontSize: 10
-                    });
-                    setTimeout(() => vwr.removeAllLabels(), 2000);
-                 });
-
-
-                viewer.zoomTo();
-                viewer.render();
-                console.log("renderCore: Completed and rendered.");
-
-            } catch (e) {
-                console.error("!!! Error during renderCore:", e);
-                displayViewerError("Error during core rendering.");
             }
-        } // --- END renderCore ---
 
-
-        // --- Function to Regenerate Atoms AND Render (Adapted) ---
-        function regenerateAndRender() {
-            console.log("--- regenerateAndRender ---");
-            const compositionSlider = document.getElementById(`${controlsElementId}-composition`);
-            const compValueDisplay = document.getElementById(`${controlsElementId}-composition-value`);
-            let cdRatio = parseFloat(compositionSlider.value);
-            currentComposition = cdRatio; // Update state
-            if (compValueDisplay) compValueDisplay.textContent = `x = ${cdRatio.toFixed(2)}`;
-
-            // Generate new atom data based on current composition and supercell
-            currentAtoms = generateAtomData(currentComposition, currentSupercell);
-
-            // Call the core rendering function
-            renderCore();
-        }
-
-        // --- Function to Update View Options AND Render (Adapted) ---
-        function redrawView() {
-            console.log("--- redrawView (calls renderCore) ---");
-            // This function just triggers a re-render with existing atoms
-            // It's called when style, labels, or cell visibility changes
-            renderCore();
-        }
-
-
-        // --- Event Listeners Setup (Adapted - Plain JS) ---
-        function setupButtonListener(idSuffix, callback) { const button = document.getElementById(`${controlsElementId}-${idSuffix}`); if(button) button.addEventListener("click", callback); else console.warn(`Button ${controlsElementId}-${idSuffix} not found.`); }
-        function updateActiveButtons(clickedButton, buttonGroupSelector) { const buttonGroup = clickedButton.closest(buttonGroupSelector); if (!buttonGroup) { console.warn("Could not find button group:", buttonGroupSelector); return; } buttonGroup.querySelectorAll('button').forEach(btn => btn.classList.remove('active')); clickedButton.classList.add('active'); }
-
-        // Comp Slider
-        const compSlider = document.getElementById(`${controlsElementId}-composition`);
-        if (compSlider) { compSlider.addEventListener("input", regenerateAndRender); } // Regenerate atoms on slider change
-
-        // Style Buttons
-        controlsElement.querySelectorAll('.viz-controls button').forEach(button => {
-            button.addEventListener('click', function() {
-                if (currentViewStyle !== this.dataset.style) { // Prevent redraw if style hasn't changed
-                    currentViewStyle = this.dataset.style;
-                    updateActiveButtons(this, '.viz-controls');
-                    redrawView(); // Only redraw scene, don't regenerate atoms
-                }
-            });
-        });
-
-        // Cell Buttons
-        setupButtonListener("btn-show-cell", () => {
-            if (!cellShown) {
-                cellShown = true; updateActiveButtons(document.getElementById(`${controlsElementId}-btn-show-cell`), '.cell-controls');
-                redrawView(); // Redraw to show cell
-            }
-        });
-        setupButtonListener("btn-hide-cell", () => {
+             // --- 5. Add Unit Cell Outline ---
             if (cellShown) {
-                cellShown = false; updateActiveButtons(document.getElementById(`${controlsElementId}-btn-hide-cell`), '.cell-controls');
-                redrawView(); // Redraw to hide cell
+                 drawUnitCellOutline();
             }
-        });
 
-        // Supercell Buttons
-        controlsElement.querySelectorAll('.supercell-controls button').forEach(button => {
-            button.addEventListener('click', function() {
-                 const newSize = parseInt(this.dataset.size);
-                 if (currentSupercell !== newSize) { // Prevent redraw if size hasn't changed
-                     currentSupercell = newSize;
-                     updateActiveButtons(this, '.supercell-controls');
-                     regenerateAndRender(); // Regenerate atoms for new supercell size
+             // --- 6. Add Labels (Placeholder - Not fully implemented) ---
+             if (labelsShown) {
+                 // Placeholder: Add simple sprites or text elements here if needed
+                 console.log("Label rendering not implemented yet.");
+             }
+
+            // --- 7. Adjust camera/controls if supercell changed significantly ---
+             controls.minDistance = latticeConstant * currentSupercell * 0.5;
+             controls.maxDistance = latticeConstant * currentSupercell * 10;
+             // Optional: Call controls.reset() or adjust camera position if needed
+             // camera.position.z = latticeConstant * currentSupercell * 1.8; // Example adjustment
+             controls.update(); // Apply changes
+
+
+             console.log("Scene update complete.");
+        }
+
+
+        // --- Draw Unit Cell Outline ---
+        function drawUnitCellOutline() {
+            const cellDimension = latticeConstant * currentSupercell;
+            const halfDim = cellDimension / 2;
+
+            // Define vertices relative to the *centered* supercell origin
+             const vertices = [
+                new THREE.Vector3(-halfDim, -halfDim, -halfDim), // 0
+                new THREE.Vector3( halfDim, -halfDim, -halfDim), // 1
+                new THREE.Vector3( halfDim,  halfDim, -halfDim), // 2
+                new THREE.Vector3(-halfDim,  halfDim, -halfDim), // 3
+                new THREE.Vector3(-halfDim, -halfDim,  halfDim), // 4
+                new THREE.Vector3( halfDim, -halfDim,  halfDim), // 5
+                new THREE.Vector3( halfDim,  halfDim,  halfDim), // 6
+                new THREE.Vector3(-halfDim,  halfDim,  halfDim)  // 7
+            ];
+
+            const edges = [
+                0, 1, 1, 2, 2, 3, 3, 0, // Bottom face
+                4, 5, 5, 6, 6, 7, 7, 4, // Top face
+                0, 4, 1, 5, 2, 6, 3, 7  // Vertical edges
+            ];
+
+            const lineGeometry = new THREE.BufferGeometry();
+            const positions = [];
+            edges.forEach(index => {
+                positions.push(vertices[index].x, vertices[index].y, vertices[index].z);
+            });
+            lineGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+
+            const cellLines = new THREE.LineSegments(lineGeometry, cellMaterial);
+            crystalGroup.add(cellLines); // Add to the crystal group
+            console.log("Drew unit cell outline.");
+        }
+
+
+        // --- UI and Controls ---
+        function setupControls() {
+            controlsContainer.innerHTML = ''; // Clear loading message
+
+             // Build Control HTML Dynamically
+            let controlsHTML = `<h4>Controls</h4>`;
+
+            // Composition Slider (if variable)
+             if (vizData.composition.min_x !== vizData.composition.max_x) {
+                 controlsHTML += `
+                    <div class="control-group" id="${controlsElementId}-composition-group">
+                        <label class="control-title" for="${controlsElementId}-composition">Composition (${vizData.composition.variable_element || 'x'} fraction 'x')</label>
+                        <input type="range" id="${controlsElementId}-composition" class="slider"
+                               min="${vizData.composition.min_x}" max="${vizData.composition.max_x}" step="0.01" value="${vizData.composition.initial_x}">
+                        <div id="${controlsElementId}-composition-value">x = ${vizData.composition.initial_x.toFixed(2)}</div>
+                    </div>`;
+             }
+
+             // Visualization Style Buttons
+             controlsHTML += `
+                <div class="control-group viz-controls">
+                    <div class="control-title">Visualization</div>
+                    <button data-style="stick" id="${controlsElementId}-btn-stick">Stick</button>
+                    <button data-style="ballAndStick" id="${controlsElementId}-btn-ball-stick" class="active">Ball & Stick</button>
+                    <button data-style="spacefill" id="${controlsElementId}-btn-spacefill">Spacefill</button>
+                </div>`;
+
+             // Unit Cell Buttons
+             controlsHTML += `
+                <div class="control-group cell-controls">
+                    <div class="control-title">Unit Cell</div>
+                    <button id="${controlsElementId}-btn-show-cell">Show Cell</button>
+                    <button id="${controlsElementId}-btn-hide-cell" class="active">Hide Cell</button>
+                </div>`;
+
+            // Supercell Buttons
+            controlsHTML += `
+                <div class="control-group supercell-controls">
+                   <div class="control-title">Supercell</div>
+                   ${(vizData.supercell_options || [1]).map(size =>
+                       `<button data-size="${size}" id="${controlsElementId}-btn-${size}x${size}x${size}" class="${size === defaultSupercell ? 'active' : ''}">${size}×${size}×${size}</button>`
+                    ).join('')}
+               </div>`;
+
+             // Info Panel
+              controlsHTML += `
+                 <div class="control-group">
+                     <div class="control-title">Info</div>
+                     <div class="info-panel">
+                         <h5 id="${controlsElementId}-info-title">${allMaterialDetails.materialName || 'Material'} Structure</h5>
+                         <div id="${controlsElementId}-lattice-info">Lattice: ...</div>
+                         <div id="${controlsElementId}-composition-info">Composition: ...</div>
+                         <div id="${controlsElementId}-spacegroup-info">Space group: ${allMaterialDetails.identification?.properties?.space_group?.summary || 'N/A'}</div>
+                         <hr>
+                         <div id="${controlsElementId}-legend"></div>
+                     </div>
+                 </div>`;
+
+             // Action Buttons
+             controlsHTML += `
+                 <div class="control-group action-controls">
+                    <div class="control-title">Actions</div>
+                    <button id="${controlsElementId}-btn-spin">Spin</button>
+                    <button id="${controlsElementId}-btn-stop">Stop</button>
+                    <button id="${controlsElementId}-btn-screenshot">Screenshot (PNG)</button>
+                 </div>`;
+
+            controlsContainer.innerHTML = controlsHTML;
+
+            // --- Add Event Listeners ---
+            const compSlider = document.getElementById(`${controlsElementId}-composition`);
+            const compValueDisplay = document.getElementById(`${controlsElementId}-composition-value`);
+
+            if (compSlider) {
+                 compSlider.addEventListener('input', () => {
+                    currentComposition = parseFloat(compSlider.value);
+                    if(compValueDisplay) compValueDisplay.textContent = `x = ${currentComposition.toFixed(2)}`;
+                    // Regenerate atoms and update the scene
+                    generateAtomData(currentComposition, currentSupercell);
+                    updateScene();
+                });
+            }
+
+            // Style Buttons
+            controlsContainer.querySelectorAll('.viz-controls button').forEach(button => {
+                button.addEventListener('click', function() {
+                    if (currentViewStyle !== this.dataset.style) {
+                        currentViewStyle = this.dataset.style;
+                        updateActiveButtons(this, '.viz-controls');
+                        updateScene(); // Redraw with new style
+                    }
+                });
+            });
+
+            // Cell Buttons
+            document.getElementById(`${controlsElementId}-btn-show-cell`)?.addEventListener('click', function() {
+                 if (!cellShown) {
+                    cellShown = true; updateActiveButtons(this, '.cell-controls');
+                    updateScene(); // Redraw to show cell
                  }
             });
-        });
+            document.getElementById(`${controlsElementId}-btn-hide-cell`)?.addEventListener('click', function() {
+                 if (cellShown) {
+                    cellShown = false; updateActiveButtons(this, '.cell-controls');
+                    updateScene(); // Redraw to hide cell
+                 }
+            });
 
-        // Label Buttons (Added)
-        setupButtonListener("btn-show-labels", () => {
-             if (!labelsShown) {
-                 labelsShown = true; updateActiveButtons(document.getElementById(`${controlsElementId}-btn-show-labels`), '.label-controls'); // Assuming .label-controls class on parent div
-                 redrawView();
+             // Supercell Buttons
+             controlsContainer.querySelectorAll('.supercell-controls button').forEach(button => {
+                 button.addEventListener('click', function() {
+                     const newSize = parseInt(this.dataset.size);
+                     if (currentSupercell !== newSize) {
+                         currentSupercell = newSize;
+                         updateActiveButtons(this, '.supercell-controls');
+                         // Regenerate atoms for new supercell size and update scene
+                         generateAtomData(currentComposition, currentSupercell);
+                         updateScene();
+                     }
+                 });
+             });
+
+            // Action Buttons
+            document.getElementById(`${controlsElementId}-btn-spin`)?.addEventListener('click', () => {
+                isSpinning = true;
+                controls.autoRotate = true;
+                controls.autoRotateSpeed = 1.0; // Adjust speed as needed
+            });
+            document.getElementById(`${controlsElementId}-btn-stop`)?.addEventListener('click', () => {
+                 isSpinning = false;
+                 controls.autoRotate = false;
+            });
+            document.getElementById(`${controlsElementId}-btn-screenshot`)?.addEventListener('click', () => {
+                try {
+                    renderer.render(scene, camera); // Ensure latest frame is rendered
+                    const imageData = renderer.domElement.toDataURL('image/png');
+                    const link = document.createElement('a');
+                    const safeMaterialName = (allMaterialDetails.materialName || 'material').replace(/ /g, '_').toLowerCase();
+                    let compString = (vizData.composition.min_x !== vizData.composition.max_x) ? `_x${currentComposition.toFixed(2)}` : "";
+                    link.download = `${safeMaterialName}_${structureType}${compString}_${currentSupercell}x${currentSupercell}x${currentSupercell}.png`;
+                    link.href = imageData;
+                    link.click();
+                } catch (e) {
+                    console.error("Screenshot failed:", e);
+                    alert("Could not capture screenshot. Check console for errors (tainted canvas issue?).");
+                }
+            });
+
+            // Initialize Info Panel
+            updateInfoPanel(currentComposition); // Initial update
+            populateLegend();
+
+             // Set initial active buttons based on state
+             updateActiveButtons(controlsContainer.querySelector(`.viz-controls button[data-style="${currentViewStyle}"]`), '.viz-controls');
+             updateActiveButtons(controlsContainer.querySelector(`.cell-controls button[id$="${cellShown ? 'show' : 'hide'}-cell"]`), '.cell-controls');
+             updateActiveButtons(controlsContainer.querySelector(`.supercell-controls button[data-size="${currentSupercell}"]`), '.supercell-controls');
+
+        } // --- End setupControls ---
+
+        // --- Info Panel & Legend ---
+        function updateInfoPanel(compositionRatio) {
+             const latticeInfoEl = document.getElementById(`${controlsElementId}-lattice-info`);
+             const compositionInfoEl = document.getElementById(`${controlsElementId}-composition-info`);
+
+             if(latticeInfoEl) latticeInfoEl.textContent = `Lattice: a ≈ ${latticeConstant.toFixed(3)} Å`; // Uses calculated latticeConstant
+
+             if(compositionInfoEl && vizData.composition.formula_template && vizData.composition.min_x !== vizData.composition.max_x) {
+                const formula = vizData.composition.formula_template
+                                  .replace('{x}', compositionRatio.toFixed(2))
+                                  .replace('{1-x}', (1 - compositionRatio).toFixed(2));
+                compositionInfoEl.innerHTML = `Composition: ${formula}`; // Use innerHTML for subscript
+            } else if (compositionInfoEl && vizData.composition.formula_template) {
+                const formula = vizData.composition.formula_template.replace(/{1-x}/g,'').replace(/{x}/g,'');
+                compositionInfoEl.innerHTML = `Formula: ${formula}`;
+            } else if (compositionInfoEl) {
+                 compositionInfoEl.textContent = `Composition: x = ${compositionRatio.toFixed(2)}`;
+            }
+        }
+
+        function populateLegend() {
+            const legendEl = document.getElementById(`${controlsElementId}-legend`);
+            if (!legendEl || !atomInfo) return;
+            legendEl.innerHTML = ''; // Clear previous
+            Object.entries(atomInfo).forEach(([symbol, info]) => {
+                const color = materials[symbol.toUpperCase()]?.color.getStyle() || '#cccccc';
+                const legendItem = document.createElement('div');
+                legendItem.className = 'legend';
+                legendItem.innerHTML = `<div class="legend-color" style="background-color:${color};"></div><div>${symbol}</div>`;
+                legendEl.appendChild(legendItem);
+            });
+             // Add bond legend item
+             const bondLegendItem = document.createElement('div');
+             bondLegendItem.className = 'legend';
+             bondLegendItem.innerHTML = `<div class="legend-color" style="background-color:${bondMaterial.color.getStyle()};"></div><div>Bonds</div>`;
+             legendEl.appendChild(bondLegendItem);
+        }
+
+
+        // --- Helper to update active button states ---
+        function updateActiveButtons(clickedButton, buttonGroupSelector) {
+            if (!clickedButton) return;
+            const buttonGroup = clickedButton.closest(buttonGroupSelector);
+            if (!buttonGroup) { console.warn("Could not find button group:", buttonGroupSelector); return; }
+            buttonGroup.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+            clickedButton.classList.add('active');
+        }
+
+        // --- Window Resize Handler ---
+        function onWindowResize() {
+            if (!camera || !renderer || !viewerContainer) return;
+            const width = viewerContainer.clientWidth;
+            const height = viewerContainer.clientHeight;
+            if (width === 0 || height === 0) return; // Prevent errors if container is hidden
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+            renderer.setSize(width, height);
+        }
+
+        // --- Animation Loop ---
+        function animate() {
+            animationFrameId = requestAnimationFrame(animate);
+            controls.update(); // Required if enableDamping is true
+            renderer.render(scene, camera);
+        }
+
+        // --- Cleanup Function (Optional but good practice) ---
+        function cleanup() {
+             console.log("Cleaning up Three.js viewer...");
+             window.removeEventListener('resize', onWindowResize);
+             cancelAnimationFrame(animationFrameId);
+             disposeMeshes(crystalGroup); // Dispose geometries/materials in the group
+             scene.remove(crystalGroup);
+             // Dispose scene resources? Generally not needed unless creating/destroying many scenes.
+             if (renderer) {
+                renderer.dispose();
+                if (renderer.domElement && renderer.domElement.parentNode) {
+                     renderer.domElement.parentNode.removeChild(renderer.domElement);
+                }
              }
-        });
-         setupButtonListener("btn-hide-labels", () => {
-             if (labelsShown) {
-                 labelsShown = false; updateActiveButtons(document.getElementById(`${controlsElementId}-btn-hide-labels`), '.label-controls');
-                 redrawView();
-             }
-         });
+             // Clear references
+             scene = null; camera = null; renderer = null; controls = null; crystalGroup = null;
+        }
 
+        // --- === Main Execution Flow === ---
+        try {
+            viewerContainer.innerHTML = ''; // Clear loading message
+            controlsContainer.innerHTML = ''; // Clear loading message
+            initThree();
+            setupControls();
+            generateAtomData(currentComposition, currentSupercell); // Generate initial data
+            updateScene(); // Perform initial render
+            animate(); // Start animation loop
+        } catch(error) {
+            console.error("Error during Three.js initialization:", error);
+            viewerContainer.innerHTML = `<p class="error-message" style="padding:20px;">Failed to initialize 3D viewer. Check console.</p>`;
+            controlsContainer.innerHTML = '';
+        }
 
-        // Action Buttons
-        setupButtonListener("btn-spin", () => viewer.spin(true));
-        setupButtonListener("btn-stop", () => viewer.spin(false));
-        setupButtonListener("btn-screenshot", function() { /* ... same screenshot logic ... */
-            let imageData = viewer.pngURI(); let link = document.createElement('a'); const safeMaterialName = allMaterialDetails.materialName.replace(/ /g, '_').toLowerCase(); let compString = (vizData.composition.min_x !== vizData.composition.max_x) ? `_x${currentComposition.toFixed(2)}` : ""; link.download = `${safeMaterialName}_${vizData.structure_type}${compString}_${currentSupercell}x${currentSupercell}x${currentSupercell}.png`; link.href = imageData; document.body.appendChild(link); link.click(); document.body.removeChild(link);
-        });
+        // Example of how you might integrate cleanup if needed, e.g., if navigating away
+        // viewerContainer.addEventListener('destroy', cleanup);
 
-        // Add resize handler
-        // Note: viewer.resize() might need to be debounced for performance on frequent resize events
-        let resizeTimeout;
-        window.addEventListener('resize', () => {
-             clearTimeout(resizeTimeout);
-             resizeTimeout = setTimeout(() => {
-                 if (viewer) viewer.resize();
-                 console.log("Viewer resized.");
-             }, 150); // Debounce resize for 150ms
-        });
-
-        // --- Initial Setup ---
-        // Set initial active buttons based on default state variables
-        updateActiveButtons(document.getElementById(`${controlsElementId}-btn-ball-stick`), '.viz-controls');
-        updateActiveButtons(document.getElementById(`${controlsElementId}-btn-1x1x1`), '.supercell-controls');
-        updateActiveButtons(document.getElementById(`${controlsElementId}-btn-hide-cell`), '.cell-controls');
-        // updateActiveButtons(document.getElementById(`${controlsElementId}-btn-hide-labels`), '.label-controls'); // Assuming labels are initially hidden
-
-        // --- Initial Render ---
-        regenerateAndRender(); // Generate initial atoms and render the scene
-
-    } // --- END initialize3DViewer FUNCTION ---
-
+    } // --- End initializeThreeJsViewer ---
+    // --- ============================================================ ---
+    // ---            *** NEW Three.js Initializer END ***             ---
+    // --- ============================================================ ---
 
 }); // End DOMContentLoaded
