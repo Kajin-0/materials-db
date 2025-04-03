@@ -721,7 +721,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                  <div class="control-group action-buttons">
                     <button id="${labelBtnId}">${showLabels ? 'Hide' : 'Show'} Labels</button>
-                    {/* *** FIX 1 & 3: Separate button, use showOutline state, REMOVED STRAY COMMENT *** */}
+                    
                     <button id="${outlineBtnId}">${showOutline ? 'Hide' : 'Show'} Outline</button>
                     <button id="${spinBtnId}">${isSpinning ? 'Stop Spin' : 'Start Spin'}</button>
                  </div>
