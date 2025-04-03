@@ -133,7 +133,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Check if a specific file exists (simplistic check, replace with actual existence check if needed)
     // For this example, we *know* which file to use if the name matches.
     if (materialName === "Mercury Cadmium Telluride") {
-        detailFilePath = `./${specificDetailFileName}`;
+        // *** CORRECTED PATH ***
+        detailFilePath = `./details/${specificDetailFileName}`;
         console.log(`[Full Detail Loader] Using specific detail file: '${detailFilePath}'`);
     } else {
         detailFilePath = `./material_details.json`; // Fallback to the main details file
@@ -929,6 +930,7 @@ document.addEventListener("DOMContentLoaded", async () => {
              const showCompositionSlider = vizData.composition.min_x !== vizData.composition.max_x;
              const supercellOptions = vizData.supercell_options || [1];
 
+             // Use materialData.materialName for the title
              controlsWrapper.innerHTML = `
                  <h4>${materialData.materialName || 'Material'} Controls</h4>
 
