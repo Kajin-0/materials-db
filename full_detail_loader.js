@@ -137,7 +137,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         detailFilePath = `./details/${specificDetailFileName}`;
         console.log(`[Full Detail Loader] Using specific detail file: '${detailFilePath}'`);
     } else {
-        detailFilePath = `./material_details.json`; // Fallback to the main details file
+        // *** CORRECTED FALLBACK PATH ***
+        detailFilePath = `./details/material_details.json`; // Fallback to the main details file in details folder
         console.log(`[Full Detail Loader] Using main details file: '${detailFilePath}'`);
     }
     // *****************************************************************************
@@ -277,7 +278,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                  let propertyCount = 0;
                  Object.entries(sectionDetailData.properties).forEach(([propKey, propData]) => {
                      // Pass sectionKey and use materialData
-                     const propertyBlockElement = renderPropertyBlock(sectionKey, propKey, propData, materialData, propertiesContainerEl);
+                     // Pass the entire section's properties object as well for context
+                     const propertyBlockElement = renderPropertyBlock(sectionKey, propKey, propData, materialData, sectionDetailData.properties);
                      if (propertyBlockElement) {
                          propertiesContainerEl.appendChild(propertyBlockElement);
                          propertyCount++;
@@ -319,8 +321,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // --- Helper Function to Render a Single Property Block ---
-    // Modified to accept sectionKey and use materialData for references
-    function renderPropertyBlock(sectionKey, propKey, propData, materialData, parentContainer) {
+    // Modified to accept sectionKey and sectionProperties (parent object)
+    function renderPropertyBlock(sectionKey, propKey, propData, materialData, sectionProperties) {
         if (typeof propData !== 'object' || propData === null) return null;
         const propBlock = document.createElement('div'); propBlock.className = 'property-detail-block';
         propBlock.id = `prop-${sectionKey}-${propKey}`; // Unique ID per section/property
@@ -328,34 +330,42 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (propData.summary) { const summaryEl = document.createElement('div'); summaryEl.className = 'summary'; summaryEl.innerHTML = propData.summary; propBlock.appendChild(summaryEl); }
 
         // --- Bandgap Plot Integration ---
+        // Check if this is the specific property block ('band_gap') where the plot should go
         if (sectionKey === 'electrical_properties' && propKey === 'band_gap') {
-            const equationDetails = propData.details?.equations?.find(eq => eq.name === "Hansen E_g(x,T) Empirical Relation");
+            // *** CORRECTED: Look for the equation in the sibling property ***
+            const bandgapEquationPropData = sectionProperties?.bandgap_equation; // Access sibling property data
+            const equationDetails = bandgapEquationPropData?.details?.equations?.find(eq => eq.name === "Hansen E_g(x,T) Empirical Relation");
+
             if (equationDetails) {
+                console.log("[Render Property Block] Found Hansen equation, initializing plot setup for:", propKey);
+                // Create container and controls elements dynamically
                 const plotControlsId = `bandgap-plot-controls-${sectionKey}-${propKey}`;
                 const plotContainerId = `bandgap-plot-container-${sectionKey}-${propKey}`;
                 const sliderId = `temp-slider-${sectionKey}-${propKey}`;
                 const valueId = `temp-value-${sectionKey}-${propKey}`;
 
                 const plotWrapper = document.createElement('div');
-                plotWrapper.className = 'bandgap-plot-wrapper';
+                plotWrapper.className = 'bandgap-plot-wrapper'; // Optional wrapper class
 
                 const plotDiv = document.createElement('div');
                 plotDiv.id = plotContainerId;
-                plotDiv.className = 'bandgap-plot-container';
-                plotDiv.innerHTML = `<p style="text-align:center; padding: 20px; color: #888;">Loading Bandgap Plot...</p>`;
+                plotDiv.className = 'bandgap-plot-container'; // Add class for styling
+                plotDiv.innerHTML = `<p style="text-align:center; padding: 20px; color: #888;">Loading Bandgap Plot...</p>`; // Placeholder text
                 plotWrapper.appendChild(plotDiv);
 
                 const controlsDiv = document.createElement('div');
                 controlsDiv.id = plotControlsId;
-                controlsDiv.className = 'plot-controls';
+                controlsDiv.className = 'plot-controls'; // Add class for styling
                 controlsDiv.innerHTML = `
                     <label for="${sliderId}">Temperature:</label>
                     <input type="range" id="${sliderId}" min="4" max="300" step="1" value="77">
                     <span id="${valueId}" class="temp-value-display">77 K</span>
                 `;
                 plotWrapper.appendChild(controlsDiv);
-                propBlock.appendChild(plotWrapper);
 
+                propBlock.appendChild(plotWrapper); // Add plot and controls to the property block
+
+                // Use requestAnimationFrame to ensure elements are in DOM before initializing plot
                 requestAnimationFrame(() => {
                     if (typeof initializeBandgapPlot === 'function') {
                         try {
@@ -372,7 +382,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     }
                 });
             } else {
-                 console.warn(`[renderPropertyBlock] Hansen equation data not found for ${sectionKey}.${propKey}, skipping plot.`);
+                 console.warn(`[Render Property Block] Hansen equation data not found under 'bandgap_equation' property, skipping plot for ${propKey}.`);
             }
         }
         // --- End Bandgap Plot Integration ---
@@ -444,11 +454,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                  if (detailKey === 'visualization_data') continue; // Already handled above
                  if (!detailContent || (Array.isArray(detailContent) && detailContent.length === 0) || (typeof detailContent === 'object' && !Array.isArray(detailContent) && Object.keys(detailContent).length === 0)) continue;
 
-                 // Skip rendering 'equations' if the bandgap plot exists for this specific property block
-                 if (sectionKey === 'electrical_properties' && propKey === 'band_gap' && detailKey === 'equations' && propBlock.querySelector('.bandgap-plot-container')) {
-                     console.log(`[renderPropertyBlock] Skipping redundant equation block render for ${sectionKey}.${propKey} as plot exists.`);
-                     continue;
-                 }
+                // *** No longer need to skip equations here, as plot is handled separately under 'band_gap' ***
 
                  const subsection = document.createElement('div');
                  subsection.className = `detail-subsection ${detailKey.replace(/ /g, '_').toLowerCase()}`;
@@ -521,6 +527,16 @@ document.addEventListener("DOMContentLoaded", async () => {
                  }
             }
         }
+        // Do not render the block if it only contains a title and no other content (e.g. 'bandgap_equation' after plot added to 'band_gap')
+        if (propBlock.children.length <= 1 && propBlock.querySelector('h3')) {
+             // Check if the ONLY child is the h3 title
+            const plotWasAddedElsewhere = sectionKey === 'electrical_properties' && propKey === 'bandgap_equation' && sectionProperties?.band_gap;
+             if (plotWasAddedElsewhere) {
+                 console.log(`[Render Property Block] Skipping empty property block render for ${propKey} as its content (plot) was moved.`);
+                 return null; // Don't render this block
+             }
+        }
+
         return propBlock;
     } // --- End renderPropertyBlock ---
 
