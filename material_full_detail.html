@@ -6,6 +6,8 @@
     <title>Material Detail</title> <!-- Title will be set dynamically -->
     <link rel="stylesheet" href="style.css"> <!-- Link to main style.css if needed -->
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    <!-- Add Plotly.js CDN -->
+    <script src='https://cdn.plot.ly/plotly-2.18.2.min.js'></script>
     <style>
         /* General Page Styles */
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; line-height: 1.5; color: #333; background-color: #f5f5f5; margin: 0; padding: 0; }
@@ -27,7 +29,7 @@
 
         /* Main Content Sections */
         .detail-content-section { margin-bottom: 2.5rem; padding-top: 1rem; }
-        .detail-content-section[id] { scroll-margin-top: 20px; }
+        .detail-content-section[id] { scroll-margin-top: 20px; /* Adjust scroll margin if you have a fixed header */ }
         .detail-content-section h2 { font-size: 1.75rem; color: #2c3e50; font-weight: 600; margin-top: 0; margin-bottom: 1.5rem; padding-bottom: 0.75rem; border-bottom: 1px solid #ccc; }
         .section-introduction { margin-bottom: 2rem; padding: 1.25rem; background-color: #f1f7fe; border-left: 4px solid #2980b9; border-radius: 4px; font-size: 1rem; line-height: 1.6; color: #333; }
         .section-introduction p:first-child { margin-top: 0; }
@@ -43,8 +45,10 @@
 
         /* Detail Subsections */
         .detail-subsection { margin: 1.25rem 0 1.25rem 0.5rem; }
-        .detail-subsection h4 { font-size: 0; margin: 0 0 0.75rem 0; padding-bottom: 0.3rem; border-bottom: 1px solid #eee; position: relative; }
+        /* Use ::before to display title based on data-title attribute */
+        .detail-subsection h4 { font-size: 0; /* Hide original h4 text */ margin: 0 0 0.75rem 0; padding-bottom: 0.3rem; border-bottom: 1px solid #eee; position: relative; }
         .detail-subsection h4::before { font-size: 1.1rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; display: block; content: attr(data-title); }
+        /* Specific subsection title styling via ::before */
         .detail-subsection.key_characteristics h4::before { content: "Key Characteristics"; color: #17a2b8; }
         .detail-subsection.notes h4::before { content: "Notes"; color: #6c757d; }
         .detail-subsection.measurement_characterization h4::before { content: "Measurement & Characterization"; color: #6f42c1; }
@@ -86,7 +90,9 @@
         #references-list li strong { color: #555; font-weight: 600; margin-right: 0.5em; }
         #references-list li a { color: #0066cc; text-decoration: none; }
         #references-list li a:hover { text-decoration: underline; }
-        #references-list li:target, #references-list li.highlight-ref { background-color: #fff9c4; transition: background-color 0.3s ease-out; border-radius: 4px; margin-left: 0 !important; padding-left: 0.5rem !important; text-indent: 0 !important; padding-top: 0.3rem; padding-bottom: 0.3rem; margin-right: -0.5rem; outline: 1px dashed #fbc02d; }
+        /* Highlighting for referenced items */
+        #references-list li.highlight-ref { background-color: #fff9c4; transition: background-color 0.3s ease-out; border-radius: 4px; margin-left: 2.0em !important; /* Adjust margin for highlight */ padding-left: 0.5rem !important; text-indent: 0 !important; padding-top: 0.3rem; padding-bottom: 0.3rem; margin-right: -0.5rem; outline: 1px dashed #fbc02d; }
+
 
         /* Error Message Style */
         .error-message { color: #c0392b; background-color: #fbeae5; padding: 1rem; border-radius: 4px; border: 1px solid #e74c3c; margin: 1rem 0; }
@@ -121,6 +127,46 @@
         .legend-color { width: 12px; height: 12px; margin-right: 6px; border-radius: 50%; border: 1px solid rgba(0, 0, 0, 0.1); display: inline-block; vertical-align: middle; flex-shrink: 0; }
         .legend div:last-child { display: inline-block; vertical-align: middle; }
 
+        /* --- Styles for Bandgap Plot --- */
+        .bandgap-plot-container {
+            width: 100%;
+            min-height: 350px; /* Ensure space for the plot */
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid #eee;
+            border-radius: 4px;
+        }
+        .plot-controls {
+            margin-top: 0.5rem;
+            margin-bottom: 1rem; /* Space below controls */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            font-size: 0.9rem;
+            color: #555;
+        }
+        .plot-controls label {
+            margin-right: 0.5rem;
+        }
+        .plot-controls input[type="range"] {
+            max-width: 250px; /* Wider slider */
+            cursor: pointer;
+            vertical-align: middle;
+        }
+        .plot-controls .temp-value-display {
+            font-weight: 500;
+            min-width: 50px; /* Ensure space for value "XXX K" */
+            text-align: right;
+            display: inline-block; /* Align properly */
+            background-color: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 3px;
+            border: 1px solid #e9ecef;
+        }
+
+
         /* Responsive Layout */
          @media (max-width: 768px) { .full-detail-container { margin: 1rem; padding: 1.5rem; } #toc ul { columns: 1; -webkit-columns: 1; -moz-columns: 1; } .detail-content-section h2 { font-size: 1.5rem; } .property-detail-block h3 { font-size: 1.25rem; } .detail-subsection h4::before { font-size: 1rem; } .crystal-viewer-wrapper { height: auto; min-height: 550px; } .crystal-viewer-container { flex-direction: column; height: 100%; } .viewer-area { height: 60%; min-height: 300px; border-right: none; } .viewer-controls { width: 100%; height: 40%; border-left: none; border-top: 1px solid #e0e0e0; max-height: none; } }
          @media (min-width: 769px) { .crystal-viewer-wrapper { height: var(--viewer-height, 450px); } .crystal-viewer-container { flex-direction: row; height: 100%; } .viewer-area { border-right: 1px solid #e0e0e0; border-bottom: none; height: 100%; width: calc(100% - 280px); } .viewer-controls { width: 280px; flex-shrink: 0; border-top: none; border-left: 1px solid #e0e0e0; height: 100%; overflow-y: auto; } }
@@ -140,7 +186,7 @@
             </ul>
         </nav>
         <main id="main-content">
-            <!-- Section Placeholders -->
+            <!-- Section Placeholders (Existing ones are fine, JS will add missing ones) -->
             <section id="section-identification" class="detail-content-section" style="display: none;">
                  <h2 id="section-identification-title">Identification & Structure</h2>
                  <p class="section-introduction" id="section-identification-intro"></p>
@@ -221,7 +267,7 @@
                 <p class="section-introduction" id="section-vendor_info-intro"></p>
                 <div class="properties-container" id="section-vendor_info-properties"></div>
              </section>
-             <!-- Add more section placeholders here if needed -->
+             <!-- Add more section placeholders here if needed, or let JS create them -->
         </main>
         <div id="references-section" style="display: none;">
             <h4>References Cited</h4>
