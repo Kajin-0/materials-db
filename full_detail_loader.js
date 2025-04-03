@@ -1,6 +1,96 @@
 // --- START OF FILE full_detail_loader.js ---
 console.log("[Full Detail Loader] Script started.");
 
+// --- ================================================================= ---
+// ---                *** Bandgap Plot Function START ***                ---
+// --- ================================================================= ---
+function initializeBandgapPlot(plotContainerId, sliderId, valueId, equationData) {
+    console.log(`[Bandgap Plot] Initializing plot for ${plotContainerId}`);
+    const plotContainer = document.getElementById(plotContainerId);
+    const tempSlider = document.getElementById(sliderId);
+    const tempValueSpan = document.getElementById(valueId);
+
+    if (!plotContainer || !tempSlider || !tempValueSpan || typeof Plotly === 'undefined') {
+        console.error("[Bandgap Plot] Error: Plot container, slider, value span, or Plotly library not found.");
+        if (plotContainer) plotContainer.innerHTML = '<p class="error-message">Error initializing plot.</p>';
+        return;
+    }
+
+    // --- Hansen Equation Implementation ---
+    // E_g(x, T) = -0.302 + 1.93x + 5.35 × 10⁻⁴ T (1 - 2x) - 0.810x² + 0.832x³
+    // Note: Ideally parse coefficients from equationData if it was structured that way.
+    const calculateHansenEg = (x, T) => {
+        return -0.302 + 1.93 * x + 5.35e-4 * T * (1 - 2 * x) - 0.810 * Math.pow(x, 2) + 0.832 * Math.pow(x, 3);
+    };
+
+    // --- Generate Data ---
+    const numPoints = 101;
+    const xValues = Array.from({ length: numPoints }, (_, i) => i / (numPoints - 1)); // x from 0 to 1
+
+    const calculateYValues = (temp) => {
+        return xValues.map(x => {
+            const eg = calculateHansenEg(x, temp);
+            // Plotly handles negative values fine (HgTe is ~ -0.3 eV)
+            return eg;
+        });
+    };
+
+    // --- Initial Plot Setup ---
+    const initialTemp = 77; // Default temperature (e.g., 77K)
+    tempSlider.value = initialTemp;
+    tempValueSpan.textContent = `${initialTemp} K`;
+    let yValues = calculateYValues(initialTemp);
+
+    const trace = {
+        x: xValues,
+        y: yValues,
+        mode: 'lines',
+        type: 'scatter',
+        name: `Eg at ${initialTemp}K`,
+        line: {
+            color: 'rgb(0, 100, 200)',
+            width: 3
+        }
+    };
+
+    const layout = {
+        title: 'Hg<sub>(1-x)</sub>Cd<sub>x</sub>Te Bandgap vs. Composition',
+        xaxis: {
+            title: 'Cd Mole Fraction (x)',
+            range: [0, 1],
+            zeroline: false
+        },
+        yaxis: {
+            title: 'Bandgap E<sub>g</sub> (eV)',
+            range: [-0.5, 1.6], // Explicit range to better see behavior near x=0
+            zeroline: true
+        },
+        margin: { l: 60, r: 30, b: 50, t: 50 }, // Adjust margins
+        hovermode: 'x unified'
+    };
+
+    Plotly.newPlot(plotContainerId, [trace], layout, {responsive: true});
+
+    // --- Slider Event Listener ---
+    tempSlider.addEventListener('input', () => {
+        const currentTemp = parseFloat(tempSlider.value);
+        tempValueSpan.textContent = `${currentTemp} K`;
+
+        // Recalculate Y values
+        const newYValues = calculateYValues(currentTemp);
+
+        // Update plot data and trace name
+        Plotly.update(plotContainerId, { y: [newYValues], name: [`Eg at ${currentTemp}K`] }, {}, [0]); // Update trace 0
+    });
+
+    console.log(`[Bandgap Plot] Plot initialized successfully for ${plotContainerId}`);
+
+} // --- End initializeBandgapPlot ---
+// --- ================================================================= ---
+// ---                 *** Bandgap Plot Function END ***                 ---
+// --- ================================================================= ---
+
+
 document.addEventListener("DOMContentLoaded", async () => {
     console.log("[Full Detail Loader] DOMContentLoaded event fired.");
 
@@ -35,49 +125,95 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.title = `${materialName} - Full Details`;
 
     // --- Construct file path ---
-    const safeMaterialName = materialName.replace(/ /g, '_').toLowerCase();
-    const detailFilePath = `./details/${safeMaterialName}_details.json`;
-    console.log(`[Full Detail Loader] Constructed file path: '${detailFilePath}'`);
+    // Determine which JSON file to load based on the material name
+    let detailFilePath;
+    const safeMaterialNameLower = materialName.replace(/ /g, '_').toLowerCase();
+    const specificDetailFileName = `${safeMaterialNameLower}_details.json`; // e.g., mercury_cadmium_telluride_details.json
+
+    // Check if a specific file exists (simplistic check, replace with actual existence check if needed)
+    // For this example, we *know* which file to use if the name matches.
+    if (materialName === "Mercury Cadmium Telluride") {
+        detailFilePath = `./${specificDetailFileName}`;
+        console.log(`[Full Detail Loader] Using specific detail file: '${detailFilePath}'`);
+    } else {
+        detailFilePath = `./material_details.json`; // Fallback to the main details file
+        console.log(`[Full Detail Loader] Using main details file: '${detailFilePath}'`);
+    }
+    // *****************************************************************************
 
     // --- Fetch and Process Data ---
-    let allMaterialDetails;
+    let allMaterialDetails; // Holds the full JSON content (either the single object or the map)
+    let materialData; // Variable to hold the specific material's data object
+
     try {
         const response = await fetch(detailFilePath);
-        console.log(`[Full Detail Loader] Fetch response status: ${response.status} ${response.statusText}`);
+        console.log(`[Full Detail Loader] Fetch response status for ${detailFilePath}: ${response.status} ${response.statusText}`);
         if (!response.ok) {
              const errorText = await response.text(); console.error(`Fetch failed: ${response.status}.`, errorText);
             if (response.status === 404) { throw new Error(`Details file not found: ${detailFilePath}. Check file name and path.`); }
             else { throw new Error(`HTTP error ${response.status} fetching ${detailFilePath}`); }
         }
-        allMaterialDetails = await response.json();
-        if (typeof allMaterialDetails !== 'object' || allMaterialDetails === null) { throw new Error(`Invalid JSON structure.`); }
+
+        // Parse the JSON content
+        const rawJson = await response.json();
+        allMaterialDetails = rawJson; // Store the raw JSON content
+
+        // Extract the specific material's data based on which file was loaded
+        if (detailFilePath.endsWith('material_details.json')) {
+            // Original structure: find the material within the main JSON object
+            if (typeof allMaterialDetails !== 'object' || allMaterialDetails === null) throw new Error(`Invalid JSON structure in ${detailFilePath}. Expected top-level object.`);
+             materialData = allMaterialDetails[materialName];
+             if (!materialData) {
+                 // Try case-insensitive fallback
+                const lowerCaseMaterialName = materialName.toLowerCase();
+                const foundKey = Object.keys(allMaterialDetails).find(key => key.toLowerCase() === lowerCaseMaterialName);
+                if (foundKey) {
+                     materialData = allMaterialDetails[foundKey];
+                     console.warn(`[Full Detail Loader] Case-insensitive match found for "${materialName}" as "${foundKey}" in ${detailFilePath}.`);
+                } else {
+                    throw new Error(`Data for material '${materialName}' not found inside ${detailFilePath}.`);
+                }
+             }
+        } else {
+            // Dedicated file structure: the JSON *is* the material data
+             if (typeof allMaterialDetails !== 'object' || allMaterialDetails === null || !allMaterialDetails.materialName) throw new Error(`Invalid JSON structure in dedicated file ${detailFilePath}. Expected object with material details.`);
+             materialData = allMaterialDetails; // The whole file content is the data for this material
+        }
+        // ************************************************
+
+        if (typeof materialData !== 'object' || materialData === null) { throw new Error(`Invalid data structure for material '${materialName}'.`); }
         console.log("[Full Detail Loader] JSON parsed successfully.");
 
-        const sectionDataMap = new Map(); // Moved inside try block
+        // Use the materialData directly from now on
+        const sectionDataMap = new Map();
 
         // --- Process References ---
         const collectedRefs = new Set();
         const processRefs = (data) => {
              if (typeof data === 'object' && data !== null) {
-                 if (data.ref && allMaterialDetails.references && allMaterialDetails.references[data.ref]) { collectedRefs.add(data.ref); }
+                 // Check if the specific material data has a 'references' key
+                 if (data.ref && materialData.references && materialData.references[data.ref]) {
+                    collectedRefs.add(data.ref);
+                 }
                  Object.values(data).forEach(value => { if (typeof value === 'object' || Array.isArray(value)) { processRefs(value); } });
              } else if (Array.isArray(data)) { data.forEach(processRefs); }
         };
-        processRefs(allMaterialDetails);
+        processRefs(materialData); // Process only the specific material's data
         console.log(`[Full Detail Loader] References processed: ${collectedRefs.size}`);
 
         // --- Build Table of Contents ---
         if (tocListEl && mainContentEl) {
             tocListEl.innerHTML = ''; let sectionCount = 0;
-            const excludedKeys = ['materialName', 'references'];
-            for (const sectionKey in allMaterialDetails) {
-                if (excludedKeys.includes(sectionKey) || typeof allMaterialDetails[sectionKey] !== 'object' || allMaterialDetails[sectionKey] === null) continue;
-                const sectionData = allMaterialDetails[sectionKey];
-                 // Ensure sectionData has a displayName or is otherwise valid for TOC
-                 // if (typeof sectionData.displayName !== 'string') continue; // Example stricter check
+            const excludedKeys = ['materialName', 'references', 'name', 'formula', 'synonyms', 'category', 'constituent_elements', 'description', 'wiki_link', 'tags']; // Exclude top-level metadata keys
+            for (const sectionKey in materialData) { // Iterate through the specific material's sections
+                if (excludedKeys.includes(sectionKey) || typeof materialData[sectionKey] !== 'object' || materialData[sectionKey] === null) continue;
+                const sectionDetailData = materialData[sectionKey]; // Get data for this section
 
-                sectionDataMap.set(sectionKey, sectionData); sectionCount++;
-                const sectionDisplayName = sectionData.displayName || sectionKey.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                // Basic check: Ensure the section data is an object and potentially has a displayName
+                if (typeof sectionDetailData !== 'object' || sectionDetailData === null) continue;
+
+                sectionDataMap.set(sectionKey, sectionDetailData); sectionCount++;
+                const sectionDisplayName = sectionDetailData.displayName || sectionKey.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
                 const sectionId = `section-${sectionKey}`;
                 const tocLi = document.createElement('li'); const tocLink = document.createElement('a');
                 tocLink.href = `#${sectionId}`; tocLink.textContent = sectionDisplayName;
@@ -88,34 +224,59 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         // --- Populate Sections ---
         let populatedSectionCount = 0;
-        for (const [sectionKey, sectionData] of sectionDataMap.entries()) {
-             const sectionId = `section-${sectionKey}`; const sectionElement = document.getElementById(sectionId);
+        for (const [sectionKey, sectionDetailData] of sectionDataMap.entries()) { // Use sectionDetailData now
+             const sectionId = `section-${sectionKey}`;
+             let sectionElement = document.getElementById(sectionId);
+
+             // *** Dynamically create section if placeholder doesn't exist ***
              if (!sectionElement) {
-                 console.warn(`HTML section placeholder '${sectionId}' not found. Skipping.`);
-                 continue;
+                 console.warn(`HTML section placeholder '${sectionId}' not found. Creating dynamically.`);
+                 sectionElement = document.createElement('section');
+                 sectionElement.id = sectionId;
+                 sectionElement.className = 'detail-content-section';
+                 sectionElement.style.display = 'none'; // Keep hidden initially
+
+                 const h2 = document.createElement('h2');
+                 h2.id = `${sectionId}-title`;
+                 sectionElement.appendChild(h2);
+
+                 const introP = document.createElement('p');
+                 introP.className = 'section-introduction';
+                 introP.id = `${sectionId}-intro`;
+                 sectionElement.appendChild(introP);
+
+                 const propsDiv = document.createElement('div');
+                 propsDiv.className = 'properties-container';
+                 propsDiv.id = `${sectionId}-properties`;
+                 sectionElement.appendChild(propsDiv);
+
+                 mainContentEl.appendChild(sectionElement); // Add to main content
              }
-             const h2Title = sectionElement.querySelector('h2');
+             // ***********************************************************
+
+             const h2Title = sectionElement.querySelector('h2'); // Find h2 within the section
              if (h2Title) {
-                 h2Title.textContent = sectionData.displayName || sectionKey.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                 h2Title.textContent = sectionDetailData.displayName || sectionKey.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
              } else {
                  console.warn(`Title element (h2) not found within section '${sectionId}'.`);
              }
 
              const sectionIntroEl = document.getElementById(`${sectionId}-intro`);
              if (sectionIntroEl) {
-                 if (sectionData.introduction) {
-                     sectionIntroEl.innerHTML = sectionData.introduction; sectionIntroEl.style.display = 'block';
+                 if (sectionDetailData.introduction) {
+                     sectionIntroEl.innerHTML = sectionDetailData.introduction; sectionIntroEl.style.display = 'block';
                  } else {
                      sectionIntroEl.style.display = 'none'; sectionIntroEl.innerHTML = '';
                  }
              }
 
              const propertiesContainerEl = document.getElementById(`${sectionId}-properties`);
-             if (propertiesContainerEl && sectionData.properties && typeof sectionData.properties === 'object') {
+             if (propertiesContainerEl && sectionDetailData.properties && typeof sectionDetailData.properties === 'object') {
                  propertiesContainerEl.innerHTML = '';
                  let propertyCount = 0;
-                 Object.entries(sectionData.properties).forEach(([propKey, propData]) => {
-                     const propertyBlockElement = renderPropertyBlock(propKey, propData, allMaterialDetails, propertiesContainerEl);
+                 Object.entries(sectionDetailData.properties).forEach(([propKey, propData]) => {
+                     // Pass sectionKey and use materialData
+                     const propertyBlockElement = renderPropertyBlock(sectionKey, propKey, propData, materialData, propertiesContainerEl);
                      if (propertyBlockElement) {
                          propertiesContainerEl.appendChild(propertyBlockElement);
                          propertyCount++;
@@ -130,10 +291,10 @@ document.addEventListener("DOMContentLoaded", async () => {
          console.log(`[Full Detail Loader] Populated ${populatedSectionCount} sections.`);
 
         // --- Populate References ---
-        if (collectedRefs.size > 0 && referencesListEl && allMaterialDetails.references) {
+        if (collectedRefs.size > 0 && referencesListEl && materialData.references) { // Use materialData.references
              referencesListEl.innerHTML = ''; const sortedRefs = Array.from(collectedRefs).sort();
              sortedRefs.forEach(refKey => {
-                 const refData = allMaterialDetails.references[refKey];
+                 const refData = materialData.references[refKey]; // Use materialData.references
                  if(refData){
                      const li = document.createElement('li'); li.id = `ref-${refKey}`;
                      let linkHtml = refData.text;
@@ -142,8 +303,9 @@ document.addEventListener("DOMContentLoaded", async () => {
                  } else { console.warn(`Ref key '${refKey}' not defined.`); }
             });
              referencesSectionEl.style.display = 'block';
-             mainContentEl.addEventListener('click', handleRefLinkClick); // Add listener once
-              console.log("[Full Detail Loader] References populated.");
+             // Add event listener to the main content area for delegated reference clicks
+             mainContentEl.addEventListener('click', handleRefLinkClick);
+             console.log("[Full Detail Loader] References populated.");
         } else if(referencesSectionEl){
             referencesSectionEl.style.display = 'none';
             console.log("[Full Detail Loader] No references to populate or elements missing.");
@@ -156,17 +318,68 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // --- Helper Function to Render a Single Property Block ---
-    // THIS VERSION CALLS THE Three.js INITIALIZER
-    function renderPropertyBlock(propKey, propData, allDetails, parentContainer) {
+    // Modified to accept sectionKey and use materialData for references
+    function renderPropertyBlock(sectionKey, propKey, propData, materialData, parentContainer) {
         if (typeof propData !== 'object' || propData === null) return null;
-        const propBlock = document.createElement('div'); propBlock.className = 'property-detail-block'; propBlock.id = `prop-${propKey}`;
+        const propBlock = document.createElement('div'); propBlock.className = 'property-detail-block';
+        propBlock.id = `prop-${sectionKey}-${propKey}`; // Unique ID per section/property
         const propTitle = document.createElement('h3'); propTitle.innerHTML = propData.displayName || propKey.replace(/_/g, ' '); propBlock.appendChild(propTitle);
         if (propData.summary) { const summaryEl = document.createElement('div'); summaryEl.className = 'summary'; summaryEl.innerHTML = propData.summary; propBlock.appendChild(summaryEl); }
+
+        // --- Bandgap Plot Integration ---
+        if (sectionKey === 'electrical_properties' && propKey === 'band_gap') {
+            const equationDetails = propData.details?.equations?.find(eq => eq.name === "Hansen E_g(x,T) Empirical Relation");
+            if (equationDetails) {
+                const plotControlsId = `bandgap-plot-controls-${sectionKey}-${propKey}`;
+                const plotContainerId = `bandgap-plot-container-${sectionKey}-${propKey}`;
+                const sliderId = `temp-slider-${sectionKey}-${propKey}`;
+                const valueId = `temp-value-${sectionKey}-${propKey}`;
+
+                const plotWrapper = document.createElement('div');
+                plotWrapper.className = 'bandgap-plot-wrapper';
+
+                const plotDiv = document.createElement('div');
+                plotDiv.id = plotContainerId;
+                plotDiv.className = 'bandgap-plot-container';
+                plotDiv.innerHTML = `<p style="text-align:center; padding: 20px; color: #888;">Loading Bandgap Plot...</p>`;
+                plotWrapper.appendChild(plotDiv);
+
+                const controlsDiv = document.createElement('div');
+                controlsDiv.id = plotControlsId;
+                controlsDiv.className = 'plot-controls';
+                controlsDiv.innerHTML = `
+                    <label for="${sliderId}">Temperature:</label>
+                    <input type="range" id="${sliderId}" min="4" max="300" step="1" value="77">
+                    <span id="${valueId}" class="temp-value-display">77 K</span>
+                `;
+                plotWrapper.appendChild(controlsDiv);
+                propBlock.appendChild(plotWrapper);
+
+                requestAnimationFrame(() => {
+                    if (typeof initializeBandgapPlot === 'function') {
+                        try {
+                            initializeBandgapPlot(plotContainerId, sliderId, valueId, equationDetails);
+                        } catch(plotError) {
+                             console.error(`Error initializing Bandgap Plot for ${plotContainerId}:`, plotError);
+                             const targetPlotDiv = document.getElementById(plotContainerId);
+                             if (targetPlotDiv) targetPlotDiv.innerHTML = `<p class="error-message">Error initializing plot: ${plotError.message}</p>`;
+                        }
+                    } else {
+                        console.error("Plot initialization function 'initializeBandgapPlot' not found.");
+                         const targetPlotDiv = document.getElementById(plotContainerId);
+                         if (targetPlotDiv) targetPlotDiv.innerHTML = '<p class="error-message">Plotting function missing.</p>';
+                    }
+                });
+            } else {
+                 console.warn(`[renderPropertyBlock] Hansen equation data not found for ${sectionKey}.${propKey}, skipping plot.`);
+            }
+        }
+        // --- End Bandgap Plot Integration ---
+
 
         // --- Visualization Integration (Calling THREE.JS viewer) ---
         if (propKey === 'crystal_structure' && propData.details && propData.details.visualization_data) {
             const vizData = propData.details.visualization_data;
-             // Basic validation for Three.js viewer data
              if (!vizData || typeof vizData !== 'object' || !vizData.atom_info || !vizData.composition || !vizData.lattice_constants) {
                  console.error(`[renderPropertyBlock] Invalid viz_data for '${propKey}'. Missing fields needed for Three.js viewer.`);
                  const errorDiv = document.createElement('div'); errorDiv.className = 'error-message'; errorDiv.textContent = 'Error: Visualization data is invalid or incomplete.'; propBlock.appendChild(errorDiv);
@@ -174,7 +387,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const viewerContainerId = vizData.container_id || `viewer-container-${propKey}-${Date.now()}`;
                 const viewerWrapper = document.createElement('div'); viewerWrapper.className = 'crystal-viewer-wrapper';
                 const viewerHeight = vizData.viewer_height || '450px'; viewerWrapper.style.setProperty('--viewer-height', viewerHeight);
-                // Ensure unique IDs for viewer and controls areas
                 const viewerAreaId = `${viewerContainerId}-viewer`;
                 const controlsAreaId = `${viewerContainerId}-controls`;
                 viewerWrapper.innerHTML = `
@@ -183,9 +395,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                         <div id="${controlsAreaId}" class="viewer-controls"><p style="padding:10px; color:#888;">Loading Controls...</p></div>
                     </div>`;
                 propBlock.appendChild(viewerWrapper);
-                 // Delay initialization slightly to ensure elements are in the DOM
+
                 requestAnimationFrame(() => {
-                     // Check for Three.js components existence BEFORE calling the init function
                      let missingLibs = [];
                      if (typeof THREE === 'undefined') missingLibs.push("THREE (core)");
                      if (typeof THREE !== 'undefined' && typeof THREE.OrbitControls === 'undefined') missingLibs.push("OrbitControls.js");
@@ -197,20 +408,18 @@ document.addEventListener("DOMContentLoaded", async () => {
                         if(targetViewerEl) targetViewerEl.innerHTML = `<p class="error-message" style="padding: 20px;">Error: Required Three.js components (${missingLibs.join(', ')}) failed to load. Check script inclusion and order.</p>`;
                         const targetControlsEl = document.getElementById(controlsAreaId);
                         if(targetControlsEl) targetControlsEl.innerHTML = '';
-                        return; // Stop initialization if libs are missing
+                        return;
                      }
 
-                     // Check if the specific Three.js initializer exists
                      if (typeof initializeSimplifiedThreeJsViewer === 'function') {
                         try {
-                            // Pass the specific IDs for viewer and controls areas
                             const targetViewerEl = document.getElementById(viewerAreaId);
                             const targetControlsEl = document.getElementById(controlsAreaId);
                             if(targetViewerEl && targetControlsEl) {
                                 console.log(`[renderPropertyBlock] Initializing Three.js viewer for ${viewerAreaId}`);
-                                initializeSimplifiedThreeJsViewer(viewerAreaId, controlsAreaId, vizData, allDetails);
+                                // Pass the specific materialData object
+                                initializeSimplifiedThreeJsViewer(viewerAreaId, controlsAreaId, vizData, materialData);
                             } else {
-                                // This case should be rare if the innerHTML is set correctly above
                                 console.error(`Target elements for Three.js viewer ${viewerContainerId} not found (Viewer: ${!!targetViewerEl}, Controls: ${!!targetControlsEl}).`);
                                 if(targetViewerEl) targetViewerEl.innerHTML = '<p class="error-message">Error: Could not find viewer sub-element.</p>';
                             }
@@ -220,69 +429,93 @@ document.addEventListener("DOMContentLoaded", async () => {
                             if(targetViewerEl) targetViewerEl.innerHTML = `<p class="error-message">Error initializing 3D viewer: ${e.message}. Check console.</p>`;
                         }
                      } else {
-                         console.error("Viewer initialization function 'initializeSimplifiedThreeJsViewer' not found! Check if the function definition is included correctly in this file.");
+                         console.error("Viewer initialization function 'initializeSimplifiedThreeJsViewer' not found!");
                          const targetViewerEl = document.getElementById(viewerAreaId);
-                         if(targetViewerEl) targetViewerEl.innerHTML = '<p class="error-message">Error: Viewer initialization code (initializeSimplifiedThreeJsViewer) not found.</p>';
+                         if(targetViewerEl) targetViewerEl.innerHTML = '<p class="error-message">Error: Viewer initialization code not found.</p>';
                      }
                 });
              }
         } // --- End Visualization Integration ---
 
-        // --- Process other details subsections (logic from your second file) ---
+        // --- Process other details subsections ---
         if (propData.details && typeof propData.details === 'object') {
             for (const [detailKey, detailContent] of Object.entries(propData.details)) {
-                 if (detailKey === 'visualization_data') continue; // Already handled
-                 // Skip empty content
-                 if (!detailContent || (Array.isArray(detailContent) && detailContent.length === 0) || (typeof detailContent === 'object' && !Array.isArray(detailContent) && Object.keys(detailContent).length === 0) ) continue;
+                 if (detailKey === 'visualization_data') continue; // Already handled above
+                 if (!detailContent || (Array.isArray(detailContent) && detailContent.length === 0) || (typeof detailContent === 'object' && !Array.isArray(detailContent) && Object.keys(detailContent).length === 0)) continue;
+
+                 // Skip rendering 'equations' if the bandgap plot exists for this specific property block
+                 if (sectionKey === 'electrical_properties' && propKey === 'band_gap' && detailKey === 'equations' && propBlock.querySelector('.bandgap-plot-container')) {
+                     console.log(`[renderPropertyBlock] Skipping redundant equation block render for ${sectionKey}.${propKey} as plot exists.`);
+                     continue;
+                 }
 
                  const subsection = document.createElement('div');
                  subsection.className = `detail-subsection ${detailKey.replace(/ /g, '_').toLowerCase()}`;
 
                  const subsectionTitle = document.createElement('h4');
-                 subsectionTitle.textContent = detailKey.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                 // Only add title if content is not a simple string (avoids redundant titles)
-                 if (typeof detailContent !== 'string') {
+                 const titleText = detailKey.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                 subsectionTitle.setAttribute('data-title', titleText); // Use data-title for styling
+                 // Add h4 only if content isn't just a string OR it's the 'equations' section
+                 if (typeof detailContent !== 'string' || detailKey === 'equations') {
                     subsection.appendChild(subsectionTitle);
                  }
 
-                 // Simplified content rendering logic (ensure this matches the full logic you had if needed)
-                 if (Array.isArray(detailContent) && detailKey !== 'equations') {
+                 // Render different detail types
+                 if (Array.isArray(detailContent) && detailKey !== 'equations' && detailKey !== 'measurement_characterization') {
                      const ul = document.createElement('ul');
-                     detailContent.forEach(item => { const li = document.createElement('li'); li.innerHTML = item; ul.appendChild(li); });
-                     subsection.appendChild(ul);
-                 } else if (detailKey === 'equations' && Array.isArray(detailContent)) {
+                     detailContent.forEach(item => {
+                        if (item === null || item === undefined) return;
+                        const li = document.createElement('li');
+                        li.innerHTML = typeof item === 'string' ? item : JSON.stringify(item);
+                        ul.appendChild(li);
+                     });
+                     if (ul.children.length > 0) subsection.appendChild(ul);
+                 }
+                 else if (detailKey === 'equations' && Array.isArray(detailContent)) {
+                     let equationsAdded = 0;
                      detailContent.forEach(eq => {
                         if (typeof eq !== 'object' || eq === null) return;
-                         const eqBlock = document.createElement('div'); eqBlock.className = 'equation-block';
-                         // ... (Add full equation block generation logic here) ...
-                         if (eq.name) { const nameEl = document.createElement('span'); nameEl.className = 'eq-name'; nameEl.textContent = eq.name; eqBlock.appendChild(nameEl); }
-                         if (eq.description) { const descEl = document.createElement('p'); descEl.className = 'eq-desc'; descEl.innerHTML = eq.description; eqBlock.appendChild(descEl); }
-                         const formulaContainer = document.createElement('div'); formulaContainer.className = 'eq-formula-container';
-                         if (eq.formula_html) { formulaContainer.innerHTML = eq.formula_html; formulaContainer.classList.add('eq-formula-html'); }
-                         else if (eq.formula_plain) { formulaContainer.textContent = eq.formula_plain; formulaContainer.classList.add('eq-formula-plain'); }
-                         else { formulaContainer.textContent = "[Formula not available]"; formulaContainer.style.cssText = 'font-style: italic; color: #888;'; }
-                         eqBlock.appendChild(formulaContainer);
-                         if(eq.units){ const unitsEl = document.createElement('div'); unitsEl.className = 'eq-units'; unitsEl.innerHTML = `Units: ${eq.units}`; eqBlock.appendChild(unitsEl); }
-                         if (eq.variables && Array.isArray(eq.variables) && eq.variables.length > 0) { const varsDiv = document.createElement('div'); varsDiv.className = 'eq-vars'; varsDiv.innerHTML = '<strong>Variables:</strong>'; const varsUl = document.createElement('ul'); eq.variables.forEach(v => { if (typeof v === 'object' && v !== null && v.symbol && v.description) { const li = document.createElement('li'); li.innerHTML = `<strong>${v.symbol}:</strong> ${v.description}`; varsUl.appendChild(li); } }); if (varsUl.children.length > 0) { varsDiv.appendChild(varsUl); eqBlock.appendChild(varsDiv); } }
-                         if (eq.ref && allDetails.references && allDetails.references[eq.ref]) { const refEl = document.createElement('div'); refEl.className = 'eq-ref'; refEl.innerHTML = `Ref: <a href="#ref-${eq.ref}" class="ref-link" data-ref-key="${eq.ref}">[${eq.ref}]</a>`; eqBlock.appendChild(refEl); }
-                         subsection.appendChild(eqBlock);
+                        const eqBlock = document.createElement('div'); eqBlock.className = 'equation-block';
+                        let blockHasContent = false;
+                        if (eq.name) { const nameEl = document.createElement('span'); nameEl.className = 'eq-name'; nameEl.textContent = eq.name; eqBlock.appendChild(nameEl); blockHasContent = true; }
+                        if (eq.description) { const descEl = document.createElement('p'); descEl.className = 'eq-desc'; descEl.innerHTML = eq.description; eqBlock.appendChild(descEl); blockHasContent = true; }
+                        const formulaContainer = document.createElement('div'); formulaContainer.className = 'eq-formula-container';
+                        if (eq.formula_html) { formulaContainer.innerHTML = eq.formula_html; formulaContainer.classList.add('eq-formula-html'); blockHasContent = true; }
+                        else if (eq.formula_plain) { formulaContainer.textContent = eq.formula_plain; formulaContainer.classList.add('eq-formula-plain'); blockHasContent = true; }
+                        else { formulaContainer.textContent = "[Formula not available]"; formulaContainer.style.cssText = 'font-style: italic; color: #888;'; }
+                        eqBlock.appendChild(formulaContainer);
+                        if(eq.units){ const unitsEl = document.createElement('div'); unitsEl.className = 'eq-units'; unitsEl.innerHTML = `Units: ${eq.units}`; eqBlock.appendChild(unitsEl); blockHasContent = true; }
+                        if (eq.variables && Array.isArray(eq.variables) && eq.variables.length > 0) { const varsDiv = document.createElement('div'); varsDiv.className = 'eq-vars'; varsDiv.innerHTML = '<strong>Variables:</strong>'; const varsUl = document.createElement('ul'); eq.variables.forEach(v => { if (typeof v === 'object' && v !== null && v.symbol && v.description) { const li = document.createElement('li'); li.innerHTML = `<strong>${v.symbol}:</strong> ${v.description}`; varsUl.appendChild(li); } }); if (varsUl.children.length > 0) { varsDiv.appendChild(varsUl); eqBlock.appendChild(varsDiv); blockHasContent = true; } }
+                        // Reference check using materialData
+                        if (eq.ref && materialData.references && materialData.references[eq.ref]) {
+                            const refEl = document.createElement('div'); refEl.className = 'eq-ref'; refEl.innerHTML = `Ref: <a href="#ref-${eq.ref}" class="ref-link" data-ref-key="${eq.ref}">[${eq.ref}]</a>`; eqBlock.appendChild(refEl); blockHasContent = true;
+                        }
+                        if (blockHasContent) {
+                             subsection.appendChild(eqBlock);
+                             equationsAdded++;
+                         }
                      });
-                 } else if (detailKey === 'measurement_characterization' && typeof detailContent === 'object') {
-                     // ... (Add measurement/characterization block generation logic here if needed) ...
-                     if(detailContent.techniques && Array.isArray(detailContent.techniques) && detailContent.techniques.length > 0){ const techDiv = document.createElement('div'); techDiv.className = "techniques"; const ulTech = document.createElement('ul'); detailContent.techniques.forEach(tech => { const li = document.createElement('li'); li.innerHTML = tech; ulTech.appendChild(li); }); techDiv.appendChild(ulTech); subsection.appendChild(techDiv); }
-                     if(detailContent.considerations && Array.isArray(detailContent.considerations) && detailContent.considerations.length > 0){ const considDiv = document.createElement('div'); considDiv.className = "considerations"; if (subsection.querySelector('.techniques')) { const considTitle = document.createElement('p'); considTitle.innerHTML = '<strong>Considerations:</strong>'; considTitle.style.cssText = 'margin-top: 1rem; margin-bottom: 0.25rem; font-weight: bold;'; considDiv.appendChild(considTitle); } const ulConsid = document.createElement('ul'); detailContent.considerations.forEach(note => { const li = document.createElement('li'); li.innerHTML = note; ulConsid.appendChild(li); }); considDiv.appendChild(ulConsid); subsection.appendChild(considDiv); }
-                 } else if (typeof detailContent === 'string') {
+                     if (equationsAdded === 0) subsection.innerHTML = ''; // Clear if no equations were actually added
+                 }
+                 else if (detailKey === 'measurement_characterization' && typeof detailContent === 'object') {
+                     let mcContentAdded = false;
+                     if(detailContent.techniques && Array.isArray(detailContent.techniques) && detailContent.techniques.length > 0){ const techDiv = document.createElement('div'); techDiv.className = "techniques"; const ulTech = document.createElement('ul'); detailContent.techniques.forEach(tech => { const li = document.createElement('li'); li.innerHTML = tech; ulTech.appendChild(li); }); techDiv.appendChild(ulTech); subsection.appendChild(techDiv); mcContentAdded = true;}
+                     if(detailContent.considerations && Array.isArray(detailContent.considerations) && detailContent.considerations.length > 0){ const considDiv = document.createElement('div'); considDiv.className = "considerations"; if (mcContentAdded) { const considTitle = document.createElement('p'); considTitle.innerHTML = '<strong>Considerations:</strong>'; considTitle.style.cssText = 'margin-top: 1rem; margin-bottom: 0.25rem; font-weight: bold;'; considDiv.appendChild(considTitle); } const ulConsid = document.createElement('ul'); detailContent.considerations.forEach(note => { const li = document.createElement('li'); li.innerHTML = note; ulConsid.appendChild(li); }); considDiv.appendChild(ulConsid); subsection.appendChild(considDiv); mcContentAdded = true; }
+                     if (!mcContentAdded) subsection.innerHTML = '';
+                 }
+                 else if (typeof detailContent === 'string') {
                      const p = document.createElement('p'); p.innerHTML = detailContent;
                      subsection.appendChild(p);
-                 } else { // Fallback for unexpected structures
-                    console.warn(`Unhandled detail structure for key '${detailKey}'. Displaying JSON.`);
+                 }
+                 else { // Fallback for unexpected structures
+                    console.warn(`Unhandled detail structure for key '${detailKey}' in ${sectionKey}.${propKey}. Displaying JSON.`);
                     const pre = document.createElement('pre'); pre.textContent = JSON.stringify(detailContent, null, 2);
                     pre.style.cssText = 'font-size: 0.8em; background-color: #f0f0f0; padding: 8px; border: 1px solid #ccc; border-radius: 4px; overflow-x: auto; margin-top: 0.5rem;';
                     subsection.appendChild(pre);
                  }
 
-                 // Add subsection only if it has content
-                 if(subsection.children.length > 0) {
+                 // Add subsection only if it has rendered content
+                 if(subsection.children.length > (subsection.querySelector('h4') ? 1 : 0)) { // Check if more than just the H4 exists
                     propBlock.appendChild(subsection);
                  }
             }
@@ -294,28 +527,43 @@ document.addEventListener("DOMContentLoaded", async () => {
     function handleRefLinkClick(event) {
         const link = event.target.closest('a.ref-link[data-ref-key]');
         if (link) {
-            event.preventDefault(); const targetId = `ref-${link.dataset.refKey}`; const targetElement = document.getElementById(targetId);
+            event.preventDefault(); // Prevent default anchor jump behavior
+            const targetId = `ref-${link.dataset.refKey}`;
+            const targetElement = document.getElementById(targetId);
             if (targetElement) {
-                const elementRect = targetElement.getBoundingClientRect();
-                const absoluteElementTop = elementRect.top + window.pageYOffset;
-                const headerOffset = 60; // Adjust if you have a fixed header
-                const viewportHeight = window.innerHeight;
-                const desiredScrollPos = absoluteElementTop - (viewportHeight * 0.3) - headerOffset;
-                window.scrollTo({ top: Math.max(0, desiredScrollPos), behavior: 'smooth' });
+                // Highlight logic
                 document.querySelectorAll('#references-list li.highlight-ref').forEach(el => el.classList.remove('highlight-ref'));
                 targetElement.classList.add('highlight-ref');
+                // Optionally remove highlight after a delay
                 setTimeout(() => targetElement.classList.remove('highlight-ref'), 2500);
+
+                // Smooth scroll logic (adjusted for better centering)
+                const elementRect = targetElement.getBoundingClientRect();
+                const absoluteElementTop = elementRect.top + window.pageYOffset;
+                // Estimate fixed header height (adjust if necessary or get dynamically)
+                const headerOffset = 60;
+                const middleOfViewport = window.innerHeight / 2;
+                // Calculate scroll position to center the element, accounting for header
+                const scrollPosition = absoluteElementTop - middleOfViewport + (targetElement.offsetHeight / 2) - headerOffset;
+
+                window.scrollTo({
+                    top: Math.max(0, scrollPosition), // Ensure not scrolling above top
+                    behavior: 'smooth'
+                });
+
+            } else {
+                console.warn(`Reference target element with ID '${targetId}' not found.`);
             }
-            else { console.warn(`Reference target element with ID '${targetId}' not found.`); }
         }
      } // --- End handleRefLinkClick ---
 
 
     // --- ================================================================= ---
     // ---      *** SIMPLIFIED Three.js Initializer START (FIXED v3) ***      ---
-    // ---     (Fixes: Outline visibility, Outline offset, Stray comment)    ---
+    // ---     (No changes needed here for the plot feature, only ensure    ---
+    // ---      materialData is passed and used correctly)                ---
     // --- ================================================================= ---
-    function initializeSimplifiedThreeJsViewer(viewerElementId, controlsElementId, vizData, allMaterialDetails) {
+    function initializeSimplifiedThreeJsViewer(viewerElementId, controlsElementId, vizData, materialData) { // Changed last parameter name
         console.log(`--- [Three.js Simplified Init v3] Initializing Viewer for ${viewerElementId} ---`);
 
         const viewerContainer = document.getElementById(viewerElementId);
@@ -344,7 +592,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         let unitCellOutlineGeometry = null; // Reusable geometry for the outline edges
         let isSpinning = false;
         let showLabels = true; // Default label visibility
-        let showOutline = true; // *** FIX 1: Separate state for outline visibility *** (Default to true)
+        let showOutline = true; // Default outline visibility
         let cdConcentration = vizData.composition?.initial_x ?? 0.5;
         let currentSupercellDims = { nx: 1, ny: 1, nz: 1 }; // Default state, updated in init/UI
         const spinSpeed = 0.005;
@@ -411,7 +659,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                 const width = viewerContainer.clientWidth; const height = viewerContainer.clientHeight;
                 camera = new THREE.PerspectiveCamera(60, width / height, 0.1, 1000);
-                calculateLatticeConstant(cdConcentration);
+                calculateLatticeConstant(cdConcentration); // Uses atomInfo from vizData
 
                 // Set initial supercell from vizData options or default to 1
                 const initialSizeOption = vizData.supercell_options && Array.isArray(vizData.supercell_options) ? vizData.supercell_options[0] : 1;
@@ -436,7 +684,9 @@ document.addEventListener("DOMContentLoaded", async () => {
                 viewerContainer.appendChild(css2dContainer);
 
                 css2DRenderer = new THREE.CSS2DRenderer(); css2DRenderer.setSize(width, height);
+                // *** Append CSS2DRenderer to its dedicated overlay container ***
                 css2dContainer.appendChild(css2DRenderer.domElement);
+                css2DRenderer.domElement.classList.add('css2d-renderer-overlay'); // Add class for potential styling/debugging
 
                 controls = new THREE.OrbitControls(camera, renderer.domElement);
                 controls.enableDamping = true; controls.dampingFactor = 0.1;
@@ -464,6 +714,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         // --- Calculate Lattice Constant ---
         function calculateLatticeConstant(currentConcentration) {
+             const atomInfo = vizData?.atom_info; // Get atomInfo from vizData
+             if (!atomInfo) { console.error("AtomInfo missing in vizData for lattice calculation."); lattice_a = 6.5; return; }
+
             let calculated_a = 0;
             if (vizData.composition.min_x !== vizData.composition.max_x && latticeConstantsSource && Object.keys(latticeConstantsSource).length >= 2) {
                  const cation_host_symbol = Object.keys(atomInfo).find(key => atomInfo[key]?.role === 'cation_host');
@@ -487,18 +740,19 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         // --- Generate Atom Positions (Centered) ---
-        // *** Returns object including centerOffset ***
         function generateCrystalData(nx, ny, nz, currentCdConcentration) {
              const atoms = [];
              calculateLatticeConstant(currentCdConcentration); // Ensure lattice_a is up-to-date
+
+             const atomInfo = vizData?.atom_info; // Get atomInfo from vizData
+             if (!atomInfo) { console.error("AtomInfo missing in vizData for atom generation."); return { atoms: [], centerOffset: new THREE.Vector3() }; }
 
              const cation_host_symbol = Object.keys(atomInfo).find(key => atomInfo[key]?.role === 'cation_host');
              const cation_subst_symbol = Object.keys(atomInfo).find(key => atomInfo[key]?.role === 'cation_subst');
              const anion_symbol = Object.keys(atomInfo).find(key => atomInfo[key]?.role === 'anion');
              if (!anion_symbol || (vizData.composition.min_x !== vizData.composition.max_x && (!cation_host_symbol || !cation_subst_symbol))) {
                  console.error("Atom roles missing for data generation.");
-                 // Return empty structure to prevent further errors
-                 return { atoms: [], centerOffset: new THREE.Vector3() };
+                 return { atoms: [], centerOffset: new THREE.Vector3() }; // Return empty structure
              }
 
              const supercellCenter = new THREE.Vector3(
@@ -527,8 +781,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                  });
              }}}
              console.log(`[Three.js] Generated ${atoms.length} atoms for ${nx}x${ny}x${nz} centered supercell.`);
-             // *** Return the center offset as well, needed for outline positioning ***
-             return { atoms: atoms, centerOffset: supercellCenter };
+             return { atoms: atoms, centerOffset: supercellCenter }; // Return atoms and offset
          }
 
 
@@ -544,6 +797,10 @@ document.addEventListener("DOMContentLoaded", async () => {
              disposeMeshes(crystalModelGroup); // Clear existing objects first (except outline)
 
              if (!atomData || atomData.length === 0) { console.warn("[Three.js updateModel] No atom data provided."); return; }
+
+             const atomInfo = vizData?.atom_info; // Get atomInfo from vizData
+             if (!atomInfo) { console.error("AtomInfo missing in vizData for model creation."); return; }
+
              const currentSphereScale = sphereScales[currentViewStyle] || sphereScales.ballAndStick;
              const jsonBondCutoff = Number(vizData.bond_cutoff);
              const bondCutoff = (!isNaN(jsonBondCutoff) && jsonBondCutoff > 0) ? jsonBondCutoff : (lattice_a * fallbackBondCutoffFactor);
@@ -583,12 +840,10 @@ document.addEventListener("DOMContentLoaded", async () => {
                      if (!atom1?.position || !atom2?.position || isNaN(atom1.position.x) || isNaN(atom2.position.x)) continue;
                      const distSq = atom1.position.distanceToSquared(atom2.position);
                      if (distSq > 1e-6 && distSq < bondCutoffSq) {
-                          // Optional Role Filter
                           const role1 = atomInfo[atom1.element]?.role ?? 'unknown'; const role2 = atomInfo[atom2.element]?.role ?? 'unknown';
                           const isCation1 = role1.includes('cation'); const isAnion1 = role1 === 'anion';
                           const isCation2 = role2.includes('cation'); const isAnion2 = role2 === 'anion';
                           if (!((isCation1 && isAnion2) || (isAnion1 && isCation2))) { continue; }
-                          // End Optional Filter
                           const distance = Math.sqrt(distSq); if (isNaN(distance) || distance <= 1e-3) continue;
                           const stickMesh = new THREE.Mesh(stickGeometry, bondMaterial);
                           stickMesh.position.copy(atom1.position).add(atom2.position).multiplyScalar(0.5);
@@ -614,44 +869,27 @@ document.addEventListener("DOMContentLoaded", async () => {
             console.log("[Three.js Simplified] Created Unit Cell Outline Geometry");
         }
 
-        // --- Create or Update Unit Cell Outline Object (Called during updates) ---
-        // *** FIX 2: Corrected Positioning relative to centered atoms ***
+        // --- Create or Update Unit Cell Outline Object ---
         function createOrUpdateUnitCellOutlineObject(supercellCenterOffset) { // Takes the calculated center offset
-             // Remove the old outline object if it exists
              if (unitCellOutline && unitCellOutline.parent) {
                  crystalModelGroup.remove(unitCellOutline);
-                 // Do not dispose geometry here, it's shared (unitCellOutlineGeometry)
              }
-
              if (!unitCellOutlineGeometry) { console.error("Unit cell outline geometry not created!"); return; }
              if (!supercellCenterOffset) { console.warn("Supercell center offset not provided for outline positioning."); return;}
 
-             // Create the LineSegments object using the shared geometry and material
              unitCellOutline = new THREE.LineSegments(unitCellOutlineGeometry, unitCellMaterial);
-
-             // --- Corrected Positioning ---
-             // Position the origin of the outline geometry at the origin of the first unit cell
-             // within the centered coordinate system of the crystalModelGroup.
              const firstCellOriginInGroup = new THREE.Vector3(0, 0, 0).sub(supercellCenterOffset);
              unitCellOutline.position.copy(firstCellOriginInGroup);
-             // --------------------------
-
-             // Scale the unit cube geometry to the current lattice constant
              unitCellOutline.scale.set(lattice_a, lattice_a, lattice_a);
-
-             // *** FIX 1: Set visibility based on the separate showOutline state ***
              unitCellOutline.visible = showOutline;
              crystalModelGroup.add(unitCellOutline); // Add to the main group
-
              console.log(`[Three.js Simplified] Unit Cell Outline ${unitCellOutline.visible ? 'shown' : 'hidden'} at position ${unitCellOutline.position.x.toFixed(2)},${unitCellOutline.position.y.toFixed(2)},${unitCellOutline.position.z.toFixed(2)}`);
          }
 
 
         // --- Update Crystal Model (Wrapper) ---
-        // *** Modified to pass center offset ***
         function updateCrystalModel() {
             console.log("[Three.js updateCrystalModel] Generating atom data...");
-            // Regenerate atom positions and get the center offset
             const generationResult = generateCrystalData(currentSupercellDims.nx, currentSupercellDims.ny, currentSupercellDims.nz, cdConcentration);
             if (!generationResult || !generationResult.atoms) { console.error("Failed atom data generation."); return; }
             const atomData = generationResult.atoms;
@@ -661,8 +899,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             createOrUpdateBallAndStickModel(atomData);
 
             console.log("[Three.js updateCrystalModel] Updating unit cell outline...");
-            // Pass the center offset needed for correct positioning
-            createOrUpdateUnitCellOutlineObject(centerOffset);
+            createOrUpdateUnitCellOutlineObject(centerOffset); // Pass the center offset
 
             // Update camera limits
             if (controls) {
@@ -676,7 +913,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
         // --- UI Setup ---
-        // *** FIX 1 & 3: Separate Outline Button, Correct Initial State, Remove Stray Comment ***
         function setupUI() {
              controlsContainer.innerHTML = ''; // Clear previous controls
              const controlsWrapper = document.createElement('div');
@@ -687,14 +923,14 @@ document.addEventListener("DOMContentLoaded", async () => {
              const labelBtnId = `${controlsElementId}-labelToggleButton`;
              const styleSelectId = `${controlsElementId}-styleSelect`;
              const supercellSelectId = `${controlsElementId}-supercellSelect`;
-             const outlineBtnId = `${controlsElementId}-outlineToggleButton`; // *** ID for outline button ***
+             const outlineBtnId = `${controlsElementId}-outlineToggleButton`;
              const legendListId = `${controlsElementId}-legendList`;
 
              const showCompositionSlider = vizData.composition.min_x !== vizData.composition.max_x;
              const supercellOptions = vizData.supercell_options || [1];
 
              controlsWrapper.innerHTML = `
-                 <h4>${allMaterialDetails.materialName || 'Material'} Controls</h4>
+                 <h4>${materialData.materialName || 'Material'} Controls</h4>
 
                  ${showCompositionSlider ? `
                  <div class="control-group">
@@ -721,7 +957,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                  <div class="control-group action-buttons">
                     <button id="${labelBtnId}">${showLabels ? 'Hide' : 'Show'} Labels</button>
-                    
                     <button id="${outlineBtnId}">${showOutline ? 'Hide' : 'Show'} Outline</button>
                     <button id="${spinBtnId}">${isSpinning ? 'Stop Spin' : 'Start Spin'}</button>
                  </div>
@@ -742,7 +977,7 @@ document.addEventListener("DOMContentLoaded", async () => {
              const labelButton = document.getElementById(labelBtnId);
              const styleSelect = document.getElementById(styleSelectId);
              const supercellSelect = document.getElementById(supercellSelectId);
-             const outlineButton = document.getElementById(outlineBtnId); // *** Get outline button ***
+             const outlineButton = document.getElementById(outlineBtnId);
 
              // Composition Slider Listener
              if (slider) {
@@ -769,29 +1004,31 @@ document.addEventListener("DOMContentLoaded", async () => {
              if (labelButton) {
                  labelButton.addEventListener('click', () => { showLabels = !showLabels; labelButton.textContent = showLabels ? 'Hide Labels' : 'Show Labels'; updateCrystalModel(); });
              }
-             // *** FIX 1: Outline Toggle Button Listener ***
+             // Outline Toggle Button Listener
              if (outlineButton) {
                 outlineButton.addEventListener('click', () => {
                     showOutline = !showOutline; // Toggle outline state
                     if (unitCellOutline) { unitCellOutline.visible = showOutline; } // Update visibility directly
-                    else { console.warn("Outline object missing, cannot toggle visibility."); } // Should not happen if init runs ok
+                    else { console.warn("Outline object missing, cannot toggle visibility."); }
                     outlineButton.textContent = showOutline ? 'Hide Outline' : 'Show Outline'; // Update button text
-                    // No need to call updateCrystalModel, just need to render the change
                     if (renderer && scene && camera) { renderer.render(scene, camera); if (css2DRenderer) css2DRenderer.render(scene, camera); }
                     else { console.warn("Cannot re-render outline visibility change - renderer missing?"); }
                 });
              }
 
-             populateLegendUI(legendListId);
+             populateLegendUI(legendListId, materialData); // Pass materialData
              console.log("[Three.js Simplified] UI Setup Complete");
         }
 
         // --- Populate Legend UI ---
-        function populateLegendUI(legendListId) {
+        // Modified to accept materialData, but uses atomInfo from vizData
+        function populateLegendUI(legendListId, materialData) {
              const legendList = document.getElementById(legendListId);
              if (!legendList) { console.error("Legend list element not found:", legendListId); return; }
              legendList.innerHTML = ''; // Clear existing
-             if(!atomInfo || Object.keys(atomInfo).length === 0) { console.warn("AtomInfo empty."); legendList.innerHTML = '<li>Legend missing.</li>'; return; }
+
+             const atomInfo = vizData?.atom_info; // Get atomInfo from vizData passed into main function
+             if(!atomInfo || Object.keys(atomInfo).length === 0) { console.warn("AtomInfo empty in vizData."); legendList.innerHTML = '<li>Legend missing.</li>'; return; }
 
              Object.entries(atomInfo).forEach(([symbol, info]) => {
                  const upperSymbol = symbol.toUpperCase(); const material = materials[upperSymbol];
