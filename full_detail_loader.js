@@ -128,67 +128,165 @@ document.addEventListener("DOMContentLoaded", async () => {
     else { console.warn("[Full Detail Loader] Material name element not found."); }
     document.title = `${materialName} - Full Details`;
 
-    // --- Construct file path ---
-    // Determine which JSON file to load based on the material name
-    let detailFilePath;
-    const safeMaterialNameLower = materialName.replace(/ /g, '_').toLowerCase();
-    const specificDetailFileName = `${safeMaterialNameLower}_details.json`; // e.g., mercury_cadmium_telluride_details.json
-
-    // Check if a specific file exists (simplistic check, replace with actual existence check if needed)
-    // For this example, we *know* which file to use if the name matches.
-    if (materialName === "Mercury Cadmium Telluride") {
-        // *** CORRECTED PATH ***
-        detailFilePath = `./details/${specificDetailFileName}`;
-        console.log(`[Full Detail Loader] Using specific detail file: '${detailFilePath}'`);
-    } else {
-        // *** CORRECTED FALLBACK PATH ***
-        detailFilePath = `./details/material_details.json`; // Fallback to the main details file in details folder
-        console.log(`[Full Detail Loader] Using main details file: '${detailFilePath}'`);
-    }
-    // *****************************************************************************
-
-    // --- Fetch and Process Data ---
-    let allMaterialDetails; // Holds the full JSON content (either the single object or the map)
+    // --- =============================================================== ---
+    // ---      *** START: REVISED File Path and Fetch Logic v2 ***        ---
+    // --- =============================================================== ---
     let materialData; // Variable to hold the specific material's data object
 
+    // 1. Generate the specific filename based on the decoded name
+    const safeChars = materialName
+        .toLowerCase()
+        .replace(/ /g, '_')
+        .replace(/[^\w-]+/g, ''); // Remove potentially problematic chars like ()
+    const specificDetailFileName = `${safeChars}_details.json`;
+    const specificDetailFilePath = `./details/${specificDetailFileName}`;
+    const mainDetailFilePath = `./details/material_details.json`;
+
+    console.log(`[Full Detail Loader] Generating specific file path: ${specificDetailFilePath} (from '${materialName}')`);
+
     try {
-        const response = await fetch(detailFilePath);
-        console.log(`[Full Detail Loader] Fetch response status for ${detailFilePath}: ${response.status} ${response.statusText}`);
-        if (!response.ok) {
-             const errorText = await response.text(); console.error(`Fetch failed: ${response.status}.`, errorText);
-            if (response.status === 404) { throw new Error(`Details file not found: ${detailFilePath}. Check file name and path.`); }
-            else { throw new Error(`HTTP error ${response.status} fetching ${detailFilePath}`); }
+        let response = null;
+        let jsonData = null;
+        let dataSource = 'none';
+        let specificFetchStatus = null; // Track specific fetch status separately
+
+        // 2. Try fetching the specific file
+        try {
+            console.log(`[Full Detail Loader] Attempt 1: Fetching specific file: ${specificDetailFilePath}`);
+            response = await fetch(specificDetailFilePath);
+            specificFetchStatus = response.status; // Store status of this attempt
+            if (response.ok) {
+                jsonData = await response.json();
+                dataSource = 'specific';
+                console.log(`[Full Detail Loader] Success fetching specific file.`);
+            } else {
+                console.log(`[Full Detail Loader] Fetch specific file failed with status: ${response.status}`);
+                if (response.status !== 404) {
+                    // Log non-404 errors immediately if they happen
+                    console.error(`[Full Detail Loader] Non-404 Error fetching specific file: ${response.status} ${response.statusText}`);
+                }
+            }
+        } catch (fetchError) {
+            console.error(`[Full Detail Loader] Network or other error fetching specific file ${specificDetailFilePath}:`, fetchError);
+            // Proceed to fallback even on network errors for the specific file
+            specificFetchStatus = 'Network Error'; // Indicate network issue
         }
 
-        // Parse the JSON content
-        const rawJson = await response.json();
-        allMaterialDetails = rawJson; // Store the raw JSON content
-
-        // Extract the specific material's data based on which file was loaded
-        if (detailFilePath.endsWith('material_details.json')) {
-            // Original structure: find the material within the main JSON object
-            if (typeof allMaterialDetails !== 'object' || allMaterialDetails === null) throw new Error(`Invalid JSON structure in ${detailFilePath}. Expected top-level object.`);
-             materialData = allMaterialDetails[materialName];
-             if (!materialData) {
-                 // Try case-insensitive fallback
-                const lowerCaseMaterialName = materialName.toLowerCase();
-                const foundKey = Object.keys(allMaterialDetails).find(key => key.toLowerCase() === lowerCaseMaterialName);
-                if (foundKey) {
-                     materialData = allMaterialDetails[foundKey];
-                     console.warn(`[Full Detail Loader] Case-insensitive match found for "${materialName}" as "${foundKey}" in ${detailFilePath}.`);
+        // 3. If specific file fetch failed (jsonData is still null), try the fallback
+        if (jsonData === null) {
+            console.log(`[Full Detail Loader] Attempt 2: Fetching fallback file: ${mainDetailFilePath}`);
+            try {
+                const fallbackResponse = await fetch(mainDetailFilePath); // Use a new response variable for fallback
+                if (fallbackResponse.ok) {
+                    jsonData = await fallbackResponse.json(); // Parse the main file
+                    dataSource = 'main';
+                    console.log(`[Full Detail Loader] Success fetching fallback file.`);
                 } else {
-                    throw new Error(`Data for material '${materialName}' not found inside ${detailFilePath}.`);
+                     // If fallback file itself is not found or errors out
+                     throw new Error(`Fallback file fetch failed with status: ${fallbackResponse.status}`);
                 }
+            } catch (fallbackError) {
+                 console.error(`[Full Detail Loader] Error fetching/processing fallback file ${mainDetailFilePath}:`, fallbackError);
+                 // Construct error message indicating both attempts failed
+                 let specificErrorText = `Specific file ('${specificDetailFileName}') attempt failed`;
+                 if (specificFetchStatus) {
+                     specificErrorText += ` (status ${specificFetchStatus})`;
+                 } else {
+                     specificErrorText += ` (network/other error)`;
+                 }
+                 throw new Error(`Failed to load material data. ${specificErrorText}, and fallback file ('${mainDetailFilePath}') attempt also failed: ${fallbackError.message}`);
+            }
+        }
+
+        // 4. Extract materialData based on which source succeeded
+        if (dataSource === 'specific') {
+            materialData = jsonData;
+            if (typeof materialData !== 'object' || materialData === null) throw new Error(`Invalid JSON structure in dedicated file ${specificDetailFilePath}.`);
+            // Ensure materialName is present, using the decoded name if necessary
+            if (!materialData.materialName) {
+                 console.warn(`[Full Detail Loader] Adding 'materialName' from URL to data from specific file.`);
+                 materialData.materialName = materialName; // Use the decoded name from URL
+             } else if (materialData.materialName !== materialName) {
+                 console.warn(`[Full Detail Loader] Name mismatch: File='${materialData.materialName}', URL='${materialName}'. Using name from file.`);
+                 // Update page title to match file content if different
+                 if (materialNameEl) materialNameEl.textContent = materialData.materialName;
+                 document.title = `${materialData.materialName} - Full Details`;
+             }
+        } else if (dataSource === 'main') {
+            if (typeof jsonData !== 'object' || jsonData === null) throw new Error(`Invalid JSON structure in main file ${mainDetailFilePath}.`);
+            materialData = jsonData[materialName]; // Lookup using decoded name
+            if (!materialData) {
+                const lowerCaseMaterialName = materialName.toLowerCase();
+                const foundKey = Object.keys(jsonData).find(key => key.toLowerCase() === lowerCaseMaterialName);
+                if (foundKey) {
+                    materialData = jsonData[foundKey];
+                    console.warn(`[Full Detail Loader] Case-insensitive match found: '${foundKey}'.`);
+                    if (!materialData.materialName || materialData.materialName !== foundKey) {
+                         console.warn(`Updating materialName field to match key: ${foundKey}`);
+                         materialData.materialName = foundKey; if (materialNameEl) materialNameEl.textContent = foundKey; document.title = `${foundKey} - Full Details`;
+                    }
+                } else {
+                    throw new Error(`Material '${materialName}' not found in fallback file ${mainDetailFilePath}.`);
+                }
+            }
+             // Ensure materialName field exists even when loaded from main file
+             if (!materialData.materialName) {
+                 materialData.materialName = materialName;
              }
         } else {
-            // Dedicated file structure: the JSON *is* the material data
-             if (typeof allMaterialDetails !== 'object' || allMaterialDetails === null || !allMaterialDetails.materialName) throw new Error(`Invalid JSON structure in dedicated file ${detailFilePath}. Expected object with material details.`);
-             materialData = allMaterialDetails; // The whole file content is the data for this material
+             // This case should now be prevented by the errors thrown earlier if both fetches fail
+             throw new Error("Data source could not be determined. Both specific and fallback fetches failed.");
         }
-        // ************************************************
 
-        if (typeof materialData !== 'object' || materialData === null) { throw new Error(`Invalid data structure for material '${materialName}'.`); }
-        console.log("[Full Detail Loader] JSON parsed successfully.");
+        // 5. Final validation
+        if (typeof materialData !== 'object' || materialData === null) {
+            throw new Error(`Invalid data structure loaded for material '${materialName}'.`);
+        }
+        console.log("[Full Detail Loader] Material data successfully processed.");
+
+        // --- Now Proceed with Populating Page ---
+        const sectionDataMap = new Map(); // Ensure this is declared before use
+
+        // --- Process References ---
+        const collectedRefs = new Set();
+        const processRefs = (data) => { if (typeof data === 'object' && data !== null) { if (data.ref && materialData.references && materialData.references[data.ref]) { collectedRefs.add(data.ref); } Object.values(data).forEach(value => { if (typeof value === 'object' || Array.isArray(value)) { processRefs(value); } }); } else if (Array.isArray(data)) { data.forEach(processRefs); } };
+        processRefs(materialData);
+        console.log(`[Full Detail Loader] References processed: ${collectedRefs.size}`);
+
+        // --- Build Table of Contents ---
+        if (tocListEl && mainContentEl) {
+            tocListEl.innerHTML = ''; let sectionCount = 0; const excludedKeys = ['materialName', 'references', 'name', 'formula', 'synonyms', 'category', 'constituent_elements', 'description', 'wiki_link', 'tags'];
+            for (const sectionKey in materialData) { if (excludedKeys.includes(sectionKey) || typeof materialData[sectionKey] !== 'object' || materialData[sectionKey] === null) continue; const sectionDetailData = materialData[sectionKey]; if (typeof sectionDetailData !== 'object' || sectionDetailData === null) continue; sectionDataMap.set(sectionKey, sectionDetailData); sectionCount++; const sectionDisplayName = sectionDetailData.displayName || sectionKey.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()); const sectionId = `section-${sectionKey}`; const tocLi = document.createElement('li'); const tocLink = document.createElement('a'); tocLink.href = `#${sectionId}`; tocLink.textContent = sectionDisplayName; tocLi.appendChild(tocLink); tocListEl.appendChild(tocLi); }
+             console.log(`[Full Detail Loader] TOC built: ${sectionCount} sections.`);
+        } else { console.warn("TOC elements not found."); }
+
+        // --- Populate Sections ---
+        let populatedSectionCount = 0;
+        for (const [sectionKey, sectionDetailData] of sectionDataMap.entries()) {
+             const sectionId = `section-${sectionKey}`; let sectionElement = document.getElementById(sectionId);
+             if (!sectionElement) { console.warn(`HTML section placeholder '${sectionId}' not found. Creating dynamically.`); sectionElement = document.createElement('section'); sectionElement.id = sectionId; sectionElement.className = 'detail-content-section'; sectionElement.style.display = 'none'; const h2 = document.createElement('h2'); h2.id = `${sectionId}-title`; sectionElement.appendChild(h2); const introP = document.createElement('p'); introP.className = 'section-introduction'; introP.id = `${sectionId}-intro`; sectionElement.appendChild(introP); const propsDiv = document.createElement('div'); propsDiv.className = 'properties-container'; propsDiv.id = `${sectionId}-properties`; sectionElement.appendChild(propsDiv); mainContentEl.appendChild(sectionElement); }
+             const h2Title = sectionElement.querySelector('h2'); if (h2Title) { h2Title.textContent = sectionDetailData.displayName || sectionKey.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()); } else { console.warn(`Title element (h2) not found within section '${sectionId}'.`); }
+             const sectionIntroEl = document.getElementById(`${sectionId}-intro`); if (sectionIntroEl) { if (sectionDetailData.introduction) { sectionIntroEl.innerHTML = sectionDetailData.introduction; sectionIntroEl.style.display = 'block'; } else { sectionIntroEl.style.display = 'none'; sectionIntroEl.innerHTML = ''; } }
+             const propertiesContainerEl = document.getElementById(`${sectionId}-properties`); if (propertiesContainerEl && sectionDetailData.properties && typeof sectionDetailData.properties === 'object') { propertiesContainerEl.innerHTML = ''; let propertyCount = 0; Object.entries(sectionDetailData.properties).forEach(([propKey, propData]) => { const propertyBlockElement = renderPropertyBlock(sectionKey, propKey, propData, materialData, sectionDetailData.properties); if (propertyBlockElement) { propertiesContainerEl.appendChild(propertyBlockElement); propertyCount++; } }); propertiesContainerEl.style.display = propertyCount > 0 ? 'block' : 'none'; } else if (propertiesContainerEl) { propertiesContainerEl.style.display = 'none'; }
+             sectionElement.style.display = 'block'; populatedSectionCount++;
+        }
+         console.log(`[Full Detail Loader] Populated ${populatedSectionCount} sections.`);
+
+        // --- Populate References ---
+        if (collectedRefs.size > 0 && referencesListEl && materialData.references) {
+             referencesListEl.innerHTML = ''; const sortedRefs = Array.from(collectedRefs).sort();
+             sortedRefs.forEach(refKey => { const refData = materialData.references[refKey]; if(refData){ const li = document.createElement('li'); li.id = `ref-${refKey}`; let linkHtml = refData.text; if(refData.doi){ linkHtml += ` <a href="https://doi.org/${refData.doi}" target="_blank" rel="noopener noreferrer">[DOI]</a>`; } li.innerHTML = `<strong>[${refKey}]</strong> ${linkHtml}`; referencesListEl.appendChild(li); } else { console.warn(`Ref key '${refKey}' not defined.`); } });
+             referencesSectionEl.style.display = 'block'; mainContentEl.addEventListener('click', handleRefLinkClick); console.log("[Full Detail Loader] References populated.");
+        } else if(referencesSectionEl){ referencesSectionEl.style.display = 'none'; console.log("[Full Detail Loader] No references to populate or elements missing."); }
+        console.log("[Full Detail Loader] Data processing complete.");
+
+    } catch (error) {
+         console.error("[Full Detail Loader] CRITICAL ERROR in fetch/process:", error);
+         displayError(error.message || "Unknown error loading details.");
+    }
+    // --- =============================================================== ---
+    // ---       *** END: REVISED File Path and Fetch Logic v2 ***         ---
+    // --- =============================================================== ---
 
         const sectionDataMap = new Map();
 
