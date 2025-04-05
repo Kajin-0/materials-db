@@ -128,9 +128,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     else { console.warn("[Full Detail Loader] Material name element not found."); }
     document.title = `${materialName} - Full Details`;
 
-    // --- =============================================================== ---
-    // ---      *** START: REVISED File Path and Fetch Logic v3 ***        ---
-    // ---      (Corrected error message syntax, robust fetch)           ---
+        // --- =============================================================== ---
+    // ---      *** START: REVISED File Path and Fetch Logic v4 ***        ---
+    // ---      (Simplified Error Handling, Robust Fetch)                ---
     // --- =============================================================== ---
     let materialData; // Variable to hold the specific material's data object
 
@@ -146,35 +146,75 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.log(`[Full Detail Loader] Generating specific file path: ${specificDetailFilePath} (from '${materialName}')`);
 
     try { // Outer try-catch for the whole data loading process
-        let specificResponse = null; // Store response object for specific fetch
-        let specificJsonData = null;
+        let specificResponse = null;
+        let jsonData = null;
+        let dataSource = 'none';
         let specificFetchError = null;
+        let specificFetchStatusCode = null;
 
         // 2. Try fetching the specific file
         try {
             console.log(`[Full Detail Loader] Attempt 1: Fetching specific file: ${specificDetailFilePath}`);
-            specificResponse = await fetch(specificDetailFilePath); // Assign to specificResponse
+            specificResponse = await fetch(specificDetailFilePath);
+            specificFetchStatusCode = specificResponse.status; // Store status immediately
 
             if (specificResponse.ok) {
-                specificJsonData = await specificResponse.json();
+                jsonData = await specificResponse.json();
+                dataSource = 'specific';
                 console.log(`[Full Detail Loader] Success fetching and parsing specific file.`);
             } else {
-                 // Store the error status but don't throw yet, allow fallback
                  specificFetchError = new Error(`Fetch specific file failed with status: ${specificResponse.status}`);
                  console.log(`[Full Detail Loader] ${specificFetchError.message}`);
-                 if (specificResponse.status !== 404) {
-                     console.error(`[Full Detail Loader] Non-404 Error fetching specific file: ${specificResponse.status} ${specificResponse.statusText}`);
-                 }
             }
         } catch (fetchError) {
             console.error(`[Full Detail Loader] Network or other error fetching specific file ${specificDetailFilePath}:`, fetchError);
             specificFetchError = fetchError; // Store the network error
+            specificFetchStatusCode = 'Network Error'; // Indicate network issue
         }
 
-        // 3. If specific file fetch succeeded, use its data
-        if (specificJsonData !== null) {
-            materialData = specificJsonData;
-            // Basic validation for dedicated file structure
+        // 3. If specific file fetch failed (jsonData is still null), try the fallback
+        if (jsonData === null) {
+            console.log(`[Full Detail Loader] Attempt 2: Fetching fallback file: ${mainDetailFilePath}`);
+            let fallbackResponse = null;
+            try {
+                fallbackResponse = await fetch(mainDetailFilePath);
+                if (fallbackResponse.ok) {
+                    jsonData = await fallbackResponse.json();
+                    dataSource = 'main';
+                    console.log(`[Full Detail Loader] Success fetching and parsing fallback file.`);
+                } else {
+                     // If fallback also fails, construct and throw detailed error
+                     let errorMessage = "Failed to load material data. ";
+                     errorMessage += `Specific file ('${specificDetailFileName}') attempt failed`;
+                     if (specificFetchError) {
+                         errorMessage += ` (${specificFetchError.message})`;
+                     } else if (specificFetchStatusCode) {
+                         errorMessage += ` (status ${specificFetchStatusCode})`;
+                     } else {
+                          errorMessage += ` (Unknown Error/Network Issue)`;
+                     }
+                     errorMessage += `. Fallback file ('${mainDetailFilePath}') attempt also failed (status ${fallbackResponse.status}).`;
+                     throw new Error(errorMessage);
+                }
+            } catch (fallbackCatchError) {
+                 console.error(`[Full Detail Loader] Error fetching/processing fallback file ${mainDetailFilePath}:`, fallbackCatchError);
+                  let errorMessage = "Failed to load material data. ";
+                  errorMessage += `Specific file ('${specificDetailFileName}') attempt failed`;
+                  if (specificFetchError) {
+                      errorMessage += ` (${specificFetchError.message})`;
+                  } else if (specificFetchStatusCode) {
+                      errorMessage += ` (status ${specificFetchStatusCode})`;
+                  } else {
+                       errorMessage += ` (Unknown Error/Network Issue)`;
+                  }
+                 errorMessage += `. Fallback file ('${mainDetailFilePath}') attempt also failed: ${fallbackCatchError.message}`;
+                 throw new Error(errorMessage);
+            }
+        }
+
+        // 4. Extract materialData based on which source succeeded
+        if (dataSource === 'specific') {
+            materialData = jsonData;
             if (typeof materialData !== 'object' || materialData === null) throw new Error(`Invalid JSON structure in dedicated file ${specificDetailFilePath}.`);
             if (!materialData.materialName) {
                  console.warn(`[Full Detail Loader] Adding 'materialName' from URL to data from specific file.`);
@@ -183,71 +223,35 @@ document.addEventListener("DOMContentLoaded", async () => {
                  console.warn(`[Full Detail Loader] Name mismatch: File='${materialData.materialName}', URL='${materialName}'. Using name from file.`);
                  if (materialNameEl) materialNameEl.textContent = materialData.materialName; document.title = `${materialData.materialName} - Full Details`;
              }
-            console.log("[Full Detail Loader] Using data from specific file.");
-
-        } else {
-            // 4. If specific file fetch failed, try the fallback
-            console.log(`[Full Detail Loader] Attempt 2: Fetching fallback file: ${mainDetailFilePath}`);
-            let fallbackResponse = null;
-            try {
-                fallbackResponse = await fetch(mainDetailFilePath);
-                if (fallbackResponse.ok) {
-                    const mainJsonData = await fallbackResponse.json();
-                    if (typeof mainJsonData !== 'object' || mainJsonData === null) throw new Error(`Invalid JSON structure in main file ${mainDetailFilePath}.`);
-                    console.log(`[Full Detail Loader] Success fetching fallback file.`);
-
-                    // Find material within the main file
-                    materialData = mainJsonData[materialName];
-                    if (!materialData) {
-                        const lowerCaseMaterialName = materialName.toLowerCase();
-                        const foundKey = Object.keys(mainJsonData).find(key => key.toLowerCase() === lowerCaseMaterialName);
-                        if (foundKey) {
-                            materialData = mainJsonData[foundKey];
-                            console.warn(`[Full Detail Loader] Case-insensitive match found: '${foundKey}'.`);
-                            if (!materialData.materialName || materialData.materialName !== foundKey) {
-                                 console.warn(`Updating materialName field to match key: ${foundKey}`);
-                                 materialData.materialName = foundKey; if (materialNameEl) materialNameEl.textContent = foundKey; document.title = `${foundKey} - Full Details`;
-                            }
-                        } else {
-                            throw new Error(`Material '${materialName}' not found in fallback file ${mainDetailFilePath}.`);
-                        }
+        } else if (dataSource === 'main') {
+            if (typeof jsonData !== 'object' || jsonData === null) throw new Error(`Invalid JSON structure in main file ${mainDetailFilePath}.`);
+            materialData = jsonData[materialName];
+            if (!materialData) {
+                const lowerCaseMaterialName = materialName.toLowerCase();
+                const foundKey = Object.keys(jsonData).find(key => key.toLowerCase() === lowerCaseMaterialName);
+                if (foundKey) {
+                    materialData = jsonData[foundKey];
+                    console.warn(`[Full Detail Loader] Case-insensitive match found: '${foundKey}'.`);
+                    if (!materialData.materialName || materialData.materialName !== foundKey) {
+                         console.warn(`Updating materialName field to match key: ${foundKey}`);
+                         materialData.materialName = foundKey; if (materialNameEl) materialNameEl.textContent = foundKey; document.title = `${foundKey} - Full Details`;
                     }
-                    if (!materialData.materialName) materialData.materialName = materialName; // Ensure name field exists
-                    console.log("[Full Detail Loader] Using data from main file.");
-
                 } else {
-                    // Throw error including info about previous failure
-                    let errorMsg = `Failed to load material data. `;
-                    if (specificFetchError) {
-                         errorMsg += `Specific file ('${specificDetailFileName}') attempt failed (${specificFetchError.message || 'Status: '+(specificResponse?.status || 'N/A')}). `;
-                    } else {
-                         errorMsg += `Specific file ('${specificDetailFileName}') attempt failed (Status ${specificResponse?.status || 'N/A'}). `;
-                    }
-                    errorMsg += `Fallback file ('${mainDetailFilePath}') attempt also failed (status ${fallbackResponse.status}).`;
-                    throw new Error(errorMsg);
+                    throw new Error(`Material '${materialName}' not found in fallback file ${mainDetailFilePath}.`);
                 }
-            } catch (fallbackCatchError) {
-                 console.error(`[Full Detail Loader] Error fetching/processing fallback file ${mainDetailFilePath}:`, fallbackCatchError);
-                  let errorMsg = `Failed to load material data. `;
-                  if (specificFetchError) {
-                      errorMsg += `Specific file ('${specificDetailFileName}') attempt failed (${specificFetchError.message || 'Status: '+(specificResponse?.status || 'N/A')}). `;
-                  } else {
-                      errorMsg += `Specific file ('${specificDetailFileName}') attempt failed (Status ${specificResponse?.status || 'N/A'}). `;
-                  }
-                 errorMsg += `Fallback file ('${mainDetailFilePath}') attempt also failed: ${fallbackCatchError.message}`;
-                 throw new Error(errorMsg);
             }
+            if (!materialData.materialName) materialData.materialName = materialName;
+        } else {
+             throw new Error("Critical logic error: Data source could not be determined after fetch attempts.");
         }
 
-        // 5. Final validation of the loaded materialData
+        // 5. Final validation
         if (typeof materialData !== 'object' || materialData === null) {
-            // This check might be redundant now but kept for safety
-            throw new Error(`Invalid data structure ultimately loaded for material '${materialName}'. Expected an object.`);
+            throw new Error(`Invalid data structure loaded for material '${materialName}'.`);
         }
         console.log("[Full Detail Loader] Material data successfully processed.");
 
         // --- Now Proceed with Populating Page ---
-        // (The rest of the code inside the outer try block remains the same)
         const sectionDataMap = new Map();
 
         // --- Process References ---
@@ -288,7 +292,7 @@ document.addEventListener("DOMContentLoaded", async () => {
          displayError(error.message || "Unknown error loading details.");
     }
     // --- =============================================================== ---
-    // ---       *** END: REVISED File Path and Fetch Logic v3 ***         ---
+    // ---       *** END: REVISED File Path and Fetch Logic v4 ***         ---
     // --- =============================================================== ---
 
         const sectionDataMap = new Map();
