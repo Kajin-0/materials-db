@@ -446,13 +446,12 @@ function populatePage(material, container, encodedMaterialNameParam) { // Added 
         itemDiv.appendChild(dt); itemDiv.appendChild(dd); return itemDiv;
     };
 
-    // --- Helper Function: createSection (REMOVED title population here) ---
+    // --- Helper Function: createSection (Creates section and empty H2 with icon if provided) ---
     const createSection = (id, icon = null) => {
         const section = document.createElement('section');
         section.className = 'material-section';
         section.id = id; // ID for the simple detail page section container
-        const h2 = document.createElement('h2'); // Create h2, content added later
-        // Add icon span directly to h2 if icon exists
+        const h2 = document.createElement('h2');
         if (icon) {
             const iconSpan = document.createElement('span');
             iconSpan.setAttribute('aria-hidden', 'true');
@@ -464,14 +463,12 @@ function populatePage(material, container, encodedMaterialNameParam) { // Added 
         return section;
     };
 
-    // --- Configuration for Sections and Properties (Ensure dataKey is present) ---
-     // NOTE: Ensure these dataKeys accurately match the structure of your material_details.json
-     // and the desired anchor IDs (#section-...) in material_full_detail.html
-    const sectionConfig = [
-        { id: 'section-overview', title: 'Overview', isSpecial: true, dataKey: 'overview' }, // Ensured dataKey
+    // --- Configuration for Sections and Properties (FULL VERSION) ---
+     const sectionConfig = [
+        { id: 'section-overview', title: 'Overview', isSpecial: true, dataKey: 'overview' },
         { id: 'section-safety', title: 'Safety Information', icon: '⚠️', dataKey: 'safety', properties: {'toxicity': { label: 'Toxicity', isKey: true }, 'handling': { label: 'Handling' }}},
         { id: 'section-identification', title: 'Identification & Structure', dataKey: 'identification', properties: {'cas_number': { label: 'CAS Number' }, 'crystal_structure': { label: 'Crystal Structure', isKey: true }, 'space_group': { label: 'Space Group', isHtml: true}, 'lattice_constant': { label: 'Lattice Constant', isKey: true, isHtml: true }, 'phase_diagram_notes': { label: 'Phase Diagram Notes' }, 'material_standard': {label: 'Material Standard'}, 'appearance': {label: 'Appearance', isHtml: true}, 'xrd_pattern': {label: 'XRD Pattern'}, 'grain_size_um': { label: 'Grain Size', isHtml: true }, 'molecular_weight': {label: 'Molecular Weight', isHtml: true}, 'zirconia_content': {label: 'Zirconia Content', isHtml: true}, 'fiber_volume_fraction': {label: 'Fiber Vol. Fraction', isHtml: true}, 'filament_diameter': {label: 'Filament Diameter', isHtml: true}, 'layer_density': {label: 'Layer Density', isHtml: true}, 'doping_concentration': { label: 'Doping Conc.', isHtml: true } }},
-        { id: 'section-fab-insights', title: 'Advanced Fabrication Insights', dataKey: 'advanced_fabrication_insights', properties: {'stoichiometry_control': { label: 'Stoichiometry Control', isKey: true }, 'common_defects_impact': { label: 'Common Defects' }, 'surface_preparation': { label: 'Surface Preparation' }, 'method_specific_notes': { label: 'Method Nuances' }, 'process_control': {label: 'Process Control'}, 'interface_engineering': {label: 'Interface Engineering'}, 'alignment_techniques': {label: 'Alignment Techniques'}, 'cooling_rate_control': {label: 'Cooling Rate Control'}, 'particle_dispersion': {label: 'Particle Dispersion'}, 'transformation_toughening': { label: 'Transformation Toughening' }, 'coating_process': { label: 'Coating Process' }, 'machining': { label: 'Machining Notes' }, 'weave_style': { label: 'Weave Style' }, 'crystallinity_control': { label: 'Crystallinity Control' }, 'wear_mechanism': { label: 'Wear Mechanism' }, 'cold_welding': { label: 'Cold Welding' }, 'spacer_material': { label: 'Spacer Material' }, 'surface_sizing': { label: 'Surface Sizing' } }},
+        { id: 'section-fab-insights', title: 'Advanced Fabrication Insights', dataKey: 'advanced_fabrication_insights', properties: {'stoichiometry_control': { label: 'Stoichiometry Control', isKey: true }, 'common_defects_impact': { label: 'Common Defects' }, 'surface_preparation': { label: 'Surface Preparation' }, 'method_specific_notes': { label: 'Method Nuances' }, 'process_control': {label: 'Process Control'}, 'interface_engineering': {label: 'Interface Engineering'}, 'alignment_techniques': {label: 'Alignment Techniques'}, 'cooling_rate_control': {label: 'Cooling Rate Control'}, 'particle_dispersion': {label: 'Particle Dispersion'}, 'transformation_toughening': { label: 'Transformation Toughening' }, 'coating_process': { label: 'Coating Process' }, 'machining': { label: 'Machining Notes' }, 'weave_style': { label: 'Weave Style' }, 'crystallinity_control': { label: 'Crystallinity Control' }, 'wear_mechanism': { label: 'Wear Mechanism' }, 'cold_welding': { label: 'Cold Welding' }, 'spacer_material': { label: 'Spacer Material' }, 'surface_sizing': { label: 'Surface Sizing' } }}, // Removed outgassing, hydrophobicity - moved to chemical
         { id: 'section-growth', title: 'Growth & Fabrication Properties', dataKey: 'growth_fabrication_properties', properties: {'common_growth_methods': { label: 'Common Methods' }, 'source_materials_purity': { label: 'Source Materials' }, 'preferred_substrates_orientations': { label: 'Substrates/Orientations', isKey: true }, 'typical_growth_parameters': { label: 'Growth Parameters' }, 'passivation_methods': { label: 'Passivation/Surface Treat.' }}},
         { id: 'section-processing', title: 'Post-Growth Processing', dataKey: 'post_growth_processing', properties: {'annealing': { label: 'Annealing', isKey: true }, 'lapping_polishing': { label: 'Lapping & Polishing' }, 'etching': { label: 'Etching Methods' }, 'grinding_milling': { label: 'Grinding/Milling Notes' }}},
         { id: 'section-device-char', title: 'Device Integration & Characterization', dataKey: 'device_integration_characterization', properties: {'device_architectures': { label: 'Device Architectures' }, 'readout_integration': { label: 'Readout Integration', isKey: true }, 'ar_coatings': { label: 'AR Coatings' }, 'packaging_cooling': { label: 'Packaging/Cooling', isKey: true }, 'key_characterization_techniques': { label: 'Key Characterization', isHtml: true }}},
@@ -486,6 +483,7 @@ function populatePage(material, container, encodedMaterialNameParam) { // Added 
         { id: 'section-comparison', title: 'Comparison with Alternatives', dataKey: 'comparison_alternatives', isSpecial: true },
         { id: 'section-references', title: 'References & Further Reading', dataKey: 'references_further_reading', isSpecial: true },
         { id: 'section-vendors', title: 'Commercial Vendors (Example)', dataKey: 'vendor_info', isSpecial: true }
+        // Add ALL other sections from your original config here
     ];
 
 
@@ -511,21 +509,38 @@ function populatePage(material, container, encodedMaterialNameParam) { // Added 
 
     sectionConfig.forEach(config => {
         const { id, title, icon, dataKey, properties, isSpecial } = config;
-        let sectionShouldExist = false; // Assume section shouldn't exist initially
+        let sectionShouldExist = false; // Determine if section container should be created
 
-        // *** RESTORED Existence Check Logic (Simpler) ***
-        // Check if the primary data key for the section exists in the material object
+        // *** RESTORED/SIMPLIFIED Existence Check Logic ***
+        // Check if the primary data key exists directly in the material object
         if (dataKey && material.hasOwnProperty(dataKey) && material[dataKey] !== null) {
-             sectionShouldExist = true;
+             // For non-special sections, also require the properties object to exist
+             // AND have at least one property defined in the config that is present in the data.
+             if (!isSpecial) {
+                  if (properties && typeof material[dataKey] === 'object') {
+                     sectionShouldExist = Object.keys(properties).some(propKey => {
+                         const dataPath = `${dataKey}.${propKey}`;
+                         // Check if path exists and is not null/undefined
+                         return dataPath.split('.').reduce((o, key) => (o && typeof o === 'object' && o[key] !== undefined && o[key] !== null) ? o[key] : undefined, material) !== undefined;
+                     });
+                      // Add back special case for identification category/class if standard check fails
+                     if (!sectionShouldExist && id === 'section-identification' && (material['category'] || material?.identification?.['class'])) {
+                         sectionShouldExist = true;
+                     }
+                 } else {
+                      sectionShouldExist = false; // Non-special section needs properties defined
+                 }
+             } else {
+                 sectionShouldExist = true; // Special section exists if its dataKey exists
+             }
         } else if (id === 'section-overview' && (material['description'] || material['wiki_link'])) {
-             // Special case for overview: show if description or wiki link exists
+             // Special case for overview based on specific fields if dataKey logic fails
              sectionShouldExist = true;
         }
-        // Add more else if conditions here for special sections if needed
 
         if (!sectionShouldExist) {
-             // console.log(`Skipping section creation: ${title} (No data found for key: ${dataKey})`);
-             return; // Skip creating this section entirely if its main data key is missing
+             // console.log(`Skipping section: ${title} (No data found for key: ${dataKey})`);
+             return; // Skip creating this section entirely if its main data is missing or conditions not met
         }
         // *** End of Restored Existence Check ***
 
@@ -535,12 +550,14 @@ function populatePage(material, container, encodedMaterialNameParam) { // Added 
         const h2 = section.querySelector('h2');
         if (!h2) { console.error(`Could not find h2 element in created section for id: ${id}`); return; }
 
-        let sectionHasRenderableContent = false; // Track if any content is actually added
+        let sectionHasActualContent = false; // Track if any content is actually ADDED
 
-        // Construct the link and add content to h2
+        // --- Add link to H2 ---
         const link = document.createElement('a');
-        const anchorTargetDataKey = dataKey || id.replace(/^section-/, ''); // Use dataKey, fallback to derived key
-        const anchorTargetId = `section-${anchorTargetDataKey}`;
+        // Use dataKey for anchor. Ensure dataKey exists in config.
+        const anchorTargetDataKey = dataKey || id.replace(/^section-/, ''); // Fallback just in case
+        const anchorTargetId = `section-${anchorTargetDataKey}`; // This MUST match the ID pattern in material_full_detail.html
+
         // Use the encoded parameter passed into the function
         const fullDetailUrl = `material_full_detail.html?material=${encodedMaterialNameParam}#${anchorTargetId}`;
 
@@ -552,51 +569,58 @@ function populatePage(material, container, encodedMaterialNameParam) { // Added 
         // Ensure icon is prepended correctly if it exists
         const existingIcon = h2.querySelector('span[aria-hidden="true"]');
         if (existingIcon) {
-            h2.insertBefore(link, existingIcon.nextSibling); // Insert link after icon
+            h2.insertBefore(link, existingIcon.nextSibling); // Insert link after icon span
         } else {
             h2.appendChild(link); // Otherwise, just append link
         }
+        // --- End Add link to H2 ---
+
 
         // --- Populate section content (Property lists, special sections) ---
         if (isSpecial) {
-             // Logic for Overview, Comparison, References, Vendors...
-             // (This logic remains the same as before, checking *within* the section's data)
-            if (id === 'section-overview') {
-                const descVal = getData(material, 'description', fallbackValue); if (descVal !== fallbackValue) { const p = document.createElement('p'); p.className='description'; p.innerHTML=descVal; section.appendChild(p); sectionHasRenderableContent = true; }
-                const wikiUrl = getData(material, 'wiki_link', '#'); if (wikiUrl !== '#' && wikiUrl !== fallbackValue) { const p = document.createElement('p'); const a = document.createElement('a'); a.id = 'wiki-link'; a.href=wikiUrl; a.target='_blank'; a.rel='noopener noreferrer'; a.textContent='Wikipedia Article'; p.appendChild(document.createTextNode('See also: ')); p.appendChild(a); section.appendChild(p); sectionHasRenderableContent = true;}
-                // Always add placeholder for overview if the section is created
-                const imgPlaceholder = document.createElement('div'); imgPlaceholder.className = 'image-placeholder'; imgPlaceholder.textContent = 'Image Placeholder / Diagram'; section.appendChild(imgPlaceholder); sectionHasRenderableContent = true;
+            // --- Logic for Special Sections (Checks internal data existence) ---
+             if (id === 'section-overview') {
+                const descVal = getData(material, 'description', fallbackValue); if (descVal !== fallbackValue) { const p = document.createElement('p'); p.className='description'; p.innerHTML=descVal; section.appendChild(p); sectionHasActualContent = true; }
+                const wikiUrl = getData(material, 'wiki_link', '#'); if (wikiUrl !== '#' && wikiUrl !== fallbackValue) { const p = document.createElement('p'); const a = document.createElement('a'); a.id = 'wiki-link'; a.href=wikiUrl; a.target='_blank'; a.rel='noopener noreferrer'; a.textContent='Wikipedia Article'; p.appendChild(document.createTextNode('See also: ')); p.appendChild(a); section.appendChild(p); sectionHasActualContent = true;}
+                // Only add placeholder if description or link existed
+                if (sectionHasActualContent) { const imgPlaceholder = document.createElement('div'); imgPlaceholder.className = 'image-placeholder'; imgPlaceholder.textContent = 'Image Placeholder / Diagram'; section.appendChild(imgPlaceholder);} else { section.style.display = 'none'; } // Hide overview if totally empty
             }
             else if (id === 'section-comparison' && material.comparison_alternatives) {
-                const dl = document.createElement('dl'); dl.className = 'property-list'; dl.id = 'comparison-list'; let comparisonsAdded = false; const notesValue = getData(material, 'comparison_alternatives.notes', fallbackValue); if (notesValue !== fallbackValue) { const notesP = document.createElement('p'); notesP.innerHTML = `<em>${notesValue}</em>`; section.insertBefore(notesP, h2.nextSibling); sectionHasRenderableContent = true; comparisonsAdded = true; }
-                Object.entries(material.comparison_alternatives).forEach(([key, value]) => { if (key.startsWith('vs_')) { const comparisonValueStr = getData(material, `comparison_alternatives.${key}`, fallbackValue); if (comparisonValueStr !== fallbackValue) { dl.appendChild(createPropertyItem(key.replace(/^vs_/, 'vs. '), comparisonValueStr)); sectionHasRenderableContent = true; comparisonsAdded = true; } } });
+                const dl = document.createElement('dl'); dl.className = 'property-list'; dl.id = 'comparison-list'; let comparisonsAdded = false; const notesValue = getData(material, 'comparison_alternatives.notes', fallbackValue); if (notesValue !== fallbackValue) { const notesP = document.createElement('p'); notesP.innerHTML = `<em>${notesValue}</em>`; section.insertBefore(notesP, h2.nextSibling); sectionHasActualContent = true; comparisonsAdded = true; }
+                Object.entries(material.comparison_alternatives).forEach(([key, value]) => { if (key.startsWith('vs_')) { const comparisonValueStr = getData(material, `comparison_alternatives.${key}`, fallbackValue); if (comparisonValueStr !== fallbackValue) { dl.appendChild(createPropertyItem(key.replace(/^vs_/, 'vs. '), comparisonValueStr)); sectionHasActualContent = true; comparisonsAdded = true; } } });
                 if (comparisonsAdded && dl.hasChildNodes()) { section.appendChild(dl); }
-                // Only add fallback if no notes AND no comparisons were added
-                else if (notesValue === fallbackValue && !comparisonsAdded) { dl.innerHTML = `<div class="property-item comparison-na-message"><dd class="property-value">${fallbackValue}</dd></div>`; section.appendChild(dl); sectionHasRenderableContent = true; }
+                else if (notesValue === fallbackValue && !comparisonsAdded) { section.style.display = 'none'; } // Hide if no content
             }
-            else if (id === 'section-references' && material.references_further_reading) {
+             else if (id === 'section-references' && material.references_further_reading) {
                 const ul = document.createElement('ul'); ul.id = 'reference-list'; let listHasContent = false; const notesValue = getData(material, 'references_further_reading.notes', fallbackValue); if (notesValue !== fallbackValue) { const notesLi = document.createElement('li'); notesLi.className = 'ref-notes'; notesLi.innerHTML = `<em>${notesValue}</em>`; ul.appendChild(notesLi); listHasContent = true; }
                 Object.entries(material.references_further_reading).forEach(([key, value])=>{ if(key !== 'notes'){ const refValue = getData(material, `references_further_reading.${key}`, fallbackValue); if (refValue !== fallbackValue) { const li = document.createElement('li'); let itemHtml = refValue; if (typeof refValue === 'string' && (refValue.startsWith('http') || refValue.startsWith('www'))) { const url = refValue.startsWith('http') ? refValue : 'http://' + refValue; const label = key === 'wikipedia' ? `Wikipedia: ${url}` : url; itemHtml = `<a href="${url}" target="_blank" rel="noopener noreferrer">${label}</a>`; } else if (key === 'wikipedia') { itemHtml = `Wikipedia: ${refValue}`; } li.innerHTML = itemHtml; ul.appendChild(li); listHasContent = true; } } });
-                if (!listHasContent && notesValue === fallbackValue) { ul.innerHTML = `<li>Reference information ${fallbackValue}</li>`; } // Show N/A only if truly empty
-                if(listHasContent || notesValue !== fallbackValue) { section.appendChild(ul); sectionHasRenderableContent = true; }
+                if (!listHasContent && notesValue === fallbackValue) { section.style.display = 'none'; } // Hide if truly empty
+                else { section.appendChild(ul); sectionHasActualContent = true; }
             }
-            else if (id === 'section-vendors' && material.vendor_info) {
-                const introP = document.createElement('p'); introP.textContent = 'This space can list companies supplying materials or related services. (Example data)'; section.appendChild(introP); const ul = document.createElement('ul'); ul.id = 'vendor-list'; let listHasContent = false; const notesValue = getData(material, 'vendor_info.notes', fallbackValue); if (notesValue !== fallbackValue) { const notesLi = document.createElement('li'); notesLi.className = 'vendor-notes'; notesLi.innerHTML = `<em>${notesValue}</em>`; ul.appendChild(notesLi); listHasContent = true; }
-                Object.entries(material.vendor_info).forEach(([key, value])=>{ if(key !== 'notes'){ const vendorValue = getData(material, `vendor_info.${key}`, fallbackValue); if (vendorValue !== fallbackValue) { const li = document.createElement('li'); let itemHtml = vendorValue; try { const urlMatch = String(vendorValue).match(/(https?:\/\/[^\s"'>]+)|(www\.[^\s"'>]+)/); if (urlMatch) { const url = urlMatch[0].startsWith('http') ? urlMatch[0] : 'http://' + urlMatch[0]; itemHtml = String(vendorValue).replace(urlMatch[0], `<a href="${url}" target="_blank" rel="noopener noreferrer">${urlMatch[0]}</a>`); } } catch (linkError) {} li.innerHTML = itemHtml; ul.appendChild(li); listHasContent = true; } } });
-                if (!listHasContent && notesValue === fallbackValue) { ul.innerHTML = `<li>Vendor information ${fallbackValue}</li>`; } // Show N/A only if truly empty
-                if(listHasContent || notesValue !== fallbackValue) { section.appendChild(ul); const disclaimerP = document.createElement('p'); const small = document.createElement('small'); small.textContent = 'Note: Listing does not imply endorsement.'; disclaimerP.appendChild(small); section.appendChild(disclaimerP); sectionHasRenderableContent = true; }
-            }
-            // --- Append Special Section ---
-            if (sectionHasRenderableContent) {
+             else if (id === 'section-vendors' && material.vendor_info) {
+                let listHasContent = false; const notesValue = getData(material, 'vendor_info.notes', fallbackValue);
+                const vendorEntries = Object.entries(material.vendor_info).filter(([k,v]) => k !== 'notes' && getData(material, `vendor_info.${k}`, fallbackValue) !== fallbackValue);
+                if(notesValue !== fallbackValue || vendorEntries.length > 0) {
+                    const introP = document.createElement('p'); introP.textContent = 'Example Vendors:'; section.appendChild(introP);
+                    const ul = document.createElement('ul'); ul.id = 'vendor-list';
+                    if (notesValue !== fallbackValue) { const notesLi = document.createElement('li'); notesLi.className = 'vendor-notes'; notesLi.innerHTML = `<em>${notesValue}</em>`; ul.appendChild(notesLi); listHasContent = true; }
+                    vendorEntries.forEach(([key, value]) => { const vendorValue = getData(material, `vendor_info.${key}`, fallbackValue); const li = document.createElement('li'); let itemHtml = vendorValue; try { const urlMatch = String(vendorValue).match(/(https?:\/\/[^\s"'>]+)|(www\.[^\s"'>]+)/); if (urlMatch) { const url = urlMatch[0].startsWith('http') ? urlMatch[0] : 'http://' + urlMatch[0]; itemHtml = String(vendorValue).replace(urlMatch[0], `<a href="${url}" target="_blank" rel="noopener noreferrer">${urlMatch[0]}</a>`); } } catch (linkError) {} li.innerHTML = itemHtml; ul.appendChild(li); listHasContent = true; });
+                    section.appendChild(ul);
+                    const disclaimerP = document.createElement('p'); const small = document.createElement('small'); small.textContent = 'Note: Listing does not imply endorsement.'; disclaimerP.appendChild(small); section.appendChild(disclaimerP);
+                    sectionHasActualContent = true;
+                } else {
+                     section.style.display = 'none'; // Hide if truly empty
+                }
+             }
+            // --- Append Special Section to Fragment IF it has content ---
+            if (sectionHasActualContent) {
                  fragment.appendChild(section);
-            } else {
-                console.log(`Special section ${title} created but had no content, skipping append.`);
             }
 
         } else if (dataKey && properties && material[dataKey]) {
-            // Logic for Standard Sections (Populating properties)
+            // --- Logic for Standard Sections (Populating properties) ---
             const dl = document.createElement('dl'); dl.className = 'property-list';
-            let propertiesAddedToDl = false;
+            let propertiesAddedToDl = false; // Track if any items are added to THIS dl
             // Special handling for section-identification category/class
             if (id === 'section-identification') {
                 let catVal = getData(material, 'category', fallbackValue); if (catVal !== fallbackValue) { dl.appendChild(createPropertyItem('Material Category', catVal)); propertiesAddedToDl = true;}
@@ -604,22 +628,29 @@ function populatePage(material, container, encodedMaterialNameParam) { // Added 
             }
             // Iterate configured properties
             Object.entries(properties).forEach(([propKey, propConfig]) => {
-                 if (id === 'section-identification' && propKey === 'class') return;
-                 const dataPath = `${dataKey}.${propKey}`; const value = getData(material, dataPath, fallbackValue);
-                 if (value !== fallbackValue) { const label = propConfig.label; dl.appendChild(createPropertyItem(label, value, propConfig.isKey || false)); propertiesAddedToDl = true; }
+                 if (id === 'section-identification' && propKey === 'class') return; // Already handled
+                 const dataPath = `${dataKey}.${propKey}`;
+                 const value = getData(material, dataPath, fallbackValue);
+                 if (value !== fallbackValue) {
+                     const label = propConfig.label;
+                     dl.appendChild(createPropertyItem(label, value, propConfig.isKey || false));
+                     propertiesAddedToDl = true; // Mark that we added at least one property
+                 }
             });
 
-            // --- Append Standard Section only if it has properties ---
+            // --- Append Standard Section to Fragment IF it has properties ---
             if (propertiesAddedToDl) {
-                section.appendChild(dl);
-                fragment.appendChild(section);
-            } else {
-                 console.log(`Standard section ${title} created but had no properties, skipping append.`);
+                section.appendChild(dl); // Add the populated dl to the section
+                fragment.appendChild(section); // Add the section to the document fragment
+                sectionHasActualContent = true; // Mark that this section had content
             }
-        } else {
-             console.log(`Section ${title} had dataKey but no matching data or properties, skipping append.`);
         }
-    });
+
+        // Optional: Log if a section was created but ultimately not added (debug)
+        // if (!section.parentNode && sectionShouldExist) {
+        //     console.log(`Section ${title} was created but no renderable content found.`);
+        // }
+    }); // End sectionConfig.forEach
 
     container.appendChild(fragment);
     console.log("[Detail Page] Dynamic page section population complete.");
