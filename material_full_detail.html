@@ -11,13 +11,13 @@
     <style>
         /* General Page Styles */
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; line-height: 1.5; color: #333; background-color: #f5f5f5; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; } /* Ensure smooth scrolling for button */
         .full-detail-container { max-width: 1000px; margin: 2rem auto; padding: 2rem; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
         .back-link { display: inline-block; margin-bottom: 1.5rem; color: #0066cc; text-decoration: none; font-size: 0.9rem; }
         .back-link:hover { text-decoration: underline; }
         .back-link::before { content: "←"; margin-right: 0.4rem; }
         .material-title-bar { margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid #e0e0e0; }
         .material-title-bar h1 { margin: 0 0 0.25rem 0; font-size: 2rem; color: #1a1a1a; font-weight: 600; }
-        html { scroll-behavior: smooth; }
 
         /* Table of Contents */
         #toc { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 6px; padding: 1rem 1.5rem; margin-bottom: 2.5rem; }
@@ -45,10 +45,8 @@
 
         /* Detail Subsections */
         .detail-subsection { margin: 1.25rem 0 1.25rem 0.5rem; }
-        /* Use ::before to display title based on data-title attribute */
         .detail-subsection h4 { font-size: 0; /* Hide original h4 text */ margin: 0 0 0.75rem 0; padding-bottom: 0.3rem; border-bottom: 1px solid #eee; position: relative; }
         .detail-subsection h4::before { font-size: 1.1rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; display: block; content: attr(data-title); }
-        /* Specific subsection title styling via ::before */
         .detail-subsection.key_characteristics h4::before { content: "Key Characteristics"; color: #17a2b8; }
         .detail-subsection.notes h4::before { content: "Notes"; color: #6c757d; }
         .detail-subsection.measurement_characterization h4::before { content: "Measurement & Characterization"; color: #6f42c1; }
@@ -90,8 +88,7 @@
         #references-list li strong { color: #555; font-weight: 600; margin-right: 0.5em; }
         #references-list li a { color: #0066cc; text-decoration: none; }
         #references-list li a:hover { text-decoration: underline; }
-        /* Highlighting for referenced items */
-        #references-list li.highlight-ref { background-color: #fff9c4; transition: background-color 0.3s ease-out; border-radius: 4px; margin-left: 2.0em !important; /* Adjust margin for highlight */ padding-left: 0.5rem !important; text-indent: 0 !important; padding-top: 0.3rem; padding-bottom: 0.3rem; margin-right: -0.5rem; outline: 1px dashed #fbc02d; }
+        #references-list li.highlight-ref { background-color: #fff9c4; transition: background-color 0.3s ease-out; border-radius: 4px; margin-left: 2.0em !important; padding-left: 0.5rem !important; text-indent: 0 !important; padding-top: 0.3rem; padding-bottom: 0.3rem; margin-right: -0.5rem; outline: 1px dashed #fbc02d; }
 
 
         /* Error Message Style */
@@ -102,9 +99,7 @@
         .crystal-viewer-container { display: flex; flex-direction: column; height: 100%; }
         .viewer-area { flex-grow: 1; position: relative; background-color: white; min-height: 250px; height: 70%; overflow: hidden; }
         .viewer-area canvas { display: block; width: 100% !important; height: 100% !important; }
-        /* Container for CSS2D Labels - MUST overlay the WebGL canvas */
         .css2d-renderer-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; overflow: hidden; z-index: 1; }
-        /* CSS2D Label Styling */
         .atom-label { color: #000; background-color: rgba(255, 255, 255, 0.75); padding: 1px 4px; border-radius: 3px; font-size: 11px; font-weight: bold; font-family: Arial, sans-serif; }
         .viewer-controls { width: 100%; padding: 15px; background-color: #f8f9fa; border-top: 1px solid #e0e0e0; overflow-y: auto; box-sizing: border-box; height: 30%; flex-shrink: 0; }
         .viewer-controls h4 { margin-top: 0; margin-bottom: 15px; font-size: 1.1rem; color: #343a40; border-bottom: 1px solid #dee2e6; padding-bottom: 8px; }
@@ -147,29 +142,47 @@
             font-size: 0.9rem;
             color: #555;
         }
-        .plot-controls label {
-            margin-right: 0.5rem;
-        }
-        .plot-controls input[type="range"] {
-            max-width: 250px; /* Wider slider */
-            cursor: pointer;
-            vertical-align: middle;
-        }
-        .plot-controls .temp-value-display {
-            font-weight: 500;
-            min-width: 50px; /* Ensure space for value "XXX K" */
-            text-align: right;
-            display: inline-block; /* Align properly */
-            background-color: #f8f9fa;
-            padding: 2px 6px;
-            border-radius: 3px;
-            border: 1px solid #e9ecef;
-        }
+        .plot-controls label { margin-right: 0.5rem; }
+        .plot-controls input[type="range"] { max-width: 250px; cursor: pointer; vertical-align: middle; }
+        .plot-controls .temp-value-display { font-weight: 500; min-width: 50px; text-align: right; display: inline-block; background-color: #f8f9fa; padding: 2px 6px; border-radius: 3px; border: 1px solid #e9ecef; }
 
 
         /* Responsive Layout */
-         @media (max-width: 768px) { .full-detail-container { margin: 1rem; padding: 1.5rem; } #toc ul { columns: 1; -webkit-columns: 1; -moz-columns: 1; } .detail-content-section h2 { font-size: 1.5rem; } .property-detail-block h3 { font-size: 1.25rem; } .detail-subsection h4::before { font-size: 1rem; } .crystal-viewer-wrapper { height: auto; min-height: 550px; } .crystal-viewer-container { flex-direction: column; height: 100%; } .viewer-area { height: 60%; min-height: 300px; border-right: none; } .viewer-controls { width: 100%; height: 40%; border-left: none; border-top: 1px solid #e0e0e0; max-height: none; } }
-         @media (min-width: 769px) { .crystal-viewer-wrapper { height: var(--viewer-height, 450px); } .crystal-viewer-container { flex-direction: row; height: 100%; } .viewer-area { border-right: 1px solid #e0e0e0; border-bottom: none; height: 100%; width: calc(100% - 280px); } .viewer-controls { width: 280px; flex-shrink: 0; border-top: none; border-left: 1px solid #e0e0e0; height: 100%; overflow-y: auto; } }
+        @media (max-width: 768px) { .full-detail-container { margin: 1rem; padding: 1.5rem; } #toc ul { columns: 1; -webkit-columns: 1; -moz-columns: 1; } .detail-content-section h2 { font-size: 1.5rem; } .property-detail-block h3 { font-size: 1.25rem; } .detail-subsection h4::before { font-size: 1rem; } .crystal-viewer-wrapper { height: auto; min-height: 550px; } .crystal-viewer-container { flex-direction: column; height: 100%; } .viewer-area { height: 60%; min-height: 300px; border-right: none; } .viewer-controls { width: 100%; height: 40%; border-left: none; border-top: 1px solid #e0e0e0; max-height: none; } }
+        @media (min-width: 769px) { .crystal-viewer-wrapper { height: var(--viewer-height, 450px); } .crystal-viewer-container { flex-direction: row; height: 100%; } .viewer-area { border-right: 1px solid #e0e0e0; border-bottom: none; height: 100%; width: calc(100% - 280px); } .viewer-controls { width: 280px; flex-shrink: 0; border-top: none; border-left: 1px solid #e0e0e0; height: 100%; overflow-y: auto; } }
+
+        /* --- Style for Back to Top Button --- */
+        #backToTopBtn {
+            display: none; /* Hidden by default */
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            z-index: 99;
+            border: none;
+            outline: none;
+            background-color: #0056b3; /* Adjusted color */
+            color: white;
+            cursor: pointer;
+            padding: 12px 15px; /* Slightly less padding */
+            border-radius: 50%; /* Make it round */
+            font-size: 18px; /* Larger arrow */
+            line-height: 1;
+            opacity: 0; /* Start transparent */
+            transition: opacity 0.3s ease-in-out, background-color 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        #backToTopBtn.show {
+            display: block;
+            opacity: 0.7; /* Slightly transparent when visible */
+        }
+
+        #backToTopBtn:hover {
+            background-color: #003d80; /* Darker blue on hover */
+            opacity: 1; /* Fully opaque on hover */
+        }
+        /* ------------------------------------ */
+
     </style>
 </head>
 <body>
@@ -205,7 +218,9 @@
              <section id="section-thermal_properties" class="detail-content-section" style="display: none;">
                  <h2 id="section-thermal_properties-title">Thermal Properties</h2>
                  <p class="section-introduction" id="section-thermal_properties-intro"></p>
-                 <div class="properties-container" id="section-thermal_properties-properties"></div>
+                 <div class="properties-container" id="section-thermal_properties-properties">
+                     <!-- NOTE: Removed chart placeholder divs -->
+                 </div>
              </section>
              <section id="section-mechanical_properties" class="detail-content-section" style="display: none;">
                  <h2 id="section-mechanical_properties-title">Mechanical Properties</h2>
@@ -277,8 +292,11 @@
         </div>
     </div>
 
+    <!-- *** ADD BACK TO TOP BUTTON HTML *** -->
+    <button id="backToTopBtn" title="Go to top">↑</button>
+    <!-- *********************************** -->
+
     <!-- Load Three.js libraries *** BEFORE *** full_detail_loader.js -->
-    <!-- Make sure these paths are correct and accessible -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r133/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.133.0/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.133.0/examples/js/renderers/CSS2DRenderer.js"></script>
