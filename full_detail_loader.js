@@ -576,21 +576,20 @@ document.addEventListener("DOMContentLoaded", async () => {
      } // --- End handleRefLinkClick ---
 
 
-        // --- ================================================================= ---
-    // ---      *** START: REFINED Three.js Viewer Logic v10 ***            ---
-    // ---      (Absolute Label Pos within Group + Loading Text Fix)       ---
+    // --- ================================================================= ---
+    // ---      *** START: REFINED Three.js Viewer Logic v11 ***            ---
+    // ---      (Attach Label to Sphere + worldToLocal Offset Calc)        ---
     // --- ================================================================= ---
     function initializeSimplifiedThreeJsViewer(viewerElementId, controlsElementId, vizData, materialData) {
-        console.log(`--- [Three.js ADAPTED Init v10] Initializing Viewer for ${viewerElementId} ---`);
+        console.log(`--- [Three.js ADAPTED Init v11] Initializing Viewer for ${viewerElementId} ---`);
 
         const viewerContainer = document.getElementById(viewerElementId);
         const controlsContainer = document.getElementById(controlsElementId);
 
         if (!viewerContainer || !controlsContainer) { console.error("[Three.js Error] Viewer or controls element not found!"); return; }
 
-        // *** FIX: Explicitly clear placeholder text ***
+        // Explicitly clear placeholder text
         viewerContainer.innerHTML = '';
-        // ********************************************
 
         // WebGL Check
         try { const canvas = document.createElement('canvas'); if (!window.WebGLRenderingContext || !(canvas.getContext('webgl') || canvas.getContext('experimental-webgl'))) throw new Error('WebGL not supported.'); }
@@ -615,7 +614,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const latticeConstantsSource = vizData.lattice_constants || {};
         const spinSpeed = 0.005;
         const sphereScales = { spacefill: 0.55, ballAndStick: 0.28, stick: 0.1 };
-        const labelOffsetValue = 0.45; // *** Fixed world-unit offset for labels above atoms ***
+        const labelWorldOffset = new THREE.Vector3(0, 0.5, 0); // *** Fixed offset in WORLD units ***
         const sphereDetail = 12;
         const stickDetail = 6;
         const stickRadius = 0.05;
@@ -638,6 +637,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         // Reusable Geometries
         const sphereGeometries = {};
         const stickGeometry = new THREE.CylinderGeometry(stickRadius, stickRadius, 1, stickDetail, 1);
+        // Temp vectors for calculations
+        const tempVec = new THREE.Vector3();
+        const tempVec2 = new THREE.Vector3();
+
 
         // --- Helper: Calculate Lattice Constant (Unchanged from v9) ---
         function calculateLatticeConstant_Adapted(concentration) {
@@ -661,30 +664,33 @@ document.addEventListener("DOMContentLoaded", async () => {
             const minBounds = new THREE.Vector3(Infinity, Infinity, Infinity); const maxBounds = new THREE.Vector3(-Infinity, -Infinity, -Infinity);
             for (let i = 0; i < nx; i++) { for (let j = 0; j < ny; j++) { for (let k = 0; k < nz; k++) { basis.forEach(basisAtom => { basisAtom.coords.forEach(coord => { let elementSymbol; if (basisAtom.element === 'cation') { if (vizData.composition.min_x !== vizData.composition.max_x) { elementSymbol = Math.random() < concentration ? subst_symbol : host_symbol; } else { elementSymbol = subst_symbol || host_symbol; } } else { elementSymbol = basisAtom.element; } const pos = new THREE.Vector3( (coord.x + i) * lattice_a, (coord.y + j) * lattice_a, (coord.z + k) * lattice_a ); generatedAtoms.push({ element: elementSymbol.toUpperCase(), position: pos }); minBounds.min(pos); maxBounds.max(pos); }); }); } } }
             const center = new THREE.Vector3().addVectors(minBounds, maxBounds).multiplyScalar(0.5);
-            console.log(`[Three.js Adapted v10] Generated ${generatedAtoms.length} atoms (relative coords). Lattice: ${lattice_a.toFixed(3)}. Center calculated: ${center.x.toFixed(2)},${center.y.toFixed(2)},${center.z.toFixed(2)}`);
+            console.log(`[Three.js Adapted v11] Generated ${generatedAtoms.length} atoms (relative coords). Lattice: ${lattice_a.toFixed(3)}. Center calculated: ${center.x.toFixed(2)},${center.y.toFixed(2)},${center.z.toFixed(2)}`);
             // *** DO NOT SUBTRACT CENTER HERE ***
             return { atoms: generatedAtoms, center: center }; // Return atoms relative to (0,0,0) and the center
         }
 
-        // --- Helper: Create CSS2D Label Object (Unchanged from v7) ---
+        // --- Helper: Create CSS2D Label Object ---
         function createCSS2DLabel_Adapted(text) {
             const div = document.createElement('div'); div.className = 'atom-label'; div.textContent = text;
             const label = new THREE.CSS2DObject(div);
-            // label.center.set(0.5, 0.5); // Removed - incorrect property
             label.layers.set(0);
             return label;
         }
 
-        // --- Helper: Create/Update Model (Atoms, Bonds, Labels - Adapted v10 - Absolute Label Positioning) ---
+        // --- Helper: Create/Update Model (Atoms, Bonds, Labels - Adapted v11 - Attach Label + WorldToLocal) ---
         function createOrUpdateModel_Adapted(atomData) {
-            console.log("[Three.js Adapted v10] Rebuilding model...");
+            console.log("[Three.js Adapted v11] Rebuilding model...");
             const childrenToRemove = crystalGroup.children.filter(child => child !== unitCellOutline);
             childrenToRemove.forEach(object => {
-                if (object.isMesh) { if (object.geometry && object.geometry !== stickGeometry) object.geometry.dispose(); }
-                else if (object.isLineSegments && object.geometry) { object.geometry.dispose(); }
+                if (object.isMesh) {
+                    if (object.geometry && object.geometry !== stickGeometry) object.geometry.dispose();
+                    const labelsToRemove = object.children.filter(child => child.isCSS2DObject); // Also remove labels attached to sphere
+                    labelsToRemove.forEach(label => { if (label.element?.parentNode) label.element.parentNode.removeChild(label.element); label.element = null; object.remove(label); });
+                } else if (object.isLineSegments && object.geometry) { object.geometry.dispose(); }
                 else if (object.isCSS2DObject) { if (object.element?.parentNode) object.element.parentNode.removeChild(object.element); object.element = null; }
                 crystalGroup.remove(object);
             });
+            atomData.forEach(a => a.sphereMesh = null);
 
             if (!atomData || atomData.length === 0) { console.warn("No atom data to build model."); return; }
 
@@ -706,7 +712,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 });
             }
 
-            // Add Spheres & Labels - POSITIONING USING RAW COORDS
+            // Add Spheres & Labels - Attach label to sphere using worldToLocal
             let spheresAdded = 0, labelsAdded = 0;
             atomData.forEach((atom) => {
                 const symbol = atom.element;
@@ -715,26 +721,40 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const radiusKey = sphereRadius.toFixed(3); const geometry = sphereGeometries[radiusKey];
                 const material = getMaterial(symbol);
 
-                // Add Sphere at its calculated position (relative to group origin)
+                let sphere = null;
                 if (currentSphereScale > 0 && geometry && material && atom.position && !isNaN(atom.position.x)) {
-                    const sphere = new THREE.Mesh(geometry, material);
-                    sphere.position.copy(atom.position); // Use the position directly
+                    sphere = new THREE.Mesh(geometry, material);
+                    sphere.position.copy(atom.position); // Position sphere relative to group origin
                     crystalGroup.add(sphere);
                     spheresAdded++;
-                }
 
-                // Add Label at atom position + fixed offset (relative to group origin)
-                if (showLabels && atom.position && !isNaN(atom.position.x)) {
-                    const label = createCSS2DLabel_Adapted(atom.element);
-                    label.position.copy(atom.position); // Start at atom's relative position
-                    label.position.y += labelOffsetValue; // Add fixed offset in Y direction
-                    crystalGroup.add(label); // Add label directly to the main group
-                    labelsAdded++;
+                    // Add Label, attached to sphere
+                    if (showLabels) {
+                        const label = createCSS2DLabel_Adapted(atom.element);
+                        // Calculate desired world position for label (sphere world pos + world offset)
+                        // Note: Need to update sphere's world matrix *before* getting world position if group moved
+                        sphere.updateWorldMatrix(true, false); // Force update world matrix
+                        const desiredWorldPos = sphere.getWorldPosition(tempVec).add(labelWorldOffset);
+
+                        // Convert world position back to sphere's local space for the label
+                        const localLabelPos = sphere.worldToLocal(desiredWorldPos.clone()); // Use clone to avoid modifying desiredWorldPos
+
+                        label.position.copy(localLabelPos);
+                        sphere.add(label); // Add label as child of sphere
+                        labelsAdded++;
+                    }
+                } else if (showLabels && atom.position && !isNaN(atom.position.x)){
+                     // Stick mode or other case where sphere isn't created
+                     // Add label directly to group at atom pos + world offset
+                     const label = createCSS2DLabel_Adapted(atom.element);
+                     label.position.copy(atom.position).add(labelWorldOffset);
+                     crystalGroup.add(label);
+                     labelsAdded++;
                 }
             });
-            console.log(`[Three.js Adapted v10] Added ${spheresAdded} spheres, ${labelsAdded} labels.`);
+            console.log(`[Three.js Adapted v11] Added ${spheresAdded} spheres, ${labelsAdded} labels.`);
 
-            // Add Bonds (Sticks) - POSITIONING USING RAW COORDS
+            // Add Bonds (Sticks) - Positioning relative to group origin
             let bondsAdded = 0;
             if ((currentViewStyle === 'stick' || currentViewStyle === 'ballAndStick') && bondCutoffSq > 0) {
                 const yAxis = new THREE.Vector3(0, 1, 0);
@@ -752,7 +772,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                             if (!((isCation1 && isAnion2) || (isAnion1 && isCation2))) continue;
                             const distance = Math.sqrt(distSq); if (isNaN(distance) || distance <= 1e-3) continue;
                             const stickMesh = new THREE.Mesh(stickGeometry, bondMaterial);
-                            stickMesh.position.copy(atom1.position).lerp(atom2.position, 0.5); // Midpoint using raw coords
+                            stickMesh.position.copy(atom1.position).lerp(atom2.position, 0.5);
                             const direction = new THREE.Vector3().subVectors(atom2.position, atom1.position).normalize();
                             const quaternion = new THREE.Quaternion();
                             if (Math.abs(direction.dot(yAxis)) < 1.0 - 1e-6) { quaternion.setFromUnitVectors(yAxis, direction); }
@@ -763,18 +783,19 @@ document.addEventListener("DOMContentLoaded", async () => {
                         }
                     }
                 }
-                console.log(`[Three.js Adapted v10] Added ${bondsAdded} bonds.`);
-            } else { console.log(`[Three.js Adapted v10] Skipping bond generation.`); }
+                console.log(`[Three.js Adapted v11] Added ${bondsAdded} bonds.`);
+            } else { console.log(`[Three.js Adapted v11] Skipping bond generation.`); }
         }
 
-        // --- Helper: Create/Update Unit Cell Outline (Adapted v10 - Positioning Relative to Group) ---
+
+        // --- Helper: Create/Update Unit Cell Outline (Adapted v11 - Positioning Relative to Group) ---
         function createOrUpdateUnitCellOutline_Adapted() {
             if (unitCellOutline) {
                 crystalGroup.remove(unitCellOutline);
                 if (unitCellOutline.geometry) unitCellOutline.geometry.dispose();
             }
             if (!showOutline) {
-                console.log("[Three.js Adapted v10] Outline hidden.");
+                console.log("[Three.js Adapted v11] Outline hidden.");
                 unitCellOutline = null; return;
             }
             // Geometry represents a 1x1x1 box centered at its local (0,0,0)
@@ -789,7 +810,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             unitCellOutline.position.set(0.5 * lattice_a, 0.5 * lattice_a, 0.5 * lattice_a);
 
             crystalGroup.add(unitCellOutline);
-            console.log(`[Three.js Adapted v10] Outline positioned relative to group at: ${unitCellOutline.position.x.toFixed(2)},${unitCellOutline.position.y.toFixed(2)},${unitCellOutline.position.z.toFixed(2)}`);
+            console.log(`[Three.js Adapted v11] Outline positioned relative to group at: ${unitCellOutline.position.x.toFixed(2)},${unitCellOutline.position.y.toFixed(2)},${unitCellOutline.position.z.toFixed(2)}`);
         }
 
 
@@ -870,7 +891,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         // --- === Main Execution Flow === ---
         try {
-            console.log("[Three.js Adapted v10] Starting Main Flow..."); // Version identifier updated
+            console.log("[Three.js Adapted v11] Starting Main Flow..."); // Version identifier updated
             // Initial Scene Setup
             scene = new THREE.Scene(); scene.background = new THREE.Color(vizData.background_color || 0xddeeff);
             const width = viewerContainer.clientWidth; const height = viewerContainer.clientHeight;
@@ -904,45 +925,5 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     } // --- End initializeSimplifiedThreeJsViewer ---
     // --- =============================================================== ---
-    // ---      *** END: REFINED Three.js Viewer Logic v10 ***              ---
+    // ---      *** END: REFINED Three.js Viewer Logic v11 ***              ---
     // --- =============================================================== ---
-
-
-    // --- =============================================================== ---
-    // ---      *** Back to Top Button Logic START ***                     ---
-    // --- =============================================================== ---
-    if (backToTopButton) {
-        // Function to show/hide button based on scroll position
-        const scrollFunction = () => {
-            // Show button if scrolled down more than 100px (adjust threshold as needed)
-            if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
-                backToTopButton.classList.add('show');
-            } else {
-                backToTopButton.classList.remove('show');
-            }
-        };
-
-        // Function to scroll to top smoothly
-        const scrollToTop = () => {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth' // Use smooth scrolling
-            });
-        };
-
-        // Add event listeners
-        window.addEventListener('scroll', scrollFunction);
-        backToTopButton.addEventListener('click', scrollToTop);
-
-        console.log("[Full Detail Loader] Back to Top button initialized.");
-    } else {
-        console.warn("[Full Detail Loader] Back to Top button element '#backToTopBtn' not found.");
-    }
-    // --- =============================================================== ---
-    // ---      *** Back to Top Button Logic END ***                       ---
-    // --- =============================================================== ---
-
-
-}); // End DOMContentLoaded
-
-// --- END OF FILE full_detail_loader.js ---
