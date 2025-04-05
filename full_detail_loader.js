@@ -576,12 +576,12 @@ document.addEventListener("DOMContentLoaded", async () => {
      } // --- End handleRefLinkClick ---
 
 
-        // --- ================================================================= ---
-    // ---      *** START: REFINED Three.js Viewer Logic v7 ***             ---
-    // ---      (Fixes Label positioning error)                            ---
+    // --- ================================================================= ---
+    // ---      *** START: REFINED Three.js Viewer Logic v9 ***             ---
+    // ---      (Group Centering, Absolute Child Positioning)              ---
     // --- ================================================================= ---
     function initializeSimplifiedThreeJsViewer(viewerElementId, controlsElementId, vizData, materialData) {
-        console.log(`--- [Three.js ADAPTED Init v7] Initializing Viewer for ${viewerElementId} ---`);
+        console.log(`--- [Three.js ADAPTED Init v9] Initializing Viewer for ${viewerElementId} ---`);
 
         const viewerContainer = document.getElementById(viewerElementId);
         const controlsContainer = document.getElementById(controlsElementId);
@@ -596,7 +596,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         let scene, camera, renderer, css2DRenderer, controls, animationFrameId;
         let crystalGroup = new THREE.Group(); // Main group for atoms, bonds, outline
         let unitCellOutline = null;
-        let atoms = []; // Store atom data {element, position, sphereMesh (optional)}
+        let atoms = []; // Store atom data {element, position (relative to group origin)}
+        let structureCenter = new THREE.Vector3(); // Store the calculated center
         let isSpinning = false;
         let showLabels = true;
         let showOutline = true;
@@ -610,7 +611,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const latticeConstantsSource = vizData.lattice_constants || {};
         const spinSpeed = 0.005;
         const sphereScales = { spacefill: 0.55, ballAndStick: 0.28, stick: 0.1 };
-        const labelOffsetFactor = 1.3; // Multiply sphere radius by this for label distance
+        const labelOffsetValue = 0.4; // Fixed world-unit offset for labels above atoms
         const sphereDetail = 12;
         const stickDetail = 6;
         const stickRadius = 0.05;
@@ -624,88 +625,64 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const symbolKey = Object.keys(atomInfo).find(k => k.toUpperCase() === upperSymbol) || upperSymbol;
                 const info = atomInfo[symbolKey] || {};
                 materialsCache[upperSymbol] = new THREE.MeshStandardMaterial({
-                    color: info.color || '#cccccc',
-                    metalness: info.metalness ?? 0.4,
-                    roughness: info.roughness ?? 0.6,
-                    side: THREE.DoubleSide
-                });
-            }
-            return materialsCache[upperSymbol];
+                    color: info.color || '#cccccc', metalness: info.metalness ?? 0.4, roughness: info.roughness ?? 0.6, side: THREE.DoubleSide });
+            } return materialsCache[upperSymbol];
         }
         const bondMaterial = new THREE.MeshStandardMaterial({ color: 0x666666, metalness: 0.1, roughness: 0.8, side: THREE.DoubleSide });
         const outlineMaterial = new THREE.LineBasicMaterial({ color: 0x3333ff, linewidth: 1.5 });
 
-
         // Reusable Geometries
-        const sphereGeometries = {}; // Cache sphere geometries by radius string
+        const sphereGeometries = {};
         const stickGeometry = new THREE.CylinderGeometry(stickRadius, stickRadius, 1, stickDetail, 1);
 
         // --- Helper: Calculate Lattice Constant ---
         function calculateLatticeConstant_Adapted(concentration) {
-            let calculated_a = 0; const default_a = 6.47;
+             let calculated_a = 0; const default_a = 6.47;
             if (!atomInfo || !latticeConstantsSource) { console.warn("Atom info/lattice const missing, using default."); return default_a; }
             if (vizData.composition.min_x !== vizData.composition.max_x && Object.keys(latticeConstantsSource).length >= 2) {
-                const host_symbol = Object.keys(atomInfo).find(k => atomInfo[k]?.role === 'cation_host');
-                const subst_symbol = Object.keys(atomInfo).find(k => atomInfo[k]?.role === 'cation_subst');
+                const host_symbol = Object.keys(atomInfo).find(k => atomInfo[k]?.role === 'cation_host'); const subst_symbol = Object.keys(atomInfo).find(k => atomInfo[k]?.role === 'cation_subst');
                 if (!host_symbol || !subst_symbol) { console.warn("Cation host/subst roles missing."); calculated_a = default_a; }
-                else {
-                    const a_host = Number(latticeConstantsSource[host_symbol]); const a_subst = Number(latticeConstantsSource[subst_symbol]); const ratio = Number(concentration);
-                    if (!isNaN(a_host) && !isNaN(a_subst) && !isNaN(ratio) && a_host > 0 && a_subst > 0) { calculated_a = a_host * (1 - ratio) + a_subst * ratio; }
-                    else { console.warn("Invalid values for Vegard's law.", {a_host, a_subst, ratio}); calculated_a = default_a; }
-                }
+                else { const a_host = Number(latticeConstantsSource[host_symbol]); const a_subst = Number(latticeConstantsSource[subst_symbol]); const ratio = Number(concentration); if (!isNaN(a_host) && !isNaN(a_subst) && !isNaN(ratio) && a_host > 0 && a_subst > 0) { calculated_a = a_host * (1 - ratio) + a_subst * ratio; } else { console.warn("Invalid values for Vegard's law.", {a_host, a_subst, ratio}); calculated_a = default_a; } }
             } else { calculated_a = Number(latticeConstantsSource?.a) || Number(Object.values(latticeConstantsSource)[0]) || default_a; }
             if (!isNaN(calculated_a) && calculated_a > 0) return calculated_a;
             console.error(`Invalid calculated lattice const: ${calculated_a}. Returning default.`); return default_a;
         }
 
-        // --- Helper: Generate Atom Positions & Center ---
+        // --- Helper: Generate Atom Positions (RELATIVE TO ORIGIN) & Calculate Center ---
         function generateCrystalData_Adapted(nx, ny, nz, concentration) {
             const generatedAtoms = []; lattice_a = calculateLatticeConstant_Adapted(concentration);
-            const host_symbol = Object.keys(atomInfo).find(k => atomInfo[k]?.role === 'cation_host');
-            const subst_symbol = Object.keys(atomInfo).find(k => atomInfo[k]?.role === 'cation_subst');
-            const anion_symbol = Object.keys(atomInfo).find(k => atomInfo[k]?.role === 'anion');
+            const host_symbol = Object.keys(atomInfo).find(k => atomInfo[k]?.role === 'cation_host'); const subst_symbol = Object.keys(atomInfo).find(k => atomInfo[k]?.role === 'cation_subst'); const anion_symbol = Object.keys(atomInfo).find(k => atomInfo[k]?.role === 'anion');
             if (!anion_symbol || (vizData.composition.min_x !== vizData.composition.max_x && (!host_symbol || !subst_symbol))) { console.error("Missing roles definition."); return { atoms: [], center: new THREE.Vector3() }; }
             const basis = [ { element: anion_symbol, coords: [new THREE.Vector3(0.00, 0.00, 0.00),new THREE.Vector3(0.00, 0.50, 0.50),new THREE.Vector3(0.50, 0.00, 0.50),new THREE.Vector3(0.50, 0.50, 0.00)] }, { element: 'cation', coords: [new THREE.Vector3(0.25, 0.25, 0.25),new THREE.Vector3(0.25, 0.75, 0.75),new THREE.Vector3(0.75, 0.25, 0.75),new THREE.Vector3(0.75, 0.75, 0.25)] }];
             const minBounds = new THREE.Vector3(Infinity, Infinity, Infinity); const maxBounds = new THREE.Vector3(-Infinity, -Infinity, -Infinity);
             for (let i = 0; i < nx; i++) { for (let j = 0; j < ny; j++) { for (let k = 0; k < nz; k++) { basis.forEach(basisAtom => { basisAtom.coords.forEach(coord => { let elementSymbol; if (basisAtom.element === 'cation') { if (vizData.composition.min_x !== vizData.composition.max_x) { elementSymbol = Math.random() < concentration ? subst_symbol : host_symbol; } else { elementSymbol = subst_symbol || host_symbol; } } else { elementSymbol = basisAtom.element; } const pos = new THREE.Vector3( (coord.x + i) * lattice_a, (coord.y + j) * lattice_a, (coord.z + k) * lattice_a ); generatedAtoms.push({ element: elementSymbol.toUpperCase(), position: pos }); minBounds.min(pos); maxBounds.max(pos); }); }); } } }
+            // Calculate center of the raw coordinates
             const center = new THREE.Vector3().addVectors(minBounds, maxBounds).multiplyScalar(0.5);
-            generatedAtoms.forEach(atom => atom.position.sub(center)); // Center atoms around world origin
-            console.log(`[Three.js Adapted v7] Generated ${generatedAtoms.length} atoms. Lattice: ${lattice_a.toFixed(3)}. Center offset calculated: ${center.x.toFixed(2)},${center.y.toFixed(2)},${center.z.toFixed(2)}`);
-            return { atoms: generatedAtoms, center: center }; // Return centered atoms and the center offset
+            console.log(`[Three.js Adapted v9] Generated ${generatedAtoms.length} atoms (relative coords). Lattice: ${lattice_a.toFixed(3)}. Center calculated: ${center.x.toFixed(2)},${center.y.toFixed(2)},${center.z.toFixed(2)}`);
+            // *** DO NOT SUBTRACT CENTER HERE ***
+            return { atoms: generatedAtoms, center: center }; // Return atoms relative to (0,0,0) and the center
         }
 
-        // --- Helper: Create CSS2D Label Object (FIXED - Removed .center.set) ---
+        // --- Helper: Create CSS2D Label Object ---
         function createCSS2DLabel_Adapted(text) {
-            const div = document.createElement('div');
-            div.className = 'atom-label';
-            div.textContent = text;
+            const div = document.createElement('div'); div.className = 'atom-label'; div.textContent = text;
             const label = new THREE.CSS2DObject(div);
-            // REMOVED: label.center.set(0.5, 0.5); <-- This property does not exist on CSS2DObject
+            // label.center.set(0.5, 0.5); // Removed - incorrect property
             label.layers.set(0);
             return label;
         }
 
-        // --- Helper: Create/Update Model (Atoms, Bonds, Labels - Adapted v8 - Refined Label Offset) ---
+        // --- Helper: Create/Update Model (Atoms, Bonds, Labels - Adapted v9) ---
         function createOrUpdateModel_Adapted(atomData) {
-            console.log("[Three.js Adapted v8] Rebuilding model..."); // Version identifier updated
+            console.log("[Three.js Adapted v9] Rebuilding model...");
+            // Dispose old objects *except* the outline
             const childrenToRemove = crystalGroup.children.filter(child => child !== unitCellOutline);
             childrenToRemove.forEach(object => {
-                if (object.isMesh) {
-                    if (object.geometry && object.geometry !== stickGeometry) object.geometry.dispose();
-                    // Clean up labels attached to this sphere
-                    const labelsToRemove = object.children.filter(child => child.isCSS2DObject);
-                    labelsToRemove.forEach(label => {
-                        if (label.element?.parentNode) label.element.parentNode.removeChild(label.element);
-                        label.element = null; object.remove(label);
-                    });
-                } else if (object.isLineSegments && object.geometry) { object.geometry.dispose(); }
-                else if (object.isCSS2DObject) { // Handle labels attached directly to group
-                    if (object.element?.parentNode) object.element.parentNode.removeChild(object.element);
-                    object.element = null;
-                }
-                crystalGroup.remove(object);
+                if (object.isMesh) { if (object.geometry && object.geometry !== stickGeometry) object.geometry.dispose(); }
+                else if (object.isLineSegments && object.geometry) { object.geometry.dispose(); }
+                else if (object.isCSS2DObject) { if (object.element?.parentNode) object.element.parentNode.removeChild(object.element); object.element = null; }
+                crystalGroup.remove(object); // Remove from group
             });
-            atomData.forEach(a => a.sphereMesh = null); // Clear references
 
             if (!atomData || atomData.length === 0) { console.warn("No atom data to build model."); return; }
 
@@ -721,59 +698,40 @@ document.addEventListener("DOMContentLoaded", async () => {
             for (const key in sphereGeometries) delete sphereGeometries[key];
             if (currentSphereScale > 0) {
                 atomData.forEach(atom => {
-                    const symbol = atom.element;
-                    const symbolKey = Object.keys(atomInfo).find(k => k.toUpperCase() === symbol.toUpperCase()) || symbol;
-                    const baseRadius = atomInfo[symbolKey]?.radius ?? 1.0;
-                    const radius = Math.max(0.01, baseRadius * currentSphereScale);
-                    const radiusKey = radius.toFixed(3);
-                    if (!sphereGeometries[radiusKey]) {
-                        try { sphereGeometries[radiusKey] = new THREE.SphereGeometry(radius, sphereDetail, sphereDetail); }
-                        catch (e) { console.error(`Error creating sphere geom r=${radius}: ${e.message}`); }
-                    }
+                    const symbol = atom.element; const symbolKey = Object.keys(atomInfo).find(k => k.toUpperCase() === symbol.toUpperCase()) || symbol;
+                    const baseRadius = atomInfo[symbolKey]?.radius ?? 1.0; const radius = Math.max(0.01, baseRadius * currentSphereScale);
+                    const radiusKey = radius.toFixed(3); if (!sphereGeometries[radiusKey]) { try { sphereGeometries[radiusKey] = new THREE.SphereGeometry(radius, sphereDetail, sphereDetail); } catch (e) { console.error(`Error creating sphere geom r=${radius}: ${e.message}`); } }
                 });
             }
 
-            // Add Spheres & Labels
+            // Add Spheres & Labels - POSITIONING USING RAW COORDS
             let spheresAdded = 0, labelsAdded = 0;
-            const labelOffsetFactor = 1.1; // *** REDUCED OFFSET FACTOR ***
-
             atomData.forEach((atom) => {
-                const symbol = atom.element;
-                const symbolKey = Object.keys(atomInfo).find(k => k.toUpperCase() === symbol.toUpperCase()) || symbol;
-                const baseRadius = atomInfo[symbolKey]?.radius ?? 1.0;
-                const sphereRadius = Math.max(0.01, baseRadius * currentSphereScale);
-                const radiusKey = sphereRadius.toFixed(3);
-                const geometry = sphereGeometries[radiusKey];
+                const symbol = atom.element; const symbolKey = Object.keys(atomInfo).find(k => k.toUpperCase() === symbol.toUpperCase()) || symbol;
+                const baseRadius = atomInfo[symbolKey]?.radius ?? 1.0; const sphereRadius = Math.max(0.01, baseRadius * currentSphereScale);
+                const radiusKey = sphereRadius.toFixed(3); const geometry = sphereGeometries[radiusKey];
                 const material = getMaterial(symbol);
 
-                let sphere = null;
+                // Add Sphere at its calculated position (relative to group origin)
                 if (currentSphereScale > 0 && geometry && material && atom.position && !isNaN(atom.position.x)) {
-                    sphere = new THREE.Mesh(geometry, material);
-                    sphere.position.copy(atom.position);
+                    const sphere = new THREE.Mesh(geometry, material);
+                    sphere.position.copy(atom.position); // Use the position directly
                     crystalGroup.add(sphere);
-                    atom.sphereMesh = sphere; // Store reference
                     spheresAdded++;
                 }
 
-                // Add Label - Attach to sphere if sphere exists, else position absolutely
+                // Add Label at atom position + offset (relative to group origin)
                 if (showLabels && atom.position && !isNaN(atom.position.x)) {
-                    const label = createCSS2DLabel_Adapted(atom.element); // Use corrected label creator
-                    if (sphere) {
-                        // Position label relative to the sphere's center using scaled offset
-                        label.position.set(0, sphereRadius * labelOffsetFactor, 0); // Use refined offset factor
-                        sphere.add(label); // Attach label TO the sphere mesh
-                    } else {
-                         // If no sphere (e.g., stick mode), position label absolutely near atom world pos
-                         label.position.copy(atom.position);
-                         label.position.y += baseRadius * labelOffsetFactor; // Offset from world position using reduced factor
-                         crystalGroup.add(label); // Add to group
-                    }
+                    const label = createCSS2DLabel_Adapted(atom.element);
+                    label.position.copy(atom.position); // Start at atom position
+                    label.position.y += labelOffsetValue; // Add fixed world-unit offset
+                    crystalGroup.add(label); // Add label directly to the main group
                     labelsAdded++;
                 }
             });
-            console.log(`[Three.js Adapted v8] Added ${spheresAdded} spheres, ${labelsAdded} labels.`);
+            console.log(`[Three.js Adapted v9] Added ${spheresAdded} spheres, ${labelsAdded} labels.`);
 
-            // Add Bonds (Sticks)
+            // Add Bonds (Sticks) - POSITIONING USING RAW COORDS
             let bondsAdded = 0;
             if ((currentViewStyle === 'stick' || currentViewStyle === 'ballAndStick') && bondCutoffSq > 0) {
                 const yAxis = new THREE.Vector3(0, 1, 0);
@@ -791,7 +749,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                             if (!((isCation1 && isAnion2) || (isAnion1 && isCation2))) continue;
                             const distance = Math.sqrt(distSq); if (isNaN(distance) || distance <= 1e-3) continue;
                             const stickMesh = new THREE.Mesh(stickGeometry, bondMaterial);
-                            stickMesh.position.copy(atom1.position).lerp(atom2.position, 0.5);
+                            stickMesh.position.copy(atom1.position).lerp(atom2.position, 0.5); // Midpoint using raw coords
                             const direction = new THREE.Vector3().subVectors(atom2.position, atom1.position).normalize();
                             const quaternion = new THREE.Quaternion();
                             if (Math.abs(direction.dot(yAxis)) < 1.0 - 1e-6) { quaternion.setFromUnitVectors(yAxis, direction); }
@@ -802,41 +760,34 @@ document.addEventListener("DOMContentLoaded", async () => {
                         }
                     }
                 }
-                console.log(`[Three.js Adapted v8] Added ${bondsAdded} bonds.`);
-            } else { console.log(`[Three.js Adapted v8] Skipping bond generation.`); }
+                console.log(`[Three.js Adapted v9] Added ${bondsAdded} bonds.`);
+            } else { console.log(`[Three.js Adapted v9] Skipping bond generation.`); }
         }
 
-
-        // --- Helper: Create/Update Unit Cell Outline (Adapted v7 - Same as v6) ---
-        function createOrUpdateUnitCellOutline_Adapted(atomsCenter) {
+        // --- Helper: Create/Update Unit Cell Outline (Adapted v9 - POSITIONING RELATIVE TO GROUP) ---
+        function createOrUpdateUnitCellOutline_Adapted() { // No longer needs atomsCenter
             if (unitCellOutline) {
                 crystalGroup.remove(unitCellOutline);
                 if (unitCellOutline.geometry) unitCellOutline.geometry.dispose();
             }
             if (!showOutline) {
-                console.log("[Three.js Adapted v7] Outline hidden.");
+                console.log("[Three.js Adapted v9] Outline hidden.");
                 unitCellOutline = null; return;
             }
 
-            // Create a Box Geometry centered at (0,0,0) locally, with dimensions of the lattice constant
+            // Create Box Geometry centered at LOCAL (0.5, 0.5, 0.5) * lattice_a
+            // This represents the first unit cell relative to the group's origin (0,0,0 corner)
             const unitBoxGeometry = new THREE.BoxGeometry(lattice_a, lattice_a, lattice_a);
-            // Create EdgesGeometry from the BoxGeometry
+            unitBoxGeometry.translate(0.5 * lattice_a, 0.5 * lattice_a, 0.5 * lattice_a); // Shift center to (0.5, 0.5, 0.5)
             const edgesGeometry = new THREE.EdgesGeometry(unitBoxGeometry);
-            unitBoxGeometry.dispose(); // Dispose the temporary box geometry
+            unitBoxGeometry.dispose();
 
-            // Create the LineSegments object using the edges geometry
             unitCellOutline = new THREE.LineSegments(edgesGeometry, outlineMaterial);
-
-            // Calculate the position of the center of the first conceptual unit cell (0.5, 0.5, 0.5) *before* centering
-            const firstCellCenter_Absolute = new THREE.Vector3(0.5, 0.5, 0.5).multiplyScalar(lattice_a);
-            // Calculate the position of this center relative to the overall structure's center (which is at world 0,0,0)
-            const firstCellCenter_Relative = new THREE.Vector3().copy(firstCellCenter_Absolute).sub(atomsCenter);
-
-            // Position the outline object (which is already centered locally) at the calculated relative position
-            unitCellOutline.position.copy(firstCellCenter_Relative);
+            // No need to set position, as the geometry itself is already positioned relative to group origin
+            // unitCellOutline.position.set(0,0,0); // It's already relative to the group
 
             crystalGroup.add(unitCellOutline);
-            console.log(`[Three.js Adapted v7] Outline positioned at center: ${unitCellOutline.position.x.toFixed(2)},${unitCellOutline.position.y.toFixed(2)},${unitCellOutline.position.z.toFixed(2)}`);
+            console.log(`[Three.js Adapted v9] Unit Cell Outline added/updated relative to group origin.`);
         }
 
 
@@ -888,20 +839,28 @@ document.addEventListener("DOMContentLoaded", async () => {
              if (viewerContainer) viewerContainer.innerHTML = ''; if (controlsContainer) controlsContainer.innerHTML = ''; console.log("[Three.js Adapted] Cleanup complete.");
         }
 
-        // --- Wrapper to Update Model & Outline ---
+        // --- Wrapper to Update Model & Outline (CENTERS GROUP) ---
         function updateModelAndOutline() {
             const result = generateCrystalData_Adapted(currentSupercell.nx, currentSupercell.ny, currentSupercell.nz, cdConcentration);
-            atoms = result.atoms; // Update global atoms array
-            const atomsCenter = result.center; // Get the calculated center
+            atoms = result.atoms; // Update global atoms array (positions relative to 0,0,0)
+            structureCenter = result.center; // Store the calculated center
 
-            createOrUpdateModel_Adapted(atoms); // Rebuild atoms, bonds, labels
-            createOrUpdateUnitCellOutline_Adapted(atomsCenter); // Rebuild outline, positioned correctly
-            populateLegendUI(`${controlsElementId}-legendList`, materialData); // Update legend if style changes bonds
+            // Reset group position before adding children with absolute coords
+            crystalGroup.position.set(0, 0, 0);
+            crystalGroup.rotation.set(0, 0, 0); // Also reset rotation if applicable
 
-             // Adjust camera zoom limits based on new model size
+            createOrUpdateModel_Adapted(atoms); // Rebuild atoms, bonds, labels relative to group origin
+            createOrUpdateUnitCellOutline_Adapted(); // Rebuild outline relative to group origin
+
+            // *** Center the entire group ***
+            crystalGroup.position.copy(structureCenter).multiplyScalar(-1);
+
+            populateLegendUI(`${controlsElementId}-legendList`, materialData); // Update legend
+
+            // Adjust camera zoom limits
             if (controls) {
                  const modelSize = lattice_a * Math.max(currentSupercell.nx, currentSupercell.ny, currentSupercell.nz);
-                 controls.maxDistance = modelSize * 5; // Allow zooming out further for larger models
+                 controls.maxDistance = modelSize * 5;
                  controls.minDistance = lattice_a * 0.5;
                  controls.update();
              }
@@ -921,11 +880,15 @@ document.addEventListener("DOMContentLoaded", async () => {
             controls = new THREE.OrbitControls(camera, renderer.domElement); controls.enableDamping = true; controls.dampingFactor = 0.1;
             // Lights
             scene.add(new THREE.AmbientLight(0xffffff, 0.7)); const directionalLight = new THREE.DirectionalLight(0xffffff, 0.9); directionalLight.position.set(5, 10, 7.5); scene.add(directionalLight);
-            scene.add(crystalGroup); // Add the main group
-            // Initial Model Build
-            updateModelAndOutline(); // Generate initial atoms and build model/outline
-            // Set initial camera position based on initial model
-             const initialModelSize = lattice_a * Math.max(currentSupercell.nx, currentSupercell.ny, currentSupercell.nz); const initialDist = initialModelSize * 1.8; camera.position.set(initialDist * 0.7, initialDist * 0.5, initialDist); camera.lookAt(crystalGroup.position); controls.target.copy(crystalGroup.position); controls.minDistance = lattice_a * 0.5; controls.maxDistance = initialModelSize * 5; controls.update();
+            scene.add(crystalGroup); // Add the main group TO THE SCENE
+            // Initial Model Build and Centering
+            updateModelAndOutline();
+            // Set initial camera position AFTER group is centered
+             const initialModelSize = lattice_a * Math.max(currentSupercell.nx, currentSupercell.ny, currentSupercell.nz); const initialDist = initialModelSize * 1.8; camera.position.set(initialDist * 0.7, initialDist * 0.5, initialDist);
+             // Camera looks at world origin (0,0,0) which is where the group center is now
+             camera.lookAt(0, 0, 0);
+             controls.target.set(0, 0, 0); // Orbit controls target the world origin
+             controls.minDistance = lattice_a * 0.5; controls.maxDistance = initialModelSize * 5; controls.update();
             setupUI(); // Setup controls
             animate(); // Start animation loop
             // Resize listener
@@ -939,7 +902,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     } // --- End initializeSimplifiedThreeJsViewer ---
     // --- =============================================================== ---
-    // ---      *** END: REFINED Three.js Viewer Logic v6 ***               ---
+    // ---      *** END: REFINED Three.js Viewer Logic v9 ***               ---
     // --- =============================================================== ---
 
 
