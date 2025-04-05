@@ -128,9 +128,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     else { console.warn("[Full Detail Loader] Material name element not found."); }
     document.title = `${materialName} - Full Details`;
 
-        // --- =============================================================== ---
-    // ---      *** START: REVISED File Path and Fetch Logic v4 ***        ---
-    // ---      (Simplified Error Handling, Robust Fetch)                ---
+    // --- =============================================================== ---
+    // ---      *** START: REVISED File Path and Fetch Logic v5 ***        ---
+    // ---      (Simplified nested error throwing)                       ---
     // --- =============================================================== ---
     let materialData; // Variable to hold the specific material's data object
 
@@ -149,27 +149,28 @@ document.addEventListener("DOMContentLoaded", async () => {
         let specificResponse = null;
         let jsonData = null;
         let dataSource = 'none';
-        let specificFetchError = null;
-        let specificFetchStatusCode = null;
+        let specificFetchError = null; // Store error from specific fetch attempt
 
         // 2. Try fetching the specific file
         try {
             console.log(`[Full Detail Loader] Attempt 1: Fetching specific file: ${specificDetailFilePath}`);
             specificResponse = await fetch(specificDetailFilePath);
-            specificFetchStatusCode = specificResponse.status; // Store status immediately
 
             if (specificResponse.ok) {
                 jsonData = await specificResponse.json();
                 dataSource = 'specific';
                 console.log(`[Full Detail Loader] Success fetching and parsing specific file.`);
             } else {
+                 // Store error details but continue to fallback
                  specificFetchError = new Error(`Fetch specific file failed with status: ${specificResponse.status}`);
                  console.log(`[Full Detail Loader] ${specificFetchError.message}`);
+                 if (specificResponse.status !== 404) {
+                     console.error(`[Full Detail Loader] Non-404 Error fetching specific file: ${specificResponse.status} ${specificResponse.statusText}`);
+                 }
             }
         } catch (fetchError) {
             console.error(`[Full Detail Loader] Network or other error fetching specific file ${specificDetailFilePath}:`, fetchError);
             specificFetchError = fetchError; // Store the network error
-            specificFetchStatusCode = 'Network Error'; // Indicate network issue
         }
 
         // 3. If specific file fetch failed (jsonData is still null), try the fallback
@@ -183,32 +184,24 @@ document.addEventListener("DOMContentLoaded", async () => {
                     dataSource = 'main';
                     console.log(`[Full Detail Loader] Success fetching and parsing fallback file.`);
                 } else {
-                     // If fallback also fails, construct and throw detailed error
-                     let errorMessage = "Failed to load material data. ";
-                     errorMessage += `Specific file ('${specificDetailFileName}') attempt failed`;
-                     if (specificFetchError) {
-                         errorMessage += ` (${specificFetchError.message})`;
-                     } else if (specificFetchStatusCode) {
-                         errorMessage += ` (status ${specificFetchStatusCode})`;
-                     } else {
-                          errorMessage += ` (Unknown Error/Network Issue)`;
-                     }
-                     errorMessage += `. Fallback file ('${mainDetailFilePath}') attempt also failed (status ${fallbackResponse.status}).`;
-                     throw new Error(errorMessage);
+                    // If fallback also fails, log details and throw a *simple* error
+                    console.error(`[Full Detail Loader] Fallback file fetch failed with status: ${fallbackResponse.status}`);
+                    if (specificFetchError) {
+                         console.error('[Full Detail Loader] Previous specific file fetch error was:', specificFetchError);
+                    } else if (specificResponse) {
+                         console.error(`[Full Detail Loader] Previous specific file fetch status was: ${specificResponse.status}`);
+                    }
+                    throw new Error("Failed to load material data from both specific and fallback files."); // Simple error message
                 }
             } catch (fallbackCatchError) {
                  console.error(`[Full Detail Loader] Error fetching/processing fallback file ${mainDetailFilePath}:`, fallbackCatchError);
-                  let errorMessage = "Failed to load material data. ";
-                  errorMessage += `Specific file ('${specificDetailFileName}') attempt failed`;
-                  if (specificFetchError) {
-                      errorMessage += ` (${specificFetchError.message})`;
-                  } else if (specificFetchStatusCode) {
-                      errorMessage += ` (status ${specificFetchStatusCode})`;
-                  } else {
-                       errorMessage += ` (Unknown Error/Network Issue)`;
-                  }
-                 errorMessage += `. Fallback file ('${mainDetailFilePath}') attempt also failed: ${fallbackCatchError.message}`;
-                 throw new Error(errorMessage);
+                 // Also log previous error and throw simple message
+                 if (specificFetchError) {
+                     console.error('[Full Detail Loader] Previous specific file fetch error was:', specificFetchError);
+                 } else if (specificResponse) {
+                     console.error(`[Full Detail Loader] Previous specific file fetch status was: ${specificResponse.status}`);
+                 }
+                 throw new Error("Failed to load material data. Error during fallback attempt."); // Simple error message
             }
         }
 
@@ -252,7 +245,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.log("[Full Detail Loader] Material data successfully processed.");
 
         // --- Now Proceed with Populating Page ---
-        const sectionDataMap = new Map();
+        const sectionDataMap = new Map(); // Ensure this is declared before use
 
         // --- Process References ---
         const collectedRefs = new Set();
@@ -292,7 +285,7 @@ document.addEventListener("DOMContentLoaded", async () => {
          displayError(error.message || "Unknown error loading details.");
     }
     // --- =============================================================== ---
-    // ---       *** END: REVISED File Path and Fetch Logic v4 ***         ---
+    // ---       *** END: REVISED File Path and Fetch Logic v5 ***         ---
     // --- =============================================================== ---
 
         const sectionDataMap = new Map();
