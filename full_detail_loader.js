@@ -998,79 +998,26 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         // --- Populate Legend UI (Same as before) ---
         function populateLegendUI(legendListId, materialData) {
-             const legendList = document.getElementById(legendListId);
-             if (!legendList) { console.error("Legend list element not found:", legendListId); return; }
-             legendList.innerHTML = ''; // Clear existing
-             const atomInfo = vizData?.atom_info;
-             if(!atomInfo || Object.keys(atomInfo).length === 0) { console.warn("AtomInfo empty in vizData."); legendList.innerHTML = '<li>Legend missing.</li>'; return; }
-             Object.entries(atomInfo).forEach(([symbol, info]) => {
-                 const upperSymbol = symbol.toUpperCase(); const material = materialsCache[upperSymbol]; // Use cache
-                 const color = material ? material.color.getStyle() : (info?.color || '#cccccc');
-                 const li = document.createElement('li'); li.style.marginBottom = '3px';
-                 li.innerHTML = `<span class="color-box" style="display: inline-block; width: 12px; height: 12px; margin-right: 5px; border: 1px solid #ccc; background-color:${color}; vertical-align: middle;"></span> ${symbol} (${info.role || 'Atom'})`;
-                 legendList.appendChild(li);
-             });
-             if (currentViewStyle === 'ballAndStick' || currentViewStyle === 'stick') {
-                 const bondLi = document.createElement('li'); bondLi.style.marginTop = '5px';
-                 bondLi.innerHTML = `<span class="color-box" style="display: inline-block; width: 12px; height: 12px; margin-right: 5px; border: 1px solid #888; background-color: ${bondMaterial.color.getStyle()}; vertical-align: middle;"></span> Bonds`;
-                 legendList.appendChild(bondLi);
-             }
+             const legendList = document.getElementById(legendListId); if (!legendList) { console.error("Legend list element not found:", legendListId); return; } legendList.innerHTML = ''; const atomInfo = vizData?.atom_info; if(!atomInfo || Object.keys(atomInfo).length === 0) { console.warn("AtomInfo empty."); legendList.innerHTML = '<li>Legend missing.</li>'; return; }
+             Object.entries(atomInfo).forEach(([symbol, info]) => { const upperSymbol = symbol.toUpperCase(); const material = materialsCache[upperSymbol]; const color = material ? material.color.getStyle() : (info?.color || '#cccccc'); const li = document.createElement('li'); li.style.marginBottom = '3px'; li.innerHTML = `<span class="color-box" style="display: inline-block; width: 12px; height: 12px; margin-right: 5px; border: 1px solid #ccc; background-color:${color}; vertical-align: middle;"></span> ${symbol} (${info.role || 'Atom'})`; legendList.appendChild(li); });
+             if (currentViewStyle === 'ballAndStick' || currentViewStyle === 'stick') { const bondLi = document.createElement('li'); bondLi.style.marginTop = '5px'; bondLi.innerHTML = `<span class="color-box" style="display: inline-block; width: 12px; height: 12px; margin-right: 5px; border: 1px solid #888; background-color: ${bondMaterial.color.getStyle()}; vertical-align: middle;"></span> Bonds`; legendList.appendChild(bondLi); }
          }
 
 
         // --- Window Resize Handler (Same as before) ---
-        function onWindowResize() {
-            if (!camera || !renderer || !css2DRenderer || !viewerContainer) return;
-            const width = viewerContainer.clientWidth; const height = viewerContainer.clientHeight;
-            if (width === 0 || height === 0) return;
-            camera.aspect = width / height; camera.updateProjectionMatrix();
-            renderer.setSize(width, height); css2DRenderer.setSize( width, height );
-        }
+        function onWindowResize() { if (!camera || !renderer || !css2DRenderer || !viewerContainer) return; const width = viewerContainer.clientWidth; const height = viewerContainer.clientHeight; if (width === 0 || height === 0) return; camera.aspect = width / height; camera.updateProjectionMatrix(); renderer.setSize(width, height); css2DRenderer.setSize( width, height ); }
 
         // --- Animation Loop (Same as before) ---
-        function animate() {
-            if (!renderer || !scene || !camera) { if (animationFrameId) cancelAnimationFrame(animationFrameId); animationFrameId = null; return; }
-            animationFrameId = requestAnimationFrame(animate);
-            if (controls) controls.update();
-            if (isSpinning && crystalGroup) { crystalGroup.rotation.y += spinSpeed; }
-            renderer.render(scene, camera);
-            if (css2DRenderer) css2DRenderer.render(scene, camera);
-        }
+        function animate() { if (!renderer || !scene || !camera) { if (animationFrameId) cancelAnimationFrame(animationFrameId); animationFrameId = null; return; } animationFrameId = requestAnimationFrame(animate); if (controls) controls.update(); if (isSpinning && crystalGroup) { crystalGroup.rotation.y += spinSpeed; } renderer.render(scene, camera); if (css2DRenderer) css2DRenderer.render(scene, camera); }
 
          // --- Cleanup Function (Dispose geometries) ---
         function cleanup() {
-             console.log("[Three.js Adapted] Cleaning up...");
-             if (animationFrameId) cancelAnimationFrame(animationFrameId); animationFrameId = null;
-             window.removeEventListener('resize', onWindowResize);
-
-             if (crystalGroup) {
-                 const children_to_remove = [...crystalGroup.children];
-                 children_to_remove.forEach(object => {
-                     if (object.isMesh) {
-                         if (object.geometry && object.geometry !== stickGeometry) object.geometry.dispose();
-                     } else if (object.isLineSegments && object.geometry) {
-                          object.geometry.dispose(); // Dispose outline geometry
-                     } else if (object.isCSS2DObject) {
-                         if (object.element?.parentNode) object.element.parentNode.removeChild(object.element);
-                         object.element = null;
-                     }
-                     crystalGroup.remove(object);
-                 });
-             }
-             if(stickGeometry) stickGeometry.dispose(); // Dispose shared stick geo
-             Object.values(sphereGeometries).forEach(geom => geom?.dispose()); // Dispose cached sphere geos
-             for (const key in sphereGeometries) delete sphereGeometries[key];
-
-             Object.values(materialsCache).forEach(mat => mat?.dispose());
-             if(bondMaterial) bondMaterial.dispose(); if(outlineMaterial) outlineMaterial.dispose();
-
-             if(scene && crystalGroup) scene.remove(crystalGroup); crystalGroup = null;
-             if (renderer) { renderer.dispose(); if (renderer.domElement?.parentNode) renderer.domElement.parentNode.removeChild(renderer.domElement); renderer = null; }
-             if (css2DRenderer) { const cssOverlay = css2DRenderer.domElement?.parentNode; if (cssOverlay?.parentNode) cssOverlay.parentNode.removeChild(cssOverlay); css2DRenderer = null; }
-             scene = null; camera = null; controls = null; unitCellOutline = null;
-
-             if (viewerContainer) viewerContainer.innerHTML = ''; if (controlsContainer) controlsContainer.innerHTML = '';
-             console.log("[Three.js Adapted] Cleanup complete.");
+             console.log("[Three.js Adapted] Cleaning up..."); if (animationFrameId) cancelAnimationFrame(animationFrameId); animationFrameId = null; window.removeEventListener('resize', onWindowResize);
+             if (crystalGroup) { const children_to_remove = [...crystalGroup.children]; children_to_remove.forEach(object => { if (object.isMesh) { if (object.geometry && object.geometry !== stickGeometry) object.geometry.dispose(); } else if (object.isLineSegments && object.geometry) { object.geometry.dispose(); } else if (object.isCSS2DObject) { if (object.element?.parentNode) object.element.parentNode.removeChild(object.element); object.element = null; } crystalGroup.remove(object); }); }
+             if(stickGeometry) stickGeometry.dispose(); Object.values(sphereGeometries).forEach(geom => geom?.dispose()); for (const key in sphereGeometries) delete sphereGeometries[key];
+             Object.values(materialsCache).forEach(mat => mat?.dispose()); if(bondMaterial) bondMaterial.dispose(); if(outlineMaterial) outlineMaterial.dispose();
+             if(scene && crystalGroup) scene.remove(crystalGroup); crystalGroup = null; if (renderer) { renderer.dispose(); if (renderer.domElement?.parentNode) renderer.domElement.parentNode.removeChild(renderer.domElement); renderer = null; } if (css2DRenderer) { const cssOverlay = css2DRenderer.domElement?.parentNode; if (cssOverlay?.parentNode) cssOverlay.parentNode.removeChild(cssOverlay); css2DRenderer = null; } scene = null; camera = null; controls = null; unitCellOutline = null;
+             if (viewerContainer) viewerContainer.innerHTML = ''; if (controlsContainer) controlsContainer.innerHTML = ''; console.log("[Three.js Adapted] Cleanup complete.");
         }
 
         // --- Wrapper to Update Model & Outline ---
@@ -1088,8 +1035,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                  const modelSize = lattice_a * Math.max(currentSupercell.nx, currentSupercell.ny, currentSupercell.nz);
                  controls.maxDistance = modelSize * 5; // Allow zooming out further for larger models
                  controls.minDistance = lattice_a * 0.5;
-                 // Optionally reset camera view slightly if needed
-                 // controls.reset(); or adjust target/position
                  controls.update();
              }
         }
@@ -1098,74 +1043,35 @@ document.addEventListener("DOMContentLoaded", async () => {
         try {
             console.log("[Three.js Adapted] Starting Main Flow...");
             // Initial Scene Setup
-            scene = new THREE.Scene();
-            scene.background = new THREE.Color(vizData.background_color || 0xddeeff);
+            scene = new THREE.Scene(); scene.background = new THREE.Color(vizData.background_color || 0xddeeff);
             const width = viewerContainer.clientWidth; const height = viewerContainer.clientHeight;
             camera = new THREE.PerspectiveCamera(60, width > 0 && height > 0 ? width / height : 1, 0.1, 1000);
-            renderer = new THREE.WebGLRenderer({ antialias: true });
-            renderer.setSize(width, height); renderer.setPixelRatio(window.devicePixelRatio);
-            viewerContainer.appendChild(renderer.domElement);
-
+            renderer = new THREE.WebGLRenderer({ antialias: true }); renderer.setSize(width, height); renderer.setPixelRatio(window.devicePixelRatio); viewerContainer.appendChild(renderer.domElement);
             // CSS2D Renderer Setup
-            const css2dContainer = document.createElement('div');
-            css2dContainer.className = 'css2d-renderer-overlay'; // Use class for styling if needed
-            viewerContainer.appendChild(css2dContainer);
-            css2DRenderer = new THREE.CSS2DRenderer();
-            css2DRenderer.setSize(width, height);
-            css2dContainer.appendChild(css2DRenderer.domElement);
-
+            const css2dContainer = document.createElement('div'); css2dContainer.className = 'css2d-renderer-overlay'; viewerContainer.appendChild(css2dContainer); css2DRenderer = new THREE.CSS2DRenderer(); css2DRenderer.setSize(width, height); css2dContainer.appendChild(css2DRenderer.domElement);
             // Controls
-            controls = new THREE.OrbitControls(camera, renderer.domElement);
-            controls.enableDamping = true; controls.dampingFactor = 0.1;
-
+            controls = new THREE.OrbitControls(camera, renderer.domElement); controls.enableDamping = true; controls.dampingFactor = 0.1;
             // Lights
-            scene.add(new THREE.AmbientLight(0xffffff, 0.7));
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.9);
-            directionalLight.position.set(5, 10, 7.5); scene.add(directionalLight);
-
+            scene.add(new THREE.AmbientLight(0xffffff, 0.7)); const directionalLight = new THREE.DirectionalLight(0xffffff, 0.9); directionalLight.position.set(5, 10, 7.5); scene.add(directionalLight);
             scene.add(crystalGroup); // Add the main group
-
             // Initial Model Build
             updateModelAndOutline(); // Generate initial atoms and build model/outline
-
             // Set initial camera position based on initial model
-             const initialModelSize = lattice_a * Math.max(currentSupercell.nx, currentSupercell.ny, currentSupercell.nz);
-             const initialDist = initialModelSize * 1.8;
-             camera.position.set(initialDist * 0.7, initialDist * 0.5, initialDist);
-             camera.lookAt(crystalGroup.position); // Look at the center of the group
-             controls.target.copy(crystalGroup.position);
-             controls.minDistance = lattice_a * 0.5;
-             controls.maxDistance = initialModelSize * 5;
-             controls.update();
-
-
+             const initialModelSize = lattice_a * Math.max(currentSupercell.nx, currentSupercell.ny, currentSupercell.nz); const initialDist = initialModelSize * 1.8; camera.position.set(initialDist * 0.7, initialDist * 0.5, initialDist); camera.lookAt(crystalGroup.position); controls.target.copy(crystalGroup.position); controls.minDistance = lattice_a * 0.5; controls.maxDistance = initialModelSize * 5; controls.update();
             setupUI(); // Setup controls
             animate(); // Start animation loop
-
             // Resize listener
-            window.removeEventListener('resize', onWindowResize); // Ensure no duplicates
-            window.addEventListener('resize', onWindowResize);
-
+            window.removeEventListener('resize', onWindowResize); window.addEventListener('resize', onWindowResize);
             // Cleanup Observer
             const observerTargetNode = viewerContainer.closest('.property-detail-block') || viewerContainer.parentElement;
-             if (observerTargetNode) {
-                 const observer = new MutationObserver((mutationsList, observerInstance) => {
-                     for (const mutation of mutationsList) { if (mutation.removedNodes) { mutation.removedNodes.forEach(removedNode => { if (removedNode === viewerContainer || removedNode.contains(viewerContainer)) { console.log("Viewer element removed. Cleaning up..."); cleanup(); observerInstance.disconnect(); return; } }); } }
-                 });
-                 try { observer.observe(observerTargetNode, { childList: true }); console.log("Observing parent node for cleanup."); }
-                 catch (obsError) { console.warn("Could not start observing:", obsError); }
-             } else { console.warn("Could not find suitable parent node to observe for cleanup."); }
-
+             if (observerTargetNode) { const observer = new MutationObserver((mutationsList, observerInstance) => { for (const mutation of mutationsList) { if (mutation.removedNodes) { mutation.removedNodes.forEach(removedNode => { if (removedNode === viewerContainer || removedNode.contains(viewerContainer)) { console.log("Viewer element removed. Cleaning up..."); cleanup(); observerInstance.disconnect(); return; } }); } } }); try { observer.observe(observerTargetNode, { childList: true }); console.log("Observing parent node for cleanup."); } catch (obsError) { console.warn("Could not start observing:", obsError); } } else { console.warn("Could not find suitable parent node to observe for cleanup."); }
         } catch(error) {
-            console.error("[Three.js Adapted Error] Main flow failed:", error);
-            cleanup(); // Attempt cleanup on error
-            if (viewerContainer) viewerContainer.innerHTML = `<p class="error-message" style="padding:20px;">Failed to initialize viewer: ${error.message}</p>`;
-            if (controlsContainer) controlsContainer.innerHTML = '';
+            console.error("[Three.js Adapted Error] Main flow failed:", error); cleanup(); if (viewerContainer) viewerContainer.innerHTML = `<p class="error-message" style="padding:20px;">Failed to initialize viewer: ${error.message}</p>`; if (controlsContainer) controlsContainer.innerHTML = '';
         }
 
     } // --- End initializeSimplifiedThreeJsViewer ---
     // --- =============================================================== ---
-    // ---      *** END: ADAPTED Three.js Viewer Logic ***                 ---
+    // ---      *** END: REFINED Three.js Viewer Logic v5 ***               ---
     // --- =============================================================== ---
 
 
