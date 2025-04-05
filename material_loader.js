@@ -409,7 +409,7 @@ function enhancePeriodicTable(material, tooltipElement) {
 /**
  * Dynamically populates the main content container with sections and properties
  * based *only* on the keys present in the provided material data object.
- * MODIFIED to link section titles to the full detail page.
+ * MODIFIED to link section titles to the full detail page's corresponding section.
  * @param {object} material - The detailed material data object.
  * @param {HTMLElement} container - The main HTML element to append sections to.
  * @param {string} currentMaterialName - The decoded name of the material being viewed.
@@ -417,7 +417,7 @@ function enhancePeriodicTable(material, tooltipElement) {
 function populatePage(material, container, currentMaterialName) { // Added currentMaterialName param
     const fallbackValue = '<span class="na-value">N/A</span>';
 
-    // --- Helper Function: getData --- (Handles nested access and formatting)
+    // --- Helper Function: getData --- (Handles nested access and formatting - UNCHANGED from your version)
     const getData = (obj, path, fallback = fallbackValue) => {
         const value = path.split('.').reduce((o, key) => (o && typeof o === 'object' && o[key] !== undefined && o[key] !== null) ? o[key] : undefined, obj);
         if (value === undefined || value === null) return fallback;
@@ -438,7 +438,7 @@ function populatePage(material, container, currentMaterialName) { // Added curre
     };
 
 
-    // --- Helper Function: createPropertyItem ---
+    // --- Helper Function: createPropertyItem --- (UNCHANGED from your version)
     const createPropertyItem = (keyText, valueHtml, isKey = false) => {
         const itemDiv = document.createElement('div'); itemDiv.className = 'property-item'; if (isKey) itemDiv.classList.add('key-property');
         const dt = document.createElement('dt'); dt.className = 'property-key'; dt.textContent = keyText + ':';
@@ -450,20 +450,27 @@ function populatePage(material, container, currentMaterialName) { // Added curre
     const createSection = (id, icon = null) => {
         const section = document.createElement('section');
         section.className = 'material-section';
-        section.id = id;
+        section.id = id; // ID for the simple detail page section container
         const h2 = document.createElement('h2'); // Create h2, content added later
+        // Add icon span directly to h2 if icon exists
+        if (icon) {
+            const iconSpan = document.createElement('span');
+            iconSpan.setAttribute('aria-hidden', 'true');
+            iconSpan.textContent = icon + ' '; // Add space after icon
+            h2.appendChild(iconSpan);
+        }
         section.appendChild(h2);
         if (id === 'section-safety') section.classList.add('safety-info');
         return section;
     };
 
-    // --- Configuration for Sections and Properties ---
+    // --- Configuration for Sections and Properties (Ensure dataKey is present, especially for overview) ---
     const sectionConfig = [
-        // *** Added dataKey for overview to make linking easier ***
+        // *** Make sure overview has a dataKey ***
         { id: 'section-overview', title: 'Overview', isSpecial: true, dataKey: 'overview' },
         { id: 'section-safety', title: 'Safety Information', icon: '⚠️', dataKey: 'safety', properties: {'toxicity': { label: 'Toxicity', isKey: true }, 'handling': { label: 'Handling' }}},
         { id: 'section-identification', title: 'Identification & Structure', dataKey: 'identification', properties: {'cas_number': { label: 'CAS Number' }, 'crystal_structure': { label: 'Crystal Structure', isKey: true }, 'space_group': { label: 'Space Group', isHtml: true}, 'lattice_constant': { label: 'Lattice Constant', isKey: true, isHtml: true }, 'phase_diagram_notes': { label: 'Phase Diagram Notes' }, 'material_standard': {label: 'Material Standard'}, 'appearance': {label: 'Appearance', isHtml: true}, 'xrd_pattern': {label: 'XRD Pattern'}, 'grain_size_um': { label: 'Grain Size', isHtml: true }, 'molecular_weight': {label: 'Molecular Weight', isHtml: true}, 'zirconia_content': {label: 'Zirconia Content', isHtml: true}, 'fiber_volume_fraction': {label: 'Fiber Vol. Fraction', isHtml: true}, 'filament_diameter': {label: 'Filament Diameter', isHtml: true}, 'layer_density': {label: 'Layer Density', isHtml: true}, 'doping_concentration': { label: 'Doping Conc.', isHtml: true } }},
-        { id: 'section-fab-insights', title: 'Advanced Fabrication Insights', dataKey: 'advanced_fabrication_insights', properties: {'stoichiometry_control': { label: 'Stoichiometry Control', isKey: true }, 'common_defects_impact': { label: 'Common Defects' }, 'surface_preparation': { label: 'Surface Preparation' }, 'method_specific_notes': { label: 'Method Nuances' }, 'process_control': {label: 'Process Control'}, 'interface_engineering': {label: 'Interface Engineering'}, 'alignment_techniques': {label: 'Alignment Techniques'}, 'cooling_rate_control': {label: 'Cooling Rate Control'}, 'particle_dispersion': {label: 'Particle Dispersion'}, 'transformation_toughening': { label: 'Transformation Toughening' }, 'coating_process': { label: 'Coating Process' }, 'machining': { label: 'Machining Notes' }, 'weave_style': { label: 'Weave Style' }, 'crystallinity_control': { label: 'Crystallinity Control' }, 'wear_mechanism': { label: 'Wear Mechanism' }, 'cold_welding': { label: 'Cold Welding' }, 'spacer_material': { label: 'Spacer Material' }, 'surface_sizing': { label: 'Surface Sizing' } }}, // Removed outgassing, hydrophobicity - moved to chemical
+        { id: 'section-fab-insights', title: 'Advanced Fabrication Insights', dataKey: 'advanced_fabrication_insights', properties: {'stoichiometry_control': { label: 'Stoichiometry Control', isKey: true }, 'common_defects_impact': { label: 'Common Defects' }, 'surface_preparation': { label: 'Surface Preparation' }, 'method_specific_notes': { label: 'Method Nuances' }, 'process_control': {label: 'Process Control'}, 'interface_engineering': {label: 'Interface Engineering'}, 'alignment_techniques': {label: 'Alignment Techniques'}, 'cooling_rate_control': {label: 'Cooling Rate Control'}, 'particle_dispersion': {label: 'Particle Dispersion'}, 'transformation_toughening': { label: 'Transformation Toughening' }, 'coating_process': { label: 'Coating Process' }, 'machining': { label: 'Machining Notes' }, 'weave_style': { label: 'Weave Style' }, 'crystallinity_control': { label: 'Crystallinity Control' }, 'wear_mechanism': { label: 'Wear Mechanism' }, 'cold_welding': { label: 'Cold Welding' }, 'spacer_material': { label: 'Spacer Material' }, 'surface_sizing': { label: 'Surface Sizing' } }},
         { id: 'section-growth', title: 'Growth & Fabrication Properties', dataKey: 'growth_fabrication_properties', properties: {'common_growth_methods': { label: 'Common Methods' }, 'source_materials_purity': { label: 'Source Materials' }, 'preferred_substrates_orientations': { label: 'Substrates/Orientations', isKey: true }, 'typical_growth_parameters': { label: 'Growth Parameters' }, 'passivation_methods': { label: 'Passivation/Surface Treat.' }}},
         { id: 'section-processing', title: 'Post-Growth Processing', dataKey: 'post_growth_processing', properties: {'annealing': { label: 'Annealing', isKey: true }, 'lapping_polishing': { label: 'Lapping & Polishing' }, 'etching': { label: 'Etching Methods' }, 'grinding_milling': { label: 'Grinding/Milling Notes' }}},
         { id: 'section-device-char', title: 'Device Integration & Characterization', dataKey: 'device_integration_characterization', properties: {'device_architectures': { label: 'Device Architectures' }, 'readout_integration': { label: 'Readout Integration', isKey: true }, 'ar_coatings': { label: 'AR Coatings' }, 'packaging_cooling': { label: 'Packaging/Cooling', isKey: true }, 'key_characterization_techniques': { label: 'Key Characterization', isHtml: true }}},
@@ -481,13 +488,13 @@ function populatePage(material, container, currentMaterialName) { // Added curre
     ];
 
 
-    // --- Populate Header, Title, and Tags ---
+    // --- Populate Header, Title, and Tags (UNCHANGED) ---
     const materialNameDisplay = getData(material, 'name', 'Unknown Material');
     const materialFormulaDisplay = getData(material, 'formula', '');
     document.title = `${materialNameDisplay} Detail - MaterialsDB`;
     document.getElementById('material-name').textContent = materialNameDisplay;
     const formulaElement = document.getElementById('material-formula');
-    if (formulaElement) formulaElement.innerHTML = materialFormulaDisplay; // Use innerHTML for formula
+    if (formulaElement) formulaElement.innerHTML = materialFormulaDisplay;
 
     const tagsContainer = document.getElementById('material-tags');
     if (tagsContainer) {
@@ -505,9 +512,8 @@ function populatePage(material, container, currentMaterialName) { // Added curre
         const { id, title, icon, dataKey, properties, isSpecial } = config;
         let sectionDataExists = false;
 
-        // Determine if data exists
-        // *** Added explicit check for overview section existence based on description/wiki_link ***
-        if (id === 'section-overview') {
+        // Determine if data exists (UNCHANGED from your version)
+        if (id === 'section-overview') { // Use specific check for overview
             sectionDataExists = !!(material['description'] || material['wiki_link']);
         } else if (isSpecial) {
              if (dataKey && material[dataKey]) sectionDataExists = true;
@@ -516,39 +522,52 @@ function populatePage(material, container, currentMaterialName) { // Added curre
              if (id === 'section-identification' && (material['category'] || material?.identification?.['class'])) { sectionDataExists = true; }
         } else if (dataKey && material[dataKey] !== undefined && material[dataKey] !== null) { sectionDataExists = true; }
 
-        if (!sectionDataExists) { return; } // Skip section if no data
+        if (!sectionDataExists) {
+            console.log(`Skipping section: ${title} (No data found)`); // Add log for debugging
+            return;
+        } // Skip section if no data
 
-        // *** Use the modified createSection helper (only creates section and empty h2) ***
-        const section = createSection(id); // Pass only id and icon
+        // Use the simplified createSection helper
+        const section = createSection(id, icon);
         const h2 = section.querySelector('h2'); // Get the created h2
+        if (!h2) { // Add safety check
+            console.error(`Could not find h2 element in created section for id: ${id}`);
+            return;
+        }
+        // h2.innerHTML = ''; // Clear any potential leftover content (like icon added in helper)
+
         let sectionHasRenderableContent = false;
 
         // *** Construct the link and add content to h2 ***
         const link = document.createElement('a');
-        const anchorTargetDataKey = dataKey || 'overview'; // Use dataKey, fallback for overview
-        const anchorTargetId = `section-${anchorTargetDataKey}`; // Matches ID structure in full_detail.html
+        // Use dataKey for anchor - ensure it's defined in sectionConfig for all sections you want to link
+        // Use a fallback if dataKey isn't present, maybe derived from id, but dataKey is preferred.
+        const anchorTargetDataKey = dataKey || id.replace(/^section-/, ''); // Use dataKey, fallback to derived key
+        const anchorTargetId = `section-${anchorTargetDataKey}`; // This MUST match the ID pattern in material_full_detail.html
         const fullDetailUrl = `material_full_detail.html?material=${encodeURIComponent(currentMaterialName)}#${anchorTargetId}`;
+
         link.href = fullDetailUrl;
         link.textContent = title; // Set the title as link text
-        link.style.textDecoration = 'none';
-        link.style.color = 'inherit';
+        link.style.textDecoration = 'none'; // Optional styling
+        link.style.color = 'inherit';    // Optional styling
 
-        if (icon) { // Add icon before the link if specified
-            const iconSpan = document.createElement('span');
-            iconSpan.setAttribute('aria-hidden', 'true');
-            iconSpan.textContent = icon + ' '; // Add space after icon
-            h2.appendChild(iconSpan);
+        // Prepend icon if it exists (so it appears before the link text)
+        if (icon && h2.firstChild) { // Check if icon span already exists
+             h2.insertBefore(link, h2.firstChild.nextSibling); // Insert link after icon
+        } else {
+             h2.appendChild(link); // Otherwise, just add the link
         }
-        h2.appendChild(link); // Add the link (containing the title) to the h2
-        if (id === 'section-safety') section.classList.add('safety-info');
         // *** End of H2 modification ***
 
         if (isSpecial) {
-            // --- Custom Logic for Special Sections (Unchanged) ---
+            // --- Custom Logic for Special Sections (UNCHANGED) ---
              if (id === 'section-overview') {
                 const descVal = getData(material, 'description', fallbackValue); if (descVal !== fallbackValue) { const p = document.createElement('p'); p.className='description'; p.innerHTML=descVal; section.appendChild(p); sectionHasRenderableContent = true; }
                 const wikiUrl = getData(material, 'wiki_link', '#'); if (wikiUrl !== '#' && wikiUrl !== fallbackValue) { const p = document.createElement('p'); const a = document.createElement('a'); a.id = 'wiki-link'; a.href=wikiUrl; a.target='_blank'; a.rel='noopener noreferrer'; a.textContent='Wikipedia Article'; p.appendChild(document.createTextNode('See also: ')); p.appendChild(a); section.appendChild(p); sectionHasRenderableContent = true;}
-                const imgPlaceholder = document.createElement('div'); imgPlaceholder.className = 'image-placeholder'; imgPlaceholder.textContent = 'Image Placeholder / Diagram'; section.appendChild(imgPlaceholder); sectionHasRenderableContent = true;
+                // Only add placeholder if description or link existed, or handle absence differently
+                if (sectionHasRenderableContent) {
+                     const imgPlaceholder = document.createElement('div'); imgPlaceholder.className = 'image-placeholder'; imgPlaceholder.textContent = 'Image Placeholder / Diagram'; section.appendChild(imgPlaceholder);
+                }
             }
             else if (id === 'section-comparison' && material.comparison_alternatives) {
                  const dl = document.createElement('dl'); dl.className = 'property-list'; dl.id = 'comparison-list'; let comparisonsAdded = false;
@@ -566,10 +585,11 @@ function populatePage(material, container, currentMaterialName) { // Added curre
                   Object.entries(material.vendor_info).forEach(([key, value])=>{ if(key !== 'notes'){ const vendorValue = getData(material, `vendor_info.${key}`, fallbackValue); if (vendorValue !== fallbackValue) { const li = document.createElement('li'); let itemHtml = vendorValue; try { const urlMatch = String(vendorValue).match(/(https?:\/\/[^\s"'>]+)|(www\.[^\s"'>]+)/); if (urlMatch) { const url = urlMatch[0].startsWith('http') ? urlMatch[0] : 'http://' + urlMatch[0]; itemHtml = String(vendorValue).replace(urlMatch[0], `<a href="${url}" target="_blank" rel="noopener noreferrer">${urlMatch[0]}</a>`); } } catch (linkError) {} li.innerHTML = itemHtml; ul.appendChild(li); listHasContent = true; } } });
                   if (!listHasContent) { ul.innerHTML = `<li>Vendor information ${fallbackValue}</li>`; } section.appendChild(ul); const disclaimerP = document.createElement('p'); const small = document.createElement('small'); small.textContent = 'Note: Listing does not imply endorsement. Contact vendors directly for current offerings.'; disclaimerP.appendChild(small); section.appendChild(disclaimerP); sectionHasRenderableContent = true;
              }
+            // --- Append Special Section ---
             if (sectionHasRenderableContent) fragment.appendChild(section);
 
         } else if (dataKey && properties && material[dataKey]) {
-             // Logic for Standard Sections (Unchanged from previous logic)
+             // Logic for Standard Sections (UNCHANGED)
             const dl = document.createElement('dl'); dl.className = 'property-list'; let propertiesAddedToDl = false;
             if (id === 'section-identification') { // Handle category/class first
                 let catVal = getData(material, 'category', fallbackValue); if (catVal !== fallbackValue) { dl.appendChild(createPropertyItem('Material Category', catVal)); sectionHasRenderableContent = true; propertiesAddedToDl = true;}
