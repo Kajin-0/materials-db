@@ -105,7 +105,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         periodicTableSection.style.display = ''; // Reset display style
 
         mainContainer.innerHTML = ''; // Clear potential loading messages
-        populatePage(actualMaterial, mainContainer); // Populate sections
+        
+        // *** Pass materialName to populatePage ***
+        populatePage(actualMaterial, mainContainer, materialName);
 
         // Enhance table *after* potentially adding listeners below
         enhancePeriodicTable(actualMaterial, tooltipElement); // Pass tooltip element
@@ -407,119 +409,58 @@ function enhancePeriodicTable(material, tooltipElement) {
 /**
  * Dynamically populates the main content container with sections and properties
  * based *only* on the keys present in the provided material data object.
+ * MODIFIED to link section titles to the full detail page.
  * @param {object} material - The detailed material data object.
  * @param {HTMLElement} container - The main HTML element to append sections to.
+ * @param {string} currentMaterialName - The decoded name of the material being viewed.
  */
-function populatePage(material, container) {
+function populatePage(material, container, currentMaterialName) { // Added currentMaterialName param
     const fallbackValue = '<span class="na-value">N/A</span>';
 
     // --- Helper Function: getData --- (Handles nested access and formatting)
     const getData = (obj, path, fallback = fallbackValue) => {
         const value = path.split('.').reduce((o, key) => (o && typeof o === 'object' && o[key] !== undefined && o[key] !== null) ? o[key] : undefined, obj);
         if (value === undefined || value === null) return fallback;
-
-        // Handle complex value/unit/notes objects
         if (typeof value === 'object' && !Array.isArray(value) && value.value !== undefined) {
-           const stringVal = String(value.value).trim();
-           if (stringVal === '' || stringVal.toUpperCase() === 'N/A') return fallback;
-           let text = stringVal;
-           if (value.unit) text += ` <span class="unit">${value.unit}</span>`;
-           if (value.notes) text += ` <span class="notes">(${value.notes})</span>`;
-           return text;
+           const stringVal = String(value.value).trim(); if (stringVal === '' || stringVal.toUpperCase() === 'N/A') return fallback;
+           let text = stringVal; if (value.unit) text += ` <span class="unit">${value.unit}</span>`; if (value.notes) text += ` <span class="notes">(${value.notes})</span>`; return text;
         }
-
-        // Handle arrays: Create bullet points for specific paths, otherwise join with comma
         if (Array.isArray(value)) {
-            const listPathsForBullets = [
-                'device_applications.key_applications',
-                'device_integration_characterization.key_characterization_techniques'
-                // Add other paths here if needed
-            ];
-            const filteredValues = value.filter(item => item !== null && item !== undefined && String(item).trim() !== '');
-            if (filteredValues.length === 0) return fallback;
-
-            // Process items recursively using getData in case they are complex objects or paths
-            const processedItems = filteredValues.map(item => {
-                if (typeof item === 'string' && (item.includes('.') || item.includes('{'))) {
-                    if (item.includes('.') && !item.trim().startsWith('{')) {
-                        return getData(material, item, item);
-                    }
-                    if (item.trim().startsWith('{') && item.trim().endsWith('}')) {
-                        try {
-                           const parsed = JSON.parse(item);
-                           if (parsed.value !== undefined) return getData(null, null, item);
-                        } catch(e) { /* ignore parse error */ }
-                    }
-                 }
-                return (typeof item === 'object') ? JSON.stringify(item) : item;
-            });
-
-
-            if (listPathsForBullets.includes(path)) {
-                return `<ul class="property-list-items">${processedItems.map(item => `<li>${item}</li>`).join('')}</ul>`;
-            } else {
-                 return processedItems.join(', ');
-            }
+            const listPathsForBullets = [ 'device_applications.key_applications', 'device_integration_characterization.key_characterization_techniques' ];
+            const filteredValues = value.filter(item => item !== null && item !== undefined && String(item).trim() !== ''); if (filteredValues.length === 0) return fallback;
+            const processedItems = filteredValues.map(item => { if (typeof item === 'string' && (item.includes('.') || item.includes('{'))) { if (item.includes('.') && !item.trim().startsWith('{')) { return getData(material, item, item); } if (item.trim().startsWith('{') && item.trim().endsWith('}')) { try { const parsed = JSON.parse(item); if (parsed.value !== undefined) return getData(null, null, item); } catch(e) { /* ignore parse error */ } } } return (typeof item === 'object') ? JSON.stringify(item) : item; });
+            if (listPathsForBullets.includes(path)) { return `<ul class="property-list-items">${processedItems.map(item => `<li>${item}</li>`).join('')}</ul>`; }
+            else { return processedItems.join(', '); }
         }
-
-        // Handle simple objects containing only 'notes'
-         if (typeof value === 'object' && !Array.isArray(value) && Object.keys(value).length === 1 && value.notes !== undefined) {
-            const noteString = String(value.notes).trim();
-            return (noteString !== '' && noteString.toUpperCase() !== 'N/A') ? `<span class="notes-only">${noteString}</span>` : fallback;
-        }
-
-        // Handle other unexpected objects
-        if (typeof value === 'object' && !Array.isArray(value)) {
-            console.warn(`[getData] Encountered unexpected object structure for path "${path}". Returning fallback. Object:`, value);
-            return fallback;
-        }
-
-        // Handle primitive values (strings, numbers, booleans)
-        const stringValue = String(value).trim();
-        return (stringValue === '' || stringValue.toUpperCase() === 'N/A') ? fallback : stringValue;
+        if (typeof value === 'object' && !Array.isArray(value) && Object.keys(value).length === 1 && value.notes !== undefined) { const noteString = String(value.notes).trim(); return (noteString !== '' && noteString.toUpperCase() !== 'N/A') ? `<span class="notes-only">${noteString}</span>` : fallback; }
+        if (typeof value === 'object' && !Array.isArray(value)) { console.warn(`[getData] Encountered unexpected object structure for path "${path}". Returning fallback. Object:`, value); return fallback; }
+        const stringValue = String(value).trim(); return (stringValue === '' || stringValue.toUpperCase() === 'N/A') ? fallback : stringValue;
     };
 
 
     // --- Helper Function: createPropertyItem ---
     const createPropertyItem = (keyText, valueHtml, isKey = false) => {
-        const itemDiv = document.createElement('div');
-        itemDiv.className = 'property-item';
-        if (isKey) itemDiv.classList.add('key-property');
-        const dt = document.createElement('dt');
-        dt.className = 'property-key';
-        dt.textContent = keyText + ':'; // Use textContent for the label
-        const dd = document.createElement('dd');
-        dd.className = 'property-value';
-        dd.innerHTML = valueHtml; // Use innerHTML for the value (allows tags like <sub>)
-        if (valueHtml === fallbackValue) dd.classList.add('na-value');
-        itemDiv.appendChild(dt);
-        itemDiv.appendChild(dd);
-        return itemDiv;
+        const itemDiv = document.createElement('div'); itemDiv.className = 'property-item'; if (isKey) itemDiv.classList.add('key-property');
+        const dt = document.createElement('dt'); dt.className = 'property-key'; dt.textContent = keyText + ':';
+        const dd = document.createElement('dd'); dd.className = 'property-value'; dd.innerHTML = valueHtml; if (valueHtml === fallbackValue) dd.classList.add('na-value');
+        itemDiv.appendChild(dt); itemDiv.appendChild(dd); return itemDiv;
     };
 
-    // --- Helper Function: createSection ---
-    const createSection = (id, title, icon = null) => {
+    // --- Helper Function: createSection (REMOVED title population here) ---
+    const createSection = (id, icon = null) => {
         const section = document.createElement('section');
         section.className = 'material-section';
         section.id = id;
-        const h2 = document.createElement('h2');
-        if (icon) {
-            const iconSpan = document.createElement('span');
-            iconSpan.setAttribute('aria-hidden', 'true');
-            iconSpan.textContent = icon;
-            h2.appendChild(iconSpan);
-            h2.appendChild(document.createTextNode(' '));
-        }
-        h2.appendChild(document.createTextNode(title));
+        const h2 = document.createElement('h2'); // Create h2, content added later
         section.appendChild(h2);
         if (id === 'section-safety') section.classList.add('safety-info');
         return section;
     };
 
     // --- Configuration for Sections and Properties ---
-    // Updated based on previous iterations and new requirements
     const sectionConfig = [
-        { id: 'section-overview', title: 'Overview', isSpecial: true },
+        // *** Added dataKey for overview to make linking easier ***
+        { id: 'section-overview', title: 'Overview', isSpecial: true, dataKey: 'overview' },
         { id: 'section-safety', title: 'Safety Information', icon: '⚠️', dataKey: 'safety', properties: {'toxicity': { label: 'Toxicity', isKey: true }, 'handling': { label: 'Handling' }}},
         { id: 'section-identification', title: 'Identification & Structure', dataKey: 'identification', properties: {'cas_number': { label: 'CAS Number' }, 'crystal_structure': { label: 'Crystal Structure', isKey: true }, 'space_group': { label: 'Space Group', isHtml: true}, 'lattice_constant': { label: 'Lattice Constant', isKey: true, isHtml: true }, 'phase_diagram_notes': { label: 'Phase Diagram Notes' }, 'material_standard': {label: 'Material Standard'}, 'appearance': {label: 'Appearance', isHtml: true}, 'xrd_pattern': {label: 'XRD Pattern'}, 'grain_size_um': { label: 'Grain Size', isHtml: true }, 'molecular_weight': {label: 'Molecular Weight', isHtml: true}, 'zirconia_content': {label: 'Zirconia Content', isHtml: true}, 'fiber_volume_fraction': {label: 'Fiber Vol. Fraction', isHtml: true}, 'filament_diameter': {label: 'Filament Diameter', isHtml: true}, 'layer_density': {label: 'Layer Density', isHtml: true}, 'doping_concentration': { label: 'Doping Conc.', isHtml: true } }},
         { id: 'section-fab-insights', title: 'Advanced Fabrication Insights', dataKey: 'advanced_fabrication_insights', properties: {'stoichiometry_control': { label: 'Stoichiometry Control', isKey: true }, 'common_defects_impact': { label: 'Common Defects' }, 'surface_preparation': { label: 'Surface Preparation' }, 'method_specific_notes': { label: 'Method Nuances' }, 'process_control': {label: 'Process Control'}, 'interface_engineering': {label: 'Interface Engineering'}, 'alignment_techniques': {label: 'Alignment Techniques'}, 'cooling_rate_control': {label: 'Cooling Rate Control'}, 'particle_dispersion': {label: 'Particle Dispersion'}, 'transformation_toughening': { label: 'Transformation Toughening' }, 'coating_process': { label: 'Coating Process' }, 'machining': { label: 'Machining Notes' }, 'weave_style': { label: 'Weave Style' }, 'crystallinity_control': { label: 'Crystallinity Control' }, 'wear_mechanism': { label: 'Wear Mechanism' }, 'cold_welding': { label: 'Cold Welding' }, 'spacer_material': { label: 'Spacer Material' }, 'surface_sizing': { label: 'Surface Sizing' } }}, // Removed outgassing, hydrophobicity - moved to chemical
@@ -550,19 +491,10 @@ function populatePage(material, container) {
 
     const tagsContainer = document.getElementById('material-tags');
     if (tagsContainer) {
-        tagsContainer.innerHTML = '';
-        const tags = material.tags || []; let tagsAdded = false;
+        tagsContainer.innerHTML = ''; const tags = material.tags || []; let tagsAdded = false;
         if (Array.isArray(tags) && tags.length > 0) {
-            tags.forEach(tag => {
-                if (typeof tag === 'string' && tag.trim() !== '') {
-                    const tagElement = document.createElement('span'); tagElement.className = 'tag';
-                    // Strip prefixes like prop:, proc:, class:, env:, app: for display
-                    tagElement.textContent = tag.replace(/^(prop|proc|class|env|app|industry):/i, "");
-                    tagsContainer.appendChild(tagElement); tagsAdded = true;
-                }
-            });
-        }
-        if (!tagsAdded) tagsContainer.innerHTML = fallbackValue;
+            tags.forEach(tag => { if (typeof tag === 'string' && tag.trim() !== '') { const tagElement = document.createElement('span'); tagElement.className = 'tag'; tagElement.textContent = tag.replace(/^(prop|proc|class|env|app|industry):/i, ""); tagsContainer.appendChild(tagElement); tagsAdded = true; } });
+        } if (!tagsAdded) tagsContainer.innerHTML = fallbackValue;
     } else { console.warn("[Detail Page] Tags container '#material-tags' not found."); }
 
     // --- Dynamically Create and Populate Main Content Sections ---
@@ -573,169 +505,92 @@ function populatePage(material, container) {
         const { id, title, icon, dataKey, properties, isSpecial } = config;
         let sectionDataExists = false;
 
-        // Determine if data exists for this section
-        if (isSpecial) {
-            if (id === 'section-overview') sectionDataExists = material['description'] || material['wiki_link'];
-            else if (dataKey && material[dataKey]) sectionDataExists = true;
+        // Determine if data exists
+        // *** Added explicit check for overview section existence based on description/wiki_link ***
+        if (id === 'section-overview') {
+            sectionDataExists = !!(material['description'] || material['wiki_link']);
+        } else if (isSpecial) {
+             if (dataKey && material[dataKey]) sectionDataExists = true;
         } else if (dataKey && material[dataKey] && typeof material[dataKey] === 'object') {
-             if (properties && Object.keys(properties).some(propKey => {
-                 const dataPath = `${dataKey}.${propKey}`;
-                 return dataPath.split('.').reduce((o, key) => (o && typeof o === 'object' && o[key] !== undefined && o[key] !== null) ? o[key] : undefined, material) !== undefined;
-             })) {
-                sectionDataExists = true;
-             }
-             if (id === 'section-identification' && material['category']) {
-                 sectionDataExists = true;
-             }
-             if (id === 'section-identification' && material?.identification?.['class']) {
-                 sectionDataExists = true;
-             }
-        } else if (dataKey && material[dataKey] !== undefined && material[dataKey] !== null) {
-             sectionDataExists = true;
-        }
+             if (properties && Object.keys(properties).some(propKey => { const dataPath = `${dataKey}.${propKey}`; return dataPath.split('.').reduce((o, key) => (o && typeof o === 'object' && o[key] !== undefined && o[key] !== null) ? o[key] : undefined, material) !== undefined; })) { sectionDataExists = true; }
+             if (id === 'section-identification' && (material['category'] || material?.identification?.['class'])) { sectionDataExists = true; }
+        } else if (dataKey && material[dataKey] !== undefined && material[dataKey] !== null) { sectionDataExists = true; }
 
-        if (!sectionDataExists) {
-            return;
-        }
+        if (!sectionDataExists) { return; } // Skip section if no data
 
-        let section = createSection(id, title, icon);
+        // *** Use the modified createSection helper (only creates section and empty h2) ***
+        const section = createSection(id); // Pass only id and icon
+        const h2 = section.querySelector('h2'); // Get the created h2
         let sectionHasRenderableContent = false;
 
+        // *** Construct the link and add content to h2 ***
+        const link = document.createElement('a');
+        const anchorTargetDataKey = dataKey || 'overview'; // Use dataKey, fallback for overview
+        const anchorTargetId = `section-${anchorTargetDataKey}`; // Matches ID structure in full_detail.html
+        const fullDetailUrl = `material_full_detail.html?material=${encodeURIComponent(currentMaterialName)}#${anchorTargetId}`;
+        link.href = fullDetailUrl;
+        link.textContent = title; // Set the title as link text
+        link.style.textDecoration = 'none';
+        link.style.color = 'inherit';
+
+        if (icon) { // Add icon before the link if specified
+            const iconSpan = document.createElement('span');
+            iconSpan.setAttribute('aria-hidden', 'true');
+            iconSpan.textContent = icon + ' '; // Add space after icon
+            h2.appendChild(iconSpan);
+        }
+        h2.appendChild(link); // Add the link (containing the title) to the h2
+        if (id === 'section-safety') section.classList.add('safety-info');
+        // *** End of H2 modification ***
+
         if (isSpecial) {
-            // --- Custom Logic for Special Sections ---
+            // --- Custom Logic for Special Sections (Unchanged) ---
              if (id === 'section-overview') {
-                const descVal = getData(material, 'description', fallbackValue);
-                if (descVal !== fallbackValue) { const p = document.createElement('p'); p.className='description'; p.innerHTML=descVal; section.appendChild(p); sectionHasRenderableContent = true; }
-                const wikiUrl = getData(material, 'wiki_link', '#');
-                if (wikiUrl !== '#' && wikiUrl !== fallbackValue) { const p = document.createElement('p'); const a = document.createElement('a'); a.id = 'wiki-link'; a.href=wikiUrl; a.target='_blank'; a.rel='noopener noreferrer'; a.textContent='Wikipedia Article'; p.appendChild(document.createTextNode('See also: ')); p.appendChild(a); section.appendChild(p); sectionHasRenderableContent = true;}
-                const imgPlaceholder = document.createElement('div'); imgPlaceholder.className = 'image-placeholder'; imgPlaceholder.textContent = 'Image Placeholder / Diagram'; section.appendChild(imgPlaceholder);
-                sectionHasRenderableContent = true;
+                const descVal = getData(material, 'description', fallbackValue); if (descVal !== fallbackValue) { const p = document.createElement('p'); p.className='description'; p.innerHTML=descVal; section.appendChild(p); sectionHasRenderableContent = true; }
+                const wikiUrl = getData(material, 'wiki_link', '#'); if (wikiUrl !== '#' && wikiUrl !== fallbackValue) { const p = document.createElement('p'); const a = document.createElement('a'); a.id = 'wiki-link'; a.href=wikiUrl; a.target='_blank'; a.rel='noopener noreferrer'; a.textContent='Wikipedia Article'; p.appendChild(document.createTextNode('See also: ')); p.appendChild(a); section.appendChild(p); sectionHasRenderableContent = true;}
+                const imgPlaceholder = document.createElement('div'); imgPlaceholder.className = 'image-placeholder'; imgPlaceholder.textContent = 'Image Placeholder / Diagram'; section.appendChild(imgPlaceholder); sectionHasRenderableContent = true;
             }
             else if (id === 'section-comparison' && material.comparison_alternatives) {
-                 const dl = document.createElement('dl'); dl.className = 'property-list'; dl.id = 'comparison-list';
-                 let comparisonsAdded = false;
-                 const notesValue = getData(material, 'comparison_alternatives.notes', fallbackValue);
-                 if (notesValue !== fallbackValue) {
-                      const notesP = document.createElement('p'); notesP.innerHTML = `<em>${notesValue}</em>`;
-                      section.insertBefore(notesP, section.firstChild.nextSibling);
-                      sectionHasRenderableContent = true; comparisonsAdded = true;
-                 }
-                 Object.entries(material.comparison_alternatives).forEach(([key, value]) => {
-                    if (key.startsWith('vs_')) {
-                         const comparisonValueStr = getData(material, `comparison_alternatives.${key}`, fallbackValue);
-                         if (comparisonValueStr !== fallbackValue) {
-                             dl.appendChild(createPropertyItem(key.replace(/^vs_/, 'vs. '), comparisonValueStr));
-                             sectionHasRenderableContent = true; comparisonsAdded = true;
-                         }
-                    }
-                 });
-                 if (comparisonsAdded && dl.hasChildNodes()) {
-                     section.appendChild(dl);
-                 } else if (notesValue === fallbackValue && !dl.hasChildNodes()) {
-                      dl.innerHTML = `<div class="property-item comparison-na-message"><dd class="property-value">${fallbackValue}</dd></div>`;
-                      section.appendChild(dl); sectionHasRenderableContent = true;
-                 }
+                 const dl = document.createElement('dl'); dl.className = 'property-list'; dl.id = 'comparison-list'; let comparisonsAdded = false;
+                 const notesValue = getData(material, 'comparison_alternatives.notes', fallbackValue); if (notesValue !== fallbackValue) { const notesP = document.createElement('p'); notesP.innerHTML = `<em>${notesValue}</em>`; section.insertBefore(notesP, section.firstChild.nextSibling); sectionHasRenderableContent = true; comparisonsAdded = true; }
+                 Object.entries(material.comparison_alternatives).forEach(([key, value]) => { if (key.startsWith('vs_')) { const comparisonValueStr = getData(material, `comparison_alternatives.${key}`, fallbackValue); if (comparisonValueStr !== fallbackValue) { dl.appendChild(createPropertyItem(key.replace(/^vs_/, 'vs. '), comparisonValueStr)); sectionHasRenderableContent = true; comparisonsAdded = true; } } });
+                 if (comparisonsAdded && dl.hasChildNodes()) { section.appendChild(dl); } else if (notesValue === fallbackValue && !dl.hasChildNodes()) { dl.innerHTML = `<div class="property-item comparison-na-message"><dd class="property-value">${fallbackValue}</dd></div>`; section.appendChild(dl); sectionHasRenderableContent = true; }
             }
              else if (id === 'section-references' && material.references_further_reading) {
-                 const ul = document.createElement('ul'); ul.id = 'reference-list'; let listHasContent = false;
-                 const notesValue = getData(material, 'references_further_reading.notes', fallbackValue);
-                 if (notesValue !== fallbackValue) { const notesLi = document.createElement('li'); notesLi.className = 'ref-notes'; notesLi.innerHTML = `<em>${notesValue}</em>`; ul.appendChild(notesLi); listHasContent = true; }
-                 Object.entries(material.references_further_reading).forEach(([key, value])=>{
-                     if(key !== 'notes'){
-                         const refValue = getData(material, `references_further_reading.${key}`, fallbackValue);
-                          if (refValue !== fallbackValue) {
-                              const li = document.createElement('li'); let itemHtml = refValue;
-                              if (typeof refValue === 'string' && (refValue.startsWith('http') || refValue.startsWith('www'))) {
-                                  const url = refValue.startsWith('http') ? refValue : 'http://' + refValue;
-                                  const label = key === 'wikipedia' ? `Wikipedia: ${url}` : url;
-                                  itemHtml = `<a href="${url}" target="_blank" rel="noopener noreferrer">${label}</a>`;
-                              } else if (key === 'wikipedia') {
-                                   itemHtml = `Wikipedia: ${refValue}`;
-                              }
-                              li.innerHTML = itemHtml; ul.appendChild(li); listHasContent = true;
-                          }
-                     }
-                 });
-                 if (!listHasContent) { ul.innerHTML = `<li>Reference information ${fallbackValue}</li>`; }
-                 section.appendChild(ul); sectionHasRenderableContent = true;
+                 const ul = document.createElement('ul'); ul.id = 'reference-list'; let listHasContent = false; const notesValue = getData(material, 'references_further_reading.notes', fallbackValue); if (notesValue !== fallbackValue) { const notesLi = document.createElement('li'); notesLi.className = 'ref-notes'; notesLi.innerHTML = `<em>${notesValue}</em>`; ul.appendChild(notesLi); listHasContent = true; }
+                 Object.entries(material.references_further_reading).forEach(([key, value])=>{ if(key !== 'notes'){ const refValue = getData(material, `references_further_reading.${key}`, fallbackValue); if (refValue !== fallbackValue) { const li = document.createElement('li'); let itemHtml = refValue; if (typeof refValue === 'string' && (refValue.startsWith('http') || refValue.startsWith('www'))) { const url = refValue.startsWith('http') ? refValue : 'http://' + refValue; const label = key === 'wikipedia' ? `Wikipedia: ${url}` : url; itemHtml = `<a href="${url}" target="_blank" rel="noopener noreferrer">${label}</a>`; } else if (key === 'wikipedia') { itemHtml = `Wikipedia: ${refValue}`; } li.innerHTML = itemHtml; ul.appendChild(li); listHasContent = true; } } });
+                 if (!listHasContent) { ul.innerHTML = `<li>Reference information ${fallbackValue}</li>`; } section.appendChild(ul); sectionHasRenderableContent = true;
             }
              else if (id === 'section-vendors' && material.vendor_info) {
-                  const introP = document.createElement('p'); introP.textContent = 'This space can list companies supplying materials or related services. (Example data)'; section.appendChild(introP);
-                  const ul = document.createElement('ul'); ul.id = 'vendor-list'; let listHasContent = false;
-                  const notesValue = getData(material, 'vendor_info.notes', fallbackValue);
-                  if (notesValue !== fallbackValue) { const notesLi = document.createElement('li'); notesLi.className = 'vendor-notes'; notesLi.innerHTML = `<em>${notesValue}</em>`; ul.appendChild(notesLi); listHasContent = true; }
-                  Object.entries(material.vendor_info).forEach(([key, value])=>{
-                       if(key !== 'notes'){
-                           const vendorValue = getData(material, `vendor_info.${key}`, fallbackValue);
-                            if (vendorValue !== fallbackValue) {
-                                const li = document.createElement('li'); let itemHtml = vendorValue;
-                                try { const urlMatch = String(vendorValue).match(/(https?:\/\/[^\s"'>]+)|(www\.[^\s"'>]+)/); if (urlMatch) { const url = urlMatch[0].startsWith('http') ? urlMatch[0] : 'http://' + urlMatch[0]; itemHtml = String(vendorValue).replace(urlMatch[0], `<a href="${url}" target="_blank" rel="noopener noreferrer">${urlMatch[0]}</a>`); } } catch (linkError) {}
-                                li.innerHTML = itemHtml; ul.appendChild(li); listHasContent = true;
-                            }
-                       }
-                  });
-                  if (!listHasContent) { ul.innerHTML = `<li>Vendor information ${fallbackValue}</li>`; }
-                  section.appendChild(ul);
-                  const disclaimerP = document.createElement('p'); const small = document.createElement('small'); small.textContent = 'Note: Listing does not imply endorsement. Contact vendors directly for current offerings.'; disclaimerP.appendChild(small); section.appendChild(disclaimerP);
-                  sectionHasRenderableContent = true;
+                  const introP = document.createElement('p'); introP.textContent = 'This space can list companies supplying materials or related services. (Example data)'; section.appendChild(introP); const ul = document.createElement('ul'); ul.id = 'vendor-list'; let listHasContent = false; const notesValue = getData(material, 'vendor_info.notes', fallbackValue); if (notesValue !== fallbackValue) { const notesLi = document.createElement('li'); notesLi.className = 'vendor-notes'; notesLi.innerHTML = `<em>${notesValue}</em>`; ul.appendChild(notesLi); listHasContent = true; }
+                  Object.entries(material.vendor_info).forEach(([key, value])=>{ if(key !== 'notes'){ const vendorValue = getData(material, `vendor_info.${key}`, fallbackValue); if (vendorValue !== fallbackValue) { const li = document.createElement('li'); let itemHtml = vendorValue; try { const urlMatch = String(vendorValue).match(/(https?:\/\/[^\s"'>]+)|(www\.[^\s"'>]+)/); if (urlMatch) { const url = urlMatch[0].startsWith('http') ? urlMatch[0] : 'http://' + urlMatch[0]; itemHtml = String(vendorValue).replace(urlMatch[0], `<a href="${url}" target="_blank" rel="noopener noreferrer">${urlMatch[0]}</a>`); } } catch (linkError) {} li.innerHTML = itemHtml; ul.appendChild(li); listHasContent = true; } } });
+                  if (!listHasContent) { ul.innerHTML = `<li>Vendor information ${fallbackValue}</li>`; } section.appendChild(ul); const disclaimerP = document.createElement('p'); const small = document.createElement('small'); small.textContent = 'Note: Listing does not imply endorsement. Contact vendors directly for current offerings.'; disclaimerP.appendChild(small); section.appendChild(disclaimerP); sectionHasRenderableContent = true;
              }
-            // --- Append Special Section ---
             if (sectionHasRenderableContent) fragment.appendChild(section);
 
         } else if (dataKey && properties && material[dataKey]) {
-             // --- Logic for Standard Sections ---
-            const dl = document.createElement('dl'); dl.className = 'property-list';
-            let propertiesAddedToDl = false;
-
-            // Special handling for section-identification to add category/class first
-            if (id === 'section-identification') {
-                let catVal = getData(material, 'category', fallbackValue);
-                if (catVal !== fallbackValue) { dl.appendChild(createPropertyItem('Material Category', catVal)); sectionHasRenderableContent = true; propertiesAddedToDl = true;}
-                let classVal = getData(material, 'identification.class', fallbackValue);
-                 if (classVal !== fallbackValue) {
-                     const classConfig = properties['class']; // Get config for 'class'
-                     if (classConfig) {
-                         dl.appendChild(createPropertyItem(classConfig.label, classVal, classConfig.isKey || false));
-                         sectionHasRenderableContent = true; propertiesAddedToDl = true;
-                     }
-                 }
+             // Logic for Standard Sections (Unchanged from previous logic)
+            const dl = document.createElement('dl'); dl.className = 'property-list'; let propertiesAddedToDl = false;
+            if (id === 'section-identification') { // Handle category/class first
+                let catVal = getData(material, 'category', fallbackValue); if (catVal !== fallbackValue) { dl.appendChild(createPropertyItem('Material Category', catVal)); sectionHasRenderableContent = true; propertiesAddedToDl = true;}
+                let classVal = getData(material, 'identification.class', fallbackValue); if (classVal !== fallbackValue) { const classConfig = properties['class']; if (classConfig) { dl.appendChild(createPropertyItem(classConfig.label, classVal, classConfig.isKey || false)); sectionHasRenderableContent = true; propertiesAddedToDl = true; } }
             }
-
-            // Iterate through configured properties for the section
-            Object.entries(properties).forEach(([propKey, propConfig]) => {
-                 const dataPath = `${dataKey}.${propKey}`;
-                 // Skip 'identification.class' if in the identification section (already handled)
-                 if (id === 'section-identification' && propKey === 'class') {
-                     return;
-                 }
-
-                 const value = getData(material, dataPath, fallbackValue);
-                 if (value !== fallbackValue) {
-                     const label = propConfig.label;
-                     dl.appendChild(createPropertyItem(label, value, propConfig.isKey || false));
-                     sectionHasRenderableContent = true; propertiesAddedToDl = true;
-                 }
+            Object.entries(properties).forEach(([propKey, propConfig]) => { // Iterate configured props
+                 if (id === 'section-identification' && propKey === 'class') return; // Skip if already handled
+                 const dataPath = `${dataKey}.${propKey}`; const value = getData(material, dataPath, fallbackValue);
+                 if (value !== fallbackValue) { const label = propConfig.label; dl.appendChild(createPropertyItem(label, value, propConfig.isKey || false)); sectionHasRenderableContent = true; propertiesAddedToDl = true; }
             });
-            // --- Append Standard Section ---
-            if (propertiesAddedToDl) {
-                section.appendChild(dl); fragment.appendChild(section);
-            } else if (sectionHasRenderableContent && id === 'section-identification') {
-                 // Append even if only category/class was added for identification section
-                 section.appendChild(dl); fragment.appendChild(section);
-            }
+            if (propertiesAddedToDl) { section.appendChild(dl); fragment.appendChild(section); }
+            else if (sectionHasRenderableContent && id === 'section-identification') { section.appendChild(dl); fragment.appendChild(section); }
         }
     });
 
     container.appendChild(fragment);
     console.log("[Detail Page] Dynamic page section population complete.");
 
-    // --- Enhance Periodic Table (Done Separately after DOM is built) ---
+    // --- Enhance Periodic Table ---
     const tooltipElem = document.getElementById('pt-tooltip');
-    if (tooltipElem) {
-       enhancePeriodicTable(material, tooltipElem);
-    } else {
-       console.error("Tooltip element #pt-tooltip not found after page population.");
-       enhancePeriodicTable(material, null); // Enhance without tooltip functionality
-    }
+    if (tooltipElem) { enhancePeriodicTable(material, tooltipElem); }
+    else { console.error("Tooltip element #pt-tooltip not found after page population."); enhancePeriodicTable(material, null); }
 
 } // End of populatePage function
