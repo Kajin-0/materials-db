@@ -128,132 +128,68 @@ document.addEventListener("DOMContentLoaded", async () => {
     else { console.warn("[Full Detail Loader] Material name element not found."); }
     document.title = `${materialName} - Full Details`;
 
-    // --- =============================================================== ---
-    // ---    *** START: SIMPLIFIED Fetch Logic v7 (Debug Logging) ***     ---
-    // --- =============================================================== ---
-    let materialData; // Variable to hold the specific material's data object
-    const mainDetailFilePath = `./details/material_details.json`;
+    // --- Construct file path ---
+    // Determine which JSON file to load based on the material name
+    let detailFilePath;
+    const safeMaterialNameLower = materialName.replace(/ /g, '_').toLowerCase();
+    const specificDetailFileName = `${safeMaterialNameLower}_details.json`; // e.g., mercury_cadmium_telluride_details.json
 
-    try { // Simple try-catch for the entire process
-        console.log(`[DEBUG] Attempting to load ONLY main file: ${mainDetailFilePath}`);
-        let response;
-        try {
-            response = await fetch(mainDetailFilePath);
-            console.log(`[DEBUG] Fetch attempt completed. Status: ${response.status}, OK: ${response.ok}`);
-        } catch(fetchErr) {
-             console.error(`[DEBUG] Fetch failed catastrophically:`, fetchErr);
-             throw new Error(`Network error or issue fetching main details file (${mainDetailFilePath}): ${fetchErr.message}`);
-        }
-
-        if (!response.ok) {
-            throw new Error(`Failed to fetch main details file (${mainDetailFilePath}) - Status: ${response.status}`);
-        }
-
-        let allDetailData;
-        try {
-            console.log(`[DEBUG] Attempting to parse JSON...`);
-            allDetailData = await response.json();
-            console.log(`[DEBUG] JSON parsing successful. Data type: ${typeof allDetailData}`);
-        } catch (jsonError) {
-            console.error(`[DEBUG] JSON parsing failed:`, jsonError);
-            throw new Error(`Invalid JSON in main details file (${mainDetailFilePath}): ${jsonError.message}`);
-        }
-
-
-        if (typeof allDetailData !== 'object' || allDetailData === null) {
-            throw new Error(`Invalid JSON structure in main file ${mainDetailFilePath}. Expected top-level object.`);
-        }
-
-        // Find material within the main file (case-sensitive first, then insensitive)
-        console.log(`[DEBUG] Looking for material key (case-sensitive): "${materialName}"`);
-        materialData = allDetailData[materialName];
-
-        if (!materialData) {
-            console.log(`[DEBUG] Case-sensitive key not found. Trying case-insensitive lookup...`);
-            const lowerCaseMaterialName = materialName.toLowerCase();
-            const foundKey = Object.keys(allDetailData).find(key => key.toLowerCase() === lowerCaseMaterialName);
-
-            if (foundKey) {
-                materialData = allDetailData[foundKey];
-                console.warn(`[Full Detail Loader] Case-insensitive match found: '${foundKey}'.`);
-                 // Ensure materialName field matches the key found
-                 if (!materialData.materialName || materialData.materialName !== foundKey) {
-                      console.warn(`Updating materialName field to match key: ${foundKey}`);
-                      materialData.materialName = foundKey;
-                      // Update title elements if necessary (ensure materialNameEl is defined)
-                      if (materialNameEl) materialNameEl.textContent = foundKey;
-                      document.title = `${foundKey} - Full Details`;
-                 }
-            } else {
-                // If not found either way, throw error
-                 console.error(`[DEBUG] Material key "${materialName}" not found using either case-sensitive or case-insensitive lookup.`);
-                 throw new Error(`Material '${materialName}' not found in main file ${mainDetailFilePath}.`);
-            }
-        } else {
-             console.log(`[DEBUG] Case-sensitive key found.`);
-        }
-
-         // Ensure materialName field exists if data was found
-        if (materialData && !materialData.materialName) {
-             console.warn(`[DEBUG] 'materialName' field missing in loaded data object. Setting from URL name.`);
-             materialData.materialName = materialName; // Use the originally decoded name
-        }
-
-        // Final validation of the extracted materialData
-        console.log(`[DEBUG] Final validation of materialData object...`);
-        if (typeof materialData !== 'object' || materialData === null) {
-            // This error should theoretically be caught earlier if lookup failed.
-            throw new Error(`Invalid data structure loaded for material '${materialName}'. Expected an object, got ${typeof materialData}.`);
-        }
-        console.log(`[Full Detail Loader] Material data successfully extracted for "${materialData.materialName || materialName}".`);
-
-
-        // --- Proceed with Populating Page ---
-        console.log("[DEBUG] Proceeding to populate page content...");
-        const sectionDataMap = new Map();
-
-        // --- Process References ---
-        const collectedRefs = new Set();
-        const processRefs = (data) => { if (typeof data === 'object' && data !== null) { if (data.ref && materialData.references && materialData.references[data.ref]) { collectedRefs.add(data.ref); } Object.values(data).forEach(value => { if (typeof value === 'object' || Array.isArray(value)) { processRefs(value); } }); } else if (Array.isArray(data)) { data.forEach(processRefs); } };
-        processRefs(materialData);
-        console.log(`[Full Detail Loader] References processed: ${collectedRefs.size}`);
-
-        // --- Build Table of Contents ---
-        if (tocListEl && mainContentEl) {
-            tocListEl.innerHTML = ''; let sectionCount = 0; const excludedKeys = ['materialName', 'references', 'name', 'formula', 'synonyms', 'category', 'constituent_elements', 'description', 'wiki_link', 'tags'];
-            for (const sectionKey in materialData) { if (excludedKeys.includes(sectionKey) || typeof materialData[sectionKey] !== 'object' || materialData[sectionKey] === null) continue; const sectionDetailData = materialData[sectionKey]; if (typeof sectionDetailData !== 'object' || sectionDetailData === null) continue; sectionDataMap.set(sectionKey, sectionDetailData); sectionCount++; const sectionDisplayName = sectionDetailData.displayName || sectionKey.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()); const sectionId = `section-${sectionKey}`; const tocLi = document.createElement('li'); const tocLink = document.createElement('a'); tocLink.href = `#${sectionId}`; tocLink.textContent = sectionDisplayName; tocLi.appendChild(tocLink); tocListEl.appendChild(tocLi); }
-             console.log(`[Full Detail Loader] TOC built: ${sectionCount} sections.`);
-        } else { console.warn("TOC elements not found."); }
-
-        // --- Populate Sections ---
-        let populatedSectionCount = 0;
-        for (const [sectionKey, sectionDetailData] of sectionDataMap.entries()) {
-             const sectionId = `section-${sectionKey}`; let sectionElement = document.getElementById(sectionId);
-             if (!sectionElement) { console.warn(`HTML section placeholder '${sectionId}' not found. Creating dynamically.`); sectionElement = document.createElement('section'); sectionElement.id = sectionId; sectionElement.className = 'detail-content-section'; sectionElement.style.display = 'none'; const h2 = document.createElement('h2'); h2.id = `${sectionId}-title`; sectionElement.appendChild(h2); const introP = document.createElement('p'); introP.className = 'section-introduction'; introP.id = `${sectionId}-intro`; sectionElement.appendChild(introP); const propsDiv = document.createElement('div'); propsDiv.className = 'properties-container'; propsDiv.id = `${sectionId}-properties`; sectionElement.appendChild(propsDiv); mainContentEl.appendChild(sectionElement); }
-             const h2Title = sectionElement.querySelector('h2'); if (h2Title) { h2Title.textContent = sectionDetailData.displayName || sectionKey.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()); } else { console.warn(`Title element (h2) not found within section '${sectionId}'.`); }
-             const sectionIntroEl = document.getElementById(`${sectionId}-intro`); if (sectionIntroEl) { if (sectionDetailData.introduction) { sectionIntroEl.innerHTML = sectionDetailData.introduction; sectionIntroEl.style.display = 'block'; } else { sectionIntroEl.style.display = 'none'; sectionIntroEl.innerHTML = ''; } }
-             const propertiesContainerEl = document.getElementById(`${sectionId}-properties`); if (propertiesContainerEl && sectionDetailData.properties && typeof sectionDetailData.properties === 'object') { propertiesContainerEl.innerHTML = ''; let propertyCount = 0; Object.entries(sectionDetailData.properties).forEach(([propKey, propData]) => { const propertyBlockElement = renderPropertyBlock(sectionKey, propKey, propData, materialData, sectionDetailData.properties); if (propertyBlockElement) { propertiesContainerEl.appendChild(propertyBlockElement); propertyCount++; } }); propertiesContainerEl.style.display = propertyCount > 0 ? 'block' : 'none'; } else if (propertiesContainerEl) { propertiesContainerEl.style.display = 'none'; }
-             sectionElement.style.display = 'block'; populatedSectionCount++;
-        }
-         console.log(`[Full Detail Loader] Populated ${populatedSectionCount} sections.`);
-
-        // --- Populate References ---
-        if (collectedRefs.size > 0 && referencesListEl && materialData.references) {
-             referencesListEl.innerHTML = ''; const sortedRefs = Array.from(collectedRefs).sort();
-             sortedRefs.forEach(refKey => { const refData = materialData.references[refKey]; if(refData){ const li = document.createElement('li'); li.id = `ref-${refKey}`; let linkHtml = refData.text; if(refData.doi){ linkHtml += ` <a href="https://doi.org/${refData.doi}" target="_blank" rel="noopener noreferrer">[DOI]</a>`; } li.innerHTML = `<strong>[${refKey}]</strong> ${linkHtml}`; referencesListEl.appendChild(li); } else { console.warn(`Ref key '${refKey}' not defined.`); } });
-             referencesSectionEl.style.display = 'block'; mainContentEl.addEventListener('click', handleRefLinkClick); console.log("[Full Detail Loader] References populated.");
-        } else if(referencesSectionEl){ referencesSectionEl.style.display = 'none'; console.log("[Full Detail Loader] No references to populate or elements missing."); }
-        console.log("[Full Detail Loader] Data processing complete.");
-
-    } catch (error) { // Outer catch block
-         console.error("[Full Detail Loader] CRITICAL ERROR in fetch/process:", error);
-         // *** Ensure displayError is called reliably ***
-         displayError(error.message || "An unknown error occurred during data loading.");
+    // Check if a specific file exists (simplistic check, replace with actual existence check if needed)
+    // For this example, we *know* which file to use if the name matches.
+    if (materialName === "Mercury Cadmium Telluride") {
+        // *** CORRECTED PATH ***
+        detailFilePath = `./details/${specificDetailFileName}`;
+        console.log(`[Full Detail Loader] Using specific detail file: '${detailFilePath}'`);
+    } else {
+        // *** CORRECTED FALLBACK PATH ***
+        detailFilePath = `./details/material_details.json`; // Fallback to the main details file in details folder
+        console.log(`[Full Detail Loader] Using main details file: '${detailFilePath}'`);
     }
-    // --- =============================================================== ---
-    // ---     *** END: SIMPLIFIED Fetch Logic v7 (Debug Logging) ***      ---
-    // --- =============================================================== ---
-    
+    // *****************************************************************************
+
+    // --- Fetch and Process Data ---
+    let allMaterialDetails; // Holds the full JSON content (either the single object or the map)
+    let materialData; // Variable to hold the specific material's data object
+
+    try {
+        const response = await fetch(detailFilePath);
+        console.log(`[Full Detail Loader] Fetch response status for ${detailFilePath}: ${response.status} ${response.statusText}`);
+        if (!response.ok) {
+             const errorText = await response.text(); console.error(`Fetch failed: ${response.status}.`, errorText);
+            if (response.status === 404) { throw new Error(`Details file not found: ${detailFilePath}. Check file name and path.`); }
+            else { throw new Error(`HTTP error ${response.status} fetching ${detailFilePath}`); }
+        }
+
+        // Parse the JSON content
+        const rawJson = await response.json();
+        allMaterialDetails = rawJson; // Store the raw JSON content
+
+        // Extract the specific material's data based on which file was loaded
+        if (detailFilePath.endsWith('material_details.json')) {
+            // Original structure: find the material within the main JSON object
+            if (typeof allMaterialDetails !== 'object' || allMaterialDetails === null) throw new Error(`Invalid JSON structure in ${detailFilePath}. Expected top-level object.`);
+             materialData = allMaterialDetails[materialName];
+             if (!materialData) {
+                 // Try case-insensitive fallback
+                const lowerCaseMaterialName = materialName.toLowerCase();
+                const foundKey = Object.keys(allMaterialDetails).find(key => key.toLowerCase() === lowerCaseMaterialName);
+                if (foundKey) {
+                     materialData = allMaterialDetails[foundKey];
+                     console.warn(`[Full Detail Loader] Case-insensitive match found for "${materialName}" as "${foundKey}" in ${detailFilePath}.`);
+                } else {
+                    throw new Error(`Data for material '${materialName}' not found inside ${detailFilePath}.`);
+                }
+             }
+        } else {
+            // Dedicated file structure: the JSON *is* the material data
+             if (typeof allMaterialDetails !== 'object' || allMaterialDetails === null || !allMaterialDetails.materialName) throw new Error(`Invalid JSON structure in dedicated file ${detailFilePath}. Expected object with material details.`);
+             materialData = allMaterialDetails; // The whole file content is the data for this material
+        }
+        // ************************************************
+
+        if (typeof materialData !== 'object' || materialData === null) { throw new Error(`Invalid data structure for material '${materialName}'.`); }
+        console.log("[Full Detail Loader] JSON parsed successfully.");
+
         const sectionDataMap = new Map();
 
         // --- Process References ---
