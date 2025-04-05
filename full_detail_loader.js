@@ -685,9 +685,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             return label;
         }
 
-        // --- Helper: Create/Update Model (Atoms, Bonds, Labels - Adapted v7) ---
+        // --- Helper: Create/Update Model (Atoms, Bonds, Labels - Adapted v8 - Refined Label Offset) ---
         function createOrUpdateModel_Adapted(atomData) {
-            console.log("[Three.js Adapted v7] Rebuilding model...");
+            console.log("[Three.js Adapted v8] Rebuilding model..."); // Version identifier updated
             const childrenToRemove = crystalGroup.children.filter(child => child !== unitCellOutline);
             childrenToRemove.forEach(object => {
                 if (object.isMesh) {
@@ -695,8 +695,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                     // Clean up labels attached to this sphere
                     const labelsToRemove = object.children.filter(child => child.isCSS2DObject);
                     labelsToRemove.forEach(label => {
-                         if (label.element?.parentNode) label.element.parentNode.removeChild(label.element);
-                         label.element = null; object.remove(label);
+                        if (label.element?.parentNode) label.element.parentNode.removeChild(label.element);
+                        label.element = null; object.remove(label);
                     });
                 } else if (object.isLineSegments && object.geometry) { object.geometry.dispose(); }
                 else if (object.isCSS2DObject) { // Handle labels attached directly to group
@@ -735,6 +735,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             // Add Spheres & Labels
             let spheresAdded = 0, labelsAdded = 0;
+            const labelOffsetFactor = 1.1; // *** REDUCED OFFSET FACTOR ***
+
             atomData.forEach((atom) => {
                 const symbol = atom.element;
                 const symbolKey = Object.keys(atomInfo).find(k => k.toUpperCase() === symbol.toUpperCase()) || symbol;
@@ -755,19 +757,21 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                 // Add Label - Attach to sphere if sphere exists, else position absolutely
                 if (showLabels && atom.position && !isNaN(atom.position.x)) {
-                    const label = createCSS2DLabel_Adapted(atom.element); // Use fixed function
+                    const label = createCSS2DLabel_Adapted(atom.element); // Use corrected label creator
                     if (sphere) {
-                        label.position.set(0, sphereRadius * labelOffsetFactor, 0); // Relative to sphere center
+                        // Position label relative to the sphere's center using scaled offset
+                        label.position.set(0, sphereRadius * labelOffsetFactor, 0); // Use refined offset factor
                         sphere.add(label); // Attach label TO the sphere mesh
                     } else {
-                         label.position.copy(atom.position); // Absolute position
-                         label.position.y += baseRadius * labelOffsetFactor; // Offset from world position
+                         // If no sphere (e.g., stick mode), position label absolutely near atom world pos
+                         label.position.copy(atom.position);
+                         label.position.y += baseRadius * labelOffsetFactor; // Offset from world position using reduced factor
                          crystalGroup.add(label); // Add to group
                     }
                     labelsAdded++;
                 }
             });
-            console.log(`[Three.js Adapted v7] Added ${spheresAdded} spheres, ${labelsAdded} labels.`);
+            console.log(`[Three.js Adapted v8] Added ${spheresAdded} spheres, ${labelsAdded} labels.`);
 
             // Add Bonds (Sticks)
             let bondsAdded = 0;
@@ -798,8 +802,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                         }
                     }
                 }
-                console.log(`[Three.js Adapted v7] Added ${bondsAdded} bonds.`);
-            } else { console.log(`[Three.js Adapted v7] Skipping bond generation.`); }
+                console.log(`[Three.js Adapted v8] Added ${bondsAdded} bonds.`);
+            } else { console.log(`[Three.js Adapted v8] Skipping bond generation.`); }
         }
 
 
