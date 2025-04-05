@@ -577,11 +577,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
         // --- ================================================================= ---
-    // ---      *** START: REFINED Three.js Viewer Logic v6 ***             ---
-    // ---      (Fixes Label and Outline Positioning)                      ---
+    // ---      *** START: REFINED Three.js Viewer Logic v7 ***             ---
+    // ---      (Fixes Label positioning error)                            ---
     // --- ================================================================= ---
     function initializeSimplifiedThreeJsViewer(viewerElementId, controlsElementId, vizData, materialData) {
-        console.log(`--- [Three.js ADAPTED Init v6] Initializing Viewer for ${viewerElementId} ---`);
+        console.log(`--- [Three.js ADAPTED Init v7] Initializing Viewer for ${viewerElementId} ---`);
 
         const viewerContainer = document.getElementById(viewerElementId);
         const controlsContainer = document.getElementById(controlsElementId);
@@ -610,7 +610,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const latticeConstantsSource = vizData.lattice_constants || {};
         const spinSpeed = 0.005;
         const sphereScales = { spacefill: 0.55, ballAndStick: 0.28, stick: 0.1 };
-        const labelOffsetFactor = 1.3; // Slightly increased offset factor
+        const labelOffsetFactor = 1.3; // Multiply sphere radius by this for label distance
         const sphereDetail = 12;
         const stickDetail = 6;
         const stickRadius = 0.05;
@@ -670,24 +670,24 @@ document.addEventListener("DOMContentLoaded", async () => {
             for (let i = 0; i < nx; i++) { for (let j = 0; j < ny; j++) { for (let k = 0; k < nz; k++) { basis.forEach(basisAtom => { basisAtom.coords.forEach(coord => { let elementSymbol; if (basisAtom.element === 'cation') { if (vizData.composition.min_x !== vizData.composition.max_x) { elementSymbol = Math.random() < concentration ? subst_symbol : host_symbol; } else { elementSymbol = subst_symbol || host_symbol; } } else { elementSymbol = basisAtom.element; } const pos = new THREE.Vector3( (coord.x + i) * lattice_a, (coord.y + j) * lattice_a, (coord.z + k) * lattice_a ); generatedAtoms.push({ element: elementSymbol.toUpperCase(), position: pos }); minBounds.min(pos); maxBounds.max(pos); }); }); } } }
             const center = new THREE.Vector3().addVectors(minBounds, maxBounds).multiplyScalar(0.5);
             generatedAtoms.forEach(atom => atom.position.sub(center)); // Center atoms around world origin
-            console.log(`[Three.js Adapted v6] Generated ${generatedAtoms.length} atoms. Lattice: ${lattice_a.toFixed(3)}. Center offset calculated: ${center.x.toFixed(2)},${center.y.toFixed(2)},${center.z.toFixed(2)}`);
+            console.log(`[Three.js Adapted v7] Generated ${generatedAtoms.length} atoms. Lattice: ${lattice_a.toFixed(3)}. Center offset calculated: ${center.x.toFixed(2)},${center.y.toFixed(2)},${center.z.toFixed(2)}`);
             return { atoms: generatedAtoms, center: center }; // Return centered atoms and the center offset
         }
 
-        // --- Helper: Create CSS2D Label Object ---
+        // --- Helper: Create CSS2D Label Object (FIXED - Removed .center.set) ---
         function createCSS2DLabel_Adapted(text) {
             const div = document.createElement('div');
             div.className = 'atom-label';
             div.textContent = text;
             const label = new THREE.CSS2DObject(div);
-            label.center.set(0.5, 0.5); // ** Center the label element itself on the anchor point **
+            // REMOVED: label.center.set(0.5, 0.5); <-- This property does not exist on CSS2DObject
             label.layers.set(0);
             return label;
         }
 
-        // --- Helper: Create/Update Model (Atoms, Bonds, Labels - Adapted v6) ---
+        // --- Helper: Create/Update Model (Atoms, Bonds, Labels - Adapted v7) ---
         function createOrUpdateModel_Adapted(atomData) {
-            console.log("[Three.js Adapted v6] Rebuilding model...");
+            console.log("[Three.js Adapted v7] Rebuilding model...");
             const childrenToRemove = crystalGroup.children.filter(child => child !== unitCellOutline);
             childrenToRemove.forEach(object => {
                 if (object.isMesh) {
@@ -695,8 +695,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                     // Clean up labels attached to this sphere
                     const labelsToRemove = object.children.filter(child => child.isCSS2DObject);
                     labelsToRemove.forEach(label => {
-                        if (label.element?.parentNode) label.element.parentNode.removeChild(label.element);
-                        label.element = null; object.remove(label);
+                         if (label.element?.parentNode) label.element.parentNode.removeChild(label.element);
+                         label.element = null; object.remove(label);
                     });
                 } else if (object.isLineSegments && object.geometry) { object.geometry.dispose(); }
                 else if (object.isCSS2DObject) { // Handle labels attached directly to group
@@ -705,7 +705,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 }
                 crystalGroup.remove(object);
             });
-            atomData.forEach(a => a.sphereMesh = null);
+            atomData.forEach(a => a.sphereMesh = null); // Clear references
 
             if (!atomData || atomData.length === 0) { console.warn("No atom data to build model."); return; }
 
@@ -753,23 +753,21 @@ document.addEventListener("DOMContentLoaded", async () => {
                     spheresAdded++;
                 }
 
-                // Add Label - **Attach to sphere if sphere exists, else position absolutely**
+                // Add Label - Attach to sphere if sphere exists, else position absolutely
                 if (showLabels && atom.position && !isNaN(atom.position.x)) {
-                    const label = createCSS2DLabel_Adapted(atom.element);
+                    const label = createCSS2DLabel_Adapted(atom.element); // Use fixed function
                     if (sphere) {
-                        // Position label relative to the sphere's center
-                        label.position.set(0, sphereRadius * labelOffsetFactor, 0); // Offset purely in Y local to sphere
+                        label.position.set(0, sphereRadius * labelOffsetFactor, 0); // Relative to sphere center
                         sphere.add(label); // Attach label TO the sphere mesh
                     } else {
-                         // If no sphere (e.g., stick mode), position label absolutely near atom world pos
-                         label.position.copy(atom.position);
+                         label.position.copy(atom.position); // Absolute position
                          label.position.y += baseRadius * labelOffsetFactor; // Offset from world position
-                         crystalGroup.add(label); // Add label directly to main group
+                         crystalGroup.add(label); // Add to group
                     }
                     labelsAdded++;
                 }
             });
-            console.log(`[Three.js Adapted v6] Added ${spheresAdded} spheres, ${labelsAdded} labels.`);
+            console.log(`[Three.js Adapted v7] Added ${spheresAdded} spheres, ${labelsAdded} labels.`);
 
             // Add Bonds (Sticks)
             let bondsAdded = 0;
@@ -800,18 +798,19 @@ document.addEventListener("DOMContentLoaded", async () => {
                         }
                     }
                 }
-                console.log(`[Three.js Adapted v6] Added ${bondsAdded} bonds.`);
-            } else { console.log(`[Three.js Adapted v6] Skipping bond generation.`); }
+                console.log(`[Three.js Adapted v7] Added ${bondsAdded} bonds.`);
+            } else { console.log(`[Three.js Adapted v7] Skipping bond generation.`); }
         }
 
-        // --- Helper: Create/Update Unit Cell Outline (Adapted v6 - POSITIONING REFINED) ---
+
+        // --- Helper: Create/Update Unit Cell Outline (Adapted v7 - Same as v6) ---
         function createOrUpdateUnitCellOutline_Adapted(atomsCenter) {
             if (unitCellOutline) {
                 crystalGroup.remove(unitCellOutline);
                 if (unitCellOutline.geometry) unitCellOutline.geometry.dispose();
             }
             if (!showOutline) {
-                console.log("[Three.js Adapted v6] Outline hidden.");
+                console.log("[Three.js Adapted v7] Outline hidden.");
                 unitCellOutline = null; return;
             }
 
@@ -824,7 +823,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             // Create the LineSegments object using the edges geometry
             unitCellOutline = new THREE.LineSegments(edgesGeometry, outlineMaterial);
 
-            // Calculate the position of the CENTER of the first unit cell (0.5, 0.5, 0.5) *before* centering
+            // Calculate the position of the center of the first conceptual unit cell (0.5, 0.5, 0.5) *before* centering
             const firstCellCenter_Absolute = new THREE.Vector3(0.5, 0.5, 0.5).multiplyScalar(lattice_a);
             // Calculate the position of this center relative to the overall structure's center (which is at world 0,0,0)
             const firstCellCenter_Relative = new THREE.Vector3().copy(firstCellCenter_Absolute).sub(atomsCenter);
@@ -833,8 +832,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             unitCellOutline.position.copy(firstCellCenter_Relative);
 
             crystalGroup.add(unitCellOutline);
-            console.log(`[Three.js Adapted v6] Outline positioned at center: ${unitCellOutline.position.x.toFixed(2)},${unitCellOutline.position.y.toFixed(2)},${unitCellOutline.position.z.toFixed(2)}`);
+            console.log(`[Three.js Adapted v7] Outline positioned at center: ${unitCellOutline.position.x.toFixed(2)},${unitCellOutline.position.y.toFixed(2)},${unitCellOutline.position.z.toFixed(2)}`);
         }
+
 
         // --- UI Setup (Unchanged) ---
         function setupUI() {
