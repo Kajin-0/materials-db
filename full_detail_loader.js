@@ -103,6 +103,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     const mainContentEl = document.getElementById("main-content");
     const referencesSectionEl = document.getElementById("references-section");
     const referencesListEl = document.getElementById("references-list");
+    // *** GET BACK TO TOP BUTTON ***
+    const backToTopButton = document.getElementById("backToTopBtn");
+    // *****************************
+
 
     // --- Display Error Function ---
     const displayError = (message) => {
@@ -186,7 +190,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (typeof materialData !== 'object' || materialData === null) { throw new Error(`Invalid data structure for material '${materialName}'.`); }
         console.log("[Full Detail Loader] JSON parsed successfully.");
 
-        // Use the materialData directly from now on
         const sectionDataMap = new Map();
 
         // --- Process References ---
@@ -453,8 +456,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             for (const [detailKey, detailContent] of Object.entries(propData.details)) {
                  if (detailKey === 'visualization_data') continue; // Already handled above
                  if (!detailContent || (Array.isArray(detailContent) && detailContent.length === 0) || (typeof detailContent === 'object' && !Array.isArray(detailContent) && Object.keys(detailContent).length === 0)) continue;
-
-                // *** No longer need to skip equations here, as plot is handled separately under 'band_gap' ***
 
                  const subsection = document.createElement('div');
                  subsection.className = `detail-subsection ${detailKey.replace(/ /g, '_').toLowerCase()}`;
@@ -1130,4 +1131,42 @@ document.addEventListener("DOMContentLoaded", async () => {
     // ---      *** SIMPLIFIED Three.js Initializer END (FIXED v3) ***      ---
     // --- =============================================================== ---
 
+
+    // --- =============================================================== ---
+    // ---      *** Back to Top Button Logic START ***                     ---
+    // --- =============================================================== ---
+    if (backToTopButton) {
+        // Function to show/hide button based on scroll position
+        const scrollFunction = () => {
+            // Show button if scrolled down more than 100px (adjust threshold as needed)
+            if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+                backToTopButton.classList.add('show');
+            } else {
+                backToTopButton.classList.remove('show');
+            }
+        };
+
+        // Function to scroll to top smoothly
+        const scrollToTop = () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth' // Use smooth scrolling
+            });
+        };
+
+        // Add event listeners
+        window.addEventListener('scroll', scrollFunction);
+        backToTopButton.addEventListener('click', scrollToTop);
+
+        console.log("[Full Detail Loader] Back to Top button initialized.");
+    } else {
+        console.warn("[Full Detail Loader] Back to Top button element '#backToTopBtn' not found.");
+    }
+    // --- =============================================================== ---
+    // ---      *** Back to Top Button Logic END ***                       ---
+    // --- =============================================================== ---
+
+
 }); // End DOMContentLoaded
+
+// --- END OF FILE full_detail_loader.js ---
