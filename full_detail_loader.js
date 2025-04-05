@@ -129,31 +129,50 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.title = `${materialName} - Full Details`;
 
     // --- =============================================================== ---
-    // ---    *** START: SIMPLIFIED Fetch Logic v6 (Fallback Only) ***     ---
+    // ---    *** START: SIMPLIFIED Fetch Logic v7 (Debug Logging) ***     ---
     // --- =============================================================== ---
     let materialData; // Variable to hold the specific material's data object
     const mainDetailFilePath = `./details/material_details.json`;
 
     try { // Simple try-catch for the entire process
-        console.log(`[Full Detail Loader] Attempting to load ONLY main file: ${mainDetailFilePath}`);
-        const response = await fetch(mainDetailFilePath);
+        console.log(`[DEBUG] Attempting to load ONLY main file: ${mainDetailFilePath}`);
+        let response;
+        try {
+            response = await fetch(mainDetailFilePath);
+            console.log(`[DEBUG] Fetch attempt completed. Status: ${response.status}, OK: ${response.ok}`);
+        } catch(fetchErr) {
+             console.error(`[DEBUG] Fetch failed catastrophically:`, fetchErr);
+             throw new Error(`Network error or issue fetching main details file (${mainDetailFilePath}): ${fetchErr.message}`);
+        }
 
         if (!response.ok) {
             throw new Error(`Failed to fetch main details file (${mainDetailFilePath}) - Status: ${response.status}`);
         }
 
-        const allDetailData = await response.json();
-        console.log(`[Full Detail Loader] Successfully fetched and parsed main detail file.`);
+        let allDetailData;
+        try {
+            console.log(`[DEBUG] Attempting to parse JSON...`);
+            allDetailData = await response.json();
+            console.log(`[DEBUG] JSON parsing successful. Data type: ${typeof allDetailData}`);
+        } catch (jsonError) {
+            console.error(`[DEBUG] JSON parsing failed:`, jsonError);
+            throw new Error(`Invalid JSON in main details file (${mainDetailFilePath}): ${jsonError.message}`);
+        }
+
 
         if (typeof allDetailData !== 'object' || allDetailData === null) {
             throw new Error(`Invalid JSON structure in main file ${mainDetailFilePath}. Expected top-level object.`);
         }
 
         // Find material within the main file (case-sensitive first, then insensitive)
+        console.log(`[DEBUG] Looking for material key (case-sensitive): "${materialName}"`);
         materialData = allDetailData[materialName];
+
         if (!materialData) {
+            console.log(`[DEBUG] Case-sensitive key not found. Trying case-insensitive lookup...`);
             const lowerCaseMaterialName = materialName.toLowerCase();
             const foundKey = Object.keys(allDetailData).find(key => key.toLowerCase() === lowerCaseMaterialName);
+
             if (foundKey) {
                 materialData = allDetailData[foundKey];
                 console.warn(`[Full Detail Loader] Case-insensitive match found: '${foundKey}'.`);
@@ -161,27 +180,36 @@ document.addEventListener("DOMContentLoaded", async () => {
                  if (!materialData.materialName || materialData.materialName !== foundKey) {
                       console.warn(`Updating materialName field to match key: ${foundKey}`);
                       materialData.materialName = foundKey;
-                      // Update title elements if necessary
+                      // Update title elements if necessary (ensure materialNameEl is defined)
                       if (materialNameEl) materialNameEl.textContent = foundKey;
                       document.title = `${foundKey} - Full Details`;
                  }
             } else {
-                throw new Error(`Material '${materialName}' not found in main file ${mainDetailFilePath}.`);
+                // If not found either way, throw error
+                 console.error(`[DEBUG] Material key "${materialName}" not found using either case-sensitive or case-insensitive lookup.`);
+                 throw new Error(`Material '${materialName}' not found in main file ${mainDetailFilePath}.`);
             }
+        } else {
+             console.log(`[DEBUG] Case-sensitive key found.`);
         }
-         // Ensure materialName field exists
-        if (!materialData.materialName) {
+
+         // Ensure materialName field exists if data was found
+        if (materialData && !materialData.materialName) {
+             console.warn(`[DEBUG] 'materialName' field missing in loaded data object. Setting from URL name.`);
              materialData.materialName = materialName; // Use the originally decoded name
         }
 
         // Final validation of the extracted materialData
+        console.log(`[DEBUG] Final validation of materialData object...`);
         if (typeof materialData !== 'object' || materialData === null) {
-            throw new Error(`Invalid data structure loaded for material '${materialName}'.`);
+            // This error should theoretically be caught earlier if lookup failed.
+            throw new Error(`Invalid data structure loaded for material '${materialName}'. Expected an object, got ${typeof materialData}.`);
         }
-        console.log("[Full Detail Loader] Material data successfully extracted from main file.");
+        console.log(`[Full Detail Loader] Material data successfully extracted for "${materialData.materialName || materialName}".`);
 
 
         // --- Proceed with Populating Page ---
+        console.log("[DEBUG] Proceeding to populate page content...");
         const sectionDataMap = new Map();
 
         // --- Process References ---
@@ -219,12 +247,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     } catch (error) { // Outer catch block
          console.error("[Full Detail Loader] CRITICAL ERROR in fetch/process:", error);
-         displayError(error.message || "Unknown error loading details.");
+         // *** Ensure displayError is called reliably ***
+         displayError(error.message || "An unknown error occurred during data loading.");
     }
     // --- =============================================================== ---
-    // ---     *** END: SIMPLIFIED Fetch Logic v6 (Fallback Only) ***      ---
+    // ---     *** END: SIMPLIFIED Fetch Logic v7 (Debug Logging) ***      ---
     // --- =============================================================== ---
-
+    
         const sectionDataMap = new Map();
 
         // --- Process References ---
