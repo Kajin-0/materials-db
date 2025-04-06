@@ -130,13 +130,17 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // --- Construct file path ---
     // Calculate the specific file name based on the material name
-    const safeMaterialNameLower = materialName.replace(/[\s()]/g, '_').toLowerCase(); // Handle spaces AND parentheses
-    // Remove potential double underscores
-    const cleanedSafeName = safeMaterialNameLower.replace(/__+/g, '_');
+    const safeMaterialNameLower = materialName
+        .replace(/[\s()]/g, '_') // Replace spaces AND parentheses with _
+        .toLowerCase();
+    // Remove potential double underscores AND any trailing underscores
+    const cleanedSafeName = safeMaterialNameLower
+        .replace(/__+/g, '_') // Replace multiple underscores with single
+        .replace(/_$/, '');   // Remove trailing underscore if present
     const specificDetailFileName = `${cleanedSafeName}_details.json`;
 
-    // *** Assign value to the existing detailFilePath variable (declared earlier) ***
-    detailFilePath = `./details/${specificDetailFileName}`; // NO 'let' here
+    // Assign value to the existing detailFilePath variable (declared earlier)
+    detailFilePath = `./details/${specificDetailFileName}`;
 
     console.log(`[Full Detail Loader] Attempting to load specific detail file: '${detailFilePath}'`);
     // *****************************************************************************
