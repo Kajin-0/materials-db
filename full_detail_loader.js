@@ -1146,68 +1146,60 @@ document.addEventListener("DOMContentLoaded", async () => {
                 });
              }
         } else if (propData.details && propData.details.chain_visualization_data) {
-            // *** Polymer Chain Viewer Logic ***
+            // *** Polymer Chain Viewer Logic (Simplified Controls + Links) ***
             console.log(`[renderPropertyBlock] Found chain_visualization_data for ${propKey}`);
             const vizData = propData.details.chain_visualization_data;
-            const viewerContainerId = vizData.container_id || `polymer-viewer-${sectionKey}-${propKey}-${Date.now()}`; // Added sectionKey for uniqueness
+            const viewerContainerId = vizData.container_id || `polymer-viewer-${sectionKey}-${propKey}-${Date.now()}`;
             const controlsContainerId = vizData.controls_element_id || `${viewerContainerId}-controls`;
             const viewerHeight = vizData.viewer_height || '400px';
 
             const viewerWrapper = document.createElement('div');
-            viewerWrapper.className = 'polymer-chain-viewer-wrapper';
+            viewerWrapper.className = 'polymer-chain-viewer-wrapper'; // Keep specific wrapper
             viewerWrapper.style.setProperty('--viewer-height', viewerHeight);
 
-            // +++ UPDATED innerHTML for Polymer Viewer Controls Layout +++
+            // Simplified innerHTML for controls, adding links at the end
             viewerWrapper.innerHTML = `
                 <div id="${viewerContainerId}" class="polymer-chain-viewer-container">
                     <p class="polymer-viewer-placeholder-message">Loading Polymer Chain Viewer...</p>
                 </div>
                 <div id="${controlsContainerId}" class="polymer-chain-viewer-controls">
-                    <!-- Group 1: View Controls -->
-                    <div class="polymer-viewer-control-group">
-                         <button data-action="reset-view" title="Reset Camera View">Reset View</button>
-                         <button data-action="toggle-spin" title="Toggle Auto-Rotation">Toggle Spin</button>
-                         <button data-action="regenerate" title="Generate New Random Configuration">Regenerate</button>
-                    </div>
-
-                    <!-- Group 2: Visibility Controls -->
-                    <div class="polymer-viewer-control-group">
-                        <span style="font-size: 0.8rem; color: #555;">Visibility:</span>
-                        <button data-action="toggle-chain" data-chain-index="0" title="Toggle Chain 1">1</button>
-                        <button data-action="toggle-chain" data-chain-index="1" title="Toggle Chain 2">2</button>
-                        <button data-action="toggle-chain" data-chain-index="2" title="Toggle Chain 3">3</button>
-                        <button data-action="toggle-all-chains" title="Show/Hide All Chains">All</button> <!-- Text updated by JS -->
-                    </div>
-
-                    <!-- Group 3: Info and Links -->
-                    <div class="polymer-viewer-info-group">
-                         <div class="info-line"> <!-- Info on one line -->
-                             <span id="${viewerContainerId}-chain-info"></span>
-                             <span id="${viewerContainerId}-mw-info"></span>
-                         </div>
-                         <div class="links-line"> <!-- Links on the next line -->
-                             See also:
-                             <a href="#section-mechanical_properties" class="viewer-link">Mechanical Props</a>,
-                             <a href="#section-advanced_fabrication_insights" class="viewer-link">Processing</a>
-                         </div>
-                    </div>
+                    <button data-action="reset-view" title="Reset Camera View">Reset</button> <!-- Shorter Text -->
+                    <button data-action="toggle-spin" title="Toggle Auto-Rotation">Spin</button> <!-- Shorter Text -->
+                    <button data-action="regenerate" title="Generate New Random Configuration">Regen</button> <!-- Shorter Text -->
+                    <span style="margin-left: 10px; font-size: 0.8rem; color: #555;">Vis:</span>
+                    <button data-action="toggle-chain" data-chain-index="0" title="Toggle Chain 1">1</button>
+                    <button data-action="toggle-chain" data-chain-index="1" title="Toggle Chain 2">2</button>
+                    <button data-action="toggle-chain" data-chain-index="2" title="Toggle Chain 3">3</button>
+                    <button data-action="toggle-all-chains" title="Show/Hide All Chains">All</button>
+                    <!-- Info Spans -->
+                    <span style="margin-left: auto; font-size: 0.8rem; color: #333; text-align: right;"> <!-- Push info right -->
+                        <span id="${viewerContainerId}-chain-info"></span>
+                        <span id="${viewerContainerId}-mw-info"></span>
+                        <!-- Add Monomer Display -->
+                        <span id="${viewerContainerId}-monomer-info" class="monomer-structure" style="margin-left: 5px; font-family: monospace; font-size: 0.85rem; color: #444;"></span>
+                    </span>
+                    <!-- Context Links -->
+                     <span class="links-line" style="font-size: 0.75rem; color: #555; width: 100%; text-align: center; padding-top: 5px;"> <!-- Links on new line if wrapped -->
+                         See also:
+                         <a href="#section-mechanical_properties" class="viewer-link">Mechanical Props</a>,
+                         <a href="#section-advanced_fabrication_insights" class="viewer-link">Processing</a>
+                     </span>
                 </div>
             `;
             propBlock.appendChild(viewerWrapper);
 
+            // RequestAnimationFrame block remains the same as before
             requestAnimationFrame(() => {
-                 // --- Library Checks (Copied from original - Ensure THREE is loaded) ---
+                 // --- Library Checks ---
                  let missingLibs = [];
                  if (typeof THREE === 'undefined') missingLibs.push("THREE (core)");
                  if (typeof THREE !== 'undefined' && typeof THREE.OrbitControls === 'undefined') missingLibs.push("OrbitControls.js");
-                 // CSS2DRenderer not needed for this viewer unless adding labels later
-
                  if (missingLibs.length > 0) {
                     console.error("Three.js components missing:", missingLibs.join(', '));
                     const targetViewerEl = document.getElementById(viewerContainerId);
                     if(targetViewerEl) targetViewerEl.innerHTML = `<p class="polymer-viewer-error-message">Error: Required Three.js components (${missingLibs.join(', ')}) failed to load.</p>`;
                     const targetControlsEl = document.getElementById(controlsContainerId);
-                    if(targetControlsEl) targetControlsEl.innerHTML = ''; // Clear controls area
+                    if(targetControlsEl) targetControlsEl.innerHTML = '';
                     return;
                  }
                  // --- End Library Checks ---
@@ -1215,21 +1207,16 @@ document.addEventListener("DOMContentLoaded", async () => {
                 if (typeof initializePolymerChainViewer === 'function') {
                     try {
                         console.log(`[renderPropertyBlock] Initializing Polymer Chain viewer for ${viewerContainerId}`);
-                        // Pass the specific visualization data object
-                        initializePolymerChainViewer(viewerContainerId, controlsContainerId, vizData);
+                        initializePolymerChainViewer(viewerContainerId, controlsContainerId, vizData); // Call v4
                     } catch (e) {
                         console.error(`Error initializing Polymer Chain viewer for ${viewerContainerId}:`, e);
                         const targetViewerEl = document.getElementById(viewerContainerId);
-                        if (targetViewerEl) {
-                            targetViewerEl.innerHTML = `<p class="polymer-viewer-error-message">Error initializing viewer: ${e.message}</p>`;
-                        }
+                        if (targetViewerEl) { targetViewerEl.innerHTML = `<p class="polymer-viewer-error-message">Error initializing viewer: ${e.message}</p>`; }
                     }
                 } else {
                     console.error("Viewer initialization function 'initializePolymerChainViewer' not found!");
                     const targetViewerEl = document.getElementById(viewerContainerId);
-                    if (targetViewerEl) {
-                        targetViewerEl.innerHTML = `<p class="polymer-viewer-error-message">Error: Polymer Viewer function missing.</p>`;
-                    }
+                    if (targetViewerEl) { targetViewerEl.innerHTML = `<p class="polymer-viewer-error-message">Error: Polymer Viewer function missing.</p>`; }
                 }
             });
         }
