@@ -104,13 +104,20 @@ function initializePolymerChainViewer(viewerElementId, controlsElementId, vizDat
     const chainInfoSpan = document.getElementById(`${viewerElementId}-chain-info`);
     const mwInfoSpan = document.getElementById(`${viewerElementId}-mw-info`);
 
-    if (!viewerContainer) { /* ... error handling ... */ return; }
-    if (!controlsContainer) { /* ... warning ... */ }
+    if (!viewerContainer) {
+        console.error("[Polymer Chain Error] Viewer element not found!", viewerElementId);
+        return;
+    }
+    if (!controlsContainer) {
+        console.warn("[Polymer Chain Warn] Controls element not found!", controlsElementId);
+    }
     if (!chainInfoSpan || !mwInfoSpan) { // ++ Check both spans ++
         console.warn("[Polymer Chain Warn] Info span elements not found!");
     }
 
-    viewerContainer.innerHTML = ''; // Clear placeholder
+
+    // Clear placeholder text explicitly
+    viewerContainer.innerHTML = '';
 
     // Basic WebGL Check
     try { const canvas = document.createElement('canvas'); if (!window.WebGLRenderingContext || !(canvas.getContext('webgl') || canvas.getContext('experimental-webgl'))) throw new Error('WebGL not supported.'); }
@@ -119,7 +126,7 @@ function initializePolymerChainViewer(viewerElementId, controlsElementId, vizDat
     // --- Three.js Scene Setup ---
     let scene, camera, renderer, controls, animationFrameId;
     let polymerGroup = new THREE.Group();
-    let chainMeshes = [];
+    let chainMeshes = []; // ++ Array to store references to chain meshes ++
     let isSpinning = false;
     const spinSpeed = 0.004;
 
@@ -131,13 +138,17 @@ function initializePolymerChainViewer(viewerElementId, controlsElementId, vizDat
     const tubeRadius = params.tube_radius || 0.08;
     const coilRadiusFactor = params.coil_radius_factor || 2.0;
     const stepLength = params.step_length || 0.1;
-    const randomnessFactor = params.randomness_factor || 0.6;
-    const boundsSize = params.bounds_size || 6;
+    const randomnessFactor = params.randomness_factor || 0.6; // 0 = straight, 1 = very random
+    const boundsSize = params.bounds_size || 6; // Size of the cubic boundary
 
-    // --- Materials ---
+    // --- Materials & Geometry ---
     const chainMaterial = new THREE.MeshStandardMaterial({
-        color: chainColor, metalness: 0.2, roughness: 0.7, side: THREE.DoubleSide
+        color: chainColor,
+        metalness: 0.2,
+        roughness: 0.7,
+        side: THREE.DoubleSide // Good practice for tubes
     });
+    // No geometry cache needed here as each chain is unique path
 
     // --- Helper: Generate Random Walk Path (Unchanged from v2) ---
     function generateChainPath(numSegments, stepLen, randomness, bounds) {
@@ -163,30 +174,33 @@ function initializePolymerChainViewer(viewerElementId, controlsElementId, vizDat
     // --- Helper: Create Polymer Chains ---
     function createPolymerModel() {
         console.log("[Polymer Chain] Creating/Regenerating model..."); // ++ Updated log ++
-        chainMeshes = [];
+        chainMeshes = []; // ++ Clear the reference array ++
         while(polymerGroup.children.length > 0){
             const obj = polymerGroup.children[0];
             if(obj.geometry) obj.geometry.dispose();
             polymerGroup.remove(obj);
         }
 
-        let totalCalculatedLength = 0;
+        let totalCalculatedLength = 0; // ++ Initialize length calculation ++
 
         for (let i = 0; i < numChains; i++) {
             const pathPoints = generateChainPath(segmentsPerChain, stepLength, randomnessFactor, boundsSize);
-            if (pathPoints.length < 2) continue;
+            if (pathPoints.length < 2) continue; // Need at least 2 points for a curve
+
             try {
                 const curve = new THREE.CatmullRomCurve3(pathPoints);
-                const tubularSegments = Math.min(segmentsPerChain * 2, 400);
+                // Increase tubular segments for smoother curves with many points
+                const tubularSegments = Math.min(segmentsPerChain * 2, 400); // Cap segments
                 const tubeGeometry = new THREE.TubeGeometry(curve, tubularSegments, tubeRadius, 6, false);
                 const chainMesh = new THREE.Mesh(tubeGeometry, chainMaterial);
                 polymerGroup.add(chainMesh);
-                chainMeshes.push(chainMesh);
-                if (i === 0) {
+                chainMeshes.push(chainMesh); // ++ Store reference to the mesh ++
+                if (i === 0) { // ++ Calculate length based on first chain's params ++
                     totalCalculatedLength = segmentsPerChain * stepLength;
                 }
             } catch(geomError){
                  console.error("Error creating tube geometry:", geomError, "Points:", pathPoints.length);
+                 // Handle potential issues with too few points or degenerate curves
             }
         }
         console.log(`[Polymer Chain] Added ${polymerGroup.children.length} chains to group.`);
@@ -223,20 +237,23 @@ function initializePolymerChainViewer(viewerElementId, controlsElementId, vizDat
              const button = event.target.closest('button');
              if (!button) return;
              const action = button.dataset.action;
-             const chainIndex = parseInt(button.dataset.chainIndex, 10);
+             const chainIndex = parseInt(button.dataset.chainIndex, 10); // ++ Get chain index ++
 
              if (action === 'reset-view' && controls && camera) {
                   controls.reset();
-                  camera.position.set(boundsSize * 1.2, boundsSize * 1.0, boundsSize * 1.6); // Use updated position
+                  // ++ Use the potentially fixed camera position ++
+                  camera.position.set(boundsSize * 1.2, boundsSize * 1.0, boundsSize * 1.6);
                   controls.target.set(0, 0, 0);
-                  controls.update();
+                  controls.update(); // Ensure controls update immediately
              } else if (action === 'toggle-spin') {
                   isSpinning = !isSpinning;
                   button.textContent = isSpinning ? "Stop Spin" : "Toggle Spin";
                   if(isSpinning && !animationFrameId) animate();
+             // +++ Add Chain Toggle Logic +++
              } else if (action === 'toggle-chain' && !isNaN(chainIndex)) {
                  if (chainMeshes[chainIndex]) {
                      chainMeshes[chainIndex].visible = !chainMeshes[chainIndex].visible;
+                     // Optional: Add visual feedback to button (e.g., change style)
                      button.style.opacity = chainMeshes[chainIndex].visible ? '1' : '0.5';
                      // Update "All" button text if necessary
                      const allVisible = chainMeshes.every(mesh => mesh.visible);
@@ -244,13 +261,17 @@ function initializePolymerChainViewer(viewerElementId, controlsElementId, vizDat
                      if(allButton) allButton.textContent = allVisible ? "All (Hide)" : "All (Show)";
                  }
              } else if (action === 'toggle-all-chains') {
+                 // Simple toggle: if any are hidden, show all. If all are visible, hide all.
                  const anyHidden = chainMeshes.some(mesh => !mesh.visible);
                  chainMeshes.forEach((mesh, index) => {
-                     mesh.visible = anyHidden;
+                     mesh.visible = anyHidden; // Show all if any were hidden, otherwise hide all
+                     // Update corresponding button style
                      const chainButton = controlsContainer.querySelector(`button[data-action="toggle-chain"][data-chain-index="${index}"]`);
-                     if (chainButton) { chainButton.style.opacity = mesh.visible ? '1' : '0.5'; }
+                     if (chainButton) {
+                         chainButton.style.opacity = mesh.visible ? '1' : '0.5';
+                     }
                  });
-                 button.textContent = anyHidden ? "All (Hide)" : "All (Show)";
+                 button.textContent = anyHidden ? "All (Hide)" : "All (Show)"; // Basic text feedback
              // +++ Add Regenerate Action +++
              } else if (action === 'regenerate') {
                  createPolymerModel(); // Regenerate chains and reset buttons
@@ -258,13 +279,15 @@ function initializePolymerChainViewer(viewerElementId, controlsElementId, vizDat
              // +++ End Regenerate Action +++
          });
 
-        // Initialize button styles correctly based on the initially created model
-         chainMeshes.forEach((mesh, index) => {
+        // ++ Initialize button styles ++
+        chainMeshes.forEach((mesh, index) => {
             const chainButton = controlsContainer.querySelector(`button[data-action="toggle-chain"][data-chain-index="${index}"]`);
-            if (chainButton) { chainButton.style.opacity = mesh.visible ? '1' : '0.5'; }
+            if (chainButton) {
+                chainButton.style.opacity = mesh.visible ? '1' : '0.5';
+            }
         });
          const allButton = controlsContainer.querySelector(`button[data-action="toggle-all-chains"]`);
-         if(allButton) allButton.textContent = "All (Hide)";
+         if(allButton) allButton.textContent = "All (Hide)"; // Initial state assuming all visible
 
     }
 
@@ -281,7 +304,7 @@ function initializePolymerChainViewer(viewerElementId, controlsElementId, vizDat
 
     // --- Animation Loop (Unchanged) ---
     function animate() {
-        if (!renderer || !scene || !camera) {
+        if (!renderer || !scene || !camera) { // Check if cleanup occurred
              if (animationFrameId) cancelAnimationFrame(animationFrameId);
              animationFrameId = null;
              return;
@@ -290,7 +313,7 @@ function initializePolymerChainViewer(viewerElementId, controlsElementId, vizDat
         if (controls) controls.update();
         if (isSpinning && polymerGroup) {
             polymerGroup.rotation.y += spinSpeed;
-            polymerGroup.rotation.x += spinSpeed * 0.5;
+            polymerGroup.rotation.x += spinSpeed * 0.5; // Add a little x-axis spin too
         }
         renderer.render(scene, camera);
     }
@@ -306,9 +329,10 @@ function initializePolymerChainViewer(viewerElementId, controlsElementId, vizDat
              polymerGroup.traverse(object => {
                  if (object.isMesh) {
                      if (object.geometry) object.geometry.dispose();
+                     // Don't dispose shared material here, do it once below
                  }
              });
-            if (scene) scene.remove(polymerGroup);
+            if (scene) scene.remove(polymerGroup); // Check if scene exists before removing
          }
           if (chainMaterial) chainMaterial.dispose();
 
@@ -322,10 +346,15 @@ function initializePolymerChainViewer(viewerElementId, controlsElementId, vizDat
 
          if(controls) controls.dispose();
 
-         scene = null; camera = null; controls = null; polymerGroup = null; chainMeshes = [];
+         // Clear variables
+         scene = null;
+         camera = null;
+         controls = null;
+         polymerGroup = null;
+         chainMeshes = []; // Clear array
 
-         if (viewerContainer) viewerContainer.innerHTML = '';
-         if (controlsContainer) controlsContainer.innerHTML = '';
+         if (viewerContainer) viewerContainer.innerHTML = ''; // Clear container
+         if (controlsContainer) controlsContainer.innerHTML = ''; // Clear controls
 
          console.log(`[Polymer Chain Cleanup v3] Cleanup complete for ${viewerElementId}`);
     }
@@ -346,7 +375,7 @@ function initializePolymerChainViewer(viewerElementId, controlsElementId, vizDat
         camera.position.set(boundsSize * 1.2, boundsSize * 1.0, boundsSize * 1.6);
 
         renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(width || 300, height || 200);
+        renderer.setSize(width || 300, height || 200); // Use default size if initial is zero
         renderer.setPixelRatio(window.devicePixelRatio);
         viewerContainer.appendChild(renderer.domElement);
 
@@ -753,6 +782,8 @@ function initializeSimplifiedThreeJsViewer(viewerElementId, controlsElementId, v
         animate(); // Start animation loop
         // Resize listener
         window.removeEventListener('resize', onWindowResize); window.addEventListener('resize', onWindowResize);
+         // Trigger resize once explicitly after setup
+        requestAnimationFrame(onWindowResize);
         // Cleanup Observer
         const observerTargetNode = viewerContainer.closest('.property-detail-block') || viewerContainer.parentElement;
          if (observerTargetNode) {
@@ -854,26 +885,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         allMaterialDetails = rawJson; // Store the raw JSON content
 
         // Extract the specific material's data based on which file was loaded
-        if (detailFilePath.endsWith('material_details.json')) {
-            // Original structure: find the material within the main JSON object
-            if (typeof allMaterialDetails !== 'object' || allMaterialDetails === null) throw new Error(`Invalid JSON structure in ${detailFilePath}. Expected top-level object.`);
-             materialData = allMaterialDetails[materialName];
-             if (!materialData) {
-                 // Try case-insensitive fallback
-                const lowerCaseMaterialName = materialName.toLowerCase();
-                const foundKey = Object.keys(allMaterialDetails).find(key => key.toLowerCase() === lowerCaseMaterialName);
-                if (foundKey) {
-                     materialData = allMaterialDetails[foundKey];
-                     console.warn(`[Full Detail Loader] Case-insensitive match found for "${materialName}" as "${foundKey}" in ${detailFilePath}.`);
-                } else {
-                    throw new Error(`Data for material '${materialName}' not found inside ${detailFilePath}.`);
-                }
-             }
-        } else {
-            // Dedicated file structure: the JSON *is* the material data
-             if (typeof allMaterialDetails !== 'object' || allMaterialDetails === null || !allMaterialDetails.materialName) throw new Error(`Invalid JSON structure in dedicated file ${detailFilePath}. Expected object with material details.`);
-             materialData = allMaterialDetails; // The whole file content is the data for this material
+        // *** SIMPLIFIED: Assumes dedicated file structure is always used now ***
+        if (typeof allMaterialDetails !== 'object' || allMaterialDetails === null || !allMaterialDetails.materialName) {
+            throw new Error(`Invalid JSON structure in dedicated file ${detailFilePath}. Expected object with material details.`);
         }
+        materialData = allMaterialDetails; // The whole file content is the data for this material
         // ************************************************
 
         if (typeof materialData !== 'object' || materialData === null) { throw new Error(`Invalid data structure for material '${materialName}'.`); }
@@ -1141,30 +1157,40 @@ document.addEventListener("DOMContentLoaded", async () => {
             viewerWrapper.className = 'polymer-chain-viewer-wrapper';
             viewerWrapper.style.setProperty('--viewer-height', viewerHeight);
 
-            // Use specific classes for polymer viewer elements
+            // +++ UPDATED innerHTML for Polymer Viewer Controls Layout +++
             viewerWrapper.innerHTML = `
                 <div id="${viewerContainerId}" class="polymer-chain-viewer-container">
                     <p class="polymer-viewer-placeholder-message">Loading Polymer Chain Viewer...</p>
                 </div>
                 <div id="${controlsContainerId}" class="polymer-chain-viewer-controls">
-                    <button data-action="reset-view" title="Reset Camera View">Reset View</button>
-                    <button data-action="toggle-spin" title="Toggle Auto-Rotation">Toggle Spin</button>
-                    <button data-action="regenerate" title="Generate New Random Configuration">Regenerate</button> <!-- ++ New Button ++ -->
-                    <span style="margin-left: 15px; font-size: 0.8rem; color: #555;">Show/Hide Chains:</span>
-                    <button data-action="toggle-chain" data-chain-index="0" title="Toggle Chain 1">1</button>
-                    <button data-action="toggle-chain" data-chain-index="1" title="Toggle Chain 2">2</button>
-                    <button data-action="toggle-chain" data-chain-index="2" title="Toggle Chain 3">3</button>
-                    <button data-action="toggle-all-chains" title="Show/Hide All Chains">All</button>
-                    <!-- ++ Info Section ++ -->
-                    <span style="margin-left: auto; font-size: 0.8rem; color: #333; text-align: right;">
-                        <span id="${viewerContainerId}-chain-info"></span>
-                        <span id="${viewerContainerId}-mw-info"></span>
-                        <br> <!-- ++ Line break for links ++ -->
-                        <span style="font-size: 0.75rem;">See also:
-                            <a href="#section-mechanical_properties" class="viewer-link">Mechanical Props</a>,
-                            <a href="#section-advanced_fabrication_insights" class="viewer-link">Processing</a>
-                        </span>
-                    </span>
+                    <!-- Group 1: View Controls -->
+                    <div class="polymer-viewer-control-group">
+                         <button data-action="reset-view" title="Reset Camera View">Reset View</button>
+                         <button data-action="toggle-spin" title="Toggle Auto-Rotation">Toggle Spin</button>
+                         <button data-action="regenerate" title="Generate New Random Configuration">Regenerate</button>
+                    </div>
+
+                    <!-- Group 2: Visibility Controls -->
+                    <div class="polymer-viewer-control-group">
+                        <span style="font-size: 0.8rem; color: #555;">Visibility:</span>
+                        <button data-action="toggle-chain" data-chain-index="0" title="Toggle Chain 1">1</button>
+                        <button data-action="toggle-chain" data-chain-index="1" title="Toggle Chain 2">2</button>
+                        <button data-action="toggle-chain" data-chain-index="2" title="Toggle Chain 3">3</button>
+                        <button data-action="toggle-all-chains" title="Show/Hide All Chains">All</button> <!-- Text updated by JS -->
+                    </div>
+
+                    <!-- Group 3: Info and Links -->
+                    <div class="polymer-viewer-info-group">
+                         <div class="info-line"> <!-- Info on one line -->
+                             <span id="${viewerContainerId}-chain-info"></span>
+                             <span id="${viewerContainerId}-mw-info"></span>
+                         </div>
+                         <div class="links-line"> <!-- Links on the next line -->
+                             See also:
+                             <a href="#section-mechanical_properties" class="viewer-link">Mechanical Props</a>,
+                             <a href="#section-advanced_fabrication_insights" class="viewer-link">Processing</a>
+                         </div>
+                    </div>
                 </div>
             `;
             propBlock.appendChild(viewerWrapper);
@@ -1213,7 +1239,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (propData.details && typeof propData.details === 'object') {
             for (const [detailKey, detailContent] of Object.entries(propData.details)) {
                  if (detailKey === 'visualization_data') continue; // Already handled above
-                 if (detailKey === 'chain_visualization_data') continue; // Also handled above
+                 if (detailKey === 'chain_visualization_data') continue; // +++ Also skip this +++
 
                  // Skip rendering if detailContent is null, undefined, or an empty array/object
                  if (!detailContent || (Array.isArray(detailContent) && detailContent.length === 0) || (typeof detailContent === 'object' && !Array.isArray(detailContent) && Object.keys(detailContent).length === 0)) continue;
