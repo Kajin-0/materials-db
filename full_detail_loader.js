@@ -330,43 +330,37 @@ document.addEventListener("DOMContentLoaded", async () => {
         const propTitle = document.createElement('h3'); propTitle.innerHTML = propData.displayName || propKey.replace(/_/g, ' '); propBlock.appendChild(propTitle);
         if (propData.summary) { const summaryEl = document.createElement('div'); summaryEl.className = 'summary'; summaryEl.innerHTML = propData.summary; propBlock.appendChild(summaryEl); }
 
-        // --- Bandgap Plot Integration ---
-        // Check if this is the specific property block ('band_gap') where the plot should go
+        // --- Special Visualizations / Interactive Elements ---
         if (sectionKey === 'electrical_properties' && propKey === 'band_gap') {
-            // *** CORRECTED: Look for the equation in the sibling property ***
-            const bandgapEquationPropData = sectionProperties?.bandgap_equation; // Access sibling property data
+            // *** Bandgap Plot Logic ***
+            const bandgapEquationPropData = sectionProperties?.bandgap_equation;
             const equationDetails = bandgapEquationPropData?.details?.equations?.find(eq => eq.name === "Hansen E_g(x,T) Empirical Relation");
 
             if (equationDetails) {
-                console.log("[Render Property Block] Found Hansen equation, initializing plot setup for:", propKey);
-                // Create container and controls elements dynamically
+                console.log("[Render Property Block] Found Hansen equation, initializing Bandgap plot setup for:", propKey);
                 const plotControlsId = `bandgap-plot-controls-${sectionKey}-${propKey}`;
                 const plotContainerId = `bandgap-plot-container-${sectionKey}-${propKey}`;
                 const sliderId = `temp-slider-${sectionKey}-${propKey}`;
                 const valueId = `temp-value-${sectionKey}-${propKey}`;
 
                 const plotWrapper = document.createElement('div');
-                plotWrapper.className = 'bandgap-plot-wrapper'; // Optional wrapper class
-
+                plotWrapper.className = 'bandgap-plot-wrapper';
                 const plotDiv = document.createElement('div');
                 plotDiv.id = plotContainerId;
-                plotDiv.className = 'bandgap-plot-container'; // Add class for styling
-                plotDiv.innerHTML = `<p style="text-align:center; padding: 20px; color: #888;">Loading Bandgap Plot...</p>`; // Placeholder text
+                plotDiv.className = 'bandgap-plot-container';
+                plotDiv.innerHTML = `<p style="text-align:center; padding: 20px; color: #888;">Loading Bandgap Plot...</p>`;
                 plotWrapper.appendChild(plotDiv);
-
                 const controlsDiv = document.createElement('div');
                 controlsDiv.id = plotControlsId;
-                controlsDiv.className = 'plot-controls'; // Add class for styling
+                controlsDiv.className = 'plot-controls';
                 controlsDiv.innerHTML = `
                     <label for="${sliderId}">Temperature:</label>
                     <input type="range" id="${sliderId}" min="4" max="300" step="1" value="77">
                     <span id="${valueId}" class="temp-value-display">77 K</span>
                 `;
                 plotWrapper.appendChild(controlsDiv);
+                propBlock.appendChild(plotWrapper);
 
-                propBlock.appendChild(plotWrapper); // Add plot and controls to the property block
-
-                // Use requestAnimationFrame to ensure elements are in DOM before initializing plot
                 requestAnimationFrame(() => {
                     if (typeof initializeBandgapPlot === 'function') {
                         try {
@@ -385,12 +379,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             } else {
                  console.warn(`[Render Property Block] Hansen equation data not found under 'bandgap_equation' property, skipping plot for ${propKey}.`);
             }
-        }
-        // --- End Bandgap Plot Integration ---
-
-
-        // --- Visualization Integration (Calling THREE.JS viewer) ---
-        if (propKey === 'crystal_structure' && propData.details && propData.details.visualization_data) {
+        } else if (propKey === 'crystal_structure' && propData.details && propData.details.visualization_data) {
+            // *** Crystal Structure Viewer Logic ***
             const vizData = propData.details.visualization_data;
              if (!vizData || typeof vizData !== 'object' || !vizData.atom_info || !vizData.composition || !vizData.lattice_constants) {
                  console.error(`[renderPropertyBlock] Invalid viz_data for '${propKey}'. Missing fields needed for Three.js viewer.`);
@@ -409,6 +399,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 propBlock.appendChild(viewerWrapper);
 
                 requestAnimationFrame(() => {
+                     // --- Library Checks (Copied from original) ---
                      let missingLibs = [];
                      if (typeof THREE === 'undefined') missingLibs.push("THREE (core)");
                      if (typeof THREE !== 'undefined' && typeof THREE.OrbitControls === 'undefined') missingLibs.push("OrbitControls.js");
@@ -422,32 +413,95 @@ document.addEventListener("DOMContentLoaded", async () => {
                         if(targetControlsEl) targetControlsEl.innerHTML = '';
                         return;
                      }
+                     // --- End Library Checks ---
 
                      if (typeof initializeSimplifiedThreeJsViewer === 'function') {
                         try {
                             const targetViewerEl = document.getElementById(viewerAreaId);
                             const targetControlsEl = document.getElementById(controlsAreaId);
                             if(targetViewerEl && targetControlsEl) {
-                                console.log(`[renderPropertyBlock] Initializing Three.js viewer for ${viewerAreaId}`);
-                                // Pass the specific materialData object
+                                console.log(`[renderPropertyBlock] Initializing Three.js CRYSTAL viewer for ${viewerAreaId}`);
                                 initializeSimplifiedThreeJsViewer(viewerAreaId, controlsAreaId, vizData, materialData);
                             } else {
                                 console.error(`Target elements for Three.js viewer ${viewerContainerId} not found (Viewer: ${!!targetViewerEl}, Controls: ${!!targetControlsEl}).`);
                                 if(targetViewerEl) targetViewerEl.innerHTML = '<p class="error-message">Error: Could not find viewer sub-element.</p>';
                             }
                         } catch(e) {
-                            console.error(`Error initializing Three.js viewer for ${viewerAreaId}:`, e);
+                            console.error(`Error initializing Three.js CRYSTAL viewer for ${viewerAreaId}:`, e);
                             const targetViewerEl = document.getElementById(viewerAreaId);
                             if(targetViewerEl) targetViewerEl.innerHTML = `<p class="error-message">Error initializing 3D viewer: ${e.message}. Check console.</p>`;
                         }
                      } else {
                          console.error("Viewer initialization function 'initializeSimplifiedThreeJsViewer' not found!");
                          const targetViewerEl = document.getElementById(viewerAreaId);
-                         if(targetViewerEl) targetViewerEl.innerHTML = '<p class="error-message">Error: Viewer initialization code not found.</p>';
+                         if(targetViewerEl) targetViewerEl.innerHTML = '<p class="error-message">Error: Crystal Viewer initialization code not found.</p>';
                      }
                 });
              }
-        } // --- End Visualization Integration ---
+        } else if (propData.details && propData.details.chain_visualization_data) {
+            // *** Polymer Chain Viewer Logic ***
+            console.log(`[renderPropertyBlock] Found chain_visualization_data for ${propKey}`);
+            const vizData = propData.details.chain_visualization_data;
+            const viewerContainerId = vizData.container_id || `polymer-viewer-${sectionKey}-${propKey}-${Date.now()}`; // Added sectionKey for uniqueness
+            const controlsContainerId = vizData.controls_element_id || `${viewerContainerId}-controls`;
+            const viewerHeight = vizData.viewer_height || '400px';
+
+            const viewerWrapper = document.createElement('div');
+            viewerWrapper.className = 'polymer-chain-viewer-wrapper';
+            viewerWrapper.style.setProperty('--viewer-height', viewerHeight);
+
+            // Use specific classes for polymer viewer elements
+            viewerWrapper.innerHTML = `
+                <div id="${viewerContainerId}" class="polymer-chain-viewer-container">
+                    <p class="polymer-viewer-placeholder-message">Loading Polymer Chain Viewer...</p>
+                </div>
+                <div id="${controlsContainerId}" class="polymer-chain-viewer-controls">
+                    <button data-action="reset-view" title="Reset Camera View">Reset View</button>
+                    <button data-action="toggle-spin" title="Toggle Auto-Rotation">Toggle Spin</button>
+                    <!-- Add more buttons here later if needed -->
+                </div>
+            `;
+            propBlock.appendChild(viewerWrapper);
+
+            requestAnimationFrame(() => {
+                 // --- Library Checks (Copied from original - Ensure THREE is loaded) ---
+                 let missingLibs = [];
+                 if (typeof THREE === 'undefined') missingLibs.push("THREE (core)");
+                 if (typeof THREE !== 'undefined' && typeof THREE.OrbitControls === 'undefined') missingLibs.push("OrbitControls.js");
+                 // CSS2DRenderer not needed for this viewer unless adding labels later
+
+                 if (missingLibs.length > 0) {
+                    console.error("Three.js components missing:", missingLibs.join(', '));
+                    const targetViewerEl = document.getElementById(viewerContainerId);
+                    if(targetViewerEl) targetViewerEl.innerHTML = `<p class="polymer-viewer-error-message">Error: Required Three.js components (${missingLibs.join(', ')}) failed to load.</p>`;
+                    const targetControlsEl = document.getElementById(controlsContainerId);
+                    if(targetControlsEl) targetControlsEl.innerHTML = ''; // Clear controls area
+                    return;
+                 }
+                 // --- End Library Checks ---
+
+                if (typeof initializePolymerChainViewer === 'function') {
+                    try {
+                        console.log(`[renderPropertyBlock] Initializing Polymer Chain viewer for ${viewerContainerId}`);
+                        // Pass the specific visualization data object
+                        initializePolymerChainViewer(viewerContainerId, controlsContainerId, vizData);
+                    } catch (e) {
+                        console.error(`Error initializing Polymer Chain viewer for ${viewerContainerId}:`, e);
+                        const targetViewerEl = document.getElementById(viewerContainerId);
+                        if (targetViewerEl) {
+                            targetViewerEl.innerHTML = `<p class="polymer-viewer-error-message">Error initializing viewer: ${e.message}</p>`;
+                        }
+                    }
+                } else {
+                    console.error("Viewer initialization function 'initializePolymerChainViewer' not found!");
+                    const targetViewerEl = document.getElementById(viewerContainerId);
+                    if (targetViewerEl) {
+                        targetViewerEl.innerHTML = `<p class="polymer-viewer-error-message">Error: Polymer Viewer function missing.</p>`;
+                    }
+                }
+            });
+        }
+        // --- End Special Visualizations ---
 
         // --- Process other details subsections ---
         if (propData.details && typeof propData.details === 'object') {
