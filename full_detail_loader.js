@@ -92,30 +92,25 @@ function initializeBandgapPlot(plotContainerId, sliderId, valueId, equationData)
 
 
 // --- ================================================================= ---
-// ---      *** START: Polymer Chain Viewer Logic (v2) ***            ---
-// ---        (Includes Length Display & Chain Toggle)                ---
+// ---      *** START: Polymer Chain Viewer Logic (v3) ***            ---
+// ---    (Includes Length, Conceptual MW, Regenerate, Links)         ---
 // --- ================================================================= ---
 function initializePolymerChainViewer(viewerElementId, controlsElementId, vizData) {
-    console.log(`--- [Polymer Chain Init v2] Initializing Viewer for ${viewerElementId} ---`);
+    console.log(`--- [Polymer Chain Init v3] Initializing Viewer for ${viewerElementId} ---`);
 
     const viewerContainer = document.getElementById(viewerElementId);
     const controlsContainer = document.getElementById(controlsElementId);
-    const chainInfoSpan = document.getElementById(`${viewerElementId}-chain-info`); // Get the info span
+    // +++ Get references to specific info spans +++
+    const chainInfoSpan = document.getElementById(`${viewerElementId}-chain-info`);
+    const mwInfoSpan = document.getElementById(`${viewerElementId}-mw-info`);
 
-    if (!viewerContainer) {
-        console.error("[Polymer Chain Error] Viewer element not found!", viewerElementId);
-        return;
-    }
-    if (!controlsContainer) {
-        console.warn("[Polymer Chain Warn] Controls element not found!", controlsElementId);
-    }
-    if (!chainInfoSpan) {
-        console.warn("[Polymer Chain Warn] Chain info span not found!", `${viewerElementId}-chain-info`);
+    if (!viewerContainer) { /* ... error handling ... */ return; }
+    if (!controlsContainer) { /* ... warning ... */ }
+    if (!chainInfoSpan || !mwInfoSpan) { // ++ Check both spans ++
+        console.warn("[Polymer Chain Warn] Info span elements not found!");
     }
 
-
-    // Clear placeholder text explicitly
-    viewerContainer.innerHTML = '';
+    viewerContainer.innerHTML = ''; // Clear placeholder
 
     // Basic WebGL Check
     try { const canvas = document.createElement('canvas'); if (!window.WebGLRenderingContext || !(canvas.getContext('webgl') || canvas.getContext('experimental-webgl'))) throw new Error('WebGL not supported.'); }
@@ -124,7 +119,7 @@ function initializePolymerChainViewer(viewerElementId, controlsElementId, vizDat
     // --- Three.js Scene Setup ---
     let scene, camera, renderer, controls, animationFrameId;
     let polymerGroup = new THREE.Group();
-    let chainMeshes = []; // ++ Array to store references to chain meshes ++
+    let chainMeshes = [];
     let isSpinning = false;
     const spinSpeed = 0.004;
 
@@ -139,35 +134,25 @@ function initializePolymerChainViewer(viewerElementId, controlsElementId, vizDat
     const randomnessFactor = params.randomness_factor || 0.6;
     const boundsSize = params.bounds_size || 6;
 
-    // --- Materials & Geometry ---
+    // --- Materials ---
     const chainMaterial = new THREE.MeshStandardMaterial({
-        color: chainColor,
-        metalness: 0.2,
-        roughness: 0.7,
-        side: THREE.DoubleSide
+        color: chainColor, metalness: 0.2, roughness: 0.7, side: THREE.DoubleSide
     });
 
-    // --- Helper: Generate Random Walk Path ---
+    // --- Helper: Generate Random Walk Path (Unchanged from v2) ---
     function generateChainPath(numSegments, stepLen, randomness, bounds) {
         const points = [];
-        let currentPos = new THREE.Vector3(
-             (Math.random() - 0.5) * bounds * 0.2,
-             (Math.random() - 0.5) * bounds * 0.2,
-             (Math.random() - 0.5) * bounds * 0.2
-        );
+        let currentPos = new THREE.Vector3( (Math.random() - 0.5) * bounds * 0.2, (Math.random() - 0.5) * bounds * 0.2, (Math.random() - 0.5) * bounds * 0.2 );
         points.push(currentPos.clone());
         let currentDir = new THREE.Vector3(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).normalize();
-
         for (let i = 1; i < numSegments; i++) {
             let randomDir = new THREE.Vector3(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).normalize();
             let nextDir = currentDir.clone().multiplyScalar(1.0 - randomness).add(randomDir.multiplyScalar(randomness)).normalize();
             let nextPos = currentPos.clone().add(nextDir.multiplyScalar(stepLen * (1 + (Math.random()-0.5)*0.2) ));
-
             const halfBounds = bounds / 2;
             if (Math.abs(nextPos.x) > halfBounds) { nextDir.x *= -1; nextPos.x = Math.sign(nextPos.x) * halfBounds; }
             if (Math.abs(nextPos.y) > halfBounds) { nextDir.y *= -1; nextPos.y = Math.sign(nextPos.y) * halfBounds; }
             if (Math.abs(nextPos.z) > halfBounds) { nextDir.z *= -1; nextPos.z = Math.sign(nextPos.z) * halfBounds; }
-
             points.push(nextPos.clone());
             currentPos = nextPos;
             currentDir = nextDir;
@@ -177,29 +162,27 @@ function initializePolymerChainViewer(viewerElementId, controlsElementId, vizDat
 
     // --- Helper: Create Polymer Chains ---
     function createPolymerModel() {
-        console.log("[Polymer Chain] Creating model...");
-        // Clear previous chains
-        chainMeshes = []; // ++ Clear the reference array ++
+        console.log("[Polymer Chain] Creating/Regenerating model..."); // ++ Updated log ++
+        chainMeshes = [];
         while(polymerGroup.children.length > 0){
             const obj = polymerGroup.children[0];
             if(obj.geometry) obj.geometry.dispose();
             polymerGroup.remove(obj);
         }
 
-        let totalCalculatedLength = 0; // ++ Initialize length calculation ++
+        let totalCalculatedLength = 0;
 
         for (let i = 0; i < numChains; i++) {
             const pathPoints = generateChainPath(segmentsPerChain, stepLength, randomnessFactor, boundsSize);
             if (pathPoints.length < 2) continue;
-
             try {
                 const curve = new THREE.CatmullRomCurve3(pathPoints);
                 const tubularSegments = Math.min(segmentsPerChain * 2, 400);
                 const tubeGeometry = new THREE.TubeGeometry(curve, tubularSegments, tubeRadius, 6, false);
                 const chainMesh = new THREE.Mesh(tubeGeometry, chainMaterial);
                 polymerGroup.add(chainMesh);
-                chainMeshes.push(chainMesh); // ++ Store reference to the mesh ++
-                if (i === 0) { // ++ Calculate length based on first chain's params ++
+                chainMeshes.push(chainMesh);
+                if (i === 0) {
                     totalCalculatedLength = segmentsPerChain * stepLength;
                 }
             } catch(geomError){
@@ -208,9 +191,28 @@ function initializePolymerChainViewer(viewerElementId, controlsElementId, vizDat
         }
         console.log(`[Polymer Chain] Added ${polymerGroup.children.length} chains to group.`);
 
-        // ++ Display calculated length ++
+        // +++ Update Info Spans +++
         if(chainInfoSpan) {
              chainInfoSpan.textContent = `Chain Length: ~${totalCalculatedLength.toFixed(1)} units`;
+        }
+        if (mwInfoSpan) {
+            let conceptualMW = "Very High (> 2 Million g/mol)";
+            // This threshold is arbitrary, adjust if needed for different visualizations
+            if (segmentsPerChain < 200) {
+                 conceptualMW = "Lower MW (e.g., HDPE)";
+            }
+            mwInfoSpan.textContent = ` | Conceptual MW: ${conceptualMW}`;
+        }
+
+        // +++ Reset button styles after regeneration +++
+        if (controlsContainer) {
+            chainMeshes.forEach((mesh, index) => {
+                mesh.visible = true; // Ensure all are visible after regenerate
+                const chainButton = controlsContainer.querySelector(`button[data-action="toggle-chain"][data-chain-index="${index}"]`);
+                if (chainButton) { chainButton.style.opacity = '1'; }
+            });
+            const allButton = controlsContainer.querySelector(`button[data-action="toggle-all-chains"]`);
+            if(allButton) allButton.textContent = "All (Hide)";
         }
     }
 
@@ -221,53 +223,52 @@ function initializePolymerChainViewer(viewerElementId, controlsElementId, vizDat
              const button = event.target.closest('button');
              if (!button) return;
              const action = button.dataset.action;
-             const chainIndex = parseInt(button.dataset.chainIndex, 10); // ++ Get chain index ++
+             const chainIndex = parseInt(button.dataset.chainIndex, 10);
 
              if (action === 'reset-view' && controls && camera) {
                   controls.reset();
-                  camera.position.set(boundsSize * 1.5, boundsSize * 0.8, boundsSize * 1.8);
+                  camera.position.set(boundsSize * 1.2, boundsSize * 1.0, boundsSize * 1.6); // Use updated position
                   controls.target.set(0, 0, 0);
-                  controls.update(); // Ensure controls update immediately
+                  controls.update();
              } else if (action === 'toggle-spin') {
                   isSpinning = !isSpinning;
                   button.textContent = isSpinning ? "Stop Spin" : "Toggle Spin";
                   if(isSpinning && !animationFrameId) animate();
-             // +++ Add Chain Toggle Logic +++
              } else if (action === 'toggle-chain' && !isNaN(chainIndex)) {
                  if (chainMeshes[chainIndex]) {
                      chainMeshes[chainIndex].visible = !chainMeshes[chainIndex].visible;
-                     // Optional: Add visual feedback to button (e.g., change style)
                      button.style.opacity = chainMeshes[chainIndex].visible ? '1' : '0.5';
+                     // Update "All" button text if necessary
+                     const allVisible = chainMeshes.every(mesh => mesh.visible);
+                     const allButton = controlsContainer.querySelector(`button[data-action="toggle-all-chains"]`);
+                     if(allButton) allButton.textContent = allVisible ? "All (Hide)" : "All (Show)";
                  }
              } else if (action === 'toggle-all-chains') {
-                 // Simple toggle: if any are hidden, show all. If all are visible, hide all.
                  const anyHidden = chainMeshes.some(mesh => !mesh.visible);
                  chainMeshes.forEach((mesh, index) => {
-                     mesh.visible = anyHidden; // Show all if any were hidden, otherwise hide all
-                     // Update corresponding button style
+                     mesh.visible = anyHidden;
                      const chainButton = controlsContainer.querySelector(`button[data-action="toggle-chain"][data-chain-index="${index}"]`);
-                     if (chainButton) {
-                         chainButton.style.opacity = mesh.visible ? '1' : '0.5';
-                     }
+                     if (chainButton) { chainButton.style.opacity = mesh.visible ? '1' : '0.5'; }
                  });
-                 button.textContent = anyHidden ? "All (Hide)" : "All (Show)"; // Basic text feedback
+                 button.textContent = anyHidden ? "All (Hide)" : "All (Show)";
+             // +++ Add Regenerate Action +++
+             } else if (action === 'regenerate') {
+                 createPolymerModel(); // Regenerate chains and reset buttons
              }
-             // +++ End Chain Toggle Logic +++
+             // +++ End Regenerate Action +++
          });
 
-        // ++ Initialize button styles ++
-        chainMeshes.forEach((mesh, index) => {
+        // Initialize button styles correctly based on the initially created model
+         chainMeshes.forEach((mesh, index) => {
             const chainButton = controlsContainer.querySelector(`button[data-action="toggle-chain"][data-chain-index="${index}"]`);
-            if (chainButton) {
-                chainButton.style.opacity = mesh.visible ? '1' : '0.5';
-            }
+            if (chainButton) { chainButton.style.opacity = mesh.visible ? '1' : '0.5'; }
         });
          const allButton = controlsContainer.querySelector(`button[data-action="toggle-all-chains"]`);
-         if(allButton) allButton.textContent = "All (Hide)"; // Initial state assuming all visible
+         if(allButton) allButton.textContent = "All (Hide)";
 
     }
 
-    // --- Window Resize Handler ---
+    // --- Window Resize Handler (Unchanged) ---
     function onWindowResize() {
         if (!camera || !renderer || !viewerContainer) return;
         const width = viewerContainer.clientWidth;
@@ -278,7 +279,7 @@ function initializePolymerChainViewer(viewerElementId, controlsElementId, vizDat
         renderer.setSize(width, height);
     }
 
-    // --- Animation Loop ---
+    // --- Animation Loop (Unchanged) ---
     function animate() {
         if (!renderer || !scene || !camera) {
              if (animationFrameId) cancelAnimationFrame(animationFrameId);
@@ -294,9 +295,9 @@ function initializePolymerChainViewer(viewerElementId, controlsElementId, vizDat
         renderer.render(scene, camera);
     }
 
-     // --- Cleanup Function ---
+     // --- Cleanup Function (Unchanged) ---
     function cleanup() {
-         console.log(`[Polymer Chain Cleanup] Cleaning up viewer: ${viewerElementId}`);
+         console.log(`[Polymer Chain Cleanup v3] Cleaning up viewer: ${viewerElementId}`); // Updated log
          if (animationFrameId) cancelAnimationFrame(animationFrameId);
          animationFrameId = null;
          window.removeEventListener('resize', onWindowResize);
@@ -321,77 +322,57 @@ function initializePolymerChainViewer(viewerElementId, controlsElementId, vizDat
 
          if(controls) controls.dispose();
 
-         // Clear variables
-         scene = null;
-         camera = null;
-         controls = null;
-         polymerGroup = null;
-         chainMeshes = []; // Clear array
+         scene = null; camera = null; controls = null; polymerGroup = null; chainMeshes = [];
 
          if (viewerContainer) viewerContainer.innerHTML = '';
          if (controlsContainer) controlsContainer.innerHTML = '';
 
-         console.log(`[Polymer Chain Cleanup] Cleanup complete for ${viewerElementId}`);
+         console.log(`[Polymer Chain Cleanup v3] Cleanup complete for ${viewerElementId}`);
     }
 
     // --- === Main Execution Flow === ---
     try {
-        // Scene
+        // Scene, Camera, Renderer, Lights, Controls Setup (Using updated camera position)
         scene = new THREE.Scene();
         scene.background = new THREE.Color(0xf0f0f0);
-
-        // Camera
-        const width = viewerContainer.clientWidth;
-        const height = viewerContainer.clientHeight;
+        const width = viewerContainer.clientWidth; const height = viewerContainer.clientHeight;
         if (width === 0 || height === 0) {
              console.warn(`[Polymer Chain Warn] Viewer container has zero dimensions (${width}x${height}). Visualization might not render correctly initially.`);
              camera = new THREE.PerspectiveCamera(50, 16/9, 0.1, 100);
         } else {
             camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 100);
         }
-        camera.position.set(boundsSize * 1.5, boundsSize * 0.8, boundsSize * 1.8);
+        // ++ Use the potentially fixed camera position ++
+        camera.position.set(boundsSize * 1.2, boundsSize * 1.0, boundsSize * 1.6);
 
-
-        // Renderer
         renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(width || 300, height || 200); // Use default size if initial is zero
+        renderer.setSize(width || 300, height || 200);
         renderer.setPixelRatio(window.devicePixelRatio);
         viewerContainer.appendChild(renderer.domElement);
 
-        // Lights
         scene.add(new THREE.AmbientLight(0xcccccc, 0.8));
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.9);
-        directionalLight.position.set(5, 10, 7);
-        scene.add(directionalLight);
-        const directionalLight2 = new THREE.DirectionalLight(0xffffff, 0.4);
-        directionalLight2.position.set(-5, -10, -7);
-        scene.add(directionalLight2);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.9); directionalLight.position.set(5, 10, 7); scene.add(directionalLight);
+        const directionalLight2 = new THREE.DirectionalLight(0xffffff, 0.4); directionalLight2.position.set(-5, -10, -7); scene.add(directionalLight2);
 
-
-        // Controls
         controls = new THREE.OrbitControls(camera, renderer.domElement);
-        controls.enableDamping = true;
-        controls.dampingFactor = 0.1;
-        controls.target.set(0, 0, 0);
-        controls.minDistance = boundsSize * 0.5;
-        controls.maxDistance = boundsSize * 5;
-
+        controls.enableDamping = true; controls.dampingFactor = 0.1; controls.target.set(0, 0, 0);
+        controls.minDistance = boundsSize * 0.5; controls.maxDistance = boundsSize * 5;
 
         // Create and add the polymer model
         scene.add(polymerGroup);
-        createPolymerModel(); // This now populates chainMeshes and calculates length
-
+        createPolymerModel(); // Populates meshes and info spans
 
         // Setup UI Buttons
-        setupControls(); // This now adds listeners and sets initial button state
+        setupControls(); // Adds listeners and sets initial button states
 
         // Start Animation
         animate();
 
         // Add Resize Listener
         window.addEventListener('resize', onWindowResize);
+        requestAnimationFrame(onWindowResize); // Trigger initial resize check
 
-        // Cleanup Observer
+        // Cleanup Observer (Unchanged)
         const observerTargetNode = viewerContainer.closest('.property-detail-block') || viewerContainer.parentElement;
          if (observerTargetNode) {
              const observer = new MutationObserver((mutationsList, observerInstance) => {
@@ -404,12 +385,8 @@ function initializePolymerChainViewer(viewerElementId, controlsElementId, vizDat
              try {
                  observer.observe(observerTargetNode, { childList: true, subtree: true });
                  console.log("[Polymer Chain] Observing parent node for cleanup.");
-             } catch (obsError) {
-                 console.warn("[Polymer Chain] Could not start observing:", obsError);
-             }
-         } else {
-             console.warn("[Polymer Chain] Could not find suitable parent node to observe for cleanup.");
-         }
+             } catch (obsError) { console.warn("[Polymer Chain] Could not start observing:", obsError); }
+         } else { console.warn("[Polymer Chain] Could not find suitable parent node to observe for cleanup."); }
 
     } catch(error) {
         console.error(`[Polymer Chain Error] Main flow failed for ${viewerElementId}:`, error);
@@ -419,7 +396,7 @@ function initializePolymerChainViewer(viewerElementId, controlsElementId, vizDat
 
 } // --- End initializePolymerChainViewer ---
 // --- =============================================================== ---
-// ---      *** END: Polymer Chain Viewer Logic (v2) ***              ---
+// ---      *** END: Polymer Chain Viewer Logic (v3) ***              ---
 // --- =============================================================== ---
 
 
@@ -1172,12 +1149,22 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <div id="${controlsContainerId}" class="polymer-chain-viewer-controls">
                     <button data-action="reset-view" title="Reset Camera View">Reset View</button>
                     <button data-action="toggle-spin" title="Toggle Auto-Rotation">Toggle Spin</button>
-                    <span style="margin-left: auto; font-size: 0.8rem; color: #555;">Show/Hide Chains:</span>
+                    <button data-action="regenerate" title="Generate New Random Configuration">Regenerate</button> <!-- ++ New Button ++ -->
+                    <span style="margin-left: 15px; font-size: 0.8rem; color: #555;">Show/Hide Chains:</span>
                     <button data-action="toggle-chain" data-chain-index="0" title="Toggle Chain 1">1</button>
                     <button data-action="toggle-chain" data-chain-index="1" title="Toggle Chain 2">2</button>
                     <button data-action="toggle-chain" data-chain-index="2" title="Toggle Chain 3">3</button>
                     <button data-action="toggle-all-chains" title="Show/Hide All Chains">All</button>
-                    <span id="${viewerContainerId}-chain-info" style="margin-left: 15px; font-size: 0.8rem; color: #333; min-width: 150px;"></span>
+                    <!-- ++ Info Section ++ -->
+                    <span style="margin-left: auto; font-size: 0.8rem; color: #333; text-align: right;">
+                        <span id="${viewerContainerId}-chain-info"></span>
+                        <span id="${viewerContainerId}-mw-info"></span>
+                        <br> <!-- ++ Line break for links ++ -->
+                        <span style="font-size: 0.75rem;">See also:
+                            <a href="#section-mechanical_properties" class="viewer-link">Mechanical Props</a>,
+                            <a href="#section-advanced_fabrication_insights" class="viewer-link">Processing</a>
+                        </span>
+                    </span>
                 </div>
             `;
             propBlock.appendChild(viewerWrapper);
