@@ -18,153 +18,302 @@
       "url": "https://www.celanese.com/engineered-materials/products/gur-uhmw-pe"
     },
     "Honeywell_Spectra": {
-        "text": "Honeywell Spectra® Fiber Technical Information.",
-        "url": "https://www.honeywell-spectra.com/"
+      "text": "Honeywell Spectra® Fiber Technical Information.",
+      "url": "https://www.honeywell-spectra.com/"
     },
     "Wikipedia_UHMWPE": {
-        "text": "Wikipedia: Ultra-high-molecular-weight polyethylene",
-        "url": "https://en.wikipedia.org/wiki/Ultra-high-molecular-weight_polyethylene"
+      "text": "Wikipedia: Ultra-high-molecular-weight polyethylene",
+      "url": "https://en.wikipedia.org/wiki/Ultra-high-molecular-weight_polyethylene"
     }
   },
   "identification": {
     "displayName": "Identification & Structure",
-    "introduction": "Basic identification and structural features of UHMWPE, a thermoplastic polymer known for its extremely long chains, leading to unique mechanical properties.",
+    "introduction": "Basic identification and structural features of UHMWPE, a thermoplastic polymer known for its extremely long chains, leading to unique mechanical properties. The visualization below offers an abstract representation of these long, entangled chains.",
     "properties": {
       "cas_number": {
         "displayName": "CAS Number",
         "summary": "9002-88-4",
-        "details": { "notes": ["Generic for Polyethylene."] }
+        "details": {
+          "notes": [
+            "Generic for Polyethylene."
+          ]
+        }
       },
       "class": {
         "displayName": "Material Class",
         "summary": "Polyolefin Thermoplastic Polymer",
-        "details": { "key_characteristics": ["Linear polyethylene (-(CH₂-CH₂)-)n.", "Very high molecular weight distinguishes it from HDPE, LDPE etc."] }
+        "details": {
+          "key_characteristics": [
+            "Linear polyethylene (-(CH₂-CH₂)-)n.",
+            "Very high molecular weight distinguishes it from HDPE, LDPE etc."
+          ]
+        }
       },
       "crystal_structure": {
         "displayName": "Crystal Structure / Morphology",
         "summary": "Semi-crystalline (~39–75%)",
         "details": {
-          "key_characteristics": ["Crystalline regions: Orthorhombic unit cell.", "Amorphous regions connect crystalline lamellae.", "Degree of crystallinity affects stiffness, yield strength, and wear resistance."],
-          "measurement_characterization": { "techniques": ["Differential Scanning Calorimetry (DSC) for melting enthalpy", "X-Ray Diffraction (XRD) for crystal structure and crystallinity index", "Density measurements"] },
-          "significance": ["Balance between stiffness (crystalline) and toughness (amorphous tie molecules)."]
+          "key_characteristics": [
+            "Crystalline regions: Orthorhombic unit cell.",
+            "Amorphous regions connect crystalline lamellae.",
+            "Degree of crystallinity affects stiffness, yield strength, and wear resistance."
+          ],
+          "measurement_characterization": {
+            "techniques": [
+              "Differential Scanning Calorimetry (DSC) for melting enthalpy",
+              "X-Ray Diffraction (XRD) for crystal structure and crystallinity index",
+              "Density measurements"
+            ]
+          },
+          "significance": [
+            "Balance between stiffness (crystalline) and toughness (amorphous tie molecules)."
+          ]
         }
       },
       "molecular_weight": {
         "displayName": "Molecular Weight",
         "summary": "Extremely High (typically 2–6+ million g/mol)",
         "details": {
-          "key_characteristics": ["Distinguishing feature vs. other polyethylenes (HDPE < 0.5 million).", "Long chains lead to high entanglement, causing very high melt viscosity.", "Makes conventional melt processing (injection molding, extrusion) extremely difficult or impossible for virgin resin."],
-          "measurement_characterization": {"techniques": ["Solution Viscometry (Intrinsic Viscosity, [η])", "Light Scattering (M<0xE1><0xB5><0xA5>)"]},
-          "equations": [ { "name": "Mark–Houwink Equation", "description": "Relates intrinsic viscosity to viscosity-average molecular weight.", "formula_html": "[η] = K · M<sub>v</sub><sup>a</sup>", "formula_latex": "[\\eta] = K M_v^a", "units": "dL/g", "variables": [ {"symbol":"[η]", "description":"Intrinsic viscosity"}, {"symbol":"M<sub>v</sub>", "description":"Viscosity-average mol. weight"}, {"symbol":"K, a", "description":"Constants (e.g., for PE in decalin @ 135°C: K ≈ 6.2×10⁻⁴, a ≈ 0.725)"} ], "ref": "Polymer_Handbook" } ],
-          "significance": ["Governs melt viscosity and ultimate mechanical properties (strength, wear, impact)."]
+          "key_characteristics": [
+            "Distinguishing feature vs. other polyethylenes (HDPE < 0.5 million).",
+            "Long chains lead to high entanglement, causing very high melt viscosity.",
+            "Makes conventional melt processing (injection molding, extrusion) extremely difficult or impossible for virgin resin."
+          ],
+          "measurement_characterization": {
+            "techniques": [
+              "Solution Viscometry (Intrinsic Viscosity, [η])",
+              "Light Scattering (M<0xE1><0xB5><0xA5>)"
+            ]
+          },
+          "equations": [
+            {
+              "name": "Mark–Houwink Equation",
+              "description": "Relates intrinsic viscosity to viscosity-average molecular weight.",
+              "formula_html": "[η] = K · M<sub>v</sub><sup>a</sup>",
+              "formula_latex": "[\\eta] = K M_v^a",
+              "units": "dL/g",
+              "variables": [
+                {
+                  "symbol": "[η]",
+                  "description": "Intrinsic viscosity"
+                },
+                {
+                  "symbol": "M<sub>v</sub>",
+                  "description": "Viscosity-average mol. weight"
+                },
+                {
+                  "symbol": "K, a",
+                  "description": "Constants (e.g., for PE in decalin @ 135°C: K ≈ 6.2×10⁻⁴, a ≈ 0.725)"
+                }
+              ],
+              "ref": "Polymer_Handbook"
+            }
+          ],
+          "significance": [
+            "Governs melt viscosity and ultimate mechanical properties (strength, wear, impact)."
+          ],
+          "chain_visualization_data": {
+            "type": "polymer_chain_viewer",
+            "container_id": "uhmwpe-chain-viewer",
+            "viewer_height": "400px",
+            "controls_element_id": "uhmwpe-chain-controls",
+            "parameters": {
+              "num_chains": 3,
+              "segments_per_chain": 800,
+              "color": "#2980b9",
+              "tube_radius": 0.06,
+              "coil_radius_factor": 2.0,
+              "step_length": 0.1,
+              "randomness_factor": 0.6,
+              "bounds_size": 6
+            }
+          }
         }
       },
       "appearance": {
         "displayName": "Appearance",
         "summary": "White, translucent to opaque solid",
-        "details": { "notes": ["Often described as having a waxy feel."] }
+        "details": {
+          "notes": [
+            "Often described as having a waxy feel."
+          ]
+        }
       }
     }
   },
-   "safety": {
+  "safety": {
     "displayName": "Safety Information",
     "introduction": "UHMWPE is generally considered safe and biocompatible, but processing dust requires precautions.",
     "properties": {
-        "toxicity": {
-            "displayName": "Toxicity",
-            "summary": "Low in solid form; Biocompatible (medical grades).",
-            "details": { "notes": ["Widely used for medical implants.", "Dust from machining is primarily a nuisance/mechanical irritant."] }
-        },
-        "handling": {
-            "displayName": "Handling",
-            "summary": "Use PPE for dust during machining/sanding.",
-            "details": { "notes": ["Requires respiratory protection (N95 or better) and ventilation when generating dust.", "Fibers require specialized cutting tools (can dull standard blades quickly)."] }
+      "toxicity": {
+        "displayName": "Toxicity",
+        "summary": "Low in solid form; Biocompatible (medical grades).",
+        "details": {
+          "notes": [
+            "Widely used for medical implants.",
+            "Dust from machining is primarily a nuisance/mechanical irritant."
+          ]
         }
+      },
+      "handling": {
+        "displayName": "Handling",
+        "summary": "Use PPE for dust during machining/sanding.",
+        "details": {
+          "notes": [
+            "Requires respiratory protection (N95 or better) and ventilation when generating dust.",
+            "Fibers require specialized cutting tools (can dull standard blades quickly)."
+          ]
+        }
+      }
     }
   },
   "advanced_fabrication_insights": {
     "displayName": "Advanced Fabrication Insights",
     "introduction": "Key challenges and considerations in processing UHMWPE due to its unique molecular structure.",
     "properties": {
-        "process_control": {
-            "displayName": "Processing Challenges",
-            "summary": "Extremely high melt viscosity prevents standard melt processing.",
-            "details": { "key_characteristics": ["Entanglement of long chains prevents flow in the melt state.", "Requires specialized techniques like compression molding, ram extrusion, or sintering of powder."], "significance": ["Limits achievable shapes and production rates compared to standard thermoplastics."] }
-        },
-        "crystallinity_control": {
-            "displayName": "Crystallinity Control",
-            "summary": "Influenced by processing temperature and cooling rate.",
-            "details": { "notes": ["Higher crystallinity generally increases stiffness and wear resistance but can decrease toughness.", "Annealing can modify crystallinity."] }
-        },
-         "wear_mechanism": {
-            "displayName": "Wear Mechanism",
-            "summary": "Highly resistant to abrasive and sliding wear.",
-            "details": { "key_characteristics": ["Excellent abrasion resistance due to long chain structure.", "Low friction contributes to good sliding wear performance.", "Can be susceptible to adhesive wear or fatigue wear under certain conditions, especially in implant applications (crosslinking improves this)."] }
-        },
-        "creep_resistance": {
-            "displayName": "Creep Resistance",
-            "summary": "Poor compared to engineering plastics; limits structural use.",
-            "details": { "notes": ["Exhibits significant creep (deformation under constant load) over time, especially at elevated temperatures.", "Crosslinking (e.g., via radiation) improves creep resistance, particularly for medical implants."] }
+      "process_control": {
+        "displayName": "Processing Challenges",
+        "summary": "Extremely high melt viscosity prevents standard melt processing.",
+        "details": {
+          "key_characteristics": [
+            "Entanglement of long chains prevents flow in the melt state.",
+            "Requires specialized techniques like compression molding, ram extrusion, or sintering of powder."
+          ],
+          "significance": [
+            "Limits achievable shapes and production rates compared to standard thermoplastics."
+          ]
         }
+      },
+      "crystallinity_control": {
+        "displayName": "Crystallinity Control",
+        "summary": "Influenced by processing temperature and cooling rate.",
+        "details": {
+          "notes": [
+            "Higher crystallinity generally increases stiffness and wear resistance but can decrease toughness.",
+            "Annealing can modify crystallinity."
+          ]
+        }
+      },
+      "wear_mechanism": {
+        "displayName": "Wear Mechanism",
+        "summary": "Highly resistant to abrasive and sliding wear.",
+        "details": {
+          "key_characteristics": [
+            "Excellent abrasion resistance due to long chain structure.",
+            "Low friction contributes to good sliding wear performance.",
+            "Can be susceptible to adhesive wear or fatigue wear under certain conditions, especially in implant applications (crosslinking improves this)."
+          ]
+        }
+      },
+      "creep_resistance": {
+        "displayName": "Creep Resistance",
+        "summary": "Poor compared to engineering plastics; limits structural use.",
+        "details": {
+          "notes": [
+            "Exhibits significant creep (deformation under constant load) over time, especially at elevated temperatures.",
+            "Crosslinking (e.g., via radiation) improves creep resistance, particularly for medical implants."
+          ]
+        }
+      }
     }
   },
   "growth_fabrication_properties": {
-      "displayName": "Fabrication Properties",
-      "introduction": "Methods used to produce UHMWPE resin and process it into usable forms.",
-      "properties": {
-          "common_growth_methods": {
-            "displayName": "Synthesis & Processing",
-            "summary": "Ziegler-Natta/Metallocene Polymerization; Compression Molding, Ram Extrusion, Gel Spinning (Fibers).",
-            "details": { "notes": ["Resin synthesized via catalytic polymerization of ethylene.", "Bulk shapes: Compression molding or ram extrusion of powder.", "Fibers: Gel spinning followed by hot drawing to achieve high orientation and strength."] }
-          },
-          "source_materials_purity": {
-            "displayName": "Source Materials",
-            "summary": "Ethylene monomer, specialized catalysts.",
-            "details": { "notes": ["Catalyst residues can affect properties and biocompatibility (medical grades require low residue)."] }
-          },
-           "machinability": {
-            "displayName": "Machinability",
-            "summary": "Good, but requires sharp tools; generates stringy chips.",
-             "details": {"notes": ["Use tools designed for plastics.", "Avoid excessive heat buildup during machining."] }
-           }
+    "displayName": "Fabrication Properties",
+    "introduction": "Methods used to produce UHMWPE resin and process it into usable forms.",
+    "properties": {
+      "common_growth_methods": {
+        "displayName": "Synthesis & Processing",
+        "summary": "Ziegler-Natta/Metallocene Polymerization; Compression Molding, Ram Extrusion, Gel Spinning (Fibers).",
+        "details": {
+          "notes": [
+            "Resin synthesized via catalytic polymerization of ethylene.",
+            "Bulk shapes: Compression molding or ram extrusion of powder.",
+            "Fibers: Gel spinning followed by hot drawing to achieve high orientation and strength."
+          ]
+        }
+      },
+      "source_materials_purity": {
+        "displayName": "Source Materials",
+        "summary": "Ethylene monomer, specialized catalysts.",
+        "details": {
+          "notes": [
+            "Catalyst residues can affect properties and biocompatibility (medical grades require low residue)."
+          ]
+        }
+      },
+      "machinability": {
+        "displayName": "Machinability",
+        "summary": "Good, but requires sharp tools; generates stringy chips.",
+        "details": {
+          "notes": [
+            "Use tools designed for plastics.",
+            "Avoid excessive heat buildup during machining."
+          ]
+        }
       }
+    }
   },
-   "post_growth_processing": {
-       "displayName": "Post-Growth Processing",
-       "introduction": "Treatments applied after initial forming or fiber spinning.",
-       "properties": {
-           "annealing": {
-                "displayName": "Annealing",
-                "summary": "Used for stress relief, modifying crystallinity.",
-                "details": {"notes": ["Can improve dimensional stability after machining."]}
-           },
-           "crosslinking": {
-                "displayName": "Crosslinking (Medical Grades)",
-                "summary": "Via gamma or e-beam radiation to improve wear resistance.",
-                "details": {"notes": ["Significantly reduces wear rates in orthopedic implants.", "Can slightly reduce toughness and fatigue strength.", "Often requires post-irradiation annealing to reduce free radicals."], "ref": "Kurtz_UHMWPE"}
-           },
-           "surface_treatment": {
-                "displayName": "Surface Treatment",
-                "summary": "Difficult to bond; plasma or chemical treatment needed for adhesion.",
-                 "details": {"notes": ["Low surface energy makes adhesive bonding challenging."] }
-           }
-       }
-   },
-  "device_integration_characterization": {
-      "displayName": "Device Integration & Characterization",
-      "introduction": "How UHMWPE is used in devices and key methods for evaluating its properties.",
-      "properties": {
-          "key_characterization_techniques": {
-                "displayName": "Key Characterization Techniques",
-                "summary": "Mol. Weight (Viscosity), Mech. Testing (Impact, Wear, Tensile), Thermal (DSC).",
-                 "details": {"notes": ["Standard tests include: ASTM D4020 (Viscosity), ASTM F648 (Medical Grade Spec), ISO 5834 (Implants), ASTM G99 (Wear), ASTM D638 (Tensile), ASTM D256 (Izod Impact), ASTM D790 (Flexural)."]}
-          }
-          , "device_architectures": {
-                "displayName": "Common Device Forms/Uses",
-                "summary": "Bearings, Liners, Ropes, Armor, Implants, Gears.",
-                 "details": {"notes": ["Bulk: Sheets, rods, tubes, profiles, molded parts.", "Fiber: Yarns, woven/non-woven fabrics, unidirectional tapes, composites.", "Porous: Filters, separators."]}
-          }
+  "post_growth_processing": {
+    "displayName": "Post-Growth Processing",
+    "introduction": "Treatments applied after initial forming or fiber spinning.",
+    "properties": {
+      "annealing": {
+        "displayName": "Annealing",
+        "summary": "Used for stress relief, modifying crystallinity.",
+        "details": {
+          "notes": [
+            "Can improve dimensional stability after machining."
+          ]
+        }
+      },
+      "crosslinking": {
+        "displayName": "Crosslinking (Medical Grades)",
+        "summary": "Via gamma or e-beam radiation to improve wear resistance.",
+        "details": {
+          "notes": [
+            "Significantly reduces wear rates in orthopedic implants.",
+            "Can slightly reduce toughness and fatigue strength.",
+            "Often requires post-irradiation annealing to reduce free radicals."
+          ],
+          "ref": "Kurtz_UHMWPE"
+        }
+      },
+      "surface_treatment": {
+        "displayName": "Surface Treatment",
+        "summary": "Difficult to bond; plasma or chemical treatment needed for adhesion.",
+        "details": {
+          "notes": [
+            "Low surface energy makes adhesive bonding challenging."
+          ]
+        }
       }
+    }
+  },
+  "device_integration_characterization": {
+    "displayName": "Device Integration & Characterization",
+    "introduction": "How UHMWPE is used in devices and key methods for evaluating its properties.",
+    "properties": {
+      "key_characterization_techniques": {
+        "displayName": "Key Characterization Techniques",
+        "summary": "Mol. Weight (Viscosity), Mech. Testing (Impact, Wear, Tensile), Thermal (DSC).",
+        "details": {
+          "notes": [
+            "Standard tests include: ASTM D4020 (Viscosity), ASTM F648 (Medical Grade Spec), ISO 5834 (Implants), ASTM G99 (Wear), ASTM D638 (Tensile), ASTM D256 (Izod Impact), ASTM D790 (Flexural)."
+          ]
+        }
+      },
+      "device_architectures": {
+        "displayName": "Common Device Forms/Uses",
+        "summary": "Bearings, Liners, Ropes, Armor, Implants, Gears.",
+        "details": {
+          "notes": [
+            "Bulk: Sheets, rods, tubes, profiles, molded parts.",
+            "Fiber: Yarns, woven/non-woven fabrics, unidirectional tapes, composites.",
+            "Porous: Filters, separators."
+          ]
+        }
+      }
+    }
   },
   "thermal_properties": {
     "displayName": "Thermal Properties",
@@ -173,17 +322,33 @@
       "operating_temperature": {
         "displayName": "Operating Temperature Range",
         "summary": "Cryogenic to ~80–100°C",
-        "details": { "key_characteristics": ["Maintains toughness down to very low temperatures.", "Limited by softening/melting point for structural applications under load.", "Max continuous temperature usually recommended around 80°C."] }
+        "details": {
+          "key_characteristics": [
+            "Maintains toughness down to very low temperatures.",
+            "Limited by softening/melting point for structural applications under load.",
+            "Max continuous temperature usually recommended around 80°C."
+          ]
+        }
       },
       "melting_point": {
         "displayName": "Melting Point (T\u2098)",
         "summary": "~130–136°C",
-        "details": { "measurement_characterization": {"techniques": ["DSC"]} }
+        "details": {
+          "measurement_characterization": {
+            "techniques": [
+              "DSC"
+            ]
+          }
+        }
       },
       "thermal_conductivity": {
         "displayName": "Thermal Conductivity (k)",
         "summary": "Low (~0.4 W/(m·K))",
-        "details": { "notes": ["Good thermal insulator."] }
+        "details": {
+          "notes": [
+            "Good thermal insulator."
+          ]
+        }
       },
       "specific_heat": {
         "displayName": "Specific Heat (C\u209a)",
@@ -192,7 +357,12 @@
       "thermal_expansion": {
         "displayName": "Thermal Expansion Coefficient (CTE)",
         "summary": "Very High (150–200+ ppm/°C)",
-        "details": { "key_characteristics": ["CTE is significantly higher than metals or most other plastics.", "Requires careful consideration for dimensional changes with temperature, especially in assemblies."] }
+        "details": {
+          "key_characteristics": [
+            "CTE is significantly higher than metals or most other plastics.",
+            "Requires careful consideration for dimensional changes with temperature, especially in assemblies."
+          ]
+        }
       }
     }
   },
@@ -203,119 +373,183 @@
       "density": {
         "displayName": "Density (ρ)",
         "summary": "Low (0.93–0.95 g/cm³)",
-        "details": {"notes": ["Floats in water."]}
+        "details": {
+          "notes": [
+            "Floats in water."
+          ]
+        }
       },
       "youngs_modulus": {
         "displayName": "Young’s Modulus (E)",
         "summary": "~0.5–1.0 GPa (bulk), >100 GPa (fiber)",
-        "details": { "key_characteristics": ["Bulk material is flexible.", "Gel-spun fibers achieve extremely high stiffness due to molecular alignment."] }
+        "details": {
+          "key_characteristics": [
+            "Bulk material is flexible.",
+            "Gel-spun fibers achieve extremely high stiffness due to molecular alignment."
+          ]
+        }
       },
       "tensile_strength": {
         "displayName": "Tensile Strength (σ\u1D6C)",
         "summary": "20–40 MPa (bulk), 2–4 GPa (fiber)",
-        "details": { "key_characteristics": ["Fibers offer one of the highest specific strengths (strength-to-weight ratio) available."] }
+        "details": {
+          "key_characteristics": [
+            "Fibers offer one of the highest specific strengths (strength-to-weight ratio) available."
+          ]
+        }
       },
       "elongation_at_break": {
         "displayName": "Elongation at Break",
         "summary": "Very High (>300% for bulk)",
-        "details": { "notes": ["Indicates high ductility and toughness in bulk form.", "Fibers have much lower elongation (~2-4%)."] }
+        "details": {
+          "notes": [
+            "Indicates high ductility and toughness in bulk form.",
+            "Fibers have much lower elongation (~2-4%)."
+          ]
+        }
       },
       "hardness": {
         "displayName": "Hardness (Shore D)",
         "summary": "~D60–D65",
-         "details": {"notes": ["Relatively soft surface."]}
+        "details": {
+          "notes": [
+            "Relatively soft surface."
+          ]
+        }
       },
       "coefficient_of_friction": {
         "displayName": "Coefficient of Friction",
         "summary": "Very Low (0.05–0.15 vs steel)",
-        "details": { "key_characteristics": ["Excellent self-lubricating properties."] }
+        "details": {
+          "key_characteristics": [
+            "Excellent self-lubricating properties."
+          ]
+        }
       },
       "impact_strength": {
         "displayName": "Impact Strength (Notched Izod)",
         "summary": "Typically 'No Break'",
-        "details": { "key_characteristics": ["Considered the highest impact resistance of any thermoplastic.", "Absorbs significant energy."] }
+        "details": {
+          "key_characteristics": [
+            "Considered the highest impact resistance of any thermoplastic.",
+            "Absorbs significant energy."
+          ]
+        }
       },
       "abrasion_resistance": {
         "displayName": "Abrasion Resistance",
         "summary": "Exceptional",
-        "details": { "notes": ["Often outperforms steel in sliding abrasion tests (e.g., sand slurry).", "Key property for wear pads, liners, implant bearings."] }
+        "details": {
+          "notes": [
+            "Often outperforms steel in sliding abrasion tests (e.g., sand slurry).",
+            "Key property for wear pads, liners, implant bearings."
+          ]
+        }
       }
     }
   },
   "electrical_properties": {
-      "displayName": "Electrical Properties",
-      "introduction": "UHMWPE is an excellent electrical insulator with very low dielectric loss.",
-      "properties": {
-          "resistivity": {
-              "displayName": "Volume Resistivity",
-              "summary": "> 10¹⁵ Ω·cm"
-          },
-          "dielectric_constant": {
-              "displayName": "Dielectric Constant (Dk or ε_r)",
-              "summary": "~2.3 @ 1 MHz"
-          },
-          "dissipation_factor": {
-              "displayName": "Dissipation Factor (Df or tan δ)",
-              "summary": "< 0.0002 @ 1 MHz"
-          },
-          "dielectric_strength": {
-              "displayName": "Dielectric Strength",
-              "summary": "~18-35 kV/mm (short term)"
-          }
+    "displayName": "Electrical Properties",
+    "introduction": "UHMWPE is an excellent electrical insulator with very low dielectric loss.",
+    "properties": {
+      "resistivity": {
+        "displayName": "Volume Resistivity",
+        "summary": "> 10¹⁵ Ω·cm"
+      },
+      "dielectric_constant": {
+        "displayName": "Dielectric Constant (Dk or ε_r)",
+        "summary": "~2.3 @ 1 MHz"
+      },
+      "dissipation_factor": {
+        "displayName": "Dissipation Factor (Df or tan δ)",
+        "summary": "< 0.0002 @ 1 MHz"
+      },
+      "dielectric_strength": {
+        "displayName": "Dielectric Strength",
+        "summary": "~18-35 kV/mm (short term)"
       }
-  },
-   "chemical_properties": {
-        "displayName": "Chemical Properties",
-        "introduction": "Known for broad chemical resistance and very low moisture absorption.",
-        "properties": {
-            "stability_oxidation": { "displayName": "Oxidation Stability", "summary": "Good at RT, susceptible above ~100°C; requires stabilizers."},
-            "solvent_resistance": { "displayName": "Solvent Resistance", "summary": "Excellent below ~60°C, swells/dissolves in some solvents at high temp."},
-            "acid_resistance": { "displayName": "Acid Resistance", "summary": "Excellent resistance to non-oxidizing acids."},
-            "base_resistance": { "displayName": "Base Resistance", "summary": "Excellent."},
-            "water_absorption": { "displayName": "Water Absorption", "summary": "Extremely low (<0.01%)" },
-            "uv_resistance": { "displayName": "UV Resistance", "summary": "Poor unless stabilized (e.g., with carbon black)."},
-            "biocompatibility": { "displayName": "Biocompatibility", "summary": "Excellent (medical grades widely used)."}
-        }
-    },
-    "device_applications": {
-        "displayName": "Device Applications",
-        "introduction": "Leverages UHMWPE's unique combination of wear resistance, impact strength, low friction, and biocompatibility.",
-        "properties": {
-            "key_applications": {
-                "displayName": "Key Applications",
-                "summary": "Implants, Armor, Ropes, Liners, Wear Parts",
-                 "details": {"notes": ["Medical: Orthopedic joint replacements (hip/knee cups, tibial inserts).", "Defense: Ballistic vests, helmets, vehicle armor (fiber composites).", "Industrial: Chute/hopper liners, wear strips, guide rails, gears, bearings, seals.", "Marine/Recreation: High-strength ropes, fishing lines, sailcloth (fibers)." ]}
-            }
-        }
-    },
-    "comparison_alternatives": {
-        "displayName": "Comparison with Alternatives",
-        "introduction": "Comparing UHMWPE to other materials used in similar applications highlights its strengths and weaknesses.",
-        "properties": {
-            "notes": {
-                "displayName": "General Comparison Notes",
-                "summary": "Excels in wear, impact, low friction. Limited by temp, creep, stiffness (bulk)."
-            },
-            "vs_HDPE_HMWPE": {
-                "displayName": "vs. HDPE/HMWPE",
-                "summary": "UHMWPE: Superior wear/impact, harder to process."
-            },
-            "vs_PTFE": {
-                "displayName": "vs. PTFE (Teflon)",
-                "summary": "UHMWPE: Better wear/impact. PTFE: Lower friction, wider temp range."
-            },
-            "vs_Nylon_Acetal": {
-                "displayName": "vs. Nylon/Acetal",
-                "summary": "UHMWPE: Better wear/impact/chem resist. Nylon/Acetal: Higher stiffness/strength."
-            },
-            "vs_Aramid_Fibers": {
-                "displayName": "vs. Aramid Fibers (Fiber form)",
-                "summary": "UHMWPE Fiber: Higher specific strength, better chem/UV resist, lower temp limit."
-            },
-            "vs_Carbon_Fibers": {
-                 "displayName": "vs. Carbon Fibers (Fiber form)",
-                "summary": "UHMWPE Fiber: Higher impact toughness, lower density, insulating. Carbon Fiber: Much higher stiffness."
-            }
-        }
     }
+  },
+  "chemical_properties": {
+    "displayName": "Chemical Properties",
+    "introduction": "Known for broad chemical resistance and very low moisture absorption.",
+    "properties": {
+      "stability_oxidation": {
+        "displayName": "Oxidation Stability",
+        "summary": "Good at RT, susceptible above ~100°C; requires stabilizers."
+      },
+      "solvent_resistance": {
+        "displayName": "Solvent Resistance",
+        "summary": "Excellent below ~60°C, swells/dissolves in some solvents at high temp."
+      },
+      "acid_resistance": {
+        "displayName": "Acid Resistance",
+        "summary": "Excellent resistance to non-oxidizing acids."
+      },
+      "base_resistance": {
+        "displayName": "Base Resistance",
+        "summary": "Excellent."
+      },
+      "water_absorption": {
+        "displayName": "Water Absorption",
+        "summary": "Extremely low (<0.01%)"
+      },
+      "uv_resistance": {
+        "displayName": "UV Resistance",
+        "summary": "Poor unless stabilized (e.g., with carbon black)."
+      },
+      "biocompatibility": {
+        "displayName": "Biocompatibility",
+        "summary": "Excellent (medical grades widely used)."
+      }
+    }
+  },
+  "device_applications": {
+    "displayName": "Device Applications",
+    "introduction": "Leverages UHMWPE's unique combination of wear resistance, impact strength, low friction, and biocompatibility.",
+    "properties": {
+      "key_applications": {
+        "displayName": "Key Applications",
+        "summary": "Implants, Armor, Ropes, Liners, Wear Parts",
+        "details": {
+          "notes": [
+            "Medical: Orthopedic joint replacements (hip/knee cups, tibial inserts).",
+            "Defense: Ballistic vests, helmets, vehicle armor (fiber composites).",
+            "Industrial: Chute/hopper liners, wear strips, guide rails, gears, bearings, seals.",
+            "Marine/Recreation: High-strength ropes, fishing lines, sailcloth (fibers)."
+          ]
+        }
+      }
+    }
+  },
+  "comparison_alternatives": {
+    "displayName": "Comparison with Alternatives",
+    "introduction": "Comparing UHMWPE to other materials used in similar applications highlights its strengths and weaknesses.",
+    "properties": {
+      "notes": {
+        "displayName": "General Comparison Notes",
+        "summary": "Excels in wear, impact, low friction. Limited by temp, creep, stiffness (bulk)."
+      },
+      "vs_HDPE_HMWPE": {
+        "displayName": "vs. HDPE/HMWPE",
+        "summary": "UHMWPE: Superior wear/impact, harder to process."
+      },
+      "vs_PTFE": {
+        "displayName": "vs. PTFE (Teflon)",
+        "summary": "UHMWPE: Better wear/impact. PTFE: Lower friction, wider temp range."
+      },
+      "vs_Nylon_Acetal": {
+        "displayName": "vs. Nylon/Acetal",
+        "summary": "UHMWPE: Better wear/impact/chem resist. Nylon/Acetal: Higher stiffness/strength."
+      },
+      "vs_Aramid_Fibers": {
+        "displayName": "vs. Aramid Fibers (Fiber form)",
+        "summary": "UHMWPE Fiber: Higher specific strength, better chem/UV resist, lower temp limit."
+      },
+      "vs_Carbon_Fibers": {
+        "displayName": "vs. Carbon Fibers (Fiber form)",
+        "summary": "UHMWPE Fiber: Higher impact toughness, lower density, insulating. Carbon Fiber: Much higher stiffness."
+      }
+    }
+  }
 }
