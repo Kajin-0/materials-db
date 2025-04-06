@@ -134,19 +134,19 @@ document.addEventListener("DOMContentLoaded", async () => {
     const safeMaterialNameLower = materialName.replace(/ /g, '_').toLowerCase();
     const specificDetailFileName = `${safeMaterialNameLower}_details.json`; // e.g., mercury_cadmium_telluride_details.json
 
-    // Check if a specific file exists (simplistic check, replace with actual existence check if needed)
-    // For this example, we *know* which file to use if the name matches.
-    if (materialName === "Mercury Cadmium Telluride") {
-        // *** CORRECTED PATH ***
-        detailFilePath = `./details/${specificDetailFileName}`;
-        console.log(`[Full Detail Loader] Using specific detail file: '${detailFilePath}'`);
-    } else {
-        // *** CORRECTED FALLBACK PATH ***
-        detailFilePath = `./details/material_details.json`; // Fallback to the main details file in details folder
-        console.log(`[Full Detail Loader] Using main details file: '${detailFilePath}'`);
-    }
-    // *****************************************************************************
+    // --- Construct file path ---
+    let detailFilePath;
+    const safeMaterialNameLower = materialName.replace(/[\s()]/g, '_').toLowerCase(); // Handle spaces AND parentheses
+    // Remove potential double underscores
+    const cleanedSafeName = safeMaterialNameLower.replace(/__+/g, '_');
+    const specificDetailFileName = `${cleanedSafeName}_details.json`;
 
+    // *** CHANGE: Always try to load the specific detail file ***
+    detailFilePath = `./details/${specificDetailFileName}`;
+
+    console.log(`[Full Detail Loader] Attempting to load specific detail file: '${detailFilePath}'`);
+    // *****************************************************************************
+    
     // --- Fetch and Process Data ---
     let allMaterialDetails; // Holds the full JSON content (either the single object or the map)
     let materialData; // Variable to hold the specific material's data object
