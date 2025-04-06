@@ -165,7 +165,7 @@
         /* Error Message Style */
         .error-message { color: #c0392b; background-color: #fbeae5; padding: 1rem; border-radius: 4px; border: 1px solid #e74c3c; margin: 1rem 0; }
 
-        /* --- Styles for 3D Viewer (Adjusted for Three.js + CSS2D) --- */
+        /* --- Styles for 3D Viewer (Crystal Structure) --- */
         .crystal-viewer-wrapper { margin-top: 1.5rem; margin-bottom: 1rem; border: 1px solid #e0e0e0; border-radius: 6px; overflow: hidden; background-color: #fdfdfd; height: var(--viewer-height, 450px); position: relative; }
         .crystal-viewer-container { display: flex; flex-direction: column; height: 100%; }
         .viewer-area { flex-grow: 1; position: relative; background-color: white; min-height: 250px; height: 70%; overflow: hidden; }
@@ -200,6 +200,134 @@
         .plot-controls input[type="range"] { max-width: 250px; cursor: pointer; vertical-align: middle; }
         .plot-controls .temp-value-display { font-weight: 500; min-width: 50px; text-align: right; display: inline-block; background-color: #f8f9fa; padding: 2px 6px; border-radius: 3px; border: 1px solid #e9ecef; }
 
+        /* +++ ADDED STYLES FOR POLYMER VIEWER +++ */
+        /* --- Styles for Polymer Chain Viewer --- */
+        .polymer-chain-viewer-wrapper {
+             margin-top: 1.5rem;
+             margin-bottom: 1rem;
+             border: 1px solid #e0e0e0;
+             border-radius: 6px;
+             overflow: hidden;
+             background-color: #fdfdfd;
+             height: var(--viewer-height, 400px); /* Use variable from JSON */
+             position: relative;
+             display: flex; /* Use flex to manage internal height */
+             flex-direction: column;
+         }
+        .polymer-chain-viewer-container { /* Main div for viewer */
+             width: 100%;
+             flex-grow: 1; /* Allow viewer area to take up space not used by controls */
+             position: relative;
+             background-color: #ffffff;
+             overflow: hidden;
+         }
+        .polymer-chain-viewer-container canvas {
+             display: block;
+             width: 100%;
+             height: 100%;
+         }
+        .polymer-chain-viewer-controls { /* Container for all control elements */
+            padding: 8px 15px;
+            background-color: #f8f9fa;
+            border-top: 1px solid #e0e0e0;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            gap: 15px; /* Increased gap between major groups */
+            flex-wrap: wrap; /* Allow wrapping */
+            justify-content: flex-start; /* Align groups to the start by default */
+            min-height: 45px;
+            flex-shrink: 0; /* Prevent controls from shrinking */
+        }
+
+        /* Control Group Styling */
+        .polymer-viewer-control-group {
+            display: flex;
+            align-items: center;
+            gap: 8px; /* Space between items in a group */
+        }
+         .polymer-viewer-control-group span { /* Styling for labels within groups */
+            font-size: 0.8rem;
+            color: #555;
+            margin-right: 4px; /* Space after label */
+         }
+
+        /* Info Group Styling */
+        .polymer-viewer-info-group {
+            margin-left: auto; /* Pushes this group to the right */
+            text-align: right;
+            font-size: 0.8rem;
+            color: #333;
+            line-height: 1.3;
+            padding-left: 15px; /* Space if wrapping occurs */
+        }
+         .polymer-viewer-info-group .info-line {
+             display: block;
+             min-height: 1.1em;
+             margin-bottom: 3px;
+         }
+          .polymer-viewer-info-group .info-line span { /* Space between info items */
+              margin-left: 5px;
+          }
+          .polymer-viewer-info-group .info-line span:first-child {
+              margin-left: 0;
+          }
+         .polymer-viewer-info-group .links-line {
+             display: block;
+             font-size: 0.75rem;
+             color: #555;
+         }
+
+        /* Button Styling */
+        .polymer-chain-viewer-controls button {
+             padding: 4px 10px;
+             cursor: pointer;
+             background-color: #e9ecef;
+             border: 1px solid #ced4da;
+             border-radius: 4px;
+             transition: background-color 0.2s, border-color 0.2s;
+             font-size: 0.8rem;
+             color: #495057;
+             line-height: 1.2;
+         }
+        .polymer-chain-viewer-controls button:hover {
+             background-color: #dee2e6;
+             border-color: #adb5bd;
+         }
+         .polymer-chain-viewer-controls button[data-action="toggle-chain"] { /* Style for chain visibility buttons */
+            min-width: 25px; /* Ensure buttons have some width */
+            text-align: center;
+         }
+         .polymer-chain-viewer-controls button[data-action="toggle-chain"][style*="opacity: 0.5"] { /* Dim hidden chain buttons - Adjusted selector */
+             opacity: 0.5;
+         }
+
+
+         /* Link Styling */
+         .viewer-link {
+            color: #0066cc;
+            text-decoration: none;
+            margin: 0 3px;
+        }
+        .viewer-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Placeholder & Error Message Styling */
+         .polymer-viewer-placeholder-message {
+             position: absolute; top: 50%; left: 50%;
+             transform: translate(-50%, -50%); text-align: center;
+             color: #888; padding: 20px;
+         }
+         .polymer-viewer-error-message {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            display: flex; align-items: center; justify-content: center;
+            background-color: #fff0f0; color: #c00; padding: 20px;
+            text-align: center; font-size: 0.9rem; border: 1px solid #fcc;
+            box-sizing: border-box;
+         }
+         /* --- End Styles for Polymer Chain Viewer --- */
+
 
         /* Responsive Layout */
         @media (max-width: 768px) {
@@ -218,8 +346,43 @@
             .crystal-viewer-container { flex-direction: column; height: 100%; }
             .viewer-area { height: 60%; min-height: 300px; border-right: none; }
             .viewer-controls { width: 100%; height: 40%; border-left: none; border-top: 1px solid #e0e0e0; max-height: none; }
+
+            /* ++ Polymer Viewer Responsive ++ */
+            .polymer-chain-viewer-wrapper {
+                 height: 380px;
+             }
+            .polymer-chain-viewer-controls {
+                 padding: 8px;
+                 gap: 8px;
+                 justify-content: center; /* Center groups when they wrap */
+             }
+            .polymer-viewer-info-group {
+                  width: 100%; /* Allow info to take full width on new line */
+                  text-align: center;
+                  margin-top: 8px;
+                  padding-left: 0;
+                  margin-left: 0;
+              }
+             .polymer-chain-viewer-controls button {
+                 padding: 3px 8px;
+                 font-size: 0.75rem;
+             }
+             /* ++ End Polymer Viewer Responsive ++ */
         }
         @media (min-width: 769px) { .crystal-viewer-wrapper { height: var(--viewer-height, 450px); } .crystal-viewer-container { flex-direction: row; height: 100%; } .viewer-area { border-right: 1px solid #e0e0e0; border-bottom: none; height: 100%; width: calc(100% - 280px); } .viewer-controls { width: 280px; flex-shrink: 0; border-top: none; border-left: 1px solid #e0e0e0; height: 100%; overflow-y: auto; } }
+
+         @media (max-width: 480px) {
+              /* ... existing 480px rules ... */
+              /* ++ Polymer Viewer Responsive ++ */
+             .polymer-chain-viewer-wrapper {
+                 height: 350px;
+             }
+             /* Optional: Stack control groups vertically */
+             /* .polymer-chain-viewer-controls { justify-content: flex-start; } */
+             /* .polymer-viewer-control-group { flex-basis: 100%; justify-content: center; margin-bottom: 5px;} */
+             /* ++ End Polymer Viewer Responsive ++ */
+         }
+
 
         /* --- Style for Back to Top Button --- */
         #backToTopBtn {
