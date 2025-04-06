@@ -117,6 +117,7 @@
             "container_id": "uhmwpe-chain-viewer",
             "viewer_height": "400px",
             "controls_element_id": "uhmwpe-chain-controls",
+            "monomer_structure_html": "-(CH₂-CH₂)-<sub>n</sub>",
             "parameters": {
               "num_chains": 3,
               "segments_per_chain": 800,
