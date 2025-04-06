@@ -507,7 +507,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (propData.details && typeof propData.details === 'object') {
             for (const [detailKey, detailContent] of Object.entries(propData.details)) {
                  if (detailKey === 'visualization_data') continue; // Already handled above
+                 // +++ ADD THIS LINE +++
+                 if (detailKey === 'chain_visualization_data') continue; // Also handled above
+                 // +++ END OF ADDED LINE +++
+
+                 // Skip rendering if detailContent is null, undefined, or an empty array/object
                  if (!detailContent || (Array.isArray(detailContent) && detailContent.length === 0) || (typeof detailContent === 'object' && !Array.isArray(detailContent) && Object.keys(detailContent).length === 0)) continue;
+
 
                  const subsection = document.createElement('div');
                  subsection.className = `detail-subsection ${detailKey.replace(/ /g, '_').toLowerCase()}`;
@@ -569,7 +575,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                  }
                  else { // Fallback for unexpected structures
                     console.warn(`Unhandled detail structure for key '${detailKey}' in ${sectionKey}.${propKey}. Displaying JSON.`);
-                    const pre = document.createElement('pre'); pre.textContent = JSON.stringify(detailContent, null, 2);
+                    const pre = document.createElement('pre');
+                    pre.textContent = JSON.stringify(detailContent, null, 2);
                     pre.style.cssText = 'font-size: 0.8em; background-color: #f0f0f0; padding: 8px; border: 1px solid #ccc; border-radius: 4px; overflow-x: auto; margin-top: 0.5rem;';
                     subsection.appendChild(pre);
                  }
