@@ -105,24 +105,44 @@ async function initializeDatabase() {
       return;
     }
 
+    // --- Preprocess Data: Add Normalized Formula Field ---
+    allMaterialsData = allMaterialsData.map(material => {
+        if (material.formula) {
+            // Normalization logic: remove variables, parentheses, subscripts, spaces, separators
+            material.formula_normalized = material.formula
+                .replace(/\(.*?\)/g, '') // Remove content within parentheses (e.g., (1-x))
+                .replace(/[\d.\sₓ₁₂₃₄₅₆₇₈₉₊₋₀\(\)]+/g, '') // Remove numbers, common subscripts, brackets - ADJUST as needed
+                .replace(/[-_\/]/g, ''); // Remove common separators
+        } else {
+             material.formula_normalized = '';
+        }
+        // Add other preprocessing steps here if needed
+        return material;
+    });
+    console.log("Data preprocessing complete (added formula_normalized).");
+    // --------------------------------------------------
+
     // --- Initialize Fuse.js ---
     updateLoadingMessage("Initializing search index...");
     try {
         const fuseOptions = {
+            // *** UPDATED keys and weights ***
             keys: [
                 { name: "name", weight: 0.4 },
-                { name: "formula", weight: 0.2 },
+                { name: "formula_normalized", weight: 0.4 }, // Added normalized formula with high weight
                 { name: "synonyms", weight: 0.2 },
+                { name: "formula", weight: 0.1 },          // Lowered weight for original formula
                 { name: "tags", weight: 0.1 },
                 { name: "category", weight: 0.1 }
             ],
-            threshold: 0.35,
+            threshold: 0.3, // Slightly lower threshold for more fuzziness
             includeScore: true,
+            includeMatches: true, // *** ADDED: Include match indices ***
             ignoreLocation: true,
             minMatchCharLength: 2
         };
         fuse = new Fuse(allMaterialsData, fuseOptions);
-        console.log("Fuse.js initialized successfully.");
+        console.log("Fuse.js initialized successfully with includeMatches: true.");
     } catch (fuseError) {
         console.error("Error initializing Fuse.js:", fuseError);
         updateLoadingMessage("Error: Failed to initialize search index. Check console.", true);
@@ -134,10 +154,8 @@ async function initializeDatabase() {
     updateLoadingMessage("Updating filters...");
     updateFilters(allMaterialsData); // Populate filters based on loaded data
 
-    // **** CHANGE: Don't perform initial search. Set initial message instead. ****
     updateLoadingMessage("", false); // Clear "Loading..."
-    setInitialResultsMessage("Enter a search query or select filters to begin."); // Set default message
-    // performSearch(""); // REMOVED - No initial display of all items
+    setInitialResultsMessage("Enter a search query or select filters to begin.");
 
     console.log("Database initialization complete.");
 
@@ -155,18 +173,19 @@ function updateLoadingMessage(message, isError = false) {
     if (message) {
         resultsContainer.innerHTML = `<p class="initial-message" style="text-align: center; color: ${isError ? 'red' : '#70757a'}; font-size: 1.1rem; padding: 3rem 1rem;">${message}</p>`;
     } else {
-         // Clear only if it's not an error message
          if (!resultsContainer.querySelector('p[style*="color: red"]')) {
-            resultsContainer.innerHTML = ''; // Clear loading/initial messages
+            resultsContainer.innerHTML = '';
          }
     }
 }
 
-// **** NEW: Function to set initial/placeholder message ****
 function setInitialResultsMessage(message) {
     const resultsContainer = document.getElementById("results");
     if (!resultsContainer) return;
-    resultsContainer.innerHTML = `<p class="initial-message" style="text-align: center; color: #70757a; font-size: 1.1rem; padding: 3rem 1rem;">${message}</p>`;
+    // Only set if results are currently empty or contain the placeholder
+    if (resultsContainer.innerHTML === '' || resultsContainer.querySelector('p.initial-message')) {
+        resultsContainer.innerHTML = `<p class="initial-message" style="text-align: center; color: #70757a; font-size: 1.1rem; padding: 3rem 1rem;">${message}</p>`;
+    }
 }
 
 function disableFilters() {
@@ -179,7 +198,6 @@ function disableFilters() {
             }
         }
     });
-    // Also hide the toolbar if filters are disabled
     const toolbar = document.getElementById("toolbar");
     if (toolbar) {
         toolbar.classList.remove("active");
@@ -224,7 +242,6 @@ function updateFilters(materials) {
         } else {
             selectElement.value = "";
         }
-        // Enable based on *initial* load, not current selection
         selectElement.disabled = items.length === 0;
       }
 
@@ -243,8 +260,8 @@ function updateFilters(materials) {
 
 // --- Search and Rendering ---
 function performSearch(query) {
-  query = query.trim(); // Trim whitespace
-  hasPerformedSearch = true; // Mark that a search/filter action has occurred
+  query = query.trim();
+  hasPerformedSearch = true;
   console.log(`Performing search. Query: "${query}"`);
   const resultsContainer = document.getElementById("results");
 
@@ -267,68 +284,126 @@ function performSearch(query) {
   const toolbar = document.getElementById("toolbar");
   const body = document.body;
 
-  // **** UPDATED: Toolbar and Body Class Logic ****
   const isAnyFilterActive = industry || category || tag;
   const isSearchActive = query !== "";
   const shouldShowResultsArea = isSearchActive || isAnyFilterActive;
 
-  // Activate toolbar if search or filters are active
   if (toolbar) {
     toolbar.classList.toggle("active", shouldShowResultsArea);
   }
-  // Add class to body to adjust layout when results are shown
   if (body) {
       body.classList.toggle("results-active", shouldShowResultsArea);
   }
-  // Clear initial message only if we are about to show results/toolbar
+
   if (shouldShowResultsArea) {
      const initialMsg = resultsContainer.querySelector('p.initial-message');
      if (initialMsg) {
-         resultsContainer.innerHTML = ''; // Clear the initial message
+         resultsContainer.innerHTML = '';
      }
   } else {
-     // If no search/filter, ensure initial message is present
      setInitialResultsMessage("Enter a search query or select filters to begin.");
      render([]); // Ensure render function clears any old results
-     return; // Don't proceed with search/filter if nothing is active
+     return;
   }
-  // ************************************************
 
 
-  // Perform Fuse search or use all data if query is empty
-  let results = query === ""
-    ? allMaterialsData.map(item => ({ item })) // Wrap for consistency if Fuse results are used
-    : fuse.search(query);
+  // --- Perform Fuse search or use all data ---
+  let results;
+  if (query === "") {
+      // Wrap all data for consistency, no matches needed here
+      results = allMaterialsData.map(item => ({ item: item, matches: [] }));
+  } else {
+      // *** Request matches from Fuse ***
+      results = fuse.search(query, { includeMatches: true });
+  }
+  // -----------------------------------------
 
-  // Filter based on dropdowns
-  let filteredResults = results.map(result => result.item); // Extract items
+
+  // --- Filter based on dropdowns ---
+  let filteredFuseResults = results; // Keep the full result object {item, matches}
 
   if (industry) {
-      filteredResults = filteredResults.filter(m => m.tags?.includes("industry:" + industry));
+      filteredFuseResults = filteredFuseResults.filter(r => r.item.tags?.includes("industry:" + industry));
   }
   if (category) {
-      filteredResults = filteredResults.filter(m => m.category === category);
+      filteredFuseResults = filteredFuseResults.filter(r => r.item.category === category);
   }
   if (tag) {
-      filteredResults = filteredResults.filter(m => m.tags?.includes(tag));
+      filteredFuseResults = filteredFuseResults.filter(r => r.item.tags?.includes(tag));
   }
+  // ---------------------------------
 
-  console.log(`Search/filter resulted in ${filteredResults.length} materials.`);
-  render(filteredResults); // Render the filtered results
+  console.log(`Search/filter resulted in ${filteredFuseResults.length} materials.`);
+  render(filteredFuseResults); // *** Pass the full filtered results with matches ***
 }
 
-function render(materials) {
+// --- Helper function for highlighting matches ---
+// (Can be placed inside render or globally)
+function highlightMatches(text, key, matches) {
+    if (!text || !matches || matches.length === 0) return text; // Return original if no text/matches
+
+    const keyMatches = matches.filter(m => m.key === key);
+    if (keyMatches.length === 0 || !keyMatches[0].indices || keyMatches[0].indices.length === 0) {
+        return text; // No matches for this specific key
+    }
+
+    let highlightedText = "";
+    let lastIndex = 0;
+
+    // Combine and sort all match indices for this key
+    const allIndices = keyMatches.flatMap(m => m.indices);
+    allIndices.sort((a, b) => a[0] - b[0]);
+
+    // Merge overlapping/adjacent indices (basic merge)
+    const mergedIndices = [];
+    if (allIndices.length > 0) {
+        let current = [...allIndices[0]]; // Copy start/end
+        for (let i = 1; i < allIndices.length; i++) {
+            const next = allIndices[i];
+            if (next[0] <= current[1] + 1) { // Overlap or adjacent
+                current[1] = Math.max(current[1], next[1]); // Extend end
+            } else {
+                mergedIndices.push(current); // Push previous interval
+                current = [...next];         // Start new interval
+            }
+        }
+        mergedIndices.push(current); // Push the last interval
+    }
+
+    // Build the highlighted string
+    mergedIndices.forEach(indices => {
+        const start = indices[0];
+        const end = indices[1] + 1;
+        // Add text before the match
+        highlightedText += text.substring(lastIndex, start);
+        // Add highlighted match
+        highlightedText += `<span class="highlight">${text.substring(start, end)}</span>`;
+        lastIndex = end;
+    });
+
+    // Add any remaining text after the last match
+    highlightedText += text.substring(lastIndex);
+
+    return highlightedText;
+}
+// --- End Helper function ---
+
+
+// *** MODIFIED render function ***
+function render(fuseResults) { // Parameter is now array of {item, matches, score...}
   const resultsContainer = document.getElementById("results");
   if (!resultsContainer) return;
 
-  // Clear previous results *only if* we are going to add new ones or if no results were found *after a search*
-  if (materials.length > 0 || hasPerformedSearch) {
+  // Check if there are items to render
+  const materialsExist = fuseResults && fuseResults.length > 0;
+
+  // Clear previous results only if we are going to add new ones or if no results were found *after* a search
+  if (materialsExist || hasPerformedSearch) {
      resultsContainer.innerHTML = "";
   }
-  // If no materials AND no search was performed, the initial message should already be there.
 
-  if (!materials || materials.length === 0) {
-      if (hasPerformedSearch) { // Only show "No results" if a search was actually done
+  if (!materialsExist) {
+      if (hasPerformedSearch) {
          console.log("Render: No materials to display after search/filter.");
          // CSS :empty selector handles the "No materials found" message
       } else {
@@ -338,69 +413,96 @@ function render(materials) {
     return;
   }
 
-  console.log(`Render: Displaying ${materials.length} cards.`);
+  console.log(`Render: Displaying ${fuseResults.length} cards.`);
   const fragment = document.createDocumentFragment();
 
-  materials.forEach(material => {
-    if (!material || typeof material.name !== 'string' || material.name.trim() === '') {
-        console.warn("Skipping material with missing or invalid name:", material);
-        return;
-    }
+  // Iterate through the full results array
+  fuseResults.forEach(result => {
+      const material = result.item;
+      const matches = result.matches || []; // Get matches array (empty if query was empty)
 
-    const el = document.createElement("div");
-    el.className = "material-card";
+      if (!material || typeof material.name !== 'string' || material.name.trim() === '') {
+          console.warn("Skipping material with missing or invalid name:", material);
+          return;
+      }
 
-    const name = material.name;
-    const formula = material.formula || 'N/A';
-    const category = material.category || 'N/A';
+      const el = document.createElement("div");
+      el.className = "material-card";
 
-    const tagsHtml = Array.isArray(material.tags)
-      ? material.tags
-          .filter(t => typeof t === 'string' && t.trim() !== '')
-          .map(t => `<span class='tag'>${t.trim()}</span>`)
-          .join(" ")
-      : '';
+      const name = material.name;
+      // Get normalized formula IF it exists AND has a match, otherwise use original or N/A
+      let formulaToDisplay = material.formula || 'N/A';
+      let formulaKeyForHighlight = 'formula';
+      if(material.formula_normalized && matches.some(m => m.key === 'formula_normalized')){
+          // Prefer showing original formula but highlight based on normalized match if needed
+          formulaToDisplay = material.formula || material.formula_normalized; // Show original if possible
+          formulaKeyForHighlight = 'formula_normalized'; // Tell highlight function which key had the match
+      } else if (material.formula) {
+          formulaKeyForHighlight = 'formula';
+      }
 
-    el.innerHTML = `<h2>${name}</h2>
-                    <p><strong>Formula:</strong> ${formula}</p>
-                    <p><strong>Category:</strong> ${category}</p>
-                    <div class="tags">${tagsHtml}</div>`;
 
-    el.dataset.materialName = name;
-    fragment.appendChild(el);
+      const category = material.category || 'N/A';
+
+      // Highlight tags - pass 'tags' key
+      const tagsHtml = Array.isArray(material.tags)
+        ? material.tags
+            .filter(t => typeof t === 'string' && t.trim() !== '')
+            .map(t => `<span class='tag'>${highlightMatches(t.trim(), 'tags', matches)}</span>`) // Pass 'tags' key and matches
+            .join(" ")
+        : '';
+
+      // Apply highlighting to displayed fields
+      el.innerHTML = `<h2>${highlightMatches(name, 'name', matches)}</h2>
+                      <p><strong>Formula:</strong> ${highlightMatches(formulaToDisplay, formulaKeyForHighlight, matches)}</p>
+                      <p><strong>Category:</strong> ${highlightMatches(category, 'category', matches)}</p>
+                      <div class="tags">${tagsHtml}</div>`;
+
+      el.dataset.materialName = name;
+      fragment.appendChild(el);
   });
 
   resultsContainer.appendChild(fragment);
 }
+// *** END MODIFIED render function ***
 
+
+// *** MODIFIED showSuggestions function ***
 function showSuggestions(query) {
     const suggestionsList = document.getElementById("suggestions");
     if (!suggestionsList || !fuse) return;
     suggestionsList.innerHTML = "";
 
     try {
-        const results = fuse.search(query, { limit: 8 });
+        // *** Request matches from Fuse ***
+        const results = fuse.search(query, { limit: 8, includeMatches: true });
 
-        if (results.length === 0 && query.length > 0) { // Only show 'no suggestions' if query is not empty
+        if (results.length === 0 && query.length > 0) {
             suggestionsList.innerHTML = "<li class='disabled'>No suggestions found</li>";
             return;
         }
 
         results.forEach(result => {
             const item = result.item;
+            const matches = result.matches; // Get match data
+
             if (!item?.name || typeof item.name !== 'string' || item.name.trim() === '') return;
 
             const li = document.createElement("li");
-            li.textContent = item.name;
+
+            // --- Highlighting Logic for Suggestions (using helper function) ---
+            // Primarily highlight matches in the 'name' field for suggestions
+            li.innerHTML = highlightMatches(item.name, 'name', matches);
+            // --- End Highlighting Logic ---
 
             li.addEventListener("mousedown", (e) => {
                 e.preventDefault();
                 const searchInput = document.getElementById("searchInput");
                 if (searchInput) {
-                    searchInput.value = item.name;
+                    searchInput.value = item.name; // Use original item name
                 }
                 suggestionsList.innerHTML = "";
-                performSearch(item.name); // Trigger search on suggestion click
+                performSearch(item.name);
             });
             suggestionsList.appendChild(li);
         });
@@ -409,6 +511,8 @@ function showSuggestions(query) {
         suggestionsList.innerHTML = "<li class='disabled'>Error loading suggestions</li>";
     }
 }
+// *** END MODIFIED showSuggestions function ***
+
 
 // --- Event Listeners Setup ---
 document.addEventListener("DOMContentLoaded", () => {
@@ -425,16 +529,15 @@ document.addEventListener("DOMContentLoaded", () => {
   if (searchInput && suggestionsList) {
       searchInput.addEventListener("input", () => {
         const query = searchInput.value.trim();
-        if (query.length > 1) { // Show suggestions only after 2+ chars
+        if (query.length > 1) {
           showSuggestions(query);
         } else {
-          suggestionsList.innerHTML = ""; // Clear suggestions if input is too short or empty
-          if (query === "" && hasPerformedSearch) { // If user clears search after performing one, reset view
+          suggestionsList.innerHTML = "";
+          if (query === "" && hasPerformedSearch) {
              performSearch("");
           } else if (query === "") {
-             // Keep initial message if search wasn't performed yet
              setInitialResultsMessage("Enter a search query or select filters to begin.");
-             document.body.classList.remove("results-active"); // Ensure layout resets
+             document.body.classList.remove("results-active");
              const toolbar = document.getElementById("toolbar");
              if (toolbar) toolbar.classList.remove("active");
           }
@@ -445,22 +548,37 @@ document.addEventListener("DOMContentLoaded", () => {
         if (e.key === "Enter") {
           e.preventDefault();
           suggestionsList.innerHTML = "";
-          performSearch(searchInput.value); // Perform search with current input value
+          performSearch(searchInput.value);
         }
+        // --- Tab Completion Logic ---
+        else if (e.key === "Tab") {
+            const firstSuggestion = suggestionsList.querySelector("li:not(.disabled)");
+            if (firstSuggestion) {
+                e.preventDefault(); // Prevent default Tab behavior
+                const suggestionText = firstSuggestion.textContent; // Get raw text
+                searchInput.value = suggestionText;
+                suggestionsList.innerHTML = "";
+                // Optional: Automatically search on Tab, or let user press Enter
+                // performSearch(suggestionText);
+            }
+        }
+        // --- End Tab Completion Logic ---
       });
 
+      // Reduced timeout slightly
       searchInput.addEventListener("focusout", (event) => {
           if (!suggestionsList.contains(event.relatedTarget)) {
               setTimeout(() => {
                    if (document.activeElement !== searchInput && !suggestionsList.contains(document.activeElement)) {
                        suggestionsList.innerHTML = "";
                    }
-              }, 150);
+              }, 100); // Shorter delay
           }
       });
 
+
       searchInput.addEventListener("focus", () => {
-        if (searchInput.value.trim().length > 1) { // Reshow suggestions on focus if applicable
+        if (searchInput.value.trim().length > 1) {
             showSuggestions(searchInput.value.trim());
         }
       });
@@ -472,7 +590,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (filterElement) {
           filterElement.addEventListener("change", () => {
               const currentQuery = searchInput ? searchInput.value : "";
-              performSearch(currentQuery); // Trigger search on filter change
+              performSearch(currentQuery);
           });
       } else {
           console.warn("A filter dropdown element was not found.");
@@ -484,32 +602,35 @@ document.addEventListener("DOMContentLoaded", () => {
         let targetElement = event.target;
 
         // --- Handle Tag Click ---
-        if (targetElement.classList.contains("tag")) {
-          const clickedTag = targetElement.textContent.trim();
-          console.log("Tag clicked:", clickedTag);
-          const industryPrefix = "industry:";
-          let searchTriggered = false;
+        if (targetElement.classList.contains("tag") || targetElement.closest(".tag")) {
+            // Handle click on highlighted part inside tag span as well
+            const tagSpan = targetElement.closest(".tag");
+            if (!tagSpan) return;
 
-          if (clickedTag.startsWith(industryPrefix)) {
-            const industry = clickedTag.substring(industryPrefix.length);
-            if (industryFilter && [...industryFilter.options].some(opt => opt.value === industry)) {
-                 if (industryFilter.value !== industry) { industryFilter.value = industry; searchTriggered = true; }
-                 if (propertyFilter && propertyFilter.value !== "") { propertyFilter.value = ""; searchTriggered = true; }
-            } else { console.warn(`Industry filter option not found: ${industry}`); }
-          }
-          else {
-            if (propertyFilter && [...propertyFilter.options].some(opt => opt.value === clickedTag)) {
-                if (propertyFilter.value !== clickedTag) { propertyFilter.value = clickedTag; searchTriggered = true; }
-                if (industryFilter && industryFilter.value !== "") { industryFilter.value = ""; searchTriggered = true; }
-            } else { console.warn(`Property filter option not found: ${clickedTag}`); }
-          }
+            const clickedTag = tagSpan.textContent.trim(); // Use textContent to get raw tag name
+            console.log("Tag clicked:", clickedTag);
+            const industryPrefix = "industry:";
+            let searchTriggered = false;
 
-          if (searchTriggered) {
-              const currentQuery = searchInput ? searchInput.value : "";
-              performSearch(currentQuery);
-              searchInput.value = ""; // Clear search input when filter tag is clicked
-              suggestionsList.innerHTML = ""; // Clear suggestions
-          }
+            if (clickedTag.startsWith(industryPrefix)) {
+                const industry = clickedTag.substring(industryPrefix.length);
+                if (industryFilter && [...industryFilter.options].some(opt => opt.value === industry)) {
+                    if (industryFilter.value !== industry) { industryFilter.value = industry; searchTriggered = true; }
+                    if (propertyFilter && propertyFilter.value !== "") { propertyFilter.value = ""; searchTriggered = true; }
+                } else { console.warn(`Industry filter option not found: ${industry}`); }
+            } else {
+                if (propertyFilter && [...propertyFilter.options].some(opt => opt.value === clickedTag)) {
+                    if (propertyFilter.value !== clickedTag) { propertyFilter.value = clickedTag; searchTriggered = true; }
+                    if (industryFilter && industryFilter.value !== "") { industryFilter.value = ""; searchTriggered = true; }
+                } else { console.warn(`Property filter option not found: ${clickedTag}`); }
+            }
+
+            if (searchTriggered) {
+                const currentQuery = searchInput ? searchInput.value : "";
+                performSearch(currentQuery);
+                if (searchInput) searchInput.value = ""; // Clear search input
+                if (suggestionsList) suggestionsList.innerHTML = ""; // Clear suggestions
+            }
         }
         // --- Handle Material Card Click ---
         else {
@@ -517,8 +638,10 @@ document.addEventListener("DOMContentLoaded", () => {
             if (card) {
                 const materialName = card.dataset.materialName;
                 if (materialName) {
+                    // *** Use original material name for navigation ***
                     const encodedName = encodeURIComponent(materialName);
-                    const url = `material_detail.html?material=${encodedName}`;
+                    // *** Point to the FULL detail page ***
+                    const url = `material_full_detail.html?material=${encodedName}`;
                     console.log('Navigating to material detail:', url);
                     window.location.href = url;
                 } else {
