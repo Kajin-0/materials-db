@@ -458,7 +458,7 @@ function render(fuseResults) { // Parameter is now array of {item, matches, scor
                       <p><strong>Category:</strong> ${highlightMatches(category, 'category', matches)}</p>
                       <div class="tags">${tagsHtml}</div>`;
 
-      el.dataset.materialName = name;
+      el.dataset.materialName = name; // Store original name for linking
       fragment.appendChild(el);
   });
 
@@ -636,12 +636,11 @@ document.addEventListener("DOMContentLoaded", () => {
         else {
             const card = targetElement.closest('.material-card');
             if (card) {
-                const materialName = card.dataset.materialName;
+                const materialName = card.dataset.materialName; // Get original name stored
                 if (materialName) {
-                    // *** Use original material name for navigation ***
                     const encodedName = encodeURIComponent(materialName);
-                    // *** Point to the FULL detail page ***
-                    const url = `material_full_detail.html?material=${encodedName}`;
+                    // *** CORRECTED: Point back to material_detail.html ***
+                    const url = `material_detail.html?material=${encodedName}`;
                     console.log('Navigating to material detail:', url);
                     window.location.href = url;
                 } else {
