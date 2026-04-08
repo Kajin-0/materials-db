@@ -1,3 +1,36 @@
+const DETAIL_DATASET_PATH = './data/material_details.json';
+
+async function fetchDetailDataset() {
+    const response = await fetch(DETAIL_DATASET_PATH);
+    if (!response.ok) {
+        if (response.status === 404) {
+            throw new Error(`The consolidated detail dataset could not be loaded (missing file: ${DETAIL_DATASET_PATH}).`);
+        }
+        throw new Error(`The consolidated detail dataset could not be loaded (HTTP ${response.status}).`);
+    }
+
+    const dataset = await response.json();
+    if (typeof dataset !== 'object' || dataset === null || Array.isArray(dataset)) {
+        throw new Error(`Invalid dataset format in ${DETAIL_DATASET_PATH}. Expected a top-level object keyed by material name.`);
+    }
+
+    return dataset;
+}
+
+function resolveMaterialRecord(detailDataset, requestedMaterialName) {
+    const exactRecord = detailDataset[requestedMaterialName];
+    if (exactRecord && typeof exactRecord === 'object') {
+        return { materialRecord: exactRecord, resolvedMaterialName: requestedMaterialName };
+    }
+
+    const matchedKey = Object.keys(detailDataset).find(key => key.toLowerCase() === requestedMaterialName.toLowerCase());
+    if (matchedKey) {
+        return { materialRecord: detailDataset[matchedKey], resolvedMaterialName: matchedKey };
+    }
+
+    throw new Error(`Material detail record for '${requestedMaterialName}' was not found in ${DETAIL_DATASET_PATH}.`);
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
     // --- Get parameters from URL ---
     const urlParams = new URLSearchParams(window.location.search);
@@ -32,24 +65,18 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Update context immediately
     if (materialContextEl) materialContextEl.textContent = `for ${materialName}`;
 
-    // --- Construct file path ---
-    const safeMaterialName = materialName.replace(/ /g, '_').toLowerCase();
-    const detailFilePath = `./details/${safeMaterialName}_details.json`;
-
-    console.log(`[Section Detail] Loading section '${sectionKey}' for material '${materialName}' from '${detailFilePath}'`);
+    console.log(`[Section Detail] Loading section '${sectionKey}' for material '${materialName}' from '${DETAIL_DATASET_PATH}'`);
 
     // --- Fetch and Process Data ---
     try {
-        const response = await fetch(detailFilePath);
-        if (!response.ok) {
-            if (response.status === 404) {
-                throw new Error(`Details file not found: ${detailFilePath}. Ensure the file exists and the naming convention matches.`);
-            } else {
-                throw new Error(`HTTP error ${response.status} fetching ${detailFilePath}`);
-            }
+        const detailDataset = await fetchDetailDataset();
+        const resolvedRecord = resolveMaterialRecord(detailDataset, materialName);
+        const materialDetails = resolvedRecord.materialRecord;
+
+        if (resolvedRecord.resolvedMaterialName !== materialName) {
+            console.warn(`[Section Detail] Case-insensitive material match: '${materialName}' -> '${resolvedRecord.resolvedMaterialName}'.`);
         }
 
-        const materialDetails = await response.json();
         const sectionData = materialDetails[sectionKey];
 
         if (!sectionData) {

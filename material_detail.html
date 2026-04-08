@@ -9,7 +9,7 @@
   <!-- Optional: Placeholder favicon -->
   <link rel="icon" href="data:;base64,iVBORw0KGgo=">
 </head>
-<body>
+<body class="detail-page">
   <div class="container">
     <!-- Back Link (ADDED) -->
     <a href="index.html" class="back-link">← Back to Materials List</a>
@@ -21,14 +21,15 @@
     </header>
 
     <!-- Tags Section (Outside Main) -->
-    <section class="material-section" id="section-tags">
-      <h2 style="display: none;">Tags & Categories</h2>
+    <section class="material-section" id="section-tags" data-section="tags">
+      <h2 class="visually-hidden">Tags and categories</h2>
       <div class="tags-list" id="material-tags">Loading...</div>
     </section>
 
     <!-- Constituent Elements Section -->
-    <section class="material-section" id="section-periodic-table">
+    <section class="material-section" id="section-periodic-table" data-section="constituent-elements">
       <h2>Constituent Elements</h2>
+      <p class="section-intro">Elements inferred from formula and structured constituent data.</p>
       <div class="periodic-table-wrapper"> <!-- Grid defined here -->
         <!-- Group Labels (Row 1 of wrapper grid) -->
         <div class="pt-label pt-group-label" style="grid-row: 1; grid-column: 2;">1</div>
@@ -205,7 +206,7 @@
     <!-- End Constituent Elements Section -->
 
     <!-- Main Content Area (Where dynamic sections are added) -->
-    <main id="material-content-container">
+    <main id="material-content-container" aria-label="Material technical dossier">
         <!-- Dynamically generated sections (Overview, Safety, etc.) will appear here -->
     </main>
     <!-- End Main Content Area -->
