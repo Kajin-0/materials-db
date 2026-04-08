@@ -785,6 +785,55 @@ function initializeSimplifiedThreeJsViewer(viewerElementId, controlsElementId, v
 // --- =============================================================== ---
 
 
+
+
+const DETAIL_DATASET_PATH = './data/material_details.json';
+
+async function fetchDetailDataset() {
+    const response = await fetch(DETAIL_DATASET_PATH);
+    if (!response.ok) {
+        if (response.status === 404) {
+            throw new Error(`The consolidated detail dataset could not be loaded (missing file: ${DETAIL_DATASET_PATH}).`);
+        }
+        throw new Error(`The consolidated detail dataset could not be loaded (HTTP ${response.status}).`);
+    }
+
+    let detailDataset;
+    try {
+        detailDataset = await response.json();
+    } catch (jsonError) {
+        throw new Error(`The consolidated detail dataset contains invalid JSON: ${jsonError.message}`);
+    }
+
+    if (typeof detailDataset !== 'object' || detailDataset === null || Array.isArray(detailDataset)) {
+        throw new Error(`Invalid dataset format in ${DETAIL_DATASET_PATH}. Expected a top-level object keyed by material name.`);
+    }
+
+    return detailDataset;
+}
+
+function resolveMaterialRecord(detailDataset, requestedMaterialName) {
+    if (!requestedMaterialName || typeof requestedMaterialName !== 'string') {
+        throw new Error('The material parameter in the URL did not match any indexed detail record.');
+    }
+
+    const exactRecord = detailDataset[requestedMaterialName];
+    if (exactRecord && typeof exactRecord === 'object') {
+        return { materialRecord: exactRecord, resolvedMaterialName: requestedMaterialName };
+    }
+
+    const requestedLower = requestedMaterialName.toLowerCase();
+    const matchedKey = Object.keys(detailDataset).find(key => key.toLowerCase() === requestedLower);
+    if (matchedKey) {
+        const materialRecord = detailDataset[matchedKey];
+        if (materialRecord && typeof materialRecord === 'object') {
+            return { materialRecord, resolvedMaterialName: matchedKey };
+        }
+    }
+
+    throw new Error(`Material detail record for '${requestedMaterialName}' was not found in ${DETAIL_DATASET_PATH}.`);
+}
+
 // --- MAIN DOMContentLoaded LISTENER ---
 document.addEventListener("DOMContentLoaded", async () => {
     console.log("[Full Detail Loader] DOMContentLoaded event fired.");
@@ -792,7 +841,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     // --- Get parameters from URL ---
     const urlParams = new URLSearchParams(window.location.search);
     const materialNameParam = urlParams.get("material");
-    let detailFilePath; // Declare detailFilePath here
 
     // --- Get DOM elements ---
     const materialNameEl = document.getElementById("material-name");
@@ -825,50 +873,24 @@ document.addEventListener("DOMContentLoaded", async () => {
     else { console.warn("[Full Detail Loader] Material name element not found."); }
     document.title = `${materialName} - Full Details`;
 
-    // --- Construct file path ---
-    // Calculate the specific file name based on the material name
-    const safeMaterialNameLower = materialName
-        .replace(/[\s()]/g, '_') // Replace spaces AND parentheses with _
-        .toLowerCase();
-    // Remove potential double underscores AND any trailing underscores
-    const cleanedSafeName = safeMaterialNameLower
-        .replace(/__+/g, '_') // Replace multiple underscores with single
-        .replace(/_$/, '');   // Remove trailing underscore if present
-    const specificDetailFileName = `${cleanedSafeName}_details.json`;
-
-    // Assign value to the existing detailFilePath variable (declared earlier)
-    detailFilePath = `./details/${specificDetailFileName}`;
-
-    console.log(`[Full Detail Loader] Attempting to load specific detail file: '${detailFilePath}'`);
-    // *****************************************************************************
-
     // --- Fetch and Process Data ---
-    let allMaterialDetails; // Holds the full JSON content (either the single object or the map)
-    let materialData; // Variable to hold the specific material's data object
+    let detailDataset;
+    let materialData;
 
     try {
-        const response = await fetch(detailFilePath);
-        console.log(`[Full Detail Loader] Fetch response status for ${detailFilePath}: ${response.status} ${response.statusText}`);
-        if (!response.ok) {
-             const errorText = await response.text(); console.error(`Fetch failed: ${response.status}.`, errorText);
-            if (response.status === 404) { throw new Error(`Details file not found: ${detailFilePath}. Check file name and path.`); }
-            else { throw new Error(`HTTP error ${response.status} fetching ${detailFilePath}`); }
+        detailDataset = await fetchDetailDataset();
+        const resolvedRecord = resolveMaterialRecord(detailDataset, materialName);
+        materialData = resolvedRecord.materialRecord;
+
+        if (resolvedRecord.resolvedMaterialName !== materialName) {
+            console.warn(`[Full Detail Loader] Case-insensitive material match: '${materialName}' -> '${resolvedRecord.resolvedMaterialName}'.`);
         }
 
-        // Parse the JSON content
-        const rawJson = await response.json();
-        allMaterialDetails = rawJson; // Store the raw JSON content
-
-        // Extract the specific material's data based on which file was loaded
-        // *** SIMPLIFIED: Assumes dedicated file structure is always used now ***
-        if (typeof allMaterialDetails !== 'object' || allMaterialDetails === null || !allMaterialDetails.materialName) {
-            throw new Error(`Invalid JSON structure in dedicated file ${detailFilePath}. Expected object with material details.`);
+        if (typeof materialData !== 'object' || materialData === null || Array.isArray(materialData)) {
+            throw new Error(`Material detail record for '${materialName}' is not a valid object.`);
         }
-        materialData = allMaterialDetails; // The whole file content is the data for this material
-        // ************************************************
 
-        if (typeof materialData !== 'object' || materialData === null) { throw new Error(`Invalid data structure for material '${materialName}'.`); }
-        console.log("[Full Detail Loader] JSON parsed successfully.");
+        console.log(`[Full Detail Loader] Loaded detail record from ${DETAIL_DATASET_PATH}.`);
 
         const sectionDataMap = new Map();
 
