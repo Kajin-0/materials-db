@@ -789,7 +789,40 @@ function initializeSimplifiedThreeJsViewer(viewerElementId, controlsElementId, v
 
 const DETAIL_DATASET_PATH = './data/material_details.json';
 
-async function fetchDetailDataset() {
+function buildDedicatedDetailPath(requestedMaterialName) {
+    const safeMaterialNameLower = requestedMaterialName
+        .replace(/[\s()]+/g, '_')
+        .toLowerCase();
+    const cleanedSafeName = safeMaterialNameLower
+        .replace(/__+/g, '_')
+        .replace(/^_+|_+$/g, '');
+    return `./details/${cleanedSafeName}_details.json`;
+}
+
+async function tryLoadDedicatedDetailFile(dedicatedDetailPath) {
+    const response = await fetch(dedicatedDetailPath);
+    if (response.status === 404) {
+        return null;
+    }
+    if (!response.ok) {
+        throw new Error(`Dedicated full-detail file could not be loaded (HTTP ${response.status}).`);
+    }
+
+    let dedicatedRecord;
+    try {
+        dedicatedRecord = await response.json();
+    } catch (jsonError) {
+        throw new Error(`Dedicated full-detail file contains invalid JSON: ${jsonError.message}`);
+    }
+
+    if (typeof dedicatedRecord !== 'object' || dedicatedRecord === null || Array.isArray(dedicatedRecord)) {
+        throw new Error(`Dedicated full-detail file is not a valid object: ${dedicatedDetailPath}.`);
+    }
+
+    return dedicatedRecord;
+}
+
+async function loadConsolidatedDetailDataset() {
     const response = await fetch(DETAIL_DATASET_PATH);
     if (!response.ok) {
         if (response.status === 404) {
@@ -812,7 +845,7 @@ async function fetchDetailDataset() {
     return detailDataset;
 }
 
-function resolveMaterialRecord(detailDataset, requestedMaterialName) {
+function resolveMaterialFromDataset(requestedMaterialName, detailDataset) {
     if (!requestedMaterialName || typeof requestedMaterialName !== 'string') {
         throw new Error('The material parameter in the URL did not match any indexed detail record.');
     }
@@ -831,7 +864,70 @@ function resolveMaterialRecord(detailDataset, requestedMaterialName) {
         }
     }
 
-    throw new Error(`Material detail record for '${requestedMaterialName}' was not found in ${DETAIL_DATASET_PATH}.`);
+    throw new Error(`No dedicated or consolidated detail record was found for '${requestedMaterialName}'.`);
+}
+
+function toDisplayValue(value) {
+    if (value === null || value === undefined) return 'N/A';
+    if (typeof value === 'object' && value.value !== undefined) {
+        const unitPart = value.unit ? ` ${value.unit}` : '';
+        const notesPart = value.notes ? ` (${value.notes})` : '';
+        return `${value.value}${unitPart}${notesPart}`;
+    }
+    if (Array.isArray(value)) {
+        return value.length ? value.map(item => toDisplayValue(item)).join(', ') : 'N/A';
+    }
+    if (typeof value === 'object') {
+        try { return JSON.stringify(value); } catch (_) { return String(value); }
+    }
+    return String(value);
+}
+
+function buildFallbackFullDetailRecord(materialRecord, requestedMaterialName) {
+    const fallbackRecord = {
+        materialName: materialRecord.name || requestedMaterialName,
+        references: {},
+    };
+
+    if (materialRecord.description || materialRecord.wiki_link) {
+        fallbackRecord.overview = {
+            displayName: 'Overview',
+            introduction: materialRecord.description || 'Overview information is available in the consolidated material record.',
+            properties: {
+                formula: { displayName: 'Formula', summary: toDisplayValue(materialRecord.formula || 'N/A') },
+                category: { displayName: 'Category', summary: toDisplayValue(materialRecord.category || 'N/A') },
+                wiki_link: { displayName: 'Reference Link', summary: toDisplayValue(materialRecord.wiki_link || 'N/A') }
+            }
+        };
+    }
+
+    Object.entries(materialRecord).forEach(([sectionKey, sectionValue]) => {
+        if (['name', 'formula', 'category', 'description', 'wiki_link', 'tags', 'constituent_elements', 'synonyms'].includes(sectionKey)) {
+            return;
+        }
+
+        if (!sectionValue || typeof sectionValue !== 'object' || Array.isArray(sectionValue)) {
+            return;
+        }
+
+        const properties = {};
+        Object.entries(sectionValue).forEach(([propertyKey, propertyValue]) => {
+            properties[propertyKey] = {
+                displayName: propertyKey.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+                summary: toDisplayValue(propertyValue)
+            };
+        });
+
+        if (Object.keys(properties).length > 0) {
+            fallbackRecord[sectionKey] = {
+                displayName: sectionKey.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+                introduction: 'Loaded from consolidated material details. Dedicated full-detail content is not available for this material.',
+                properties
+            };
+        }
+    });
+
+    return fallbackRecord;
 }
 
 // --- MAIN DOMContentLoaded LISTENER ---
@@ -874,23 +970,38 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.title = `${materialName} - Full Details`;
 
     // --- Fetch and Process Data ---
-    let detailDataset;
     let materialData;
+    let sourceMode = 'dedicated';
 
     try {
-        detailDataset = await fetchDetailDataset();
-        const resolvedRecord = resolveMaterialRecord(detailDataset, materialName);
-        materialData = resolvedRecord.materialRecord;
+        const dedicatedDetailPath = buildDedicatedDetailPath(materialName);
+        console.log(`[Full Detail Loader] Attempting dedicated full-detail file: ${dedicatedDetailPath}`);
 
-        if (resolvedRecord.resolvedMaterialName !== materialName) {
-            console.warn(`[Full Detail Loader] Case-insensitive material match: '${materialName}' -> '${resolvedRecord.resolvedMaterialName}'.`);
+        const dedicatedRecord = await tryLoadDedicatedDetailFile(dedicatedDetailPath);
+
+        if (dedicatedRecord) {
+            materialData = dedicatedRecord;
+            sourceMode = 'dedicated';
+            console.log(`[Full Detail Loader] Dedicated full-detail file loaded successfully: ${dedicatedDetailPath}`);
+        } else {
+            sourceMode = 'fallback';
+            console.warn('[Full Detail Loader] Dedicated full-detail file was not found. Falling back to consolidated material record.');
+            const detailDataset = await loadConsolidatedDetailDataset();
+            const resolvedRecord = resolveMaterialFromDataset(materialName, detailDataset);
+            if (resolvedRecord.resolvedMaterialName !== materialName) {
+                console.warn(`[Full Detail Loader] Case-insensitive consolidated match: '${materialName}' -> '${resolvedRecord.resolvedMaterialName}'.`);
+            }
+            materialData = buildFallbackFullDetailRecord(resolvedRecord.materialRecord, materialName);
         }
 
         if (typeof materialData !== 'object' || materialData === null || Array.isArray(materialData)) {
-            throw new Error(`Material detail record for '${materialName}' is not a valid object.`);
+            throw new Error('The full-detail page could not load the requested material.');
         }
 
-        console.log(`[Full Detail Loader] Loaded detail record from ${DETAIL_DATASET_PATH}.`);
+        if (sourceMode === 'dedicated' && materialData.materialName && materialNameEl) {
+            materialNameEl.textContent = materialData.materialName;
+            document.title = `${materialData.materialName} - Full Details`;
+        }
 
         const sectionDataMap = new Map();
 
