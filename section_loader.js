@@ -1,3 +1,59 @@
+const DETAIL_DATASET_PATH = './data/material_details.json';
+
+function buildDedicatedDetailPath(requestedMaterialName) {
+    const safeMaterialNameLower = requestedMaterialName
+        .replace(/[\s()]+/g, '_')
+        .toLowerCase();
+    const cleanedSafeName = safeMaterialNameLower
+        .replace(/__+/g, '_')
+        .replace(/^_+|_+$/g, '');
+    return `./details/${cleanedSafeName}_details.json`;
+}
+
+async function tryLoadDedicatedDetailFile(dedicatedDetailPath) {
+    const response = await fetch(dedicatedDetailPath);
+    if (response.status === 404) return null;
+    if (!response.ok) throw new Error(`Dedicated section-detail file could not be loaded (HTTP ${response.status}).`);
+
+    const dedicatedRecord = await response.json();
+    if (typeof dedicatedRecord !== 'object' || dedicatedRecord === null || Array.isArray(dedicatedRecord)) {
+        throw new Error(`Dedicated section-detail file is not a valid object: ${dedicatedDetailPath}.`);
+    }
+
+    return dedicatedRecord;
+}
+
+async function fetchDetailDataset() {
+    const response = await fetch(DETAIL_DATASET_PATH);
+    if (!response.ok) {
+        if (response.status === 404) {
+            throw new Error(`The consolidated detail dataset could not be loaded (missing file: ${DETAIL_DATASET_PATH}).`);
+        }
+        throw new Error(`The consolidated detail dataset could not be loaded (HTTP ${response.status}).`);
+    }
+
+    const dataset = await response.json();
+    if (typeof dataset !== 'object' || dataset === null || Array.isArray(dataset)) {
+        throw new Error(`Invalid dataset format in ${DETAIL_DATASET_PATH}. Expected a top-level object keyed by material name.`);
+    }
+
+    return dataset;
+}
+
+function resolveMaterialRecord(detailDataset, requestedMaterialName) {
+    const exactRecord = detailDataset[requestedMaterialName];
+    if (exactRecord && typeof exactRecord === 'object') {
+        return { materialRecord: exactRecord, resolvedMaterialName: requestedMaterialName };
+    }
+
+    const matchedKey = Object.keys(detailDataset).find(key => key.toLowerCase() === requestedMaterialName.toLowerCase());
+    if (matchedKey) {
+        return { materialRecord: detailDataset[matchedKey], resolvedMaterialName: matchedKey };
+    }
+
+    throw new Error(`No dedicated or consolidated detail record was found for '${requestedMaterialName}'.`);
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
     // --- Get parameters from URL ---
     const urlParams = new URLSearchParams(window.location.search);
@@ -32,24 +88,25 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Update context immediately
     if (materialContextEl) materialContextEl.textContent = `for ${materialName}`;
 
-    // --- Construct file path ---
-    const safeMaterialName = materialName.replace(/ /g, '_').toLowerCase();
-    const detailFilePath = `./details/${safeMaterialName}_details.json`;
-
-    console.log(`[Section Detail] Loading section '${sectionKey}' for material '${materialName}' from '${detailFilePath}'`);
+    const dedicatedDetailPath = buildDedicatedDetailPath(materialName);
+    console.log(`[Section Detail] Attempting dedicated file '${dedicatedDetailPath}' for section '${sectionKey}'.`);
 
     // --- Fetch and Process Data ---
     try {
-        const response = await fetch(detailFilePath);
-        if (!response.ok) {
-            if (response.status === 404) {
-                throw new Error(`Details file not found: ${detailFilePath}. Ensure the file exists and the naming convention matches.`);
-            } else {
-                throw new Error(`HTTP error ${response.status} fetching ${detailFilePath}`);
+        let materialDetails = await tryLoadDedicatedDetailFile(dedicatedDetailPath);
+
+        if (materialDetails) {
+            console.log(`[Section Detail] Dedicated detail file loaded: ${dedicatedDetailPath}`);
+        } else {
+            console.warn('[Section Detail] Dedicated section-detail file not found. Falling back to consolidated dataset.');
+            const detailDataset = await fetchDetailDataset();
+            const resolvedRecord = resolveMaterialRecord(detailDataset, materialName);
+            materialDetails = resolvedRecord.materialRecord;
+            if (resolvedRecord.resolvedMaterialName !== materialName) {
+                console.warn(`[Section Detail] Case-insensitive material match: '${materialName}' -> '${resolvedRecord.resolvedMaterialName}'.`);
             }
         }
 
-        const materialDetails = await response.json();
         const sectionData = materialDetails[sectionKey];
 
         if (!sectionData) {

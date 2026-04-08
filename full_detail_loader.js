@@ -785,6 +785,151 @@ function initializeSimplifiedThreeJsViewer(viewerElementId, controlsElementId, v
 // --- =============================================================== ---
 
 
+
+
+const DETAIL_DATASET_PATH = './data/material_details.json';
+
+function buildDedicatedDetailPath(requestedMaterialName) {
+    const safeMaterialNameLower = requestedMaterialName
+        .replace(/[\s()]+/g, '_')
+        .toLowerCase();
+    const cleanedSafeName = safeMaterialNameLower
+        .replace(/__+/g, '_')
+        .replace(/^_+|_+$/g, '');
+    return `./details/${cleanedSafeName}_details.json`;
+}
+
+async function tryLoadDedicatedDetailFile(dedicatedDetailPath) {
+    const response = await fetch(dedicatedDetailPath);
+    if (response.status === 404) {
+        return null;
+    }
+    if (!response.ok) {
+        throw new Error(`Dedicated full-detail file could not be loaded (HTTP ${response.status}).`);
+    }
+
+    let dedicatedRecord;
+    try {
+        dedicatedRecord = await response.json();
+    } catch (jsonError) {
+        throw new Error(`Dedicated full-detail file contains invalid JSON: ${jsonError.message}`);
+    }
+
+    if (typeof dedicatedRecord !== 'object' || dedicatedRecord === null || Array.isArray(dedicatedRecord)) {
+        throw new Error(`Dedicated full-detail file is not a valid object: ${dedicatedDetailPath}.`);
+    }
+
+    return dedicatedRecord;
+}
+
+async function loadConsolidatedDetailDataset() {
+    const response = await fetch(DETAIL_DATASET_PATH);
+    if (!response.ok) {
+        if (response.status === 404) {
+            throw new Error(`The consolidated detail dataset could not be loaded (missing file: ${DETAIL_DATASET_PATH}).`);
+        }
+        throw new Error(`The consolidated detail dataset could not be loaded (HTTP ${response.status}).`);
+    }
+
+    let detailDataset;
+    try {
+        detailDataset = await response.json();
+    } catch (jsonError) {
+        throw new Error(`The consolidated detail dataset contains invalid JSON: ${jsonError.message}`);
+    }
+
+    if (typeof detailDataset !== 'object' || detailDataset === null || Array.isArray(detailDataset)) {
+        throw new Error(`Invalid dataset format in ${DETAIL_DATASET_PATH}. Expected a top-level object keyed by material name.`);
+    }
+
+    return detailDataset;
+}
+
+function resolveMaterialFromDataset(requestedMaterialName, detailDataset) {
+    if (!requestedMaterialName || typeof requestedMaterialName !== 'string') {
+        throw new Error('The material parameter in the URL did not match any indexed detail record.');
+    }
+
+    const exactRecord = detailDataset[requestedMaterialName];
+    if (exactRecord && typeof exactRecord === 'object') {
+        return { materialRecord: exactRecord, resolvedMaterialName: requestedMaterialName };
+    }
+
+    const requestedLower = requestedMaterialName.toLowerCase();
+    const matchedKey = Object.keys(detailDataset).find(key => key.toLowerCase() === requestedLower);
+    if (matchedKey) {
+        const materialRecord = detailDataset[matchedKey];
+        if (materialRecord && typeof materialRecord === 'object') {
+            return { materialRecord, resolvedMaterialName: matchedKey };
+        }
+    }
+
+    throw new Error(`No dedicated or consolidated detail record was found for '${requestedMaterialName}'.`);
+}
+
+function toDisplayValue(value) {
+    if (value === null || value === undefined) return 'N/A';
+    if (typeof value === 'object' && value.value !== undefined) {
+        const unitPart = value.unit ? ` ${value.unit}` : '';
+        const notesPart = value.notes ? ` (${value.notes})` : '';
+        return `${value.value}${unitPart}${notesPart}`;
+    }
+    if (Array.isArray(value)) {
+        return value.length ? value.map(item => toDisplayValue(item)).join(', ') : 'N/A';
+    }
+    if (typeof value === 'object') {
+        try { return JSON.stringify(value); } catch (_) { return String(value); }
+    }
+    return String(value);
+}
+
+function buildFallbackFullDetailRecord(materialRecord, requestedMaterialName) {
+    const fallbackRecord = {
+        materialName: materialRecord.name || requestedMaterialName,
+        references: {},
+    };
+
+    if (materialRecord.description || materialRecord.wiki_link) {
+        fallbackRecord.overview = {
+            displayName: 'Overview',
+            introduction: materialRecord.description || 'Overview information is available in the consolidated material record.',
+            properties: {
+                formula: { displayName: 'Formula', summary: toDisplayValue(materialRecord.formula || 'N/A') },
+                category: { displayName: 'Category', summary: toDisplayValue(materialRecord.category || 'N/A') },
+                wiki_link: { displayName: 'Reference Link', summary: toDisplayValue(materialRecord.wiki_link || 'N/A') }
+            }
+        };
+    }
+
+    Object.entries(materialRecord).forEach(([sectionKey, sectionValue]) => {
+        if (['name', 'formula', 'category', 'description', 'wiki_link', 'tags', 'constituent_elements', 'synonyms'].includes(sectionKey)) {
+            return;
+        }
+
+        if (!sectionValue || typeof sectionValue !== 'object' || Array.isArray(sectionValue)) {
+            return;
+        }
+
+        const properties = {};
+        Object.entries(sectionValue).forEach(([propertyKey, propertyValue]) => {
+            properties[propertyKey] = {
+                displayName: propertyKey.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+                summary: toDisplayValue(propertyValue)
+            };
+        });
+
+        if (Object.keys(properties).length > 0) {
+            fallbackRecord[sectionKey] = {
+                displayName: sectionKey.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+                introduction: 'Loaded from consolidated material details. Dedicated full-detail content is not available for this material.',
+                properties
+            };
+        }
+    });
+
+    return fallbackRecord;
+}
+
 // --- MAIN DOMContentLoaded LISTENER ---
 document.addEventListener("DOMContentLoaded", async () => {
     console.log("[Full Detail Loader] DOMContentLoaded event fired.");
@@ -792,7 +937,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     // --- Get parameters from URL ---
     const urlParams = new URLSearchParams(window.location.search);
     const materialNameParam = urlParams.get("material");
-    let detailFilePath; // Declare detailFilePath here
 
     // --- Get DOM elements ---
     const materialNameEl = document.getElementById("material-name");
@@ -825,50 +969,39 @@ document.addEventListener("DOMContentLoaded", async () => {
     else { console.warn("[Full Detail Loader] Material name element not found."); }
     document.title = `${materialName} - Full Details`;
 
-    // --- Construct file path ---
-    // Calculate the specific file name based on the material name
-    const safeMaterialNameLower = materialName
-        .replace(/[\s()]/g, '_') // Replace spaces AND parentheses with _
-        .toLowerCase();
-    // Remove potential double underscores AND any trailing underscores
-    const cleanedSafeName = safeMaterialNameLower
-        .replace(/__+/g, '_') // Replace multiple underscores with single
-        .replace(/_$/, '');   // Remove trailing underscore if present
-    const specificDetailFileName = `${cleanedSafeName}_details.json`;
-
-    // Assign value to the existing detailFilePath variable (declared earlier)
-    detailFilePath = `./details/${specificDetailFileName}`;
-
-    console.log(`[Full Detail Loader] Attempting to load specific detail file: '${detailFilePath}'`);
-    // *****************************************************************************
-
     // --- Fetch and Process Data ---
-    let allMaterialDetails; // Holds the full JSON content (either the single object or the map)
-    let materialData; // Variable to hold the specific material's data object
+    let materialData;
+    let sourceMode = 'dedicated';
 
     try {
-        const response = await fetch(detailFilePath);
-        console.log(`[Full Detail Loader] Fetch response status for ${detailFilePath}: ${response.status} ${response.statusText}`);
-        if (!response.ok) {
-             const errorText = await response.text(); console.error(`Fetch failed: ${response.status}.`, errorText);
-            if (response.status === 404) { throw new Error(`Details file not found: ${detailFilePath}. Check file name and path.`); }
-            else { throw new Error(`HTTP error ${response.status} fetching ${detailFilePath}`); }
+        const dedicatedDetailPath = buildDedicatedDetailPath(materialName);
+        console.log(`[Full Detail Loader] Attempting dedicated full-detail file: ${dedicatedDetailPath}`);
+
+        const dedicatedRecord = await tryLoadDedicatedDetailFile(dedicatedDetailPath);
+
+        if (dedicatedRecord) {
+            materialData = dedicatedRecord;
+            sourceMode = 'dedicated';
+            console.log(`[Full Detail Loader] Dedicated full-detail file loaded successfully: ${dedicatedDetailPath}`);
+        } else {
+            sourceMode = 'fallback';
+            console.warn('[Full Detail Loader] Dedicated full-detail file was not found. Falling back to consolidated material record.');
+            const detailDataset = await loadConsolidatedDetailDataset();
+            const resolvedRecord = resolveMaterialFromDataset(materialName, detailDataset);
+            if (resolvedRecord.resolvedMaterialName !== materialName) {
+                console.warn(`[Full Detail Loader] Case-insensitive consolidated match: '${materialName}' -> '${resolvedRecord.resolvedMaterialName}'.`);
+            }
+            materialData = buildFallbackFullDetailRecord(resolvedRecord.materialRecord, materialName);
         }
 
-        // Parse the JSON content
-        const rawJson = await response.json();
-        allMaterialDetails = rawJson; // Store the raw JSON content
-
-        // Extract the specific material's data based on which file was loaded
-        // *** SIMPLIFIED: Assumes dedicated file structure is always used now ***
-        if (typeof allMaterialDetails !== 'object' || allMaterialDetails === null || !allMaterialDetails.materialName) {
-            throw new Error(`Invalid JSON structure in dedicated file ${detailFilePath}. Expected object with material details.`);
+        if (typeof materialData !== 'object' || materialData === null || Array.isArray(materialData)) {
+            throw new Error('The full-detail page could not load the requested material.');
         }
-        materialData = allMaterialDetails; // The whole file content is the data for this material
-        // ************************************************
 
-        if (typeof materialData !== 'object' || materialData === null) { throw new Error(`Invalid data structure for material '${materialName}'.`); }
-        console.log("[Full Detail Loader] JSON parsed successfully.");
+        if (sourceMode === 'dedicated' && materialData.materialName && materialNameEl) {
+            materialNameEl.textContent = materialData.materialName;
+            document.title = `${materialData.materialName} - Full Details`;
+        }
 
         const sectionDataMap = new Map();
 
