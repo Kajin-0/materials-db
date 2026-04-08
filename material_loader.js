@@ -440,17 +440,31 @@ function populatePage(material, container, encodedMaterialNameParam) { // Added 
 
     // --- Helper Function: createPropertyItem --- (UNCHANGED from original)
     const createPropertyItem = (keyText, valueHtml, isKey = false) => {
-        const itemDiv = document.createElement('div'); itemDiv.className = 'property-item'; if (isKey) itemDiv.classList.add('key-property');
-        const dt = document.createElement('dt'); dt.className = 'property-key'; dt.textContent = keyText + ':';
-        const dd = document.createElement('dd'); dd.className = 'property-value'; dd.innerHTML = valueHtml; if (valueHtml === fallbackValue) dd.classList.add('na-value');
-        itemDiv.appendChild(dt); itemDiv.appendChild(dd); return itemDiv;
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'property-item';
+        itemDiv.dataset.property = keyText.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+        if (isKey) itemDiv.classList.add('key-property');
+
+        const dt = document.createElement('dt');
+        dt.className = 'property-key';
+        dt.textContent = keyText + ':';
+
+        const dd = document.createElement('dd');
+        dd.className = 'property-value';
+        dd.innerHTML = valueHtml;
+        if (valueHtml === fallbackValue) dd.classList.add('na-value');
+
+        itemDiv.appendChild(dt);
+        itemDiv.appendChild(dd);
+        return itemDiv;
     };
 
     // --- Helper Function: createSection (Creates section and empty H2 with icon if provided) ---
     const createSection = (id, icon = null) => {
         const section = document.createElement('section');
         section.className = 'material-section';
-        section.id = id; // ID for the simple detail page section container
+        section.id = id;
+        section.dataset.section = id.replace(/^section-/, '');
         const h2 = document.createElement('h2');
         if (icon) {
             const iconSpan = document.createElement('span');
@@ -581,7 +595,7 @@ function populatePage(material, container, encodedMaterialNameParam) { // Added 
             // --- Logic for Special Sections (Checks internal data existence) ---
              if (id === 'section-overview') {
                 const descVal = getData(material, 'description', fallbackValue); if (descVal !== fallbackValue) { const p = document.createElement('p'); p.className='description'; p.innerHTML=descVal; section.appendChild(p); sectionHasActualContent = true; }
-                const wikiUrl = getData(material, 'wiki_link', '#'); if (wikiUrl !== '#' && wikiUrl !== fallbackValue) { const p = document.createElement('p'); const a = document.createElement('a'); a.id = 'wiki-link'; a.href=wikiUrl; a.target='_blank'; a.rel='noopener noreferrer'; a.textContent='Wikipedia Article'; p.appendChild(document.createTextNode('See also: ')); p.appendChild(a); section.appendChild(p); sectionHasActualContent = true;}
+                const wikiUrl = getData(material, 'wiki_link', '#'); if (wikiUrl !== '#' && wikiUrl !== fallbackValue) { const p = document.createElement('p'); const a = document.createElement('a'); a.id = 'wiki-link'; a.href=wikiUrl; a.target='_blank'; a.rel='noopener noreferrer'; a.textContent='Reference article'; p.appendChild(document.createTextNode('See also: ')); p.appendChild(a); section.appendChild(p); sectionHasActualContent = true;}
                 // Only add placeholder if description or link existed
                 if (sectionHasActualContent) { const imgPlaceholder = document.createElement('div'); imgPlaceholder.className = 'image-placeholder'; imgPlaceholder.textContent = 'Image Placeholder / Diagram'; section.appendChild(imgPlaceholder);} else { section.style.display = 'none'; } // Hide overview if totally empty
             }
@@ -601,7 +615,7 @@ function populatePage(material, container, encodedMaterialNameParam) { // Added 
                 let listHasContent = false; const notesValue = getData(material, 'vendor_info.notes', fallbackValue);
                 const vendorEntries = Object.entries(material.vendor_info).filter(([k,v]) => k !== 'notes' && getData(material, `vendor_info.${k}`, fallbackValue) !== fallbackValue);
                 if(notesValue !== fallbackValue || vendorEntries.length > 0) {
-                    const introP = document.createElement('p'); introP.textContent = 'Example Vendors:'; section.appendChild(introP);
+                    const introP = document.createElement('p'); introP.textContent = 'Representative vendors and suppliers:'; section.appendChild(introP);
                     const ul = document.createElement('ul'); ul.id = 'vendor-list';
                     if (notesValue !== fallbackValue) { const notesLi = document.createElement('li'); notesLi.className = 'vendor-notes'; notesLi.innerHTML = `<em>${notesValue}</em>`; ul.appendChild(notesLi); listHasContent = true; }
                     vendorEntries.forEach(([key, value]) => { const vendorValue = getData(material, `vendor_info.${key}`, fallbackValue); const li = document.createElement('li'); let itemHtml = vendorValue; try { const urlMatch = String(vendorValue).match(/(https?:\/\/[^\s"'>]+)|(www\.[^\s"'>]+)/); if (urlMatch) { const url = urlMatch[0].startsWith('http') ? urlMatch[0] : 'http://' + urlMatch[0]; itemHtml = String(vendorValue).replace(urlMatch[0], `<a href="${url}" target="_blank" rel="noopener noreferrer">${urlMatch[0]}</a>`); } } catch (linkError) {} li.innerHTML = itemHtml; ul.appendChild(li); listHasContent = true; });

@@ -2,63 +2,57 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>MaterialsDB</title>
+  <title>MaterialsDB | Engineering Materials Reference</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- Link the CSS file -->
   <link rel="stylesheet" href="style.css" />
-  <!-- Optional: Placeholder favicon -->
   <link rel="icon" href="data:;base64,iVBORw0KGgo=">
 </head>
-<body class="homepage"> <!-- Add class for homepage specific styles -->
-
-  <header id="index-header"> <!-- Use specific ID -->
-    <!-- Changed onclick to navigate directly to index.html for clarity -->
+<body class="homepage">
+  <header id="index-header" role="banner">
     <h1 onclick="window.location.href='index.html'" title="Go to MaterialsDB Home" style="cursor:pointer;">MaterialsDB</h1>
+    <p class="header-subtitle">Technical reference index for engineering materials selection and analysis.</p>
   </header>
 
-  <!-- Main content area now flex container for centering -->
-  <main id="index-main"> <!-- Use specific ID -->
+  <main id="index-main" aria-label="Material lookup workspace">
+    <section id="search-panel" aria-labelledby="search-panel-title">
+      <h2 id="search-panel-title">Material Lookup</h2>
+      <p class="search-panel-description">Search by chemical formula, material name, processing class, or application tags. Filter results by industry domain, category, and taxonomy tag.</p>
 
-    <!-- Search container remains the primary element -->
-    <div id="search-container">
-      <input id="searchInput" type="text" placeholder="Search materials by name, formula, tag..." autocomplete="off" />
-      <ul id="suggestions"></ul>
-    </div>
+      <div id="search-container">
+        <label class="visually-hidden" for="searchInput">Search materials</label>
+        <input id="searchInput" type="text" placeholder="e.g., SiC, UHMWPE, thermal barrier coating, industry:aerospace" autocomplete="off" />
+        <ul id="suggestions" role="listbox" aria-label="Search suggestions"></ul>
+      </div>
+    </section>
 
-    <!-- Toolbar is separate, shown/hidden by JS/CSS -->
-    <section class="toolbar" id="toolbar">
+    <section class="toolbar" id="toolbar" aria-label="Result filters">
       <div class="filter-group">
-        <label for="industryFilter">Industry:</label>
+        <label for="industryFilter">Industry Domain</label>
         <select id="industryFilter" disabled>
           <option value="">Loading...</option>
         </select>
       </div>
       <div class="filter-group">
-        <label for="categoryFilter">Category:</label>
+        <label for="categoryFilter">Material Category</label>
         <select id="categoryFilter" disabled>
           <option value="">Loading...</option>
         </select>
       </div>
       <div class="filter-group">
-        <label for="propertyFilter">Tag:</label>
+        <label for="propertyFilter">Tag</label>
         <select id="propertyFilter" disabled>
           <option value="">Loading...</option>
         </select>
       </div>
     </section>
 
-    <!-- Results area, initially populated by JS -->
-    <div id="results">
-        <!-- Initial message will be added by app.js -->
-    </div>
+    <section id="results-region" aria-live="polite" aria-atomic="false">
+      <div id="results-meta" class="results-meta" hidden></div>
+      <div id="results"></div>
+    </section>
+  </main>
 
-  </main> <!-- End #index-main -->
-
-
-  <!-- Load Fuse.js library from CDN -->
   <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
-  <!-- Load the application's JavaScript logic (relative path) -->
   <script src="app.js"></script>
-
 </body>
 </html>
